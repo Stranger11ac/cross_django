@@ -13,7 +13,7 @@ var swiperOptions = {
         prevEl: ".swiper-button-prev",
     },
     autoplay: {
-        delay: 150000, // tiempo en milisegundos entre cada slide
+        delay: 20000, // tiempo en milisegundos entre cada slide
         disableOnInteraction: false, // para que no se detenga al interactuar con el carrusel
     },
     on: {

@@ -15,8 +15,11 @@
     --secundario: #cdcdcd;
     --oscuro: #292f38;
     --gris_claro: #2f333a;
-    --extra: #039b75;
+    --extra: #02913c;
     --detalle: #3b71ca;
+
+    --blue_img-filter: hue-rotate(60deg) saturate(120%);
+    --original_img-filter: saturate(90%);
 
     /* Color white transparent-> "alpha chanel" */
     --whiteA: rgba(255, 255, 255, 0);
@@ -51,7 +54,31 @@
     --transitionEase: 0.3s all ease;
     --transitionCubic: 0.3s all cubic-bezier(0.68, -0.55, 0.27, 1.55);
 }
+/*######### Detalle de color #########*/
+.btn_detail {
+    background-color: var(--detalle) !important;
+    background: var(--detalle) !important;
+    color: var(--blanco) !important;
+    transition: filter 0.3s ease;
+}
 
+.btn_secondary {
+    background-color: var(--blanco) !important;
+    background: var(--blanco) !important;
+    color: var(--detalle) !important;
+    filter: brightness(80%);
+    transition: filter 0.3s ease;
+}
+
+.btn_detail:hover {
+    filter: brightness(110%);
+}
+
+.btn_secondary:hover{
+    filter: brightness(90%);
+}
+
+/*######### Generales #########*/
 html {
     accent-color: var(--detalle) !important;
     overflow-x: hidden;
@@ -91,17 +118,8 @@ a {
     color: inherit;
 }
 
-i.fa-solid{
+i.fa-solid {
     min-width: 10px;
-}
-
-/*###################### MDB components ######################*/
-.btn-secondary {
-    --mdb-btn-bg: #e2eaf7;
-    --mdb-btn-color: #294f8d;
-}
-.btn-primary {
-    --mdb-btn-bg: var(--detalle);
 }
 
 /*########################## Navbar ##########################*/
@@ -112,7 +130,7 @@ nav {
 
 nav .navbar-brand img {
     width: 100px;
-    filter: hue-rotate(60deg) saturate(120%);
+    filter: var(--blue_img-filter);
 }
 
 nav .navbar-toggler {
@@ -293,7 +311,7 @@ nav .navbar-collapse {
 }
 
 /* hr divisor */
-.hr_divisor{
+.hr_divisor {
     border: none;
     height: 5px;
     border-radius: 5px;

@@ -8,11 +8,9 @@ def index(request):
     return render(request, 'index.html', {
         'banners': banners_all
     })
-    # return HttpResponse("<h1>Inicio Cross Project</h1>")
 
 def faq(request):
     proyectosall = models.proyectos.objects.all()
-    return render(request, 'faq.html', {
+    return render(request, 'frecuentes.html', {
         'proyectos_all': proyectosall
     })
-    # return HttpResponse("<h1>Inicio Preguntas frecuentes</h1>")

@@ -39,7 +39,7 @@ class articulos(models.Model):
 class banners(models.Model):
     titulo = models.CharField(max_length=200, blank=False)
     descripcion = models.CharField(max_length=350, blank=False)
-    articulo = models.URLField(blank=False, default=False)
+    articulo = models.CharField(max_length=200, blank=False, default=False)
     imagen = models.ImageField(upload_to='cross_asistent/static/files/banners/', blank=False)
     expiracion = models.DateTimeField(blank=True, null=True)
     
