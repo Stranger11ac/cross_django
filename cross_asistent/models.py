@@ -19,10 +19,15 @@ class preguntas(models.Model):
     pregunta = models.CharField(max_length=200, blank=False)
     respuesta = models.TextField(blank=False)
     redirigir = models.URLField(blank=True)
-    documentos = models.FileField(upload_to='referencias_documentos/', blank=True)
-    imagenes =  models.ImageField(upload_to='referencias_imagenes/', blank=True)
+    documentos = models.FileField(upload_to='referencias/documentos/', blank=True)
+    imagenes =  models.ImageField(upload_to='referencias/imagenes/', blank=True)
     fecha_modificacion = models.DateTimeField(auto_now=True)
     
     def __str__(self):
         return self.pregunta
-    
+
+class banners(models.Model):
+    titulo = models.CharField(max_length=150, blank=False)
+    descripcion = models.CharField(max_length=200, blank=False)
+    imagen = models.ImageField(upload_to='referencias/banners', blank=False)
+    expiracion = models.DateTimeField(blank=True)
