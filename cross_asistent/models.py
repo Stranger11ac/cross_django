@@ -27,7 +27,7 @@ class preguntas(models.Model):
     
     def __str__(self):
         return self.pregunta
-    
+
 class articulos(models.Model):
     creacion = models.DateField(auto_now_add=True, blank=False)
     actualizacion = models.DateField(auto_now=True, blank=True, null=True)
@@ -55,3 +55,4 @@ class banners(models.Model):
             if os.path.isfile(image_path):
                 os.remove(image_path)
         super(banners, self).delete(*args, **kwargs)
+
