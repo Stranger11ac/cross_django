@@ -1,4 +1,6 @@
 from django.db import models
+import os
+from django.conf import settings
 
 # Create your models here.
 class proyectos(models.Model):
@@ -45,3 +47,11 @@ class banners(models.Model):
     
     def __str__(self):
         return self.titulo
+    
+    def delete(self, *args, **kwargs):
+        # Eliminar la imagen del sistema de archivos
+        if self.imagen:
+            image_path = os.path.join(settings.MEDIA_ROOT, self.imagen.path)
+            if os.path.isfile(image_path):
+                os.remove(image_path)
+        super(banners, self).delete(*args, **kwargs)
