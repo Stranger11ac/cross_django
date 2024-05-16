@@ -14,3 +14,15 @@ class tareas(models.Model):
     
     def __str__(self):
         return self.titulo + " - " + self.proyecto.nombre
+
+class preguntas(models.Model):
+    pregunta = models.CharField(max_length=200, blank=False)
+    respuesta = models.TextField(blank=False)
+    redirigir = models.URLField(blank=True)
+    documentos = models.FileField(upload_to='referencias_documentos/', blank=True)
+    imagenes =  models.ImageField(upload_to='referencias_imagenes/', blank=True)
+    fecha_modificacion = models.DateTimeField(auto_now=True)
+    
+    def __str__(self):
+        return self.pregunta
+    
