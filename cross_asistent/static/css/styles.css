@@ -15,8 +15,8 @@
     --secundario: #cdcdcd;
     --oscuro: #292f38;
     --gris_claro: #2f333a;
-    --detalle: #039b75;
-    --indicator: #3b71ca;
+    --extra: #039b75;
+    --detalle: #3b71ca;
 
     /* Color white transparent-> "alpha chanel" */
     --whiteA: rgba(255, 255, 255, 0);
@@ -52,13 +52,8 @@
     --transitionCubic: 0.3s all cubic-bezier(0.68, -0.55, 0.27, 1.55);
 }
 
-::selection,
-::-moz-selection {
-    background: var(--indicator);
-    color: #fff;
-}
-
 html {
+    accent-color: var(--detalle) !important;
     overflow-x: hidden;
 }
 
@@ -106,7 +101,7 @@ i.fa-solid{
     --mdb-btn-color: #294f8d;
 }
 .btn-primary {
-    --mdb-btn-bg: var(--indicator);
+    --mdb-btn-bg: var(--detalle);
 }
 
 /*########################## Navbar ##########################*/
@@ -191,16 +186,6 @@ nav .navbar-collapse {
     background-position: center;
 }
 
-.slide-inner.slide_img-01{
-    background-image: url(../img/utc1.jpg);
-}
-.slide-inner.slide_img-02{
-    background-image: url(../img/utc2.jpg);
-}
-.slide-inner.slide_img-03{
-    background-image: url(../img/utc3.jpg);
-}
-
 .swiper-slide-active h2,
 .swiper-slide-active p,
 .swiper-slide-active .div-dec,
@@ -227,7 +212,7 @@ nav .navbar-collapse {
     visibility: visible;
     line-height: 70px;
     margin-bottom: 40px;
-    text-shadow: 0 0 20px black, 0 0 30px black;
+    text-shadow: 0 0 20px black, 0 0 40px black;
 }
 
 .slide-inner .header-text .div-dec {
@@ -244,15 +229,15 @@ nav .navbar-collapse {
 .slide-inner .header-text p {
     color: #fff;
     font-size: 1.5rem;
-    text-shadow: 0 0 20px black;
     margin-right: 60px;
     margin-bottom: 50px;
     opacity: 1;
     visibility: visible;
+    text-shadow: 0 0 20px black, 0 0 30px black;
 }
 
 .slide-inner .header-text h2 em {
-    color: var(--indicator);
+    color: var(--detalle);
 }
 
 .slide-inner .header-text .buttons {
@@ -271,20 +256,6 @@ nav .navbar-collapse {
 .swiper-button-prev {
     color: #fff !important;
 }
-
-/* .btn_slide,
-.btn_slide a {
-    font-size: 14px;
-    color: var(--oscuro);
-    background-color: var(--blanco);
-    padding: 12px 30px;
-    display: inline-block;
-    border-radius: 5px;
-    font-weight: 500;
-    text-transform: capitalize;
-    letter-spacing: 0.5px;
-    transition: all 0.3s;
-} */
 
 .btn_slide:hover {
     opacity: 0.9;

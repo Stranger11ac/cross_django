@@ -86,9 +86,16 @@
             <!-- Jumbotron -->
             <div class="p-5 text-center bg-body-tertiary">
                 <h1 class="mb-3">Preguntas Frecuentes <i class="fa-solid fa-clipboard-question ms-1"></i></h1>
-                <hr class="hr_divisor bg-primary">
+                <hr class="hr_divisor bg-primary" />
             </div>
             <!-- Jumbotron -->
+            <div class="container container-fluid">
+                <div class="row">
+                    {% for proyecto in proyectos_all %}
+                    <div class="col-md bg-secondary">{{ proyecto.nombre }}</div>
+                    {% endfor %}
+                </div>
+            </div>
         </main>
         <footer></footer>
 

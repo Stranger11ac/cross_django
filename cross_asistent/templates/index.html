@@ -97,24 +97,20 @@
             <!-- Carrousel -->
             <div class="swiper-container" id="top">
                 <div class="swiper-wrapper">
-                    <!-- Slide #1 -->
+                    {% for banner in banners %}
                     <div class="swiper-slide">
-                        <div class="slide-inner slide_img-01">
+                        <div class="slide-inner" style="background-image: url({{banner.imagen}});">
                             <div class="container">
                                 <div class="row">
                                     <div class="col-lg-8">
                                         <div class="header-text">
-                                            <h2>
-                                                Us <em>Bank</em> <br />
-                                                tu banco de <em>confianza</em>
-                                            </h2>
-                                            <div class="div-dec"></div>
+                                            <h2>{{banner.titulo}}</h2>
+                                            <!-- <div class="div-dec"></div> -->
                                             <p>
-                                                Us Bank te ofrece la mejor información sobre finanzas, innovación,
-                                                educación financiera, emprendimiento, etc.
+                                                {{banner.descripcion}}
                                             </p>
                                             <div class="buttons">
-                                                <a href="" class="btn_slide btn btn-primary btn-lg">
+                                                <a href="{{banner.articulo}}" class="btn_slide btn btn-primary btn-lg">
                                                     Ver más <i class="fa-solid fa-up-right-from-square ms-1"></i>
                                                 </a>
                                             </div>
@@ -124,60 +120,7 @@
                             </div>
                         </div>
                     </div>
-                    <!-- Slide #2 -->
-                    <div class="swiper-slide">
-                        <div class="slide-inner slide_img-02">
-                            <div class="container">
-                                <div class="row">
-                                    <div class="col-lg-8">
-                                        <div class="header-text">
-                                            <h2>
-                                                Us <em>Bank</em> <br />
-                                                tu banco de <em>confianza</em>
-                                            </h2>
-                                            <div class="div-dec"></div>
-                                            <p>
-                                                Us Bank te ofrece la mejor información sobre finanzas, innovación,
-                                                educación financiera, emprendimiento, etc.
-                                            </p>
-                                            <div class="buttons">
-                                                <a href="" class="btn_slide btn btn-primary btn-lg">
-                                                    Ver más <i class="fa-solid fa-up-right-from-square ms-1"></i>
-                                                </a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- Slide #3 -->
-                    <div class="swiper-slide">
-                        <div class="slide-inner slide_img-03">
-                            <div class="container">
-                                <div class="row">
-                                    <div class="col-lg-8">
-                                        <div class="header-text">
-                                            <h2>
-                                                Us <em>Bank</em> <br />
-                                                tu banco de <em>confianza</em>
-                                            </h2>
-                                            <div class="div-dec"></div>
-                                            <p>
-                                                Us Bank te ofrece la mejor información sobre finanzas, innovación,
-                                                educación financiera, emprendimiento, etc.
-                                            </p>
-                                            <div class="buttons">
-                                                <a href="" class="btn_slide btn btn-primary btn-lg">
-                                                    Ver más <i class="fa-solid fa-up-right-from-square ms-1"></i>
-                                                </a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    {% endfor %}
                 </div>
                 <div class="swiper_buttons_nav">
                     <div class="swiper-button-next"></div>

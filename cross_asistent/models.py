@@ -19,8 +19,8 @@ class preguntas(models.Model):
     pregunta = models.CharField(max_length=200, blank=False)
     respuesta = models.TextField(blank=False)
     redirigir = models.URLField(blank=True, null=True)
-    documentos = models.FileField(upload_to='referencias/documentos/', blank=True, null=True)
-    imagenes =  models.ImageField(upload_to='referencias/imagenes/', blank=True, null=True)
+    documentos = models.FileField(upload_to='cross_asistent/static/referencias/documentos/', blank=True, null=True)
+    imagenes =  models.ImageField(upload_to='cross_asistent/static/referencias/imagenes/', blank=True, null=True)
     fecha_modificacion = models.DateTimeField(auto_now=True)
     
     def __str__(self):
@@ -37,10 +37,10 @@ class articulos(models.Model):
         return self.titulo + " - " + self.autor
 
 class banners(models.Model):
-    titulo = models.CharField(max_length=150, blank=False)
-    descripcion = models.CharField(max_length=200, blank=False)
+    titulo = models.CharField(max_length=200, blank=False)
+    descripcion = models.CharField(max_length=350, blank=False)
     articulo = models.URLField(blank=False, default=False)
-    imagen = models.ImageField(upload_to='referencias/banners', blank=False)
+    imagen = models.ImageField(upload_to='cross_asistent/static/referencias/banners/', blank=False)
     expiracion = models.DateTimeField(blank=True, null=True)
     
     def __str__(self):
