@@ -1,4 +1,4 @@
-{% load static %}
+{% load static %} {% load filtros %}
 
 <!DOCTYPE html>
 <html lang="en">
@@ -99,7 +99,9 @@
                 <div class="swiper-wrapper">
                     {% for banner in banners %}
                     <div class="swiper-slide">
-                        <div class="slide-inner" style="background-image: url({{banner.imagen}});">
+                        {% with imagen_url=banner.imagen.url|eliminar_prefijo:'cross_asistent/' %}
+                        <div class="slide-inner" style="background-image: url({{imagen_url}});">
+                            {% endwith %}
                             <div class="container">
                                 <div class="row">
                                     <div class="col-lg-8">
