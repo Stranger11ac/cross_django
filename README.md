@@ -6,10 +6,6 @@
 Con el fin de resolver y atender las dudas sobre la UTC, tanto de administrativos, alumnos y visitantes, ademas de dar una nueva imagen a la UTC al recibir a los vistantes con esta aplicacion en las entradas de la universidad
 
 
-## Screenshots
-
-![App Screenshot](https://via.placeholder.com/468x300?text=App+Screenshot+Here)
-
 ## Paleta de colores
 
 | Color             | Hex                                                                |
