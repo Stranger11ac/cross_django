@@ -38,29 +38,30 @@
                 <div class="collapse navbar-collapse position-absolute top-100" id="navbarText">
                     <ul class="navbar-nav ms-auto mb-lg-0 px-2 px-lg-0">
                         <li class="nav-item">
-                            <a class="btn btn_detail m-1 my-lg-0 d-block" href="../"
+                            <a class="btn btn_secondary m-1 my-lg-0 d-block" href="administracion/inicio/"
                                 >Inicio <i class="fa-solid fa-house-chimney ms-1"></i
                             ></a>
                         </li>
                         <li class="nav-item">
-                            <a class="btn btn_detail m-1 my-lg-0 d-block" href="../blog/"
+                            <a class="btn btn_detail m-1 my-lg-0 d-block" href="administracion/blog/"
                                 >Blog<i class="fa-solid fa-calendar-days ms-1"></i
                             ></a>
                         </li>
                         <li class="nav-item">
                             <div class="dropdown">
-                                <button
-                                    type="button"
-                                    class="btn btn_detail btn-floating m-1 my-lg-0 d-none d-lg-block dropdown-toggle"
+                                <a
+                                    class="btn btn_detail btn_lg-circle d-block m-1 my-lg-0"
+                                    href=""
+                                    role="button"
                                     data-mdb-dropdown-init
                                     data-mdb-ripple-init
                                     aria-expanded="false"
                                     id="dropdownMenuUser"
                                 >
-                                    <i class="fa-solid fa-user ms-1"></i>
-                                </button>
+                                    <span class="d-lg-none">Usuario</span> <i class="fa-solid fa-user ms-lg"></i>
+                                </a>
 
-                                <ul class="dropdown-menu mx-100" aria-labelledby="dropdownMenuUser">
+                                <ul class="dropdown-menu dropdown-menu-end mx-100" aria-labelledby="dropdownMenuUser">
                                     <li>
                                         <a class="dropdown-item" href=""
                                             >Perfil <i class="fa-regular fa-circle-user"></i
@@ -71,6 +72,7 @@
                                             >Editar Perfil <i class="fa-solid fa-paintbrush ms-1"></i
                                         ></a>
                                     </li>
+                                    <li><hr class="dropdown-divider" /></li>
                                     <li>
                                         <a class="dropdown-item" href=""
                                             >Cerrar Sesion <i class="fa-solid fa-door-open ms-1"></i
@@ -87,7 +89,7 @@
             <!-- Jumbotron -->
             <div class="p-5 text-center bg-body-tertiary">
                 <h1 class="mb-3">Administracion <i class="fa-solid fa-clipboard-question ms-1"></i></h1>
-                <hr class="hr_divisor bg-primary" />
+                <hr class="hr_divisor" />
             </div>
             <!-- Jumbotron -->
         </main>

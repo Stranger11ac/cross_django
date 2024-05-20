@@ -160,7 +160,8 @@ nav .navbar-toggler[aria-expanded="true"]:hover:before {
 }
 
 nav .dropdown-menu {
-    inset: 0.5rem auto auto 0px !important;
+    /* inset: 0.5rem auto auto 0px !important; */
+    top: 0.5em !important;
     box-shadow: 0 0 8px var(--darkA3);
     width: calc(100% - 0.5rem);
 }
@@ -219,98 +220,59 @@ nav .navbar-collapse {
 
 .slide-inner .header-text {
     position: absolute;
-    width: 45%;
-    top: 50%;
+    width: 100%;
+    padding: 0 10%;
+    top: 45%;
+    left: 0;
     transform: translateY(-50%);
+    text-align: center;
 }
 
 .slide-inner .header-text h2 {
     position: relative;
     z-index: 2;
-    font-size: 56px;
+    font-size: 3rem;
     color: #fff;
     font-weight: 700;
     opacity: 1;
     visibility: visible;
     line-height: 70px;
-    margin-bottom: 40px;
     text-shadow: 0 0 20px black, 0 0 40px black;
-}
-
-.slide-inner .header-text .div-dec {
-    width: 200px;
-    height: 6px;
-    border-radius: 3px;
-    background-color: #fff;
-    margin-bottom: 40px;
-    opacity: 1;
-    visibility: visible;
-    box-shadow: 0 0 10px var(--darkA5);
 }
 
 .slide-inner .header-text p {
     color: #fff;
     font-size: 1.5rem;
-    margin-right: 60px;
-    margin-bottom: 50px;
     opacity: 1;
     visibility: visible;
     text-shadow: 0 0 20px black, 0 0 30px black;
+    display: none;
 }
 
 .slide-inner .header-text h2 em {
     color: var(--detalle);
 }
 
-.slide-inner .header-text .buttons {
-    display: inline;
-    opacity: 1;
-    visibility: visible;
-}
-
-.slide-inner .header-text .buttons .btn_slide {
-    display: inline;
-    float: left;
-    margin-right: 20px;
-}
-
 .swiper-button-next,
 .swiper-button-prev {
-    color: #fff !important;
+    color: var(--blanco) !important;
+    text-shadow: 0 0 10px black, 0 0 15px black;
 }
 
 .btn_slide:hover {
     opacity: 0.9;
 }
 
-@media (max-width: 992px) {
+@media (min-width: 992px) {
     .slide-inner .header-text {
-        width: 80%;
-    }
-}
-
-@media (max-width: 767px) {
-    .slide-inner .header-text h2 {
-        font-size: 2rem;
+        width: 50%;
+        top: 50%;
+        left: 10%;
+        padding: 0;
+        text-align: initial;
     }
     .slide-inner .header-text p {
-        display: none;
-    }
-    .slide-inner .header-text {
-        text-align: center;
-        width: 80%;
-        margin-left: 10%;
-        margin-right: 10%;
-    }
-    .slide-inner .header-text .div-dec {
-        margin-left: auto;
-        margin-right: auto;
-    }
-    .slide-inner .header-text .buttons {
-        display: inline-flex;
-    }
-    .slide-inner .header-text .buttons .btn_slide {
-        float: none;
+        display: block;
     }
 }
 
@@ -321,6 +283,33 @@ nav .navbar-collapse {
     border-radius: 5px;
     background-color: black;
     background: black;
+}
+
+/*#################### Template Buttons ####################*/
+
+@media (min-width: 992px) {
+    .btn_lg-circle {
+        --mdb-btn-width: 2.3125rem;
+        --mdb-btn-height: 2.3125rem;
+        --mdb-btn-icon-width: 2.3125rem;
+        --mdb-btn-icon-line-height: 2.3125rem;
+        --mdb-btn-width-lg: 2.8125rem;
+        --mdb-btn-height-lg: 2.8125rem;
+        --mdb-btn-icon-width-lg: 2.8125rem;
+        --mdb-btn-icon-line-height-lg: 2.8125rem;
+        --mdb-btn-width-sm: 1.8125rem;
+        --mdb-btn-height-sm: 1.8125rem;
+        --mdb-btn-icon-width-sm: 1.8125rem;
+        --mdb-btn-icon-line-height-sm: 1.8125rem;
+        width: var(--mdb-btn-width);
+        height: var(--mdb-btn-height);
+        --mdb-btn-border-radius: 50%;
+        border-radius: var(--mdb-btn-border-radius);
+        padding: 0;
+        position: relative;
+        display: flex;
+        align-content: center;
+    }
 }
 
 /*################ Alerts customClass Sweetalert ################*/

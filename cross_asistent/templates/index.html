@@ -9,10 +9,15 @@
         <link rel="icon" href="{% static 'img/UTC_icono.ico' %}" />
         <title>Inicio | Asistente UTC | Bienvenidos</title>
 
+        <link rel="stylesheet" href="https://necolas.github.io/normalize.css/8.0.0/normalize.css" />
+        <script
+            type="module"
+            src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.5.0/model-viewer.min.js"
+        ></script>
+
         <link rel="preload" href="{% static 'css/mdb.min.css' %}" as="style" />
         <link rel="preload" href="{% static 'css/fontawesome-6.4.0.css' %}" as="style" />
 
-        <link rel="stylesheet" href="https://necolas.github.io/normalize.css/8.0.0/normalize.css" />
         <link href="{% static 'css/animate.css' %}" rel="stylesheet" />
         <link rel="stylesheet" href="https://unpkg.com/swiper@7/swiper-bundle.min.css" />
 
@@ -93,7 +98,7 @@
             </div>
         </nav>
 
-        <main>
+        <main style="position: relative;">
             <!-- Carrousel -->
             <div class="swiper-container" id="top">
                 <div class="swiper-wrapper">
@@ -128,6 +133,22 @@
                 </div>
             </div>
 
+            <!-- Asistente -->
+            <section style="position: absolute; bottom: 0; right: 50px; z-index: 5;">
+                <model-viewer
+                    style="min-height: 600px; min-width: 600px;"
+                    src="{% static 'models/RobotExpressive.glb' %}"
+                    ar
+                    ar-modes="webxr scene-viewer quick-look"
+                    
+                    tone-mapping="neutral"
+                    shadow-intensity="1"
+                    autoplay
+                    animation-name="Idle"
+                >
+                </model-viewer>
+            </section>
+
             <!-- Modal -->
             <div class="modal fade" id="modalqr" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                 <div class="modal-dialog modal-dialog-centered">
@@ -156,10 +177,12 @@
         <script src="{% static 'js/sweetalert11.js' %}"></script>
         <script src="{% static 'js/settings.js' %}"></script>
 
+        <!-- Model Viewer -->
+        <script src="{% static 'js/model-viewer.min.js' %}"></script>
+
         <script src="{% static 'js/isotope.min.js' %}"></script>
         <script src="{% static 'js/owl-carousel.js' %}"></script>
         <script src="{% static 'js/swiper.js' %}"></script>
-        <script src="{% static 'js/tabs.js' %}"></script>
         <script src="{% static 'js/custom.js' %}"></script>
     </body>
 </html>

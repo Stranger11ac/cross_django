@@ -49,7 +49,7 @@ class banners(models.Model):
         return self.titulo
     
     def delete(self, *args, **kwargs):
-        # Eliminar la imagen del sistema de archivos
+        # Eliminar la imagen del sistema de archivos al eliminar un registro
         if self.imagen:
             image_path = os.path.join(settings.MEDIA_ROOT, self.imagen.path)
             if os.path.isfile(image_path):
