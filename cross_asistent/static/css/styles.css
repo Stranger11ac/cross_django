@@ -7,6 +7,7 @@
     padding: 0;
     margin: 0;
     box-sizing: border-box;
+    font-family: inherit;
 }
 
 :root {
@@ -54,6 +55,13 @@
     --transitionEase: 0.3s all ease;
     --transitionCubic: 0.3s all cubic-bezier(0.68, -0.55, 0.27, 1.55);
 }
+
+/*######### Generales #########*/
+html {
+    overflow-x: hidden;
+    /* color-scheme: dark light; */
+}
+
 /*######### Detalle de color #########*/
 .btn_detail {
     background-color: var(--detalle) !important;
@@ -74,15 +82,11 @@
     filter: brightness(110%);
 }
 
-.btn_secondary:hover{
+.btn_secondary:hover {
     filter: brightness(90%);
 }
 
 /*######### Generales #########*/
-html {
-    accent-color: var(--detalle) !important;
-    overflow-x: hidden;
-}
 
 body {
     min-height: 100vh;

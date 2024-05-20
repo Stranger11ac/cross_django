@@ -6,4 +6,5 @@ urlpatterns = [
     path('frecuentes/', views.faq),
     path('blog/', views.faq),
     path('mapa/', views.faq),
+    path('administracion/inicio/', views.formsAdmin),
 ]

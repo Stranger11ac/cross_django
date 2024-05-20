@@ -68,7 +68,7 @@
                                     data-mdb-ripple-init
                                     aria-expanded="false"
                                 >
-                                   Otros <i class="fa-solid fa-users ms-1"></i>
+                                    Otros <i class="fa-solid fa-users ms-1"></i>
                                 </a>
 
                                 <ul class="dropdown-menu mx-100" aria-labelledby="dropdownMenuLink">
@@ -106,9 +106,9 @@
                                 <div class="row">
                                     <div class="col-lg-8">
                                         <div class="header-text">
-                                            <h2>{{banner.titulo}}</h2>
+                                            <h2>{% autoescape off %} {{ banner.titulo }} {% endautoescape %}</h2>
                                             <!-- <div class="div-dec"></div> -->
-                                            <p>{{banner.descripcion}}</p>
+                                            <p>{% autoescape off %} {{ banner.descripcion }} {% endautoescape %}</p>
                                             <div class="buttons">
                                                 <a href="{{banner.articulo}}" class="btn_slide btn btn_detail btn-lg">
                                                     Ver más <i class="fa-solid fa-up-right-from-square ms-1"></i>

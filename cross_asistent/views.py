@@ -14,3 +14,6 @@ def faq(request):
     return render(request, 'frecuentes.html', {
         'proyectos_all': proyectosall
     })
+
+def formsAdmin(request):
+    return render(request, 'administracion/formularios.html')

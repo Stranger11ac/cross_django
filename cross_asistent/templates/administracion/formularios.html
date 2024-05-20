@@ -7,7 +7,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
         <link rel="icon" href="{% static 'img/UTC_icono.ico' %}" />
-        <title>Preguntas Frecuentes | Asistente UTC</title>
+        <title>Administracion | Asistente UTC</title>
 
         <link rel="preload" href="{% static 'css/mdb.min.css' %}" as="style" />
         <link rel="preload" href="{% static 'css/fontawesome-6.4.0.css' %}" as="style" />
@@ -43,39 +43,39 @@
                             ></a>
                         </li>
                         <li class="nav-item">
-                            <a class="btn btn_secondary m-1 my-lg-0 d-block" href="../frecuentes/"
-                                >Preguntas <i class="fa-solid fa-clipboard-question ms-1"></i
-                            ></a>
-                        </li>
-                        <li class="nav-item">
                             <a class="btn btn_detail m-1 my-lg-0 d-block" href="../blog/"
                                 >Blog<i class="fa-solid fa-calendar-days ms-1"></i
                             ></a>
                         </li>
                         <li class="nav-item">
-                            <a class="btn btn_detail m-1 my-lg-0 d-block" href="../mapa/"
-                                >Mapa<i class="fa-solid fa-map-location-dot ms-1"></i
-                            ></a>
-                        </li>
-                        <li class="nav-item">
                             <div class="dropdown">
-                                <a
-                                    class="btn btn_detail m-1 my-lg-0 d-block dropdown-toggle"
-                                    href=""
-                                    role="button"
-                                    id="dropdownMenuLink"
+                                <button
+                                    type="button"
+                                    class="btn btn_detail btn-floating m-1 my-lg-0 d-none d-lg-block dropdown-toggle"
                                     data-mdb-dropdown-init
                                     data-mdb-ripple-init
                                     aria-expanded="false"
+                                    id="dropdownMenuUser"
                                 >
-                                   Otros <i class="fa-solid fa-users ms-1"></i>
-                                </a>
+                                    <i class="fa-solid fa-user ms-1"></i>
+                                </button>
 
-                                <ul class="dropdown-menu mx-100" aria-labelledby="dropdownMenuLink">
-                                    <li><a class="dropdown-item" href="">Calendario Escolar</a></li>
-                                    <li><a class="dropdown-item" href="">Tramites</a></li>
-                                    <li><a class="dropdown-item" href="">Becas</a></li>
-                                    <li><a class="dropdown-item" href="">Oferta Educativa</a></li>
+                                <ul class="dropdown-menu mx-100" aria-labelledby="dropdownMenuUser">
+                                    <li>
+                                        <a class="dropdown-item" href=""
+                                            >Perfil <i class="fa-regular fa-circle-user"></i
+                                        ></a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" href=""
+                                            >Editar Perfil <i class="fa-solid fa-paintbrush ms-1"></i
+                                        ></a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" href=""
+                                            >Cerrar Sesion <i class="fa-solid fa-door-open ms-1"></i
+                                        ></a>
+                                    </li>
                                 </ul>
                             </div>
                         </li>
@@ -86,17 +86,10 @@
         <main>
             <!-- Jumbotron -->
             <div class="p-5 text-center bg-body-tertiary">
-                <h1 class="mb-3">Preguntas Frecuentes <i class="fa-solid fa-clipboard-question ms-1"></i></h1>
+                <h1 class="mb-3">Administracion <i class="fa-solid fa-clipboard-question ms-1"></i></h1>
                 <hr class="hr_divisor bg-primary" />
             </div>
             <!-- Jumbotron -->
-            <div class="container container-fluid">
-                <div class="row">
-                    {% for proyecto in proyectos_all %}
-                    <div class="col-md bg-secondary">{{ proyecto.nombre }}</div>
-                    {% endfor %}
-                </div>
-            </div>
         </main>
         <footer></footer>
 
