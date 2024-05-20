@@ -190,6 +190,7 @@ nav .navbar-collapse {
 /*########################## Carousel ##########################*/
 
 .swiper-container {
+    min-height: 400px;
     height: calc(100vh - 90px);
     max-height: 800px;
     width: 100vw;
@@ -202,7 +203,7 @@ nav .navbar-collapse {
 
 .slide-inner {
     position: absolute;
-    width: 100%;
+    width: auto;
     height: 100%;
     inset: 0;
     background-size: cover;
@@ -222,7 +223,7 @@ nav .navbar-collapse {
     position: absolute;
     width: 100%;
     padding: 0 10%;
-    top: 45%;
+    top: 25%;
     left: 0;
     transform: translateY(-50%);
     text-align: center;
@@ -285,8 +286,21 @@ nav .navbar-collapse {
     background: black;
 }
 
-/*#################### Template Buttons ####################*/
+/*##################### Contenido #####################*/
+main{
+    min-height: 400px;
+}
 
+/*###################### Modelos 3D ######################*/
+model-viewer#asistent_model{
+    bottom: -3%;
+    right: 0;
+    z-index: 1;
+    width: 100%;
+    height: 60%;
+}
+
+/*#################### Template Buttons ####################*/
 @media (min-width: 992px) {
     .btn_lg-circle {
         --mdb-btn-width: 2.3125rem;

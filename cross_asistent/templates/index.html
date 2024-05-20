@@ -98,7 +98,7 @@
             </div>
         </nav>
 
-        <main style="position: relative;">
+        <main class="position-relative overflow-hidden">
             <!-- Carrousel -->
             <div class="swiper-container" id="top">
                 <div class="swiper-wrapper">
@@ -134,20 +134,16 @@
             </div>
 
             <!-- Asistente -->
-            <section style="position: absolute; bottom: 0; right: 50px; z-index: 5;">
-                <model-viewer
-                    style="min-height: 600px; min-width: 600px;"
-                    src="{% static 'models/RobotExpressive.glb' %}"
-                    ar
-                    ar-modes="webxr scene-viewer quick-look"
-                    
-                    tone-mapping="neutral"
-                    shadow-intensity="1"
-                    autoplay
-                    animation-name="Idle"
-                >
-                </model-viewer>
-            </section>
+            <model-viewer
+                id="asistent_model"
+                class="position-absolute"
+                src="{% static 'models/RobotExpressive.glb' %}"
+                tone-mapping="neutral"
+                shadow-intensity="1"
+                autoplay
+                animation-name="Idle"
+            >
+            </model-viewer>
 
             <!-- Modal -->
             <div class="modal fade" id="modalqr" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -176,9 +172,6 @@
         <script src="{% static 'js/mdb.umd.min.js' %}"></script>
         <script src="{% static 'js/sweetalert11.js' %}"></script>
         <script src="{% static 'js/settings.js' %}"></script>
-
-        <!-- Model Viewer -->
-        <script src="{% static 'js/model-viewer.min.js' %}"></script>
 
         <script src="{% static 'js/isotope.min.js' %}"></script>
         <script src="{% static 'js/owl-carousel.js' %}"></script>
