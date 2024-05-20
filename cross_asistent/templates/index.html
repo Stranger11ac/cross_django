@@ -1,5 +1,4 @@
 {% load static filtros %}
-
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -134,16 +133,24 @@
             </div>
 
             <!-- Asistente -->
-            <model-viewer
-                id="asistent_model"
-                class="position-absolute"
-                src="{% static 'models/RobotExpressive.glb' %}"
-                tone-mapping="neutral"
-                shadow-intensity="1"
-                autoplay
-                animation-name="Idle"
-            >
-            </model-viewer>
+            <section class="position-absolute asistent_group">
+                <model-viewer
+                    id="asistent_model"
+                    src="{% static 'models/RobotExpressive.glb' %}"
+                    tone-mapping="neutral"
+                    shadow-intensity="1"
+                    autoplay
+                    animation-name="Idle"
+                >
+                </model-viewer>
+                <!-- <div class="form-outline input_quest bg-dark" id="quest" data-mdb-input-init>
+                    <textarea class="form-control" id="textAreaExample" rows="4"></textarea>
+                    <label class="form-label" for="textAreaExample">Message</label>
+                </div>
+                <button type="button" class="btn btn-dark btn-floating btn_quest">
+                    <i class="fa-regular fa-comment-dots"></i>
+                </button> -->
+            </section>
 
             <!-- Modal -->
             <div class="modal fade" id="modalqr" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">

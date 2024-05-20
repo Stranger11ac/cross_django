@@ -192,7 +192,7 @@ nav .navbar-collapse {
 .swiper-container {
     min-height: 400px;
     height: calc(100vh - 90px);
-    max-height: 800px;
+    /* max-height: 800px; */
     width: 100vw;
     overflow: hidden;
 }
@@ -287,17 +287,28 @@ nav .navbar-collapse {
 }
 
 /*##################### Contenido #####################*/
-main{
+main {
     min-height: 400px;
 }
 
-/*###################### Modelos 3D ######################*/
-model-viewer#asistent_model{
-    bottom: -3%;
+main .asistent_group{
+    bottom: -2%;
     right: 0;
     z-index: 1;
     width: 100%;
-    height: 60%;
+}
+
+/*###################### Modelos 3D ######################*/
+model-viewer#asistent_model {
+    width: 100%;
+    height: 50vh;
+}
+
+@media (min-width: 992px) {
+    main .asistent_group,
+    model-viewer#asistent_model {
+        max-width: 500px;
+    }
 }
 
 /*#################### Template Buttons ####################*/
