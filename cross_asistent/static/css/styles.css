@@ -323,38 +323,6 @@ model-viewer#asistent_model {
 /*####################### Asistente #######################*/
 .box_asistent {
     position: relative;
-    /* background-color: #9117024d; */
-}
-
-.box_asistent__btn,
-.box_asistent__chat {
-    position: absolute;
-    bottom: 5%;
-}
-
-.box_asistent__chat {
-    width: calc(100% - 5%);
-    margin: 0 2.5% 0 2.5%;
-    /* inset: initial 10% 0 5%; */
-    /* background-color: #3b71ca; */
-}
-
-.box_asistent__chat .input_group {
-    opacity: 0.9;
-    min-height: 50px;
-    transition: var(--transitionEase);
-}
-.box_asistent__chat .input_group .input_group--label {
-    font-size: 1.2rem;
-}
-.box_asistent__chat .input_group:hover,
-.box_asistent__chat .input_group .input_group--item:focus {
-    opacity: 1;
-    font-size: 1rem;
-    height: 90px;
-}
-.box_asistent__chat .input_group .input_group--item:focus + .input_group--label {
-    top: -10px;
 }
 
 /*###################### Formularios ######################*/
@@ -399,6 +367,29 @@ model-viewer#asistent_model {
 .input_group textarea.input_group--item {
     overflow-y: scroll;
     scrollbar-width: 0px;
+}
+
+.input_group.group-controls .input_group--item{
+    padding-right: 50px;
+}
+
+.input_group .input_group--controls {
+    position: absolute;
+    right: 5px;
+    bottom: 0;
+    min-height: inherit;
+    display: flex;
+    align-items: center;
+}
+
+.input_group .input_group--controls button {
+    border: none;
+    border-radius: 50%;
+    color: var(--oscuro);
+    width: 40px;
+    height: 40px;
+    padding: 2px;
+    background: transparent;
 }
 
 /*#################### Template Buttons ####################*/
