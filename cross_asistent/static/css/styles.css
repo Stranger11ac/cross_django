@@ -54,6 +54,9 @@
     /* Transitions */
     --transitionEase: 0.3s all ease;
     --transitionCubic: 0.3s all cubic-bezier(0.68, -0.55, 0.27, 1.55);
+
+    --border-input_items: 2px solid var(--blanco);
+    --border-radius: 8px;
 }
 
 /*######### Generales #########*/
@@ -290,9 +293,14 @@ nav .navbar-collapse {
 main {
     min-height: 400px;
 }
+main.main_anchor {
+    position: relative;
+    overflow: hidden;
+}
 
-main .asistent_group{
-    bottom: -2%;
+main .asistent_group {
+    position: absolute;
+    bottom: -1%;
     right: 0;
     z-index: 1;
     width: 100%;
@@ -301,14 +309,96 @@ main .asistent_group{
 /*###################### Modelos 3D ######################*/
 model-viewer#asistent_model {
     width: 100%;
-    height: 50vh;
+    height: 45vh;
 }
 
 @media (min-width: 992px) {
     main .asistent_group,
     model-viewer#asistent_model {
-        max-width: 500px;
+        height: 80vh;
+        max-width: 600px;
     }
+}
+
+/*####################### Asistente #######################*/
+.box_asistent {
+    position: relative;
+    /* background-color: #9117024d; */
+}
+
+.box_asistent__btn,
+.box_asistent__chat {
+    position: absolute;
+    bottom: 5%;
+}
+
+.box_asistent__chat {
+    width: calc(100% - 5%);
+    margin: 0 2.5% 0 2.5%;
+    /* inset: initial 10% 0 5%; */
+    /* background-color: #3b71ca; */
+}
+
+.box_asistent__chat .input_group {
+    opacity: 0.9;
+    min-height: 50px;
+    transition: var(--transitionEase);
+}
+.box_asistent__chat .input_group .input_group--label {
+    font-size: 1.2rem;
+}
+.box_asistent__chat .input_group:hover,
+.box_asistent__chat .input_group .input_group--item:focus {
+    opacity: 1;
+    font-size: 1rem;
+    height: 90px;
+}
+.box_asistent__chat .input_group .input_group--item:focus + .input_group--label {
+    top: -10px;
+}
+
+/*###################### Formularios ######################*/
+.input_group {
+    display: block;
+    position: relative;
+    min-height: 50px;
+}
+
+.input_group .input_group--item {
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    padding: 5px 10px;
+    border: var(--border-input_items);
+    background: var(--blanco);
+    border-radius: var(--border-radius);
+    overflow: hidden;
+    transition: var(--transitionEase);
+}
+
+.input_group .input_group--label {
+    position: absolute;
+    padding: 5px 10px;
+    border-radius: var(--border-radius);
+    color: var(--oscuro);
+    top: 50%;
+    left: 0;
+    overflow: hidden;
+    transform: translateY(-50%);
+    transition: var(--transitionEase);
+}
+
+.input_group .input_group--item:focus + .input_group--label {
+    top: -40%;
+    left: 15px;
+    font-size: 0.7rem;
+    border-radius: var(--border-radius) var(--border-radius) 0 0;
+    background-color: var(--blanco);
+}
+
+.input_group textarea.input_group--item {
+    overflow-y: scroll;
+    scrollbar-width: 0px;
 }
 
 /*#################### Template Buttons ####################*/
