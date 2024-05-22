@@ -8,30 +8,7 @@
         <hr class="hr_divisor" />
     </div>
     <!-- Jumbotron -->
-    <input type="text" id="searchInput" onkeyup="searchFunction()" placeholder="Buscar preguntas...">
-
-    <ul id="questionList">
-        {% for quest in quest_all %}
-            <li class="item_list">{{ quest.pregunta }}</li>
-        {% endfor %}
-    </ul>
-
-    <script>
-        function searchFunction() {
-            let input = document.getElementById('searchInput');
-            let filter = input.value.toLowerCase();
-            let li = document.querySelector('.item_list');
-
-            for (let i = 0; i < li.length; i++) {
-                let txtValue = li[i].textContent || li[i].innerText;
-                if (txtValue.toLowerCase().indexOf(filter) > -1) {
-                    li[i].style.display = "";
-                } else {
-                    li[i].style.display = "none";
-                }
-            }
-        }
-    </script>
+    <input type="text" id="searchInput" placeholder="Buscar preguntas..." autofocus />
 
     <div class="accordion" id="accordionExampleY">
         {% for quest in quest_all %}
@@ -68,6 +45,99 @@
         {% endfor %}
     </div>
 </main>
-<footer></footer>
 
+<!-- Footer -->
+<footer class="text-center text-lg-start bg-body-tertiary text-muted mt-100">
+    <!-- Section: Social media -->
+    <section class="container d-flex justify-content-center justify-content-lg-between p-4 border-top border-bottom">
+        <!-- Left -->
+        <div class="me-5 d-none d-lg-block">
+            <span>Get connected with us on social networks:</span>
+        </div>
+        <!-- Left -->
+
+        <!-- Right -->
+        <div>
+            <a href="https://www.facebook.com/UniversidadTecnologicadeCoahuila/" target="_blank" rel="noopener noreferrer" class="me-4 text-reset">
+                <i class="fab fa-facebook-f"></i>
+            </a>
+            <a href="https://www.instagram.com/utcoahuila/" target="_blank" rel="noopener noreferrer" class="me-4 text-reset">
+                <i class="fab fa-instagram"></i>
+            </a>
+            <a target="_blank" rel="noopener noreferrer" class="me-4 text-reset">
+                <i class="fab fa-twitter"></i>
+            </a>
+        </div>
+        <!-- Right -->
+    </section>
+    <!-- Section: Social media -->
+
+    <!-- Section: Links  -->
+    <section class="">
+        <div class="container text-center text-md-start mt-5">
+            <!-- Grid row -->
+            <div class="row mt-3">
+                <!-- Grid column -->
+                <div class="col-md-3 col-lg-4 col-xl-3 mx-auto mb-4">
+                    <!-- Content -->
+                    <h6 class="text-uppercase fw-bold mb-4"><i class="fas fa-gem me-3"></i>Asistente UTC</h6>
+                    <p>
+                        Una herramienta de la UTC para resolver y atender tus dudas.
+                    </p>
+                </div>
+                <!-- Grid column -->
+
+                <!-- Grid column -->
+                <div class="col-md-2 col-lg-2 col-xl-2 mx-auto mb-4">
+                    <!-- Links -->
+                    <p>
+                        <a href="#!" class="text-reset">Angular</a>
+                    </p>
+                    <p>
+                        <a href="#!" class="text-reset">React</a>
+                    </p>
+                    <p>
+                        <a href="#!" class="text-reset">Vue</a>
+                    </p>
+                    <p>
+                        <a href="#!" class="text-reset">Laravel</a>
+                    </p>
+                </div>
+                <!-- Grid column -->
+
+                <!-- Grid column -->
+                <div class="col-md-3 col-lg-2 col-xl-2 mx-auto mb-4">
+                    <!-- Links -->
+                    <p>
+                        <a href="#!" class="text-reset">Pricing</a>
+                    </p>
+                    <p>
+                        <a href="#!" class="text-reset">Settings</a>
+                    </p>
+                    <p>
+                        <a href="#!" class="text-reset">Orders</a>
+                    </p>
+                    <p>
+                        <a href="#!" class="text-reset">Help</a>
+                    </p>
+                </div>
+                <!-- Grid column -->
+            </div>
+            <!-- Grid row -->
+        </div>
+    </section>
+    <!-- Section: Links  -->
+
+    <!-- Copyright -->
+    <div class="text-center p-4" style="background-color: rgba(0, 0, 0, 0.05)">
+        © 2021 Copyright:
+        <a class="text-reset fw-bold" href="https://mdbootstrap.com/">MDBootstrap.com</a>
+    </div>
+    <!-- Copyright -->
+</footer>
+<!-- Footer -->
+{% endblock %}
+
+{% block scripts_end %}
+<script src="../static/js/functions.js"></script>
 {% endblock %}
