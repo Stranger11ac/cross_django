@@ -1,6 +1,4 @@
-{% extends 'structure.html' %}
-{% block title %}Preguntas Frecuentes 💬{% endblock %}
-{% block content %}
+{% extends 'structure.html' %} {% block title %}Preguntas Frecuentes 💬{% endblock %} {% block content %}
 <main class="container container-fluid">
     <!-- Jumbotron -->
     <div class="p-5 text-center bg-body-tertiary">
@@ -8,7 +6,10 @@
         <hr class="hr_divisor" />
     </div>
     <!-- Jumbotron -->
-    <input type="text" id="searchInput" placeholder="Buscar preguntas..." autofocus />
+    <div class="form-outline my-4" data-mdb-input-init>
+        <input type="text" id="searchInput" class="form-control form-control-lg" placeholder="Buscar pregunta..."/>
+        <label class="form-label" for="searchInput">Example label</label>
+    </div>
 
     <div class="accordion" id="accordionExampleY">
         {% for quest in quest_all %}
@@ -58,10 +59,20 @@
 
         <!-- Right -->
         <div>
-            <a href="https://www.facebook.com/UniversidadTecnologicadeCoahuila/" target="_blank" rel="noopener noreferrer" class="me-4 text-reset">
+            <a
+                href="https://www.facebook.com/UniversidadTecnologicadeCoahuila/"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="me-4 text-reset"
+            >
                 <i class="fab fa-facebook-f"></i>
             </a>
-            <a href="https://www.instagram.com/utcoahuila/" target="_blank" rel="noopener noreferrer" class="me-4 text-reset">
+            <a
+                href="https://www.instagram.com/utcoahuila/"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="me-4 text-reset"
+            >
                 <i class="fab fa-instagram"></i>
             </a>
             <a target="_blank" rel="noopener noreferrer" class="me-4 text-reset">
@@ -81,9 +92,7 @@
                 <div class="col-md-3 col-lg-4 col-xl-3 mx-auto mb-4">
                     <!-- Content -->
                     <h6 class="text-uppercase fw-bold mb-4"><i class="fas fa-gem me-3"></i>Asistente UTC</h6>
-                    <p>
-                        Una herramienta de la UTC para resolver y atender tus dudas.
-                    </p>
+                    <p>Una herramienta de la UTC para resolver y atender tus dudas.</p>
                 </div>
                 <!-- Grid column -->
 
@@ -136,8 +145,6 @@
     <!-- Copyright -->
 </footer>
 <!-- Footer -->
-{% endblock %}
-
-{% block scripts_end %}
+{% endblock %} {% block scripts_end %}
 <script src="../static/js/functions.js"></script>
 {% endblock %}
