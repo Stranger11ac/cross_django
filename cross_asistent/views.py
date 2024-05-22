@@ -30,4 +30,4 @@ def map(request):
     })
 
 def formsAdmin(request):
-    return render(request, 'administracion/formularios.html')
+    return render(request, 'administracion/layout.html')
