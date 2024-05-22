@@ -1,108 +1,73 @@
-{% load static filtros %}
+{% extends 'structure.html' %}
+{% block title %}Preguntas Frecuentes 💬{% endblock %}
+{% block content %}
+<main class="container container-fluid">
+    <!-- Jumbotron -->
+    <div class="p-5 text-center bg-body-tertiary">
+        <h1 class="mb-3">Preguntas Frecuentes <i class="fa-solid fa-clipboard-question ms-1"></i></h1>
+        <hr class="hr_divisor" />
+    </div>
+    <!-- Jumbotron -->
+    <input type="text" id="searchInput" onkeyup="searchFunction()" placeholder="Buscar preguntas...">
 
-<!DOCTYPE html>
-<html lang="en">
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <ul id="questionList">
+        {% for quest in quest_all %}
+            <li class="item_list">{{ quest.pregunta }}</li>
+        {% endfor %}
+    </ul>
 
-        <link rel="icon" href="{% static 'img/UTC_icono.ico' %}" />
-        <title>Preguntas Frecuentes | Asistente UTC</title>
+    <script>
+        function searchFunction() {
+            let input = document.getElementById('searchInput');
+            let filter = input.value.toLowerCase();
+            let li = document.querySelector('.item_list');
 
-        <link rel="preload" href="{% static 'css/mdb.min.css' %}" as="style" />
-        <link rel="preload" href="{% static 'css/fontawesome-6.4.0.css' %}" as="style" />
+            for (let i = 0; i < li.length; i++) {
+                let txtValue = li[i].textContent || li[i].innerText;
+                if (txtValue.toLowerCase().indexOf(filter) > -1) {
+                    li[i].style.display = "";
+                } else {
+                    li[i].style.display = "none";
+                }
+            }
+        }
+    </script>
 
-        <link rel="stylesheet" href="https://necolas.github.io/normalize.css/8.0.0/normalize.css" />
-        <link href="{% static 'css/animate.css' %}" rel="stylesheet" />
-        <link rel="stylesheet" href="https://unpkg.com/swiper@7/swiper-bundle.min.css" />
-
-        <link rel="stylesheet" href="{% static 'css/mdb.min.css' %}" />
-        <link rel="stylesheet" href="{% static 'css/fontawesome-6.4.0.css' %}" />
-        <link rel="stylesheet" href="{% static 'css/styles.css' %}" />
-    </head>
-    <body>
-        <nav class="navbar navbar-expand-lg navbar-light bg-body-tertiary">
-            <div class="container container-fluid">
-                <a class="navbar-brand" href="./">
-                    <img src="{% static 'img/UTC_logo-plano.webp' %}" alt="UTC logo" />
-                </a>
+    <div class="accordion" id="accordionExampleY">
+        {% for quest in quest_all %}
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="heading{{ quest.id }}">
                 <button
                     data-mdb-collapse-init
-                    class="navbar-toggler"
+                    class="accordion-button"
                     type="button"
-                    data-mdb-target="#navbarText"
-                    aria-controls="navbarText"
-                    aria-expanded="false"
-                    aria-label="Toggle navigation"
-                ></button>
-                <div class="collapse navbar-collapse position-absolute top-100" id="navbarText">
-                    <ul class="navbar-nav ms-auto mb-lg-0 px-2 px-lg-0">
-                        <li class="nav-item">
-                            <a class="btn btn_detail m-1 my-lg-0 d-block" href="../"
-                                >Inicio <i class="fa-solid fa-house-chimney ms-1"></i
-                            ></a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="btn btn_secondary m-1 my-lg-0 d-block" href="../frecuentes/"
-                                >Preguntas <i class="fa-solid fa-clipboard-question ms-1"></i
-                            ></a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="btn btn_detail m-1 my-lg-0 d-block" href="../blog/"
-                                >Blog<i class="fa-solid fa-calendar-days ms-1"></i
-                            ></a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="btn btn_detail m-1 my-lg-0 d-block" href="../mapa/"
-                                >Mapa<i class="fa-solid fa-map-location-dot ms-1"></i
-                            ></a>
-                        </li>
-                        <li class="nav-item">
-                            <div class="dropdown">
-                                <a
-                                    class="btn btn_detail m-1 my-lg-0 d-block dropdown-toggle"
-                                    href=""
-                                    role="button"
-                                    id="dropdownMenuLink"
-                                    data-mdb-dropdown-init
-                                    data-mdb-ripple-init
-                                    aria-expanded="false"
-                                >
-                                   Otros <i class="fa-solid fa-users ms-1"></i>
-                                </a>
-
-                                <ul class="dropdown-menu mx-100" aria-labelledby="dropdownMenuLink">
-                                    <li><a class="dropdown-item" href="">Calendario Escolar</a></li>
-                                    <li><a class="dropdown-item" href="">Tramites</a></li>
-                                    <li><a class="dropdown-item" href="">Becas</a></li>
-                                    <li><a class="dropdown-item" href="">Oferta Educativa</a></li>
-                                </ul>
-                            </div>
-                        </li>
-                    </ul>
+                    data-mdb-toggle="collapse"
+                    data-mdb-target="#quest-{{ quest.id }}"
+                    aria-expanded="true"
+                    aria-controls="quest-{{ quest.id }}"
+                >
+                    <i class="fas fa-question-circle fa-sm me-2 opacity-70"></i>{{ quest.pregunta }}
+                </button>
+            </h2>
+            <div
+                id="quest-{{ quest.id }}"
+                class="accordion-collapse collapse {% if quest.id == 1 %}show{% endif %}"
+                aria-labelledby="heading{{ quest.id }}"
+                data-mdb-parent="#accordionExampleY"
+            >
+                <div class="accordion-body">
+                    {{ quest.respuesta|truncatechars:150 }}
+                    <div>
+                        <a href="" class="btn btn_detail"
+                            >Saber mas <i class="fa-solid fa-up-right-from-square ms-1"></i
+                        ></a>
+                    </div>
                 </div>
             </div>
-        </nav>
-        <main>
-            <!-- Jumbotron -->
-            <div class="p-5 text-center bg-body-tertiary">
-                <h1 class="mb-3">Preguntas Frecuentes <i class="fa-solid fa-clipboard-question ms-1"></i></h1>
-                <hr class="hr_divisor" />
-            </div>
-            <!-- Jumbotron -->
-            <div class="container container-fluid">
-                <div class="row">
-                    {% for proyecto in proyectos_all %}
-                    <div class="col-md bg-secondary">{{ proyecto.nombre }}</div>
-                    {% endfor %}
-                </div>
-            </div>
-        </main>
-        <footer></footer>
+        </div>
+        {% endfor %}
+    </div>
+</main>
+<footer></footer>
 
-        <script src="{% static 'js/jquery.js' %}"></script>
-        <script src="{% static 'js/mdb.umd.min.js' %}"></script>
-        <script src="{% static 'js/sweetalert11.js' %}"></script>
-        <script src="{% static 'js/settings.js' %}"></script>
-    </body>
-</html>
+{% endblock %}

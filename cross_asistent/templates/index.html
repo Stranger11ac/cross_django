@@ -1,183 +1,107 @@
+{% extends 'structure.html' %}
 {% load static filtros %}
-<!DOCTYPE html>
-<html lang="en">
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-        <link rel="icon" href="{% static 'img/UTC_icono.ico' %}" />
-        <title>Inicio | Asistente UTC | Bienvenidos</title>
+{% block title %}Inicio | Bienvenidos 🦅{% endblock %}
 
-        <link rel="stylesheet" href="https://necolas.github.io/normalize.css/8.0.0/normalize.css" />
-        <script
-            type="module"
-            src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.5.0/model-viewer.min.js"
-        ></script>
+{% block extra_head %}
+<link href="{% static 'css/animate.css' %}" rel="stylesheet" />
+<link rel="stylesheet" href="https://unpkg.com/swiper@7/swiper-bundle.min.css" />
+<script
+    type="module"
+    src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.5.0/model-viewer.min.js"
+></script>
+{% endblock %}
 
-        <link rel="preload" href="{% static 'css/mdb.min.css' %}" as="style" />
-        <link rel="preload" href="{% static 'css/fontawesome-6.4.0.css' %}" as="style" />
+{% block link_end-extra %}
+<button
+    type="button"
+    class="btn btn_detail btn-floating m-1 my-lg-0 d-none d-lg-block"
+    data-mdb-ripple-init
+    data-mdb-modal-init
+    data-mdb-target="#modalqr"
+>
+    <i class="fa-solid fa-mobile-screen-button"></i>
+</button>
+{% endblock %}
 
-        <link href="{% static 'css/animate.css' %}" rel="stylesheet" />
-        <link rel="stylesheet" href="https://unpkg.com/swiper@7/swiper-bundle.min.css" />
-
-        <link rel="stylesheet" href="{% static 'css/mdb.min.css' %}" />
-        <link rel="stylesheet" href="{% static 'css/fontawesome-6.4.0.css' %}" />
-        <link rel="stylesheet" href="{% static 'css/styles.css' %}" />
-    </head>
-    <body>
-        <nav class="navbar navbar-expand-lg navbar-light bg-body-tertiary">
-            <div class="container container-fluid">
-                <a class="navbar-brand" href="./">
-                    <img src="{% static 'img/UTC_logo-plano.webp' %}" alt="UTC logo" />
-                </a>
-                <button
-                    data-mdb-collapse-init
-                    class="navbar-toggler"
-                    type="button"
-                    data-mdb-target="#navbarText"
-                    aria-controls="navbarText"
-                    aria-expanded="false"
-                    aria-label="Toggle navigation"
-                ></button>
-                <div class="collapse navbar-collapse position-absolute top-100" id="navbarText">
-                    <ul class="navbar-nav ms-auto mb-lg-0 px-2 px-lg-0">
-                        <li class="nav-item">
-                            <a class="btn btn_secondary m-1 my-lg-0 d-block"
-                                >Inicio <i class="fa-solid fa-house-chimney ms-1"></i
-                            ></a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="btn btn_detail m-1 my-lg-0 d-block" href="frecuentes/"
-                                >Preguntas <i class="fa-solid fa-clipboard-question ms-1"></i
-                            ></a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="btn btn_detail m-1 my-lg-0 d-block" href="blog/"
-                                >Blog<i class="fa-solid fa-calendar-days ms-1"></i
-                            ></a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="btn btn_detail m-1 my-lg-0 d-block" href="mapa/"
-                                >Mapa<i class="fa-solid fa-map-location-dot ms-1"></i
-                            ></a>
-                        </li>
-                        <li class="nav-item">
-                            <div class="dropdown">
-                                <a
-                                    class="btn btn_detail m-1 my-lg-0 d-block dropdown-toggle"
-                                    href=""
-                                    role="button"
-                                    id="dropdownMenuLink"
-                                    data-mdb-dropdown-init
-                                    data-mdb-ripple-init
-                                    aria-expanded="false"
-                                >
-                                    Otros <i class="fa-solid fa-users ms-1"></i>
-                                </a>
-
-                                <ul class="dropdown-menu mx-100" aria-labelledby="dropdownMenuLink">
-                                    <li><a class="dropdown-item" href="">Calendario Escolar</a></li>
-                                    <li><a class="dropdown-item" href="">Tramites</a></li>
-                                    <li><a class="dropdown-item" href="">Becas</a></li>
-                                    <li><a class="dropdown-item" href="">Oferta Educativa</a></li>
-                                </ul>
-                            </div>
-                        </li>
-                        <button
-                            type="button"
-                            class="btn btn_detail btn-floating m-1 my-lg-0 d-none d-lg-block"
-                            data-mdb-ripple-init
-                            data-mdb-modal-init
-                            data-mdb-target="#modalqr"
-                        >
-                            <i class="fa-solid fa-mobile-screen-button"></i>
-                        </button>
-                    </ul>
-                </div>
-            </div>
-        </nav>
-
-        <main class="main_anchor">
-            <!-- Carrousel -->
-            <div class="swiper-container" id="top">
-                <div class="swiper-wrapper">
-                    {% for banner in banners %}
-                    <div class="swiper-slide">
-                        {% with imagen_url=banner.imagen.url|eliminar_prefijo:'cross_asistent/' %}
-                        <div class="slide-inner" style="background-image: url({{imagen_url}});">
-                            {% endwith %}
-                            <div class="container">
-                                <div class="row">
-                                    <div class="col-lg-8">
-                                        <div class="header-text">
-                                            <h2>{% autoescape off %} {{ banner.titulo }} {% endautoescape %}</h2>
-                                            <!-- <div class="div-dec"></div> -->
-                                            <p>{% autoescape off %} {{ banner.descripcion }} {% endautoescape %}</p>
-                                            <div class="buttons">
-                                                <a href="{{banner.articulo}}" class="btn_slide btn btn_detail btn-lg">
-                                                    Ver más <i class="fa-solid fa-up-right-from-square ms-1"></i>
-                                                </a>
-                                            </div>
-                                        </div>
+{% block content %}
+<main class="main_anchor">
+    <!-- Carrousel -->
+    <div class="swiper-container" id="top">
+        <div class="swiper-wrapper">
+            {% for banner in banners %}
+            <div class="swiper-slide">
+                {% with imagen_url=banner.imagen.url|eliminar_prefijo:'cross_asistent/' %}
+                <div class="slide-inner" style="background-image: url({{imagen_url}});">
+                    {% endwith %}
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-lg-8">
+                                <div class="header-text">
+                                    <h2>{% autoescape off %} {{ banner.titulo }} {% endautoescape %}</h2>
+                                    <!-- <div class="div-dec"></div> -->
+                                    <p>{% autoescape off %} {{ banner.descripcion }} {% endautoescape %}</p>
+                                    <div class="buttons">
+                                        {% if banner.articulo %}
+                                        <a href="{{banner.articulo}}" class="btn_slide btn btn_detail btn-lg">
+                                            Ver más <i class="fa-solid fa-up-right-from-square ms-1"></i>
+                                        </a>
+                                        {% endif %}
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    {% endfor %}
-                </div>
-                <div class="swiper_buttons_nav">
-                    <div class="swiper-button-next"></div>
-                    <div class="swiper-button-prev"></div>
                 </div>
             </div>
+            {% endfor %}
+        </div>
+        <div class="swiper_buttons_nav">
+            <div class="swiper-button-next"></div>
+            <div class="swiper-button-prev"></div>
+        </div>
+    </div>
 
-            <!-- Asistente -->
-            <section class="asistent_group">
-                <form class="box_asistent" autocomplete="off">
-                    <model-viewer
-                        id="asistent_model"
-                        src="{% static 'models/RobotExpressive.glb' %}"
-                        tone-mapping="neutral"
-                        camera-orbit="15deg 70deg 60m"
-                        shadow-intensity="1"
-                        autoplay
-                        animation-name="Idle"
-                    >
-                    </model-viewer>
-                </form>
-            </section>
+    <!-- Asistente -->
+    <section class="asistent_group">
+        <form class="box_asistent" autocomplete="off">
+            <model-viewer
+                id="asistent_model"
+                src="{% static 'models/RobotExpressive.glb' %}"
+                tone-mapping="neutral"
+                camera-orbit="15deg 70deg 60m"
+                shadow-intensity="1"
+                autoplay
+                animation-name="Idle"
+            >
+            </model-viewer>
+        </form>
+    </section>
 
-            <!-- Modal -->
-            <div class="modal fade" id="modalqr" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                <div class="modal-dialog modal-dialog-centered">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h2 class="modal-title" id="exampleModalLabel">Escanea el codigo QR</h2>
-                            <button
-                                type="button"
-                                class="btn-close"
-                                data-mdb-ripple-init
-                                data-mdb-dismiss="modal"
-                                aria-label="Close"
-                            ></button>
-                        </div>
-                        <div class="modal-body">
-                            <img src="{% static 'img/qr_phtone.png' %}" alt="qr" class="img-fluid" />
-                        </div>
-                    </div>
+    <!-- Modal -->
+    <div class="modal fade" id="modalqr" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 class="modal-title" id="exampleModalLabel">Escanea el codigo QR</h2>
+                    <button
+                        type="button"
+                        class="btn-close"
+                        data-mdb-ripple-init
+                        data-mdb-dismiss="modal"
+                        aria-label="Close"
+                    ></button>
+                </div>
+                <div class="modal-body">
+                    <img src="{% static 'img/qr_phtone.png' %}" alt="qr" class="img-fluid" />
                 </div>
             </div>
-        </main>
+        </div>
+    </div>
+</main>
 
-        <script src="{% static 'js/jquery.js' %}"></script>
-        <script src="{% static 'js/mdb.umd.min.js' %}"></script>
-        <script src="{% static 'js/sweetalert11.js' %}"></script>
-        <script src="{% static 'js/settings.js' %}"></script>
-
-        <script src="{% static 'js/isotope.min.js' %}"></script>
-        <script src="{% static 'js/owl-carousel.js' %}"></script>
-        <script src="{% static 'js/swiper.js' %}"></script>
-        <script src="{% static 'js/custom.js' %}"></script>
-    </body>
-</html>
+<script src="{% static 'js/isotope.min.js' %}"></script>
+<script src="{% static 'js/owl-carousel.js' %}"></script>
+<script src="{% static 'js/swiper.js' %}"></script>
+<script src="{% static 'js/custom.js' %}"></script>
+{% endblock %}

@@ -257,6 +257,10 @@ nav .navbar-collapse {
     color: var(--detalle);
 }
 
+.slide-inner .buttons{
+    min-height: 50px;
+}
+
 .swiper-button-next,
 .swiper-button-prev {
     color: var(--blanco) !important;
@@ -292,7 +296,14 @@ nav .navbar-collapse {
 /*##################### Contenido #####################*/
 main {
     min-height: 400px;
+    z-index: 0;
 }
+
+main.full_page{
+    width: 100%;
+    height: calc(100vh - 90px);
+}
+
 main.main_anchor {
     position: relative;
     overflow: hidden;
