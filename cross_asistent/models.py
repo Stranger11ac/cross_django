@@ -15,7 +15,7 @@ class tareas(models.Model):
     descripcion = models.TextField()
     
     def __str__(self):
-        return self.titulo + " - " + self.proyecto.nombre
+        return f"{self.titulo} - {self.proyecto.nombre}"
 
 class preguntas(models.Model):
     pregunta = models.CharField(max_length=200, blank=False)
@@ -41,10 +41,11 @@ class articulos(models.Model):
     actualizacion = models.DateField(auto_now=True, blank=True, null=True)
     titulo = models.CharField(max_length=200, blank=False)
     contenido = models.TextField(blank=False)
+    Encabezado =  models.ImageField(upload_to='cross_asistent/static/files/imagenes/', blank=True, null=True)
     autor = models.CharField(max_length=150, blank=False)
     
     def __str__(self):
-        return self.titulo + " - " + self.autor
+        return f"{self.titulo} - {self.autor}"
 
 class banners(models.Model):
     titulo = models.CharField(max_length=40, blank=False)

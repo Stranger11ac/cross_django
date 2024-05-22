@@ -253,6 +253,7 @@ nav .navbar-collapse {
     display: none;
 }
 
+.text_detail,
 .slide-inner .header-text h2 em {
     color: var(--detalle);
 }
@@ -296,17 +297,18 @@ nav .navbar-collapse {
 /*##################### Contenido #####################*/
 main {
     min-height: 400px;
-    z-index: 0;
 }
 
 main.full_page{
     width: 100%;
     height: calc(100vh - 90px);
+    z-index: 0;
 }
 
 main.main_anchor {
     position: relative;
     overflow: hidden;
+    z-index: 0;
 }
 
 main .asistent_group {
@@ -401,6 +403,11 @@ model-viewer#asistent_model {
     height: 40px;
     padding: 2px;
     background: transparent;
+}
+
+/* Mask */
+.mask_dark{
+    background: linear-gradient(to bottom, hsla(0, 0%, 0%, 0), hsla(0, 0%, 0%, 0.5) 70%);
 }
 
 /*#################### Template Buttons ####################*/

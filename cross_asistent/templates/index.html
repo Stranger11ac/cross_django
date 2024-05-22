@@ -1,18 +1,11 @@
 {% extends 'structure.html' %}
 {% load static filtros %}
-
 {% block title %}Inicio | Bienvenidos 🦅{% endblock %}
-
 {% block extra_head %}
 <link href="{% static 'css/animate.css' %}" rel="stylesheet" />
 <link rel="stylesheet" href="https://unpkg.com/swiper@7/swiper-bundle.min.css" />
-<script
-    type="module"
-    src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.5.0/model-viewer.min.js"
-></script>
-{% endblock %}
-
-{% block link_end-extra %}
+<script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.5.0/model-viewer.min.js"></script>
+{% endblock %} {% block link_end-extra %}
 <button
     type="button"
     class="btn btn_detail btn-floating m-1 my-lg-0 d-none d-lg-block"
@@ -23,7 +16,6 @@
     <i class="fa-solid fa-mobile-screen-button"></i>
 </button>
 {% endblock %}
-
 {% block content %}
 <main class="main_anchor">
     <!-- Carrousel -->
@@ -77,28 +69,28 @@
             </model-viewer>
         </form>
     </section>
+</main>
 
-    <!-- Modal -->
-    <div class="modal fade" id="modalqr" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h2 class="modal-title" id="exampleModalLabel">Escanea el codigo QR</h2>
-                    <button
-                        type="button"
-                        class="btn-close"
-                        data-mdb-ripple-init
-                        data-mdb-dismiss="modal"
-                        aria-label="Close"
-                    ></button>
-                </div>
-                <div class="modal-body">
-                    <img src="{% static 'img/qr_phtone.png' %}" alt="qr" class="img-fluid" />
-                </div>
+<!-- Modal -->
+<div class="modal fade" id="modalqr" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content text-center">
+            <div class="modal-header">
+                <h2 class="modal-title" id="exampleModalLabel">Escanea el codigo QR</h2>
+                <button
+                    type="button"
+                    class="btn-close"
+                    data-mdb-ripple-init
+                    data-mdb-dismiss="modal"
+                    aria-label="Close"
+                ></button>
+            </div>
+            <div class="modal-body">
+                <img src="{% static 'img/qr_2.png' %}" alt="qr" class="img-fluid" />
             </div>
         </div>
     </div>
-</main>
+</div>
 
 <script src="{% static 'js/isotope.min.js' %}"></script>
 <script src="{% static 'js/owl-carousel.js' %}"></script>
