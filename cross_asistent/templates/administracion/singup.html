@@ -1,6 +1,4 @@
-{% extends 'structure.html' %}
-{% block title %}Administracion | Formulario de Registro{% endblock %}
-{% block content %}
+{% extends 'widget.html' %}{% block title %}Administracion | Formulario de Registro{%endblock%}{%block content%}
 <main class="container container-fluid">
     <!-- Jumbotron -->
     <div class="p-5 text-center bg-body-tertiary">
@@ -8,8 +6,17 @@
         <hr class="hr_divisor" />
     </div>
     <!-- Jumbotron -->
+
+        <span class="text-danger">{{formError}}</span>
+
+    <section>
+        <div>
+            <form method="POST">
+                {% csrf_token %} {{form}}
+                <button type="submit">Registrar</button>
+            </form>
+        </div>
+    </section>
 </main>
 
-{% include 'structure_footer.html' %}
-
-{% endblock %}
+{% include 'widget_footer.html' %} {% endblock %}

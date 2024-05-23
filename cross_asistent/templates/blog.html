@@ -1,4 +1,4 @@
-{% extends 'structure.html' %} {% block title %}BLogs, Noticias y Eventos 🎈{% endblock %} {% block content %}
+{% extends 'widget.html' %}{% block title %}BLogs, Noticias y Eventos 🎈{% endblock %}{% block content %}
 <main class="container container-fluid">
     <!-- Jumbotron -->
     <div class="p-5 text-center bg-body-tertiary">
@@ -11,15 +11,13 @@
         <div class="col">
             <a href="#" class="card text-white h-100">
                 <img src="https://mdbcdn.b-cdn.net/img/new/standard/city/044.webp" class="card-img" />
-                <div
-                    class="card-img-overlay mask mask_dark"
-                >
-                <div class="d-flex flex-column justify-content-end h-100">
-                    <h5 class="card-title">{{blog.titulo}}</h5>
-                    <div class="card-text text-end lead">
-                        <small>{{ blog.creacion }}</small>
+                <div class="card-img-overlay mask mask_dark">
+                    <div class="d-flex flex-column justify-content-end h-100">
+                        <h5 class="card-title">{{blog.titulo}}</h5>
+                        <div class="card-text text-end lead">
+                            <small>{{ blog.creacion }}</small>
+                        </div>
                     </div>
-                </div>
                 </div>
             </a>
         </div>
@@ -27,4 +25,4 @@
     </div>
 </main>
 
-{% include 'structure_footer.html' %} {% endblock %}
+{% include 'widget_footer.html' %} {% endblock %}

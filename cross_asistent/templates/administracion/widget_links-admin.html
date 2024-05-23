@@ -1,0 +1,33 @@
+<li class="nav-item">
+    <a class="btn btn_detail m-1 my-lg-0 d-block" href="#">Inicio <i class="fa-solid fa-house-chimney ms-1"></i></a>
+</li>
+<li class="nav-item">
+    <a class="btn btn_detail m-1 my-lg-0 d-block" href="#">Blog<i class="fa-solid fa-calendar-days ms-1"></i></a>
+</li>
+<li class="nav-item">
+    <div class="dropdown">
+        <a
+            role="button"
+            class="btn btn_detail btn_lg-circle d-block m-1 my-lg-0 dropdown-toggle"
+            data-mdb-dropdown-init
+            data-mdb-ripple-init
+            aria-expanded="false"
+            id="dropdownMenuUser"
+        >
+            <span class="d-inline d-lg-none">Usuario</span> <i class="fa-solid fa-user ms-1"></i>
+        </a>
+
+        <ul class="dropdown-menu mx-100" aria-labelledby="dropdownMenuUser">
+            <li>
+                <a class="dropdown-item" href="#"> <i class="fa-regular fa-circle-user"></i> Perfil</a>
+            </li>
+            <li>
+                <a class="dropdown-item" href="#"><i class="fa-solid fa-paintbrush"></i> Editar Perfil</a>
+            </li>
+            <li><hr class="dropdown-divider" /></li>
+            <li>
+                <a class="dropdown-item" href="{% url 'singout' %}"><i class="fa-solid fa-door-open"></i> Cerrar Sesion</a>
+            </li>
+        </ul>
+    </div>
+</li>

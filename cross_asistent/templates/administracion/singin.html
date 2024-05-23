@@ -1,4 +1,4 @@
-{% extends 'structure.html' %}
+{% extends 'widget.html' %}
 {% block title %}Administracion | Iniciar Sesion{% endblock %}
 {% block content %}
 <main class="container container-fluid">
@@ -8,8 +8,19 @@
         <hr class="hr_divisor" />
     </div>
     <!-- Jumbotron -->
+    
+    <span class="text-danger">{{formError}}</span>
+
+    <section>
+        <div>
+            <form method="POST">
+                {% csrf_token %} {{form}}
+                <button type="submit">entrar</button>
+            </form>
+        </div>
+    </section>
 </main>
 
-{% include 'structure_footer.html' %}
+{% include 'widget_footer.html' %}
 
 {% endblock %}

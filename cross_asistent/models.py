@@ -1,23 +1,9 @@
 from django.db import models
-import os
+from django.contrib.auth.models import User
 from django.conf import settings
+import os
 
-# Create your models here.S
-class proyectos(models.Model):
-    nombre = models.CharField(max_length=150)
-    
-    def __str__(self):
-        return self.nombre
-
-class tareas(models.Model):
-    proyecto = models.ForeignKey(proyectos, on_delete=models.CASCADE)
-    titulo = models.CharField(max_length=100)
-    descripcion = models.TextField()
-    
-    def __str__(self):
-        return f"{self.titulo} - {self.proyecto.nombre}"
-
-class preguntas(models.Model):
+class Preguntas(models.Model):
     pregunta = models.CharField(max_length=200, blank=False)
     respuesta = models.TextField(blank=True, null=True)
     redirigir = models.URLField(blank=True, null=True)
@@ -28,15 +14,15 @@ class preguntas(models.Model):
     def __str__(self):
         return self.pregunta
 
-class sugerencias_preg(models.Model):
-    pregunta_num = models.ForeignKey(preguntas, on_delete=models.CASCADE)
+class Sugerencias_preg(models.Model):
+    pregunta_num = models.ForeignKey(Preguntas, on_delete=models.CASCADE)
     sugerencia = models.TextField()
     sugerente = models.CharField(max_length=100, default='Anonimo')
     
     def __str__(self):
         return f"pregunta #:{self.pregunta_num.id} sugiere: {self.sugerente}"
 
-class articulos(models.Model):
+class Articulos(models.Model):
     creacion = models.DateField(auto_now_add=True, blank=False)
     actualizacion = models.DateField(auto_now=True, blank=True, null=True)
     titulo = models.CharField(max_length=200, blank=False)
@@ -47,7 +33,7 @@ class articulos(models.Model):
     def __str__(self):
         return f"{self.titulo} - {self.autor}"
 
-class banners(models.Model):
+class Banners(models.Model):
     titulo = models.CharField(max_length=40, blank=False)
     descripcion = models.CharField(max_length=350, blank=False)
     articulo = models.CharField(max_length=200, null=True, blank=True)
@@ -63,5 +49,11 @@ class banners(models.Model):
             image_path = os.path.join(settings.MEDIA_ROOT, self.imagen.path)
             if os.path.isfile(image_path):
                 os.remove(image_path)
-        super(banners, self).delete(*args, **kwargs)
+        super(Banners, self).delete(*args, **kwargs)
 
+    class Tareas(models.Model):
+        tarea = models.CharField(max_length=255)
+        importante = models.BooleanField(default=False)
+        creacion = models.DateTimeField(auto_now_add=True)
+        completado = models.DateTimeField(null=True)
+        propietario = models.ForeignKey(User, on_delete=models.CASCADE)
