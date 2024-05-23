@@ -2,7 +2,7 @@ from django.db import models
 import os
 from django.conf import settings
 
-# Create your models here.
+# Create your models here.S
 class proyectos(models.Model):
     nombre = models.CharField(max_length=150)
     

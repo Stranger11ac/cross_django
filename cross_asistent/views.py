@@ -16,7 +16,7 @@ def faq(request):
         'quest_all': questall,
         'active_page': 'faq'
     })
-    
+
 def blog(request):
     blogs = models.articulos.objects.all()
     return render(request, 'blog.html', {
@@ -28,6 +28,13 @@ def map(request):
     return render(request,'mapa.html', {
         'active_page': 'map'
     })
+
+# Administracion --------------------------------------------
+def singuppage(request):
+    return render(request, 'administracion/singup.html')
+
+def singinpage(request):
+    return render(request, 'administracion/singin.html')
 
 def formsAdmin(request):
     return render(request, 'administracion/layout.html')
