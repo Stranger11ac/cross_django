@@ -23,7 +23,7 @@
         <!-- <body data-mdb-theme="dark"> -->
         <nav class="navbar navbar-expand-lg navbar-light bg-body-tertiary">
             <div class="container container-fluid">
-                <a class="navbar-brand" href="/">
+                <a class="navbar-brand" {% block link_home %}href="/"{% endblock %}>
                     <img src="{% static 'img/UTC_logo-plano.webp' %}" alt="UTC logo" />
                 </a>
                 <button

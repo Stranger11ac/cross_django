@@ -1,9 +1,11 @@
-from django.shortcuts import render, redirect
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.models import User
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login, authenticate ,logout
+from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
 
+from .forms import crearTarea
 from . import models
 
 # Create your views here.
@@ -56,7 +58,7 @@ def singuppage(request):
         'form': UserCreationForm,
         'formError': errorMSG
     })
-    
+
 
 def singinpage(request):
     if request.method == 'GET':
@@ -76,11 +78,50 @@ def singinpage(request):
         else:
             login(request, user)
             return redirect('dashb_admin')
-            
 
+@login_required
 def singoutpage(request):
     logout(request)
     return redirect('singin')
 
+@login_required
 def dashbAdmin(request):
-    return render(request, 'administracion/dashboard.html')
+    errorMSG=''
+    # tareas = models.Tareas.objects.all()
+    tareas = models.Tareas.objects.filter(propietario = request.user)
+    if request.method == 'POST':
+        try:
+            form_crearTarea = crearTarea(request.POST)
+            nuevaTarea = form_crearTarea.save(commit=False)
+            nuevaTarea.propietario = request.user
+            nuevaTarea.save()
+            return redirect('dashb_admin')
+        
+        except ValueError:
+            errorMSG = 'Por favor introduzca datos Validos'
+            
+    return render(request, 'administracion/dashboard.html', {
+        'form_crearTarea': crearTarea,
+        'formError': errorMSG,
+        'tareas_all': tareas
+    })
+
+@login_required
+def tareaView(request, tarea_id):
+    errorMSG=''
+    tarea = get_object_or_404(models.Tareas, pk=tarea_id, propietario=request.user)
+    if request.method == 'GET':
+        tareaActualizar = crearTarea(instance=tarea)
+    else:
+        try:
+            tareaActualizar = crearTarea(request.POST, instance=tarea)
+            tareaActualizar.save()
+            return redirect('dashb_admin')
+        except ValueError:
+            errorMSG = 'No se puede actualizar la tarea, Datos Invalidos'
+    
+    return render(request, 'administracion/tarea_view.html', {
+        'tareaNum': tarea,
+        'formEditar': tareaActualizar,
+        'formError': errorMSG
+    })

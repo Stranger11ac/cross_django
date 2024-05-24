@@ -51,9 +51,13 @@ class Banners(models.Model):
                 os.remove(image_path)
         super(Banners, self).delete(*args, **kwargs)
 
-    class Tareas(models.Model):
-        tarea = models.CharField(max_length=255)
-        importante = models.BooleanField(default=False)
-        creacion = models.DateTimeField(auto_now_add=True)
-        completado = models.DateTimeField(null=True)
-        propietario = models.ForeignKey(User, on_delete=models.CASCADE)
+class Tareas(models.Model):
+    tarea = models.CharField(max_length=255)
+    importante = models.BooleanField(default=False)
+    creacion = models.DateTimeField(auto_now_add=True)
+    completar = models.BooleanField(default=False)
+    completado_fecha = models.DateTimeField(null=True, blank=True)
+    propietario = models.ForeignKey(User, on_delete=models.CASCADE)
+    
+    def __str__(self):
+        return f"{self.tarea} - de:{self.propietario.username}"
