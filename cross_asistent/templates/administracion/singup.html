@@ -1,22 +1,63 @@
-{% extends 'widget.html' %}{% block title %}Administracion | Formulario de Registro{%endblock%}{%block content%}
+{% extends 'widget.html' %}
+{% block title %}Administracion | Formulario de Registro{%endblock%}
+{%block content%}
 <main class="container container-fluid">
-    <!-- Jumbotron -->
     <div class="p-5 text-center bg-body-tertiary">
-        <h1 class="mb-3">Registro</h1>
+        <h1 class="mb-3">Registrar Usuario:</h1>
         <hr class="hr_divisor" />
     </div>
-    <!-- Jumbotron -->
-
-        <span class="text-danger">{{formError}}</span>
-<!-- before change ajax response -->
-    <section>
-        <div>
-            <form method="POST">
-                {% csrf_token %} {{form}}
-                <button type="submit">Registrar</button>
-            </form>
+    <section class="mx-auto">
+        <div class="card text-center col-md m-1">
+            <div class="card-body">
+                <form id="signupForm" method="POST">
+                    {% csrf_token %} {{ form }}
+                    <button type="submit" class="btn btn-primary btn-block">Enviar</button>
+                </form>
+                <div id="errorMessage" class="text-danger"></div>
+            </div>
         </div>
     </section>
 </main>
 
-{% include 'widget_footer.html' %} {% endblock %}
+<script>
+    document.getElementById('signupForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const form = e.target;
+        const formData = new FormData(form);
+
+        fetch(form.action, {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+                'X-CSRFToken': form.querySelector('[name=csrfmiddlewaretoken]').value
+            }
+        })
+        .then(response => {
+            if (!response.ok) {
+                return response.json().then(data => {
+                    throw new Error(data.message || 'Error desconocido');
+                });
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.success) {
+                alert(data.message);
+                window.location.href = "{% url 'singin' %}";
+            } else {
+                errorMessage = data.message;
+                alertSToast('top', 10000, 'warning', errorMessage)
+            }
+        })
+        .catch(error => {
+            console.error('😥 Error:', error);
+            errorMessage = error.message || 'Ocurrió un error. Intente nuevamente. 😥';
+            alertSToast('top', 10000, 'error', errorMessage)
+        });
+    });
+</script>
+
+
+{% include 'widget_footer.html' %}
+{% endblock %}

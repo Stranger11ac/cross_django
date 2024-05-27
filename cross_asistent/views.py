@@ -1,9 +1,10 @@
-from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
-from django.contrib.auth.models import User
+from django.http import JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login, authenticate ,logout
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
 from django.db import IntegrityError
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
+from django.contrib.auth.decorators import login_required
 from django.views.decorators.cache import never_cache
 
 from .forms import crearTarea
@@ -37,29 +38,29 @@ def map(request):
     })
 
 # Administracion --------------------------------------------
-# Bedore change ajax response
 def singuppage(request):
-    errorMSG = ''
-    if request.method == 'GET':
-        return render(request, 'administracion/singup.html', {
-            'form': UserCreationForm
-        })
-    else:
-        if request.POST['password1'] == request.POST['password2']:
-            try:
-                newUser = User.objects.create_user(username=request.POST['username'], password=request.POST['password1'])
-                newUser.save()
-                login(request, newUser)
-                return redirect('singin')
-            except IntegrityError:
-                errorMSG = 'El usuario ya existe'
+    if request.method == 'POST' and request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        password1 = request.POST.get('password1')
+        password2 = request.POST.get('password2')
+        username = request.POST.get('username')
+
+        if password1 and password2 and username:
+            if password1 == password2:
+                try:
+                    newUser = User.objects.create_user(username=username, password=password1)
+                    newUser.save()
+                    login(request, newUser)
+                    return JsonResponse({'success': True, 'message': 'Usuario creado exitosamente 🥳'}, status=200)
+                except IntegrityError:
+                    return JsonResponse({'success': False, 'message': 'El usuario ya existe 😯'}, status=400)
+            else:
+                return JsonResponse({'success': False, 'message': 'Las contraseñas no coinciden 😬'}, status=400)
         else:
-            errorMSG = 'Las contraseñas no coinciden'
-            
-    return render(request, 'administracion/singup.html', {
-        'form': UserCreationForm,
-        'formError': errorMSG
-    })
+            return JsonResponse({'success': False, 'message': 'Datos incompletos 😅'}, status=400)
+    else:
+        return render(request, 'administracion/singup.html', {
+            'form': UserCreationForm()
+        })
 
 
 def singinpage(request):
