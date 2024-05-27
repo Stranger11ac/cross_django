@@ -19,11 +19,16 @@
     </section>
 </main>
 
+{% include 'widget_footer.html' %}
+{% endblock %}
+
+{% block scripts_end %}
 <script>
     document.getElementById('signupForm').addEventListener('submit', function(e) {
         e.preventDefault();
         const form = e.target;
         const formData = new FormData(form);
+        const timerOut = 6000;
 
         fetch(form.action, {
             method: 'POST',
@@ -43,21 +48,19 @@
         })
         .then(data => {
             if (data.success) {
-                alert(data.message);
-                window.location.href = "{% url 'singin' %}";
+                alertSToast('center', timerOut, 'success', data.message, function() {
+                    window.location.href = "{% url 'singin' %}"
+                });
             } else {
                 errorMessage = data.message;
-                alertSToast('top', 10000, 'warning', errorMessage)
+                alertSToast('top', timerOut+2000, 'warning', errorMessage);
             }
         })
         .catch(error => {
             console.error('😥 Error:', error);
             errorMessage = error.message || 'Ocurrió un error. Intente nuevamente. 😥';
-            alertSToast('top', 10000, 'error', errorMessage)
+            alertSToast('top', timerOut+3000, 'error', errorMessage);
         });
     });
 </script>
-
-
-{% include 'widget_footer.html' %}
 {% endblock %}
