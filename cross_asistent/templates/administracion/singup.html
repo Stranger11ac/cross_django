@@ -13,7 +13,6 @@
                     {% csrf_token %} {{ form }}
                     <button type="submit" class="btn btn-primary btn-block">Enviar</button>
                 </form>
-                <div id="errorMessage" class="text-danger"></div>
             </div>
         </div>
     </section>
@@ -28,7 +27,7 @@
         e.preventDefault();
         const signupForm = e.target;
         const formData = new FormData(signupForm);
-        const timerOut = 6000;
+        const timerOut = 8000;
 
         fetch(signupForm.action, {
             method: 'POST',

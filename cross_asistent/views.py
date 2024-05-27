@@ -47,12 +47,12 @@ def singuppage(request):
         if password1 and password2 and username:
             if password1 == password2:
                 try:
-                    newUser = User.objects.create_user(username=username, password=password1)
+                    newUser = User.objects.create_user(username=username, password=password1, is_active=0)
                     newUser.save()
                     login(request, newUser)
-                    return JsonResponse({'success': True, 'message': 'Usuario creado exitosamente 🥳'}, status=200)
+                    return JsonResponse({'success': True, 'message': 'Usuario creado 🥳<br> Tu cuenta esta INACTIVA'}, status=200)
                 except IntegrityError:
-                    return JsonResponse({'success': False, 'message': 'El usuario ya existe 😯'}, status=400)
+                    return JsonResponse({'success': False, 'message': f'El usuario <u>{username}</u> ya existe 😯'}, status=400)
             else:
                 return JsonResponse({'success': False, 'message': 'Las contraseñas no coinciden 😬'}, status=400)
         else:
@@ -64,23 +64,21 @@ def singuppage(request):
 
 
 def singinpage(request):
-    if request.method == 'GET':
-        return render(request, 'administracion/singin.html', {
-            'active_page': 'singin',
-            'form': AuthenticationForm
-        })
-    else:
-        user = authenticate(request, username=request.POST['username'], password=request.POST['password'])
+    if request.method == 'POST' and request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        usernamePOST = request.POST.get('username')
+        passwordPOST = request.POST.get('password')
+        
+        user = authenticate(request, username=usernamePOST, password=passwordPOST)
         if user is None:
-            errorMSG = 'El usuario o contraseña son incorrectos'
-            return render(request, 'administracion/singin.html', {
-                'active_page': 'singin',
-                'form': AuthenticationForm,
-                'formError': errorMSG
-            })
+            return JsonResponse({'success': False, 'message': 'Revisa el usuario o contraseña 😅'}, status=400)
         else:
             login(request, user)
             return redirect('dashb_admin')
+    else:
+        return render(request, 'administracion/singin.html', {
+            'active_page': 'singin',
+            'form': AuthenticationForm()
+        })
 
 @login_required
 @never_cache

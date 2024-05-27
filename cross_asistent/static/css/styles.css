@@ -454,12 +454,12 @@ model-viewer#asistent_model {
 }
 
 .title_alert span {
-    color: var(--green);
+    color: var(--mdb-success);
     font-weight: 700;
 }
 
 .title_alert u {
-    color: var(--red);
+    color: var(--mdb-danger);
     font-weight: 700;
 }
 
@@ -486,7 +486,7 @@ model-viewer#asistent_model {
     transition: all 0.3s ease !important;
 }
 
-/* Margenes */
+/*################# Margenes #################*/
 .m-10{
     margin: 10px;
 }
