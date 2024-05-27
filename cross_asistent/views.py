@@ -4,6 +4,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login, authenticate ,logout
 from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
+from django.views.decorators.cache import never_cache
 
 from .forms import crearTarea
 from . import models
@@ -80,11 +81,13 @@ def singinpage(request):
             return redirect('dashb_admin')
 
 @login_required
+@never_cache
 def singoutpage(request):
     logout(request)
     return redirect('singin')
 
 @login_required
+@never_cache
 def dashbAdmin(request):
     errorMSG=''
     # tareas = models.Tareas.objects.all()
@@ -103,10 +106,12 @@ def dashbAdmin(request):
     return render(request, 'administracion/dashboard.html', {
         'form_crearTarea': crearTarea,
         'formError': errorMSG,
-        'tareas_all': tareas
+        'tareas_all': tareas,
+        'active_page': 'inicio'
     })
 
 @login_required
+@never_cache
 def tareaView(request, tarea_id):
     errorMSG=''
     tarea = get_object_or_404(models.Tareas, pk=tarea_id, propietario=request.user)
