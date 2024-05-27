@@ -37,6 +37,7 @@ def map(request):
     })
 
 # Administracion --------------------------------------------
+# Bedore change ajax response
 def singuppage(request):
     errorMSG = ''
     if request.method == 'GET':
