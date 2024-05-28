@@ -37,6 +37,11 @@ def map(request):
         'active_page': 'map'
     })
 
+def about(request):
+    return render(request, 'about.html', {
+        'active_page': 'about'
+    })
+
 # Administracion --------------------------------------------
 def singuppage(request):
     if request.method == 'POST' and request.headers.get('X-Requested-With') == 'XMLHttpRequest':

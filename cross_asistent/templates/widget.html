@@ -1,7 +1,7 @@
 {% load static %}
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-mdb-theme="light">
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -35,7 +35,7 @@
                     aria-expanded="false"
                     aria-label="Toggle navigation"
                 ></button>
-                <div class="collapse navbar-collapse position-absolute top-100" id="navbarText">
+                <div class="collapse navbar-collapse position-absolute top-100 navbar-light bg-body-tertiary" id="navbarText">
                     <ul class="navbar-nav ms-auto mb-lg-0 px-2 px-lg-0">
                         {% block link_start-extra %}{% endblock %}
                         {% block link_default %}
@@ -112,6 +112,7 @@
                                     </li>
                                     <li>
                                         <a
+                                            href="{% url 'about' %}"
                                             class="dropdown-item {% if active_page|default:'' == 'about' %}active{% endif %}"
                                             aria-current="true"
                                             >Acerca de</a

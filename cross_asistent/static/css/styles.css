@@ -62,6 +62,7 @@
 /*######### Generales #########*/
 html {
     overflow-x: hidden;
+    /* scrollbar-gutter: stable; */
     /* color-scheme: dark light; */
 }
 
@@ -170,7 +171,6 @@ nav .dropdown-menu {
 }
 
 nav .navbar-collapse {
-    background-color: var(--blanco);
     width: 100%;
     left: 0;
     z-index: 20;
@@ -195,7 +195,6 @@ nav .navbar-collapse {
 .swiper-container {
     min-height: 400px;
     height: calc(100vh - 90px);
-    /* max-height: 800px; */
     width: 100vw;
     overflow: hidden;
 }
@@ -235,7 +234,7 @@ nav .navbar-collapse {
 .slide-inner .header-text h2 {
     position: relative;
     z-index: 2;
-    font-size: 3rem;
+    font-size: 2rem;
     color: #fff;
     font-weight: 700;
     opacity: 1;
@@ -279,6 +278,9 @@ nav .navbar-collapse {
         left: 10%;
         padding: 0;
         text-align: initial;
+    }
+    .slide-inner .header-text h2{
+        font-size: 3rem;
     }
     .slide-inner .header-text p {
         display: block;

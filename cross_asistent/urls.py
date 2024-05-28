@@ -6,6 +6,7 @@ urlpatterns = [
     path('preguntas-frecuentes/', views.faq, name='faq'),
     path('blog-eventos/', views.blog, name='blog'),
     path('mapa/', views.map, name='map'),
+    path('acercade/', views.about, name='about'),
     path('administracion/acceder/', views.singinpage, name='singin'),
     path('administracion/registro/', views.singuppage, name='singup'),
     path('administracion/', views.dashbAdmin, name='dashb_admin'),
