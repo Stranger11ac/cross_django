@@ -6,16 +6,29 @@
 {% block content %}
 <main class="full_page" id="utc_map">
 </main>
+{% endblock %}
+
+{% block scripts_end %}
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 <script>
-    var map = L.map('utc_map').setView([25.55705,-100.93663], 19);
+    var map = L.map('utc_map').setView([25.55705,-100.93663], 17);
 
-    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap</a>'
-    }).addTo(map);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'}).addTo(map);
 
-    L.marker([25.55614,-100.93468]).addTo(map)
-        .bindPopup('Estas aquí!!!')
-        .openPopup();
+    var marker = L.marker([25.55475, -100.93483], { draggable: true }).addTo(map);
+    
+    var startPoint = [25.55475, -100.93483];
+    var endPoint = [25.55666, -100.93642];
+
+    var url = `http://router.project-osrm.org/route/v1/walking/${startPoint[1]},${startPoint[0]};${endPoint[1]},${endPoint[0]}?overview=full&geometries=geojson`;
+
+    fetch(url)
+        .then(response => response.json())
+        .then(data => {
+            var route = data.routes[0].geometry;
+            var geojson = L.geoJSON(route).addTo(map);
+            map.fitBounds(geojson.getBounds());
+        });
+
 </script>
 {% endblock %}

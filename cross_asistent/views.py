@@ -43,6 +43,7 @@ def about(request):
     })
 
 # Administracion --------------------------------------------
+@never_cache
 def singuppage(request):
     if request.method == 'POST' and request.headers.get('X-Requested-With') == 'XMLHttpRequest':
         password1 = request.POST.get('password1')
@@ -67,7 +68,7 @@ def singuppage(request):
             'form': UserCreationForm()
         })
 
-
+@never_cache
 def singinpage(request):
     if request.method == 'POST' and request.headers.get('X-Requested-With') == 'XMLHttpRequest':
         usernamePOST = request.POST.get('username')
