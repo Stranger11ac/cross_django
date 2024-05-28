@@ -47,8 +47,7 @@
         })
         .then(data => {
             if (data.success) {
-                signupForm.reset();
-                alertSToast('center', timerOut, 'success', data.message);
+                window.location.href = "{% url 'dashb_admin' %}"
             } else {
                 alertSToast('top', timerOut+2000, 'warning', data.message);
             }

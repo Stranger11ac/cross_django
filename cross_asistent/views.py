@@ -43,14 +43,14 @@ def singuppage(request):
         password1 = request.POST.get('password1')
         password2 = request.POST.get('password2')
         username = request.POST.get('username')
-
+        
         if password1 and password2 and username:
             if password1 == password2:
                 try:
                     newUser = User.objects.create_user(username=username, password=password1, is_active=0)
                     newUser.save()
                     login(request, newUser)
-                    return JsonResponse({'success': True, 'message': 'Usuario creado 🥳<br> Tu cuenta esta INACTIVA'}, status=200)
+                    return JsonResponse({'success': True, 'message': 'Usuario creado 🥳<br> Tu cuenta esta <u>INACTIVA</u>'}, status=200)
                 except IntegrityError:
                     return JsonResponse({'success': False, 'message': f'El usuario <u>{username}</u> ya existe 😯'}, status=400)
             else:
@@ -70,10 +70,10 @@ def singinpage(request):
         
         user = authenticate(request, username=usernamePOST, password=passwordPOST)
         if user is None:
-            return JsonResponse({'success': False, 'message': 'Revisa el usuario o contraseña 😅'}, status=400)
+            return JsonResponse({'success': False, 'message': 'Revisa el usuario o contraseña 😅. Verifica que tu cuenta esté habilitada'}, status=400)
         else:
             login(request, user)
-            return redirect('dashb_admin')
+            return JsonResponse({'success': True}, status=200)
     else:
         return render(request, 'administracion/singin.html', {
             'active_page': 'singin',
