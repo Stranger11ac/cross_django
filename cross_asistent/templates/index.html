@@ -90,9 +90,10 @@
         </div>
     </div>
 </div>
+{% endblock %}
 
-<script src="{% static 'js/isotope.min.js' %}"></script>
-<script src="{% static 'js/owl-carousel.js' %}"></script>
-<script src="{% static 'js/swiper.js' %}"></script>
+{% block scripts_end %}
+<script src="{% static 'js/owl-carousel.min.js' %}"></script>
+<script src="{% static 'js/swiper.min.js' %}"></script>
 <script src="{% static 'js/custom.js' %}"></script>
 {% endblock %}
