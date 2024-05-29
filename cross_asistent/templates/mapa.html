@@ -14,13 +14,12 @@
     var map = L.map('utc_map').setView([25.55705,-100.93663], 17);
 
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'}).addTo(map);
-
-    var marker = L.marker([25.55475, -100.93483], { draggable: true }).addTo(map);
     
-    var startPoint = [25.55475, -100.93483];
-    var endPoint = [25.55666, -100.93642];
+    var startPoint = [25.55486, -100.93415];
+    var endPoint = [25.55476, -100.93483];
 
     var url = `http://router.project-osrm.org/route/v1/walking/${startPoint[1]},${startPoint[0]};${endPoint[1]},${endPoint[0]}?overview=full&geometries=geojson`;
+
 
     fetch(url)
         .then(response => response.json())
@@ -29,6 +28,5 @@
             var geojson = L.geoJSON(route).addTo(map);
             map.fitBounds(geojson.getBounds());
         });
-
 </script>
 {% endblock %}
