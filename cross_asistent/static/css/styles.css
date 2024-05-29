@@ -263,6 +263,7 @@ nav .navbar-collapse {
 
 .swiper-button-next,
 .swiper-button-prev {
+    z-index: 2 !important;
     color: var(--blanco) !important;
     text-shadow: 0 0 10px black, 0 0 15px black;
 }
@@ -313,98 +314,50 @@ main.main_anchor {
     z-index: 0;
 }
 
-main .asistent_group {
+/*############################ Asistente ############################*/
+.asistent_group {
     position: absolute;
-    bottom: -1%;
-    right: 0;
-    z-index: 1;
-    width: 100%;
-}
-
-/*###################### Modelos 3D ######################*/
-model-viewer#asistent_model {
-    width: 100%;
-    height: 45vh;
-}
-
-@media (min-width: 992px) {
-    main .asistent_group,
-    model-viewer#asistent_model {
-        height: 80vh;
-        max-width: 600px;
-    }
-}
-
-/*####################### Asistente #######################*/
-.box_asistent {
-    position: relative;
-}
-
-/*###################### Formularios ######################*/
-.input_group {
-    display: block;
-    position: relative;
-    min-height: 50px;
-}
-
-.input_group .input_group--item {
-    position: absolute;
-    height: 100%;
-    width: 100%;
-    padding: 5px 10px;
-    border: var(--border-input_items);
-    background: var(--blanco);
-    border-radius: var(--border-radius);
-    overflow: hidden;
-    transition: var(--transitionEase);
-}
-
-.input_group .input_group--label {
-    position: absolute;
-    padding: 5px 10px;
-    border-radius: var(--border-radius);
-    color: var(--oscuro);
-    top: 50%;
-    left: 0;
-    overflow: hidden;
-    transform: translateY(-50%);
-    transition: var(--transitionEase);
-}
-
-.input_group .input_group--item:focus + .input_group--label {
-    top: -40%;
-    left: 15px;
-    font-size: 0.7rem;
-    border-radius: var(--border-radius) var(--border-radius) 0 0;
-    background-color: var(--blanco);
-}
-
-.input_group textarea.input_group--item {
-    overflow-y: scroll;
-    scrollbar-width: 0px;
-}
-
-.input_group.group-controls .input_group--item{
-    padding-right: 50px;
-}
-
-.input_group .input_group--controls {
-    position: absolute;
-    right: 5px;
     bottom: 0;
-    min-height: inherit;
-    display: flex;
-    align-items: center;
+    z-index: 1;
+    right: 0;
+    width: 100%;
+    height: 50vh;
+    transition: var(--transitionEase);
+    /* background: #02913c; */
 }
 
-.input_group .input_group--controls button {
+.asistent_group.open{
+    height: calc(100vh - 90px);
+}
+
+.asistent_group .box_asistent {
+    width: 100%;
+    height: inherit;
+    position: relative;
+    /* background: #292f38; */
+}
+
+.asistent_group .box_asistent #asistent_model {
+    width: 100%;
+    height: 100%;
+    /* background: var(--mdb-danger); */
+}
+
+.asistent_group .box_asistent  .box_asistent_controls {
+    position: absolute;
+    bottom: 10%;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+.btn_controls{
+    height: 60px;
+    width: 60px;
     border: none;
+    font-size: 2rem;
     border-radius: 50%;
-    color: var(--oscuro);
-    width: 40px;
-    height: 40px;
-    padding: 2px;
-    background: transparent;
+    padding: 0 !important;
 }
 
 /* Mask */
