@@ -23,6 +23,7 @@
     --original_img-filter: saturate(90%);
 
     /* Color white transparent-> "alpha chanel" */
+    /* Colorxd */
     --whiteA: rgba(255, 255, 255, 0);
     --whiteA1: rgba(255, 255, 255, 0.1);
     --whiteA2: rgba(255, 255, 255, 0.2);
