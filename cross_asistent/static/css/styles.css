@@ -345,24 +345,37 @@ main.main_anchor {
 }
 
 .asistent_group.open .box_asistent #asistent_model {
+<<<<<<< HEAD
     height: 40vh;
     margin: 0 0 15vh 5%;
 }
 
 .asistent_group.open.open_keyboard .box_asistent #asistent_model {
     width: 30vw;
+=======
+    height: 30%;
+    width: 30%;
+    margin: 0 0 20% 5%;
+>>>>>>> 949bd1f3e2e39d97f75742ff6bce922bbbbaa76d
 }
 
 .asistent_group .box_asistent .box_asistent_controls {
     position: absolute;
+<<<<<<< HEAD
     bottom: 5vh;
+=======
+    bottom: 5%;
+>>>>>>> 949bd1f3e2e39d97f75742ff6bce922bbbbaa76d
     width: 100%;
     display: flex;
     justify-content: center;
 }
 
 .box_asistent_controls .controls_buttons{
+<<<<<<< HEAD
     height: 60px;
+=======
+>>>>>>> 949bd1f3e2e39d97f75742ff6bce922bbbbaa76d
     border-radius: 60px;
     background: transparent;
     transition: var(--transitionEase);
@@ -376,6 +389,35 @@ main.main_anchor {
     border-radius: 50%;
     padding: 0 !important;
     transition: var(--transitionEase);
+<<<<<<< HEAD
+=======
+}
+
+.btn_controls.controls_btn_microphone {
+    box-shadow: 0 0 5px var(--oscuro);
+    transform: scale(1.3);
+}
+
+.btn_controls.controls_btn_keyboard,
+.btn_controls.controls_btn_close {
+    background: transparent !important;
+    box-shadow: none !important;
+    font-size: 1.8rem;
+    transition-delay: 0s;
+    transform: scale(0);
+    transition: transform 0.3s var(--transitionCubicVal);
+}
+
+.asistent_group.open .controls_buttons{
+    transition-delay: 0.2s;
+    background: var(--detalle);
+}
+
+.asistent_group.open .controls_btn_keyboard,
+.asistent_group.open .controls_btn_close{
+    transition-delay: 0.5s;
+    transform: scale(1);
+>>>>>>> 949bd1f3e2e39d97f75742ff6bce922bbbbaa76d
 }
 
 .btn_controls.controls_btn_microphone {
