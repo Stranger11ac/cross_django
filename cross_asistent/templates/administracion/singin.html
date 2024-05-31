@@ -8,28 +8,33 @@
         <hr class="hr_divisor" />
     </div>
     <section class="mx-auto">
-        <div class="card text-center col-md m-1">
-            <div class=""></div>
-                <form id="singinForm" method="POST">
-                    {% csrf_token %} 
-                    <div class="mb-3 ">
-                        <label for="username">Usuario:</label>
-                        <input type="text" name="username" id="username" class="form-control" >
-                    </div>
-                    <div class="mb-3">
-                        <label for="password">Contraseña:</label>
-                        <input type="password" name="password" id="password" class="form-control text-center" >
-                    </div>
-                    
-                    <div class="d-flex justify-content-center"><button type="submit" class="btn btn_detail w-25  mt-3">entrar</button>
-                    </div>
-                </form>
-            </div>
+      <div class="container">
+        <div class="row justify-content-center">
+          <div class="col-xl-5 col-md-8">
+            <form id="singinForm" method="POST">
+              {% csrf_token %} 
+              <!-- user input -->
+              <div class="form-outline mb-4" data-mdb-input-init>
+                <input type="text" id="username" name="username" class="form-control" />
+                <label class="form-label" for="username">Usuario</label>
+              </div>
+
+              <!-- Password input -->
+              <div class="form-outline mb-4" data-mdb-input-init>
+                <input type="password" id="password" name="password" class="form-control" />
+                <label class="form-label" for="password">Password</label>
+              </div>
+              <!-- Submit button -->
+              <button type="submit" class="btn btn-primary btn-block" data-mdb-ripple-init>Entrar</button>
+              <p class="text-center mt-3"> <a class="text_detail" href="{% url 'singup' %}">Registrate</a></p>
+
+          </div>
         </div>
-        <div class="text-center">
-            <a href="{% url 'singup' %}" class="btn btn_detail w-20 mt-3 ">Registrate !</a>
-        </div>
-    </section>
+      </div>
+    </div>
+  </div>
+</header>
+</form>
 </main>
 
 {% include 'widget_footer.html' %}
@@ -68,9 +73,7 @@
         .catch(error => {
             console.error('😥 Error:', error);
             errorMessage = error.message || 'Ocurrió un error. Intente nuevamente. 😥';
-            alertSToast('center', timerOut+3000, 'error', errorMessage, function() {
-                signinForm.reset();
-            });
+            alertSToast('center', timerOut+3000, 'error', errorMessage);
         });
     });
 </script>

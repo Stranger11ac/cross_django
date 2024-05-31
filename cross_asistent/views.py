@@ -49,11 +49,13 @@ def singuppage(request):
         password1 = request.POST.get('password1')
         password2 = request.POST.get('password2')
         username = request.POST.get('username')
+        first_name = request.POST.get('first_name')
+        last_name = request.POST.get('last_name')
         
         if password1 and password2 and username:
             if password1 == password2:
                 try:
-                    newUser = User.objects.create_user(username=username, password=password1, is_active=0)
+                    newUser = User.objects.create_user(first_name=first_name, last_name=last_name  , username=username, password=password1, is_active=0)
                     newUser.save()
                     login(request, newUser)
                     return JsonResponse({'success': True, 'message': 'Usuario creado 🥳<br> Tu cuenta esta <u>INACTIVA</u>'}, status=200)
@@ -136,3 +138,7 @@ def tareaView(request, tarea_id):
         'formEditar': tareaActualizar,
         'formError': errorMSG
     })
+
+# def para la vista administrador
+def vista_admin (request):
+    return render (request,'administracion/vista_admin.html')
