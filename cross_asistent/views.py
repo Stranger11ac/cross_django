@@ -7,11 +7,41 @@ from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.cache import never_cache
 
+import os
+import speech_recognition as sr
+from django.conf import settings
+
 from .forms import crearTarea
 from . import models
 
+
+def recognize_speech_from_audio(file_path):
+    recognizer = sr.Recognizer()
+    with sr.AudioFile(file_path) as source:
+        audio = recognizer.record(source)
+    try:
+        text = recognizer.recognize_google(audio)
+        return text
+    except sr.UnknownValueError:
+        return "Al parecer no se reconoce el Audio"
+    except sr.RequestError as e:
+        return f"Could not request results from Google Speech Recognition service; {e}"
+
 # Create your views here.
 def index(request):
+    if request.method == 'POST' and request.FILES.get('audio'):
+        audio_file = request.FILES['audio']
+        file_path = os.path.join(settings.MEDIA_ROOT, audio_file.name)
+        with open(file_path, 'wb+') as destination:
+            for chunk in audio_file.chunks():
+                destination.write(chunk)
+        
+        text = recognize_speech_from_audio(file_path)
+        
+        # Delete the temporary audio file after processing
+        os.remove(file_path)
+        
+        return JsonResponse({'text': text})
     banners_all = models.Banners.objects.all()
     return render(request, 'index.html', {
         'banners': banners_all,
