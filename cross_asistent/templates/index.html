@@ -121,10 +121,6 @@
     </div>
 </div>
 
-<<<<<<< HEAD
-
-=======
->>>>>>> 949bd1f3e2e39d97f75742ff6bce922bbbbaa76d
 {% endblock %}
 
 {% block scripts_end %}
@@ -135,7 +131,6 @@
     $(document).ready(function () {
         try {
             $(".controls_btn_microphone").click(() => {
-<<<<<<< HEAD
                 $(".asistent_group").addClass('open open_controls bg-body-tertiary');
                 $(".btn_controls").addClass('btn_detail').removeClass('btn_secondary');
                 $("#btn_controls_icon").removeClass('fa-comment').addClass('fa-microphone');
@@ -148,14 +143,6 @@
             $(".controls_btn_keyboard").click(() => {
                 $(".asistent_group.open").addClass('close_controls open_keyboard').removeClass('open_controls');
                 $('.controls_input #question').focus();
-=======
-                $(".asistent_group").addClass('open bg-body-tertiary');
-                $(".btn_controls").addClass('btn_detail').removeClass('btn_secondary');
-            });
-            $(".controls_btn_close").click(() => {
-                $(".asistent_group").removeClass('open bg-body-tertiary');
-                $(".btn_controls").removeClass('btn_detail').addClass('btn_secondary');
->>>>>>> 949bd1f3e2e39d97f75742ff6bce922bbbbaa76d
             });
 
             $("#closeChat").click(() => {
