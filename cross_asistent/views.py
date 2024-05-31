@@ -15,7 +15,7 @@ import os
 from .forms import crearTarea
 from . import models
 
-openai.api_key = settings.OPENAI_API_KEY
+# openai.api_key = settings.OPENAI_API_KEY
 
 # Create your views here.
 def index(request):
