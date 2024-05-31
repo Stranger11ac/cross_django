@@ -94,12 +94,22 @@
                     </div>
                 </div>
             </form>
+            <div class="output_messages" id="output">
+                <div>
+                    <div class="text-end my-3">
+                        <span class="btn_secondary rounded-pill chat_msg user_submit" id="userQuest">
+                            Esta es una pregunta muy real
+                        </span>
+                    </div>
+                    <div class="btn_detail rounded-pill chat_msg asistent_response">
+                        <span id="answer">Una respuesta ala pregunta real...</span>
+                        <small id="tokensID" class="text-muted">205</small>
+                    </div>
+                </div>
+            </div>
         </div>
     </section>
 </main>
-
-<!-- <p id="answer" class="bg-danger w-100 text-white p-1" style="min-height: 80px;">¡Hola! ¿En qué puedo ayudarte hoy?</p>
-<p id="tokensID" class="bg-success w-100 text-white p-1">54</p> -->
 
 <!-- Modal -->
 <div class="modal fade" id="modalqr" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -144,7 +154,7 @@
             });
             $(".controls_btn_keyboard").click(() => {
                 $(".asistent_group.open").addClass('close_controls open_keyboard').removeClass('open_controls');
-                $('.controls_input #question').focus();
+                // $('.controls_input #question').focus();
             });
 
             $("#closeChat").click(() => {

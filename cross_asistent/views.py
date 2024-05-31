@@ -91,11 +91,13 @@ def singuppage(request):
         password1 = request.POST.get('password1')
         password2 = request.POST.get('password2')
         username = request.POST.get('username')
+        first_name = request.POST.get('first_name')
+        last_name = request.POST.get('last_name')
         
         if password1 and password2 and username:
             if password1 == password2:
                 try:
-                    newUser = User.objects.create_user(username=username, password=password1, is_active=0)
+                    newUser = User.objects.create_user(first_name=first_name, last_name=last_name  , username=username, password=password1, is_active=0)
                     newUser.save()
                     login(request, newUser)
                     return JsonResponse({'success': True, 'message': 'Usuario creado 🥳<br> Tu cuenta esta <u>INACTIVA</u>'}, status=200)
@@ -179,43 +181,6 @@ def tareaView(request, tarea_id):
         'formError': errorMSG
     })
 
-
-# from django.db.models import Q
-# import re
-# import openai
-
-# # Función para normalizar la entrada del usuario
-# def normalize_input(input_string):
-#     input_string = input_string.lower()
-#     input_string = re.sub(r'[^\w\s]', '', input_string)
-#     return input_string
-
-# @csrf_exempt
-# def ask(request):
-#     if request.method == 'POST':
-#         questionPOST = request.POST.get('question')
-#         normalized_question = normalize_input(questionPOST)
-        
-#         # Tokenizar la pregunta normalizada
-#         keywords = normalized_question.split()
-        
-#         # Crear una consulta que busque preguntas que contengan al menos una palabra clave
-#         query = Q()
-#         for keyword in keywords:
-#             query |= Q(pregunta__icontains=keyword)
-        
-#         # Realizar la búsqueda en la base de datos
-#         faqs = models.Preguntas.objects.filter(query)
-#         if faqs.exists():
-#             # Devolver la respuesta asociada a la primera pregunta encontrada en la base de datos
-#             answer = faqs.first().respuesta
-#         else:
-#             # Si no se encuentra una respuesta en la base de datos, utilizar el modelo de OpenAI
-#             response = openai.Completion.create(
-#                 engine="text-davinci-003",  # Especificar el motor de OpenAI que deseas utilizar
-#                 prompt=questionPOST,
-#                 max_tokens=50  # Longitud máxima de la respuesta generada
-#             )
-#             answer = response.choices[0].text.strip()
-#         return JsonResponse({'answer': answer})
-#     return JsonResponse({'error': 'Petición inválida'}, status=400)
+# def para la vista administrador
+def vista_admin (request):
+    return render (request,'administracion/vista_admin.html')
