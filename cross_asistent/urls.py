@@ -12,4 +12,5 @@ urlpatterns = [
     path('administracion/', views.dashbAdmin, name='dashb_admin'),
     path('administracion/tarea/<int:tarea_id>/', views.tareaView, name='tareaView'),
     path('logout/', views.singoutpage, name='singout'),
+    path('ask/', views.ask, name='ask'),
 ]

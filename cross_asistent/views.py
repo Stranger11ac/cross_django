@@ -1,14 +1,21 @@
-from django.http import JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login, authenticate ,logout
 from django.contrib.auth.models import User
 from django.db import IntegrityError
+from django.http import JsonResponse
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.cache import never_cache
 
+from django.views.decorators.csrf import csrf_exempt
+from django.conf import settings
+import openai
+import os
+
 from .forms import crearTarea
 from . import models
+
+openai.api_key = settings.OPENAI_API_KEY
 
 # Create your views here.
 def index(request):
@@ -17,6 +24,41 @@ def index(request):
         'banners': banners_all,
         'active_page': 'inicio'
     })
+    
+@csrf_exempt
+def ask(request):
+    if request.method == 'POST':
+        questionPOST = request.POST.get('question')
+
+        # Buscar en la base de datos la información relevante
+        faqs = models.Preguntas.objects.filter(pregunta__icontains=questionPOST)
+        if faqs.exists():
+            # Si se encuentra una pregunta en la base de datos, usar su respuesta
+            answer = faqs.first().respuesta
+        else:
+            answer = None
+        if not answer:
+            # Si no se encuentra una respuesta en la base de datos, usar OpenAI para generar una respuesta
+            context = "No relevant information found in the database."
+            response = openai.ChatCompletion.create(
+                model="gpt-3.5-turbo",
+                messages=[
+                    {"role": "system", "content": "You are a helpful assistant."},
+                    {"role": "user", "content": f"Here is some context: {context} Now, answer this question: {questionPOST}"},
+                ],
+                max_tokens=150
+            )
+            total_tokens = response["usage"]["total_tokens"]
+            try:
+                answer = response['choices'][0]['message']['content'].strip()
+            except KeyError:
+                answer = "No se pudo obtener la respuesta del servidor."
+        else:
+            # Si se encontró una respuesta en la base de datos, usarla directamente
+            pass
+        return JsonResponse({'answer': answer, 'tokens':total_tokens})
+    return JsonResponse({'error': 'Petición inválida'}, status=400)
+
 
 def faq(request):
     questall = models.Preguntas.objects.all()
@@ -136,3 +178,44 @@ def tareaView(request, tarea_id):
         'formEditar': tareaActualizar,
         'formError': errorMSG
     })
+
+
+# from django.db.models import Q
+# import re
+# import openai
+
+# # Función para normalizar la entrada del usuario
+# def normalize_input(input_string):
+#     input_string = input_string.lower()
+#     input_string = re.sub(r'[^\w\s]', '', input_string)
+#     return input_string
+
+# @csrf_exempt
+# def ask(request):
+#     if request.method == 'POST':
+#         questionPOST = request.POST.get('question')
+#         normalized_question = normalize_input(questionPOST)
+        
+#         # Tokenizar la pregunta normalizada
+#         keywords = normalized_question.split()
+        
+#         # Crear una consulta que busque preguntas que contengan al menos una palabra clave
+#         query = Q()
+#         for keyword in keywords:
+#             query |= Q(pregunta__icontains=keyword)
+        
+#         # Realizar la búsqueda en la base de datos
+#         faqs = models.Preguntas.objects.filter(query)
+#         if faqs.exists():
+#             # Devolver la respuesta asociada a la primera pregunta encontrada en la base de datos
+#             answer = faqs.first().respuesta
+#         else:
+#             # Si no se encuentra una respuesta en la base de datos, utilizar el modelo de OpenAI
+#             response = openai.Completion.create(
+#                 engine="text-davinci-003",  # Especificar el motor de OpenAI que deseas utilizar
+#                 prompt=questionPOST,
+#                 max_tokens=50  # Longitud máxima de la respuesta generada
+#             )
+#             answer = response.choices[0].text.strip()
+#         return JsonResponse({'answer': answer})
+#     return JsonResponse({'error': 'Petición inválida'}, status=400)
