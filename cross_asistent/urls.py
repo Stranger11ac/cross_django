@@ -14,4 +14,5 @@ urlpatterns = [
 # se agrego la url para la vista administrador
     path('administracion/vista_admin/', views.vista_admin, name='vista_admin'),
     path('logout/', views.singoutpage, name='singout'),
+    path('ask/', views.ask, name='ask'),
 ]
