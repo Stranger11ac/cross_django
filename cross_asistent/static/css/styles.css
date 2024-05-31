@@ -351,6 +351,7 @@ main.main_anchor {
 
 .asistent_group.open.open_keyboard .box_asistent #asistent_model {
     width: 30vw;
+    margin-bottom: 10vh;
 }
 
 .asistent_group .box_asistent .box_asistent_controls {
@@ -415,15 +416,40 @@ main.main_anchor {
     min-height: 80px;
     width: calc(100% - 10%);
     transform-origin: bottom center;
+    opacity: 0;
     transform: scaleY(0);
     transition: var(--transitionEase);
-    transition-delay: 0.6s;
+    transition-delay: 0s;
 }
 
 .asistent_group.open.open_keyboard .box_asistent .controls_input {
+    transition-delay: 0.6s;
+    opacity: 1;
     transform: scaleY(1);
 }
 
+.asistent_group .box_asistent .output_messages{
+    position: absolute;
+    width: inherit;
+    padding: 0 5%;
+    top: 0;
+    opacity: 0;
+    visibility: hidden;
+    background-color: #02913b64;
+}
+
+.asistent_group .box_asistent .output_messages .chat_msg{
+    width: fit-content;
+    padding: 0.3rem 0.6rem;
+}
+
+.asistent_group .box_asistent .output_messages .chat_msg.user_submit{
+    border-bottom-right-radius: 0 !important;
+}
+
+.asistent_group .box_asistent .output_messages .chat_msg.asistent_response{
+    border-bottom-left-radius: 0 !important;
+}
 
 /* Mask */
 .mask_dark{
