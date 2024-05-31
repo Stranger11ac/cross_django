@@ -68,9 +68,7 @@
         .catch(error => {
             console.error('😥 Error:', error);
             errorMessage = error.message || 'Ocurrió un error. Intente nuevamente. 😥';
-            alertSToast('center', timerOut+3000, 'error', errorMessage, function() {
-                signinForm.reset();
-            });
+            alertSToast('center', timerOut+3000, 'error', errorMessage);
         });
     });
 </script>

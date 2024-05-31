@@ -11,6 +11,15 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 import os
 from pathlib import Path
+import environ
+
+# Inicializar environ
+env = environ.Env()
+# Leer el archivo .env
+environ.Env.read_env()
+
+# Obtener la API key de las variables de entorno
+OPENAI_API_KEY = env('OPENAI_API_KEY')
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -125,3 +134,5 @@ LOGOUT_URL = '/administracion/acceder'
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
