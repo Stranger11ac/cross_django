@@ -1,7 +1,7 @@
 {% extends 'widget.html' %}
 {% block title %}Administracion | Formulario de Registro{%endblock%}
 {%block content%}
-<!-- se modifico los styles y la parte de registro para los usuarios-->
+<!-- se modifico los styles, se agregaron nuevos campos para el registro de usuarios-->
 <main class="container container-fluid">
     <div class="p-5 text-center">
         <h1 class="mb-3">Registrar Usuario:</h1>
@@ -10,23 +10,46 @@
     <section class="mx-auto">
         <div class="card text-center col-md m-3 mt-5">
             <div class="">
-                <form id="signupForm" method="POST" class="card card-body">
-                    {% csrf_token %} 
-                    <div class="mb-3 text-center">
-                        <label for="username">Crea tu usuario:</label>
-                        <input type="text" name="username" id="username" class="form-control text-center"  >
-                    </div>
-                    <div class="mb-3">
-                        <label for="password1">Crea tu contraseña:</label>
-                        <input type="password" name="password1" id="password1" class="form-control text-center">
-                    </div>
-                    <div class="mb-3">
-                        <label for="password2">Confirma tu Contraseña</label>
-                        <input type="password" name="password2" id="password2" class="form-control text-center" >
-                    </div>
-                    <div class="d-flex justify-content-center"><button type="submit" class="btn btn_detail w-25  mt-3">enviar</button>
-                    </div>
-                    
+                <form id="signupForm" method="POST"> 
+                    {% csrf_token %}
+                    <header>
+                            <div class="container">
+                              <div class="row justify-content-center">
+                                <div class="col-xl-5 col-md-8">
+                                  <form class="bg-white rounded shadow-5-strong p-5" method="POST">
+                                    <!-- user input -->
+                                    <div class="form-outline mb-4" data-mdb-input-init>
+                                      <input type="text" id="username" name="username" class="form-control" />
+                                      <label class="form-label" for="username">Usuario</label>
+                                    </div>
+                                    <!-- first name input -->
+                                    <div class="form-outline mb-4" data-mdb-input-init>
+                                        <input type="text" id="first_name" name="first_name" class="form-control" />
+                                        <label class="form-label" for="first_name">Nombre</label>
+                                      </div>
+                                    <!-- last name input-->
+                                    <div class="form-outline mb-4" data-mdb-input-init>
+                                        <input type="text" id="last_name" name="last_name" class="form-control" />
+                                        <label class="form-label" for="last_name">Apellido</label>
+                                      </div>
+                                    <!-- Password input -->
+                                    <div class="form-outline mb-4" data-mdb-input-init>
+                                      <input type="password" id="password1" name="password1" class="form-control" />
+                                      <label class="form-label" for="password1">Contraseña</label>
+                                    </div>
+                
+                                    <div class="form-outline mb-4" data-mdb-input-init>
+                                        <input type="password" id="password2" name="password2" class="form-control" />
+                                        <label class="form-label" for="password2">Confirma la Contraseña</label>
+                                      </div>
+                                    <!-- Submit button -->
+                                    <button type="submit" class="btn btn-primary btn-block" data-mdb-ripple-init>Registrarse</button>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </header>
                 </form>
             </div>
         </div>
