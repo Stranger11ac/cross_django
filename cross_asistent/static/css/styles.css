@@ -424,9 +424,14 @@ main.main_anchor {
 
 .asistent_group .box_asistent .controls_input textarea {
     /* field-sizing: content; */
-    height: 115px;
+    height: 110px;
     padding-right: 40px;
     scrollbar-color: transparent;
+}
+
+.asistent_group .box_asistent .controls_input label {
+    border: none;
+    border-radius: calc(var(--border-radius)/2);
 }
 
 .asistent_group.open.open_keyboard .box_asistent .controls_input {
