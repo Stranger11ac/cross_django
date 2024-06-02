@@ -57,6 +57,7 @@ def ask(request):
         else:
             answer = "No se encontraron conincidencias en la base de datos."
             total_tokens = "0"
+            completion_tokens = "😅"
         return JsonResponse({'answer': answer, 'tokens': total_tokens, 'compltokens': completion_tokens})
     return JsonResponse({'error': 'Petición inválida'}, status=400)
 

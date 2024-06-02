@@ -19,7 +19,7 @@ env = environ.Env()
 environ.Env.read_env()
 
 # Obtener la API key de las variables de entorno
-OPENAI_API_KEY = env('OPENAI_API_KEY')
+OPENAI_API_KEY = env('OPENAI_API_KEY', default=None)
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.

@@ -330,9 +330,9 @@ main.main_anchor {
 }
 
 .asistent_group .box_asistent {
+    position: relative;
     width: 100%;
     height: 100%;
-    position: relative;
     display: flex;
     align-items: end;
 }
@@ -341,15 +341,17 @@ main.main_anchor {
     width: 100%;
     height: 100%;
     transition: height 0.3s ease, width 0.3s ease, margin 0.2s ease;
-    transition-delay: 0s, 0.4s, 0s;
+    /* transition-delay: 0s, 0.4s, 0s; */
 }
 
 .asistent_group.open .box_asistent #asistent_model {
-    height: 30vh;
-    margin: 0 0 15vh 5%;
+    width: 90%;
+    height: calc(100% - 90px);
+    margin: 0 0 8vh 5%;
 }
 
 .asistent_group.open.open_keyboard .box_asistent #asistent_model {
+    height: 30vh;
     width: 30vw;
     margin-bottom: 16vh;
 }
@@ -369,7 +371,7 @@ main.main_anchor {
     transition: var(--transitionEase);
 }
 
-.btn_controls{
+.box_asistent_controls .controls_buttons .btn_controls{
     height: 60px;
     width: 60px;
     border: none;
@@ -379,7 +381,7 @@ main.main_anchor {
     transition: var(--transitionEase);
 }
 
-.btn_controls.controls_btn_microphone {
+.box_asistent_controls .controls_buttons .btn_controls.controls_btn_microphone {
     box-shadow: 0 0 5px var(--oscuro);
     transform: scale(1.3);
 }
@@ -425,8 +427,8 @@ main.main_anchor {
 .asistent_group .box_asistent .controls_input textarea {
     /* field-sizing: content; */
     height: 110px;
-    padding-right: 40px;
-    scrollbar-color: transparent;
+    padding-right: 45px;
+    scrollbar-width: none;
 }
 
 .asistent_group .box_asistent .controls_input label {
@@ -440,44 +442,149 @@ main.main_anchor {
     transform: scaleY(1);
 }
 
+.asistent_group .box_asistent .controls_input .controls_input-buttons {
+    height: 100%;
+    width: 45px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-around;
+}
+
 /* Caja de Respuestas */
-.asistent_group .box_asistent .output_messages{
+.asistent_group .box_asistent .output_messages {
     --bottom_position: 42vh;
+    scroll-snap-type: y proximity;
+    scroll-behavior: smooth;
+    overflow-y: scroll;
     position: absolute;
     width: inherit;
-    max-height: calc(88vh - var(--bottom_position));
-    overflow-y: scroll;
     padding: 0 5%;
-    bottom: var(--bottom_position);
+    opacity: 0;
     scrollbar-width: none;
+    transform: scaleY(0);
+    bottom: var(--bottom_position);
+    transform-origin: bottom center;
+    max-height: calc(88vh - var(--bottom_position));
+    transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.asistent_group.open.open_keyboard .box_asistent .output_messages {
+    opacity: 1;
+    transform: scaleY(1);
 }
 
 .asistent_group .box_asistent .output_messages .output_block {
     display: flex;
     justify-content: flex-end;
-    padding-block: 1rem;
 }
+
 .asistent_group .box_asistent .output_messages .chat_msg {
     width: fit-content;
-    padding: 0.3rem 0.8rem;
     border: none;
-    border-radius: 20px;
+    border-radius: 15px;
+}
+
+.asistent_group .box_asistent .output_messages .chat_msg.user_submit,
+.asistent_group .box_asistent .output_messages .chat_msg.asistent_response {
+    padding: 0;
+    transform: scale(0);
+    transition: var(--transitionCubic);
 }
 
 .asistent_group .box_asistent .output_messages .chat_msg.user_submit {
     border-bottom-right-radius: calc(var(--border-radius) /3) !important;
-    margin-left: 40px;
+    scroll-snap-align: start;
+    transform-origin: center right;
+    margin-left: 80px;
+    text-align: right;
 }
 
 .asistent_group .box_asistent .output_messages .chat_msg.asistent_response {
     border-bottom-left-radius: calc(var(--border-radius) /3) !important;
-    margin-right: 40px;
+    margin-right: 80px;
     margin-block: 5px;
+    transform-origin: center left;
+}
+
+.asistent_group .box_asistent .output_messages .chat_msg.visible {
+    margin-block: 0.4rem;
+    padding: 0.3rem 0.8rem;
+    transform: scale(1);
 }
 
 .asistent_group .box_asistent .output_messages .chat_msg.asistent_response small {
     opacity: 0.3;
     font-size: 0.6rem;
+}
+
+@media (min-width: 992px) {
+    .asistent_group {
+        width: 40vw;
+        height: 70vh;
+    }
+
+    .asistent_group.open {
+        width: 100vw;
+    }
+    
+    .asistent_group .box_asistent {
+        justify-content: flex-end;
+    }
+    
+    .asistent_group .box_asistent #asistent_model {
+        transition-delay: 0s, 0s, 0s;
+    }
+    
+    .asistent_group.open .box_asistent #asistent_model {
+        height: 80vh;
+        width: 100%;
+        margin: 0 0 5vh 0;
+    }
+    
+    .asistent_group.open.open_keyboard .box_asistent #asistent_model {
+        position: absolute;
+        left: 5%;
+        bottom: 3vh;
+        height: 20vh;
+        width: 20vw;
+        margin-bottom: 0;
+    }
+    
+    .asistent_group .box_asistent .box_asistent_controls {
+        transition: width 0.3s ease;
+    }
+
+    .asistent_group.open .box_asistent .box_asistent_controls {
+        width: 100%;
+    }
+    
+    .asistent_group.open.open_controls .controls_buttons{
+        transition-delay: 0.4s;
+    }
+    
+    .asistent_group .box_asistent .controls_input {
+        width: 70vw;
+    }
+    
+    /* Caja de Respuestas */
+    .asistent_group .box_asistent .output_messages {
+        --bottom_position: 22vh;
+        bottom: var(--bottom_position);
+        max-height: calc(88vh - var(--bottom_position));
+    }
+        
+    .asistent_group .box_asistent .output_messages .chat_msg.user_submit {
+        max-width: 30vw;
+    }
+    
+    .asistent_group .box_asistent .output_messages .chat_msg.asistent_response {
+        margin-right: 20vw;
+    }
+    
+    .asistent_group .box_asistent .output_messages .chat_msg.visible {
+        margin-block: 1rem;
+    }
 }
 
 /*###################### Mask ######################*/
