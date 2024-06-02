@@ -1,0 +1,321 @@
+{% extends 'widget.html' %}
+{% load static %}
+{% block title %}Mapa de la UTC 🗺️{% endblock %}
+{% block extra_head %}
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+<style>
+    #map { 
+        height: 100vh; 
+        width: 100%;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<main class="full_page" id='map'>
+</main>
+{% endblock %}
+
+{% block scripts_end %}
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+<script>
+    var lng = -100.93662;
+    var lat = 25.55707;
+
+    var map = L.map('map').setView([lat, lng], 16);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+    }).addTo(map);
+
+    // coordenadas del edificio 4
+    var polygon1 = L.polygon([
+        [25.55661,-100.93688],
+        [25.55633,-100.93647],
+        [25.55613,-100.93662],
+        [25.55642,-100.93703]
+    ], {
+        color: 'red',
+        fillColor: '#f03',
+        fillOpacity: 0.5
+    }).addTo(map);
+
+    var imageUrl1 = "{% static 'img/qr_2.png' %}";
+
+    // Construir el contenido del popup con la imagen
+    var popupContent1 = "<img src='" + imageUrl1 + "' alt='qr' class='img-fluid' />";
+    polygon1.bindPopup(popupContent1);
+
+    // Coordenadas del Edificio del Centro de Idiomas/ Cultural
+    var polygon2 = L.polygon([
+        [25.55715,-100.93684],
+        [25.55742,-100.93724],
+        [25.55757,-100.93711],
+        [25.55731,-100.93670]
+    ], {
+        color: 'blue',
+        fillColor: '#00f',
+        fillOpacity: 0.5
+    }).addTo(map);
+
+    var imageUrl2 = "{% static 'img/qr_2.png' %}";
+
+    // Construir el contenido del popup con la imagen
+    var popupContent2 = "<img src='" + imageUrl2 + "' alt='qr' class='img-fluid' />";
+    polygon2.bindPopup(popupContent2);
+
+     // Coordenadas del Laboratorio 7B
+    var polygon3 = L.polygon([
+    [25.55704,-100.93644],
+    [25.55718,-100.93631],
+    [25.55694,-100.93593],
+    [25.55679,-100.93606]
+], {
+    color: 'red',
+    fillColor: '#f03',
+    fillOpacity: 0.5
+}).addTo(map);
+
+var imageUrl3 = "{% static 'img/qr_2.png' %}";
+
+// Construir el contenido del popup  con la imagen
+var popupContent3 = "<img src='" + imageUrl3 + "' alt='qr' class='img-fluid' />";
+polygon3.bindPopup(popupContent3);
+
+ // Coordenadas de Vinculacion
+var polygon4 = L.polygon([
+    [25.55813,-100.93653],
+    [25.55794,-100.93623],
+    [25.55765,-100.93646],
+    [25.55785,-100.93676],
+], {
+    color: 'red',
+    fillColor: '#f03',
+    fillOpacity: 0.5
+}).addTo(map);
+
+var imageUrl4 = "{% static 'img/qr_2.png' %}";
+
+// Construir el contenido del popup  con la imagen
+var popupContent4 = "<img src='" + imageUrl4 + "' alt='qr' class='img-fluid' />";
+polygon4.bindPopup(popupContent4);
+
+ // Coordenadas de Rectoria
+var polygon5 = L.polygon([
+    [25.55767,-100.93590],
+    [25.55748,-100.93559],
+    [25.55719,-100.93581],
+    [25.55741,-100.93612],
+], {
+    color: 'red',
+    fillColor: '#f03',
+    fillOpacity: 0.5
+}).addTo(map);
+
+var imageUrl5 = "{% static 'img/qr_2.png' %}";
+
+// Construir el contenido del popup  con la imagen
+var popupContent5 = "<img src='" + imageUrl5 + "' alt='qr' class='img-fluid' />";
+polygon5.bindPopup(popupContent5);
+
+ // Coordenadas de Biblioteca
+var polygon5 = L.polygon([
+    [25.55651,-100.93613],
+    [25.55639,-100.93594],
+    [25.55615,-100.93616],
+    [25.55628,-100.93633],
+], {
+    color: 'red',
+    fillColor: '#f03',
+    fillOpacity: 0.5
+}).addTo(map);
+
+var imageUrl5 = "{% static 'img/qr_2.png' %}";
+
+// Construir el contenido del popup con la imagen
+var popupContent5 = "<img src='" + imageUrl5 + "' alt='qr' class='img-fluid' />";
+polygon5.bindPopup(popupContent5);
+
+ // Coordenadas de Cafeteria UTC 2
+ var polygon6 = L.polygon([
+ [25.55616,-100.93610],
+ [25.55607,-100.93618],
+ [25.55602,-100.93613],
+ [25.55611,-100.93604],
+], {
+ color: 'red',
+ fillColor: '#f03',
+ fillOpacity: 0.5
+}).addTo(map);
+
+var imageUrl6 = "{% static 'img/qr_2.png' %}";
+
+// Construir el contenido del popup con la imagen
+var popupContent6 = "<img src='" + imageUrl6 + "' alt='qr' class='img-fluid' />";
+polygon6.bindPopup(popupContent6);
+
+ // Coordenadas de  Edificio 3 
+ var polygon7 = L.polygon([
+ [25.55611,-100.93582],
+ [25.55583,-100.93547],
+ [25.55566,-100.93564],
+ [25.55594,-100.93600],
+], {
+ color: 'red',
+ fillColor: '#f03',
+ fillOpacity: 0.5
+}).addTo(map);
+
+var imageUrl7 = "{% static 'img/qr_2.png' %}";
+
+// Construir el contenido del popup con la imagen
+var popupContent7 = "<img src='" + imageUrl7 + "' alt='qr' class='img-fluid' />";
+polygon7.bindPopup(popupContent7);
+
+ // Coordenadas del Domo 
+ var polygon8 = L.polygon([
+ [25.55552,-100.93498],
+ [25.55533,-100.93471],
+ [25.55515,-100.93486],
+ [25.55534,-100.93514],
+], {
+ color: 'red',
+ fillColor: '#f03',
+ fillOpacity: 0.5
+}).addTo(map);
+
+var imageUrl8 = "{% static 'img/qr_2.png' %}";
+
+// Construir el contenido del popup con la imagen
+var popupContent8 = "<img src='" + imageUrl8 + "' alt='qr' class='img-fluid' />";
+polygon8.bindPopup(popupContent8);
+
+ // Coordenadas del Edificio 2 
+ var polygon9 = L.polygon([
+ [25.55495,-100.93495],
+ [25.55471,-100.93458],
+ [25.55455,-100.93471],
+ [25.55479,-100.93508],
+], {
+ color: 'red',
+ fillColor: '#f03',
+ fillOpacity: 0.5
+}).addTo(map);
+
+var imageUrl9 = "{% static 'img/qr_2.png' %}";
+
+// Construir el contenido del popup con la imagen
+var popupContent9 = "<img src='" + imageUrl9 + "' alt='qr' class='img-fluid' />";
+polygon9.bindPopup(popupContent9);
+
+ // Coordenadas del Laboratorio 5 
+ var polygon10 = L.polygon([
+ [25.55527,-100.93468],
+ [25.55515,-100.93479],
+ [25.55503,-100.93462],
+ [25.55515,-100.93451],
+], {
+ color: 'red',
+ fillColor: '#f03',
+ fillOpacity: 0.5
+}).addTo(map);
+
+var imageUrl10 = "{% static 'img/qr_2.png' %}";
+
+// Construir el contenido del popup con la imagen
+var popupContent10 = "<img src='" + imageUrl10 + "' alt='qr' class='img-fluid' />";
+polygon10.bindPopup(popupContent10);
+
+ // Coordenadas de Cafeteria UTC 1 
+ var polygon11 = L.polygon([
+ [25.55501,-100.93408],
+ [25.55482,-100.93430],
+ [25.55473,-100.93421],
+ [25.55491,-100.93399],
+], {
+ color: 'red',
+ fillColor: '#f03',
+ fillOpacity: 0.5
+}).addTo(map);
+
+var imageUrl11 = "{% static 'img/qr_2.png' %}";
+
+// Construir el contenido del popup con la imagen
+var popupContent11 = "<img src='" + imageUrl11 + "' alt='qr' class='img-fluid' />";
+polygon11.bindPopup(popupContent11);
+
+ // Coordenadas del Edificio 1
+ var polygon12 = L.polygon([
+ [25.55527,-100.93369],
+ [25.55545,-100.93352],
+ [25.55575,-100.93393],
+ [25.55556,-100.93409],
+], {
+ color: 'red',
+ fillColor: '#f03',
+ fillOpacity: 0.5
+}).addTo(map);
+
+var imageUrl12 = "{% static 'img/qr_2.png' %}";
+
+// Construir el contenido del popup con la imagen
+var popupContent12 = "<img src='" + imageUrl12 + "' alt='qr' class='img-fluid' />";
+polygon12.bindPopup(popupContent12);
+
+ // Coordenadas del Laboratorio de PLC
+ var polygon13 = L.polygon([
+ [25.55573,-100.93424],
+ [25.55586,-100.93411],
+ [25.55615,-100.93447],
+ [25.55602,-100.93461],
+], {
+ color: 'red',
+ fillColor: '#f03',
+ fillOpacity: 0.5
+}).addTo(map);
+
+var imageUrl13 = "{% static 'img/qr_2.png' %}";
+
+// Construir el contenido del popup con la imagen
+var popupContent13 = "<img src='" + imageUrl13 + "' alt='qr' class='img-fluid' />";
+polygon13.bindPopup(popupContent13);
+
+ // Coordenadas de Caceta 1
+ var polygon14 = L.polygon([
+ [25.55818,-100.93681],
+ [25.55812,-100.93688],
+ [25.55808,-100.93683],
+ [25.55815,-100.93677],
+], {
+ color: 'red',
+ fillColor: '#f03',
+ fillOpacity: 0.5
+}).addTo(map);
+
+var imageUrl14 = "{% static 'img/qr_2.png' %}";
+
+// Construir el contenido del popup con la imagen
+var popupContent14 = "<img src='" + imageUrl14 + "' alt='qr' class='img-fluid' />";
+polygon14.bindPopup(popupContent14);
+
+ // Coordenadas de Caceta 2
+ var polygon14 = L.polygon([
+ [25.55621,-100.93470],
+ [25.55617,-100.93474],
+ [25.55609,-100.93465],
+ [25.55614,-100.93461],
+], {
+ color: 'red',
+ fillColor: '#f03',
+ fillOpacity: 0.5
+}).addTo(map);
+
+var imageUrl14 = "{% static 'img/qr_2.png' %}";
+
+// Construir el contenido del popup con la imagen
+var popupContent14 = "<img src='" + imageUrl14 + "' alt='qr' class='img-fluid' />";
+polygon14.bindPopup(popupContent14);
+</script>
+{% endblock %}
+{% comment %}  {% endcomment %}

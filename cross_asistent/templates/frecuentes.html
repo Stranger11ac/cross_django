@@ -1,0 +1,58 @@
+{% extends 'widget.html' %}
+{% load static %}
+{% block title %}Preguntas Frecuentes 💬{% endblock %}
+{% block content %}
+<main class="container container-fluid">
+    <!-- Jumbotron -->
+    <div class="p-5 text-center bg-body-tertiary">
+        <h1 class="mb-3">Preguntas Frecuentes <i class="fa-solid fa-clipboard-question ms-1"></i></h1>
+        <hr class="hr_divisor" />
+    </div>
+    <!-- Jumbotron -->
+    <div class="form-outline my-4" data-mdb-input-init>
+        <input type="text" id="searchInput" class="form-control form-control-lg"/>
+        <label class="form-label" for="searchInput">Buscar pregunta</label>
+    </div>
+
+    <div class="accordion" id="accordionExampleY">
+        {% for quest in quest_all %}
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="heading{{ quest.id }}">
+                <button
+                    data-mdb-collapse-init
+                    class="accordion-button"
+                    type="button"
+                    data-mdb-toggle="collapse"
+                    data-mdb-target="#quest-{{ quest.id }}"
+                    aria-expanded="true"
+                    aria-controls="quest-{{ quest.id }}"
+                >
+                    <i class="fas fa-question-circle fa-sm me-2 opacity-70"></i>{{ quest.pregunta }}
+                </button>
+            </h2>
+            <div
+                id="quest-{{ quest.id }}"
+                class="accordion-collapse collapse {% if quest.id == 1 %}show{% endif %}"
+                aria-labelledby="heading{{ quest.id }}"
+                data-mdb-parent="#accordionExampleY"
+            >
+                <div class="accordion-body">
+                    {{ quest.respuesta|truncatechars:150 }}
+                    <div>
+                        <a href="" class="btn btn_detail"
+                            >Saber mas <i class="fa-solid fa-up-right-from-square ms-1"></i
+                        ></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</main>
+
+{% include 'widget_footer.html' %}
+
+{% endblock %}
+{% block scripts_end %}
+<script src="{% static 'js/functions.js' %}"></script>
+{% endblock %}

@@ -1,0 +1,148 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en" data-mdb-theme="light">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+        <link rel="icon" href="{% static 'img/UTC_icono.ico' %}" />
+        <title>{% block title %}TITULO{% endblock %} | Asistente UTC</title>
+
+        <link rel="preload" href="{% static 'css/mdb.min.css' %}" as="style" />
+        <link rel="preload" href="{% static 'css/fontawesome-6.5.2.css' %}" as="style" />
+        <link rel="stylesheet" href="https://necolas.github.io/normalize.css/8.0.0/normalize.css" />
+
+        {% block extra_head %}{% endblock %}
+
+        <link rel="stylesheet" href="{% static 'css/mdb.min.css' %}" />
+        <link rel="stylesheet" href="{% static 'css/fontawesome-6.5.2.css' %}" />
+        <link rel="stylesheet" href="{% static 'css/styles.css' %}" />
+    </head>
+    <body>
+        <!-- <body data-mdb-theme="dark"> -->
+        <nav class="navbar navbar-expand-lg navbar-light bg-body-tertiary">
+            <div class="container container-fluid">
+                <a class="navbar-brand" {% block link_home %}href="/"{% endblock %}>
+                    <img src="{% static 'img/UTC_logo-plano.webp' %}" alt="UTC logo" />
+                </a>
+                <button
+                    data-mdb-collapse-init
+                    class="navbar-toggler"
+                    type="button"
+                    data-mdb-target="#navbarText"
+                    aria-controls="navbarText"
+                    aria-expanded="false"
+                    aria-label="Toggle navigation"
+                ></button>
+                <div class="collapse navbar-collapse position-absolute top-100 navbar-light bg-body-tertiary" id="navbarText">
+                    <ul class="navbar-nav ms-auto mb-lg-0 px-2 px-lg-0">
+                        {% block link_start-extra %}{% endblock %}
+                        {% block link_default %}
+                        <li class="nav-item">
+                            <a
+                                class="btn {% if active_page == 'inicio' %}btn_secondary{% else %}btn_detail{% endif %} m-1 my-lg-0 d-block"
+                                href="/"
+                                >Inicio <i class="fa-solid fa-house-chimney ms-1"></i
+                            ></a>
+                        </li>
+                        <li class="nav-item">
+                            <a
+                                class="btn {% if active_page == 'faq' %}btn_secondary{% else %}btn_detail{% endif %} m-1 my-lg-0 d-block"
+                                href="{% url 'faq' %}"
+                                >Preguntas <i class="fa-solid fa-clipboard-question ms-1"></i
+                            ></a>
+                        </li>
+                        <li class="nav-item">
+                            <a
+                                class="btn {% if active_page == 'blog' %}btn_secondary{% else %}btn_detail{% endif %} m-1 my-lg-0 d-block"
+                                href="{% url 'blog' %}"
+                                >Blog<i class="fa-solid fa-calendar-days ms-1"></i
+                            ></a>
+                        </li>
+                        <li class="nav-item">
+                            <a
+                                class="btn {% if active_page == 'map' %}btn_secondary{% else %}btn_detail{% endif %} m-1 my-lg-0 d-block"
+                                href="{% url 'map' %}"
+                                >Mapa<i class="fa-solid fa-map-location-dot ms-1"></i
+                            ></a>
+                        </li>
+                        <li class="nav-item">
+                            <div class="dropdown">
+                                <a
+                                    class="btn btn_detail m-1 my-lg-0 d-block dropdown-toggle"
+                                    href=""
+                                    role="button"
+                                    id="dropdownMenuLink"
+                                    data-mdb-dropdown-init
+                                    data-mdb-ripple-init
+                                    aria-expanded="false"
+                                >
+                                    Otros <i class="fa-solid fa-users ms-1"></i>
+                                </a>
+
+                                <ul class="dropdown-menu mx-100" aria-labelledby="dropdownMenuLink">
+                                    <li>
+                                        <a
+                                            class="dropdown-item {% if active_page|default:'' == 'calendario' %}active{% endif %}"
+                                            aria-current="true"
+                                            >Calendario Escolar</a
+                                        >
+                                    </li>
+                                    <li>
+                                        <a
+                                            class="dropdown-item {% if active_page|default:'' == 'tramites' %}active{% endif %}"
+                                            aria-current="true"
+                                            >Tramites</a
+                                        >
+                                    </li>
+                                    <li>
+                                        <a
+                                            class="dropdown-item {% if active_page|default:'' == 'becas' %}active{% endif %}"
+                                            aria-current="true"
+                                            >Becas</a
+                                        >
+                                    </li>
+                                    <li>
+                                        <a
+                                            class="dropdown-item {% if active_page|default:'' == 'ofedu' %}active{% endif %}"
+                                            aria-current="true"
+                                            >Oferta Educativa</a
+                                        >
+                                    </li>
+                                    <li>
+                                        <a
+                                            href="{% url 'about' %}"
+                                            class="dropdown-item {% if active_page|default:'' == 'about' %}active{% endif %}"
+                                            aria-current="true"
+                                            >Acerca de</a
+                                        >
+                                    </li>
+                                    <li>
+                                        <a
+                                            href="{% url 'singin' %}"
+                                            class="dropdown-item {% if active_page|default:'' == 'singin' %}active{% endif %}"
+                                            aria-current="true"
+                                            >Acceder</a
+                                        >
+                                    </li>
+                                </ul>
+                            </div>
+                        </li>
+                        {% endblock %}
+                        {% block link_end-extra %}{% endblock %}
+                    </ul>
+                </div>
+            </div>
+        </nav>
+
+        {% block content %}{% endblock %}
+
+        <script src="{% static 'js/jquery.min.js' %}"></script>
+        <script src="{% static 'js/mdb.umd.min.js' %}"></script>
+        <script src="{% static 'js/sweetalert11.min.js' %}"></script>
+        <script src="{% static 'js/settings.js' %}"></script>
+
+        {% block scripts_end %} {% endblock %}
+    </body>
+</html>

@@ -1,0 +1,80 @@
+{% extends 'widget.html' %}
+{% block title %}Administracion | Iniciar Sesion{% endblock %}
+{% block content %}
+<!-- Se modificoc la parte del inicio de sesion para los usuarios que vayan a entrar -->
+<main class="container container-fluid">
+    <div class="p-5 text-center">
+        <h1 class="mb-3">Acceder</h1>
+        <hr class="hr_divisor" />
+    </div>
+    <section class="mx-auto">
+      <div class="container">
+        <div class="row justify-content-center">
+          <div class="col-xl-5 col-md-8">
+            <form id="singinForm" method="POST">
+              {% csrf_token %} 
+              <!-- user input -->
+              <div class="form-outline mb-4" data-mdb-input-init>
+                <input type="text" id="username" name="username" class="form-control" />
+                <label class="form-label" for="username">Usuario</label>
+              </div>
+
+              <!-- Password input -->
+              <div class="form-outline mb-4" data-mdb-input-init>
+                <input type="password" id="password" name="password" class="form-control" />
+                <label class="form-label" for="password">Password</label>
+              </div>
+              <!-- Submit button -->
+              <button type="submit" class="btn btn-primary btn-block" data-mdb-ripple-init>Entrar</button>
+              <p class="text-center mt-3"> <a class="text_detail" href="{% url 'singup' %}">Registrate</a></p>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+</form>
+</main>
+
+{% include 'widget_footer.html' %}
+{% endblock %}
+{% block scripts_end %}
+<script>
+    document.getElementById('singinForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const signinForm = e.target;
+        const formData = new FormData(signinForm);
+        const timerOut = 8000;
+
+        fetch(signinForm.action, {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+                'X-CSRFToken': signinForm.querySelector('[name=csrfmiddlewaretoken]').value
+            }
+        })
+        .then(response => {
+            if (!response.ok) {
+                return response.json().then(data => {
+                    throw new Error(data.message || 'Error desconocido');
+                });
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.success) {
+                window.location.href = "{% url 'dashb_admin' %}"
+            } else {
+                alertSToast('top', timerOut+2000, 'warning', data.message);
+            }
+        })
+        .catch(error => {
+            console.error('😥 Error:', error);
+            errorMessage = error.message || 'Ocurrió un error. Intente nuevamente. 😥';
+            alertSToast('center', timerOut+3000, 'error', errorMessage);
+        });
+    });
+</script>
+{% endblock %}

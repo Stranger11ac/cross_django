@@ -1,0 +1,107 @@
+{% extends 'widget.html' %}
+{% block title %}Administracion | Formulario de Registro{%endblock%}
+{%block content%}
+<!-- se modifico los styles, se agregaron nuevos campos para el registro de usuarios-->
+<main class="container container-fluid">
+    <div class="p-5 text-center">
+        <h1 class="mb-3">Registrar Usuario:</h1>
+        <hr class="hr_divisor" />
+    </div>
+    <section class="mx-auto">
+        <div class="card text-center col-md m-3 mt-5">
+            <div class="">
+                <form id="signupForm" method="POST"> 
+                    {% csrf_token %}
+                    <header>
+                            <div class="container">
+                              <div class="row justify-content-center">
+                                <div class="col-xl-5 col-md-8">
+                                  <form class="bg-white rounded shadow-5-strong p-5" method="POST">
+                                    <!-- user input -->
+                                    <div class="form-outline mb-4" data-mdb-input-init>
+                                      <input type="text" id="username" name="username" class="form-control" />
+                                      <label class="form-label" for="username">Usuario</label>
+                                    </div>
+                                    <!-- first name input -->
+                                    <div class="form-outline mb-4" data-mdb-input-init>
+                                        <input type="text" id="first_name" name="first_name" class="form-control" />
+                                        <label class="form-label" for="first_name">Nombre</label>
+                                      </div>
+                                    <!-- last name input-->
+                                    <div class="form-outline mb-4" data-mdb-input-init>
+                                        <input type="text" id="last_name" name="last_name" class="form-control" />
+                                        <label class="form-label" for="last_name">Apellido</label>
+                                      </div>
+                                    <!-- Password input -->
+                                    <div class="form-outline mb-4" data-mdb-input-init>
+                                      <input type="password" id="password1" name="password1" class="form-control" />
+                                      <label class="form-label" for="password1">Contraseña</label>
+                                    </div>
+                
+                                    <div class="form-outline mb-4" data-mdb-input-init>
+                                        <input type="password" id="password2" name="password2" class="form-control" />
+                                        <label class="form-label" for="password2">Confirma la Contraseña</label>
+                                      </div>
+                                    <!-- Submit button -->
+                                    <button type="submit" class="btn btn-primary btn-block" data-mdb-ripple-init>Registrarse</button>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </header>
+                </form>
+            </div>
+        </div>
+    </section>
+</main>
+
+{% include 'widget_footer.html' %}
+{% endblock %}
+
+{% block scripts_end %}
+
+<script>
+    document.getElementById('signupForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const signupForm = e.target;
+        const formData = new FormData(signupForm);
+        const timerOut = 8000;
+
+        fetch(signupForm.action, {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+                'X-CSRFToken': signupForm.querySelector('[name=csrfmiddlewaretoken]').value
+            }
+        })
+        .then(response => {
+            if (!response.ok) {
+                return response.json().then(data => {
+                    throw new Error(data.message || 'Error desconocido');
+                });
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.success) {
+                signupForm.reset();
+                alertSToast('center', timerOut+4000, 'success', data.message, function() {
+                    window.location.href = "{% url 'singin' %}"
+                });
+            } else {
+                errorMessage = data.message;
+                alertSToast('top', timerOut+2000, 'warning', errorMessage);
+            }
+        })
+        .catch(error => {
+            console.error('😥 Error:', error);
+            errorMessage = error.message || 'Ocurrió un error. Intente nuevamente. 😥';
+            alertSToast('top', timerOut+3000, 'error', errorMessage, function() {
+                signupForm.reset();
+            });
+        });
+    });
+</script>
+{% endblock %}
