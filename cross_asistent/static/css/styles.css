@@ -345,13 +345,13 @@ main.main_anchor {
 }
 
 .asistent_group.open .box_asistent #asistent_model {
-    height: 40vh;
+    height: 30vh;
     margin: 0 0 15vh 5%;
 }
 
 .asistent_group.open.open_keyboard .box_asistent #asistent_model {
     width: 30vw;
-    margin-bottom: 10vh;
+    margin-bottom: 16vh;
 }
 
 .asistent_group .box_asistent .box_asistent_controls {
@@ -422,36 +422,60 @@ main.main_anchor {
     transition-delay: 0s;
 }
 
+.asistent_group .box_asistent .controls_input textarea {
+    /* field-sizing: content; */
+    height: 115px;
+    padding-right: 40px;
+    scrollbar-color: transparent;
+}
+
 .asistent_group.open.open_keyboard .box_asistent .controls_input {
     transition-delay: 0.6s;
     opacity: 1;
     transform: scaleY(1);
 }
 
+/* Caja de Respuestas */
 .asistent_group .box_asistent .output_messages{
+    --bottom_position: 42vh;
     position: absolute;
     width: inherit;
+    max-height: calc(88vh - var(--bottom_position));
+    overflow-y: scroll;
     padding: 0 5%;
-    top: 0;
-    opacity: 0;
-    visibility: hidden;
-    background-color: #02913b64;
+    bottom: var(--bottom_position);
+    scrollbar-width: none;
 }
 
-.asistent_group .box_asistent .output_messages .chat_msg{
+.asistent_group .box_asistent .output_messages .output_block {
+    display: flex;
+    justify-content: flex-end;
+    padding-block: 1rem;
+}
+.asistent_group .box_asistent .output_messages .chat_msg {
     width: fit-content;
-    padding: 0.3rem 0.6rem;
+    padding: 0.3rem 0.8rem;
+    border: none;
+    border-radius: 20px;
 }
 
-.asistent_group .box_asistent .output_messages .chat_msg.user_submit{
-    border-bottom-right-radius: 0 !important;
+.asistent_group .box_asistent .output_messages .chat_msg.user_submit {
+    border-bottom-right-radius: calc(var(--border-radius) /3) !important;
+    margin-left: 40px;
 }
 
-.asistent_group .box_asistent .output_messages .chat_msg.asistent_response{
-    border-bottom-left-radius: 0 !important;
+.asistent_group .box_asistent .output_messages .chat_msg.asistent_response {
+    border-bottom-left-radius: calc(var(--border-radius) /3) !important;
+    margin-right: 40px;
+    margin-block: 5px;
 }
 
-/* Mask */
+.asistent_group .box_asistent .output_messages .chat_msg.asistent_response small {
+    opacity: 0.3;
+    font-size: 0.6rem;
+}
+
+/*###################### Mask ######################*/
 .mask_dark{
     background: linear-gradient(to bottom, hsla(0, 0%, 0%, 0), hsla(0, 0%, 0%, 0.5) 70%);
 }
