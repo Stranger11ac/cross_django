@@ -7,6 +7,7 @@ from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.cache import never_cache
 
+# before changes OPENAI
 from django.views.decorators.csrf import csrf_exempt
 from django.conf import settings
 import openai
@@ -15,7 +16,7 @@ import os
 from .forms import crearTarea
 from . import models
 
-# openai.api_key = settings.OPENAI_API_KEY
+openai.api_key = settings.OPENAI_API_KEY
 
 # Create your views here.
 def index(request):
