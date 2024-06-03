@@ -13,7 +13,6 @@ $(document).ready(function () {
         }
 
         input.on("input", filtertable);
-
     } catch (error) {
         console.log("Error Inesperado: ", error);
         alertSToast('top', 8000, 'error', '😥 Ah ocurrido un error en el filtro de busqueda. Code:#CC320');

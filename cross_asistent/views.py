@@ -10,12 +10,14 @@ from django.views.decorators.cache import never_cache
 from django.views.decorators.csrf import csrf_exempt
 from django.conf import settings
 import openai
+import os
 
 from .forms import crearTarea
 from . import models
 
-openai.api_key = settings.OPENAI_API_KEY
+# openai.api_key = settings.OPENAI_API_KEY
 
+# Create your views here.
 def index(request):
     banners_all = models.Banners.objects.all()
     return render(request, 'index.html', {
@@ -28,38 +30,34 @@ def index(request):
 def ask(request):
     if request.method == 'POST':
         questionPOST = request.POST.get('question')
-        # Obtener todas las preguntas y respuestas de la base de datos
-        all_faqs = models.Preguntas.objects.all()
-        context = ""
-        total_tokens = ""
-        completion_tokens = ""
-        for faq in all_faqs:
-            context += f"Question: {faq.pregunta}\nAnswer: {faq.respuesta}\n\n"
-        # Si hay preguntas en la base de datos, utilizarlas como contexto
-        if context:
+
+        # Buscar en la base de datos la información relevante
+        faqs = models.Preguntas.objects.filter(pregunta__icontains=questionPOST)
+        if faqs.exists():
+            # Si se encuentra una pregunta en la base de datos, usar su respuesta
+            answer = faqs.first().respuesta
+        else:
+            answer = None
+        if not answer:
+            # Si no se encuentra una respuesta en la base de datos, usar OpenAI para generar una respuesta
+            context = "No relevant information found in the database."
             response = openai.ChatCompletion.create(
                 model="gpt-3.5-turbo",
                 messages=[
-                    {"role": "system",
-                     "content": "You are a helpful assistant."},
-                    {"role": "user",
-                     "content": context + f"\nQuestion: {questionPOST}\nAnswer:"}
+                    {"role": "system", "content": "You are a helpful assistant."},
+                    {"role": "user", "content": f"Here is some context: {context} Now, answer this question: {questionPOST}"},
                 ],
-                max_tokens=150,
-                temperature=0.5,
-                top_p=1,
-                frequency_penalty=0,
-                presence_penalty=0
+                max_tokens=150
             )
-            answer = response.choices[0].message['content'].strip()
             total_tokens = response["usage"]["total_tokens"]
-            completion_tokens = response["usage"]["completion_tokens"]
-            answer = answer.replace('\n', '<br>')
+            try:
+                answer = response['choices'][0]['message']['content'].strip()
+            except KeyError:
+                answer = "No se pudo obtener la respuesta del servidor."
         else:
-            answer = "No se encontraron conincidencias en la base de datos."
-            total_tokens = "0"
-            completion_tokens = "😅"
-        return JsonResponse({'answer': answer, 'tokens': total_tokens, 'compltokens': completion_tokens})
+            # Si se encontró una respuesta en la base de datos, usarla directamente
+            pass
+        return JsonResponse({'answer': answer, 'tokens':total_tokens})
     return JsonResponse({'error': 'Petición inválida'}, status=400)
 
 

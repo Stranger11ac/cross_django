@@ -65,12 +65,11 @@
                 >
                 <!-- autoplay
                     shadow-intensity="1"
-                    shadow-intensity="1"
                 animation-name="Idle" -->
             </model-viewer>
             <div class="box_asistent_controls">
                 <div class="controls_buttons">
-                    <button type="button" class="btn btn_controls btn_secondary controls_btn_keyboard toggle_controls">
+                    <button type="button" class="btn btn_controls btn_secondary controls_btn_keyboard">
                         <i class="fa-regular fa-keyboard"></i>
                     </button>
                     <button type="button" class="btn btn_controls btn_secondary controls_btn_microphone">
@@ -84,23 +83,30 @@
             <form id="chatForm" class="controls_input" method="POST">
                 <div class="position-relative bottom-0 end-0">
                     <div class="form-outline" data-mdb-input-init>
-                        <textarea class="form-control bg-body-tertiary" id="question" name="question" required maxlength="200"></textarea>
+                        <textarea class="form-control bg-body-tertiary" id="question" name="question" rows="4" required></textarea>
                         <label class="form-label bg-body-tertiary" for="question">Haz una pregunta:</label>
                     </div>
-                    <div class="controls_input-buttons position-absolute top-0 end-0">
-                        <button type="button" id="closeChat" class="btn btn_secondary btn-floating btn-sm controls_btn_close">
-                            <i class="fa-solid fa-xmark"></i>
-                        </button>
-                        <button type="button" id="closeInput" class="btn btn_secondary btn-floating btn-sm toggle_controls">
-                            <i class="fa-solid fa-microphone"></i>
-                        </button>
-                        <button type="submit" class="btn btn_detail btn-floating">
-                            <i class="fa-solid fa-paper-plane"></i>
-                        </button>
+                    <button type="submit" class="btn btn_detail btn-floating position-absolute bottom-0 end-0">
+                        <i class="fa-solid fa-paper-plane"></i>
+                    </button>
+                    <div id="closeChat" class="btn btn_secondary btn-floating btn-sm position-absolute top-0 end-0">
+                        <i class="fa-solid fa-xmark"></i>
                     </div>
                 </div>
             </form>
-            <div class="output_messages" id="output"></div>
+            <div class="output_messages" id="output">
+                <div>
+                    <div class="text-end my-3">
+                        <span class="btn_secondary rounded-pill chat_msg user_submit" id="userQuest">
+                            Esta es una pregunta muy real
+                        </span>
+                    </div>
+                    <div class="btn_detail rounded-pill chat_msg asistent_response">
+                        <span id="answer">Una respuesta ala pregunta real...</span>
+                        <small id="tokensID" class="text-muted">205</small>
+                    </div>
+                </div>
+            </div>
         </div>
     </section>
 </main>
@@ -125,13 +131,14 @@
         </div>
     </div>
 </div>
+
+
 {% endblock %}
 
 {% block scripts_end %}
 <script src="{% static 'js/owl-carousel.min.js' %}"></script>
 <script src="{% static 'js/swiper.min.js' %}"></script>
 <script src="{% static 'js/custom.js' %}"></script>
-<script src="{% static 'js/functions.js' %}"></script>
 <script>
     $(document).ready(function () {
         try {
@@ -140,15 +147,17 @@
                 $(".btn_controls").addClass('btn_detail').removeClass('btn_secondary');
                 $("#btn_controls_icon").removeClass('fa-comment').addClass('fa-microphone');
             });
-            
-            $(".toggle_controls").click(() => {
-                $(".asistent_group.open").toggleClass('close_controls open_keyboard open_controls');
-                // setTimeout(function() {
-                //     $('.controls_input #question').focus();
-                // }, 5000);
+            $(".controls_btn_close").click(() => {
+                $(".asistent_group").removeClass('open open_controls bg-body-tertiary');
+                $(".btn_controls").removeClass('btn_detail').addClass('btn_secondary');
+                $("#btn_controls_icon").addClass('fa-comment').removeClass('fa-microphone');
+            });
+            $(".controls_btn_keyboard").click(() => {
+                $(".asistent_group.open").addClass('close_controls open_keyboard').removeClass('open_controls');
+                // $('.controls_input #question').focus();
             });
 
-            $(".controls_btn_close").click(() => {
+            $("#closeChat").click(() => {
                 $(".asistent_group").removeClass('open open_controls close_controls open_keyboard bg-body-tertiary');
                 $(".btn_controls").removeClass('btn_detail').addClass('btn_secondary');
                 $("#btn_controls_icon").addClass('fa-comment').removeClass('fa-microphone');
@@ -163,7 +172,6 @@
 <script>
     document.getElementById('chatForm').addEventListener('submit', function(event) {
         event.preventDefault();
-        const output = document.getElementById('output');
         const question = document.getElementById('question').value;
 
         fetch('/ask/', {
@@ -178,48 +186,9 @@
         })
         .then(response => response.json())
         .then(data => {
-            var tokendid = generarCadenaAleatoria(5);
-            var datatokend = tokendid;
-            console.log(`var:${datatokend}`);
-            const valID = `${datatokend}_${data.compltokens}`;
-
-            const htmlBlock = `
-                <div class="output_block">
-                    <div class="btn_secondary chat_msg user_submit" data-tokeid="${valID}">
-                        ${question}
-                    </div>
-                </div>
-                <div class="btn_detail chat_msg asistent_response" data-tokeid="${valID}">
-                    <span>${data.answer}</span>
-                    <small>${data.tokens} - ${data.compltokens}</small>
-                </div>
-            `;
-
-            output.insertAdjacentHTML('beforeend', htmlBlock);
-            this.reset();
-
-            const user_submit = document.querySelector(`.user_submit[data-tokeid="${valID}"]`);
-            const asistent_response = document.querySelector(`.asistent_response[data-tokeid="${valID}"]`);
-
-            setTimeout(function() {
-                user_submit.classList.add('visible');
-            }, 500);
-            setTimeout(function() {
-                asistent_response.classList.add('visible');
-            }, 2000);
+            document.getElementById('answer').innerText = data.answer;
+            document.getElementById('tokensID').innerText = data.tokens;
         });
     });
-
-    document.addEventListener("DOMContentLoaded", function() {
-        output.scrollTop = output.scrollHeight;
-    });
-
-    output.scrollTop = output.scrollHeight;
-
-    var observer = new MutationObserver(function() {
-        output.scrollTop = output.scrollHeight;
-    });
-
-    observer.observe(output, { childList: true, subtree: true });
 </script>
 {% endblock %}
