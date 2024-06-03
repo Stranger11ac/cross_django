@@ -23,6 +23,7 @@ def index(request):
         'active_page': 'inicio'
     })
     
+    # CORRECT
 @csrf_exempt
 def ask(request):
     if request.method == 'POST':

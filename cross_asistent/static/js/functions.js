@@ -20,7 +20,7 @@ $(document).ready(function () {
     }
 });
 
-
+// correct
 function generarCadenaAleatoria(longitud) {
     var caracteres = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
     var cadenaAleatoria = '';
