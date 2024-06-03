@@ -125,6 +125,8 @@ def singinpage(request):
             return JsonResponse({'success': False, 'message': 'Revisa el usuario o contraseña 😅. Verifica que tu cuenta esté habilitada'}, status=400)
         else:
             login(request, user)
+            if (request, user.is_staff):
+                return JsonResponse({'success': 'prog'}, status=200)
             return JsonResponse({'success': True}, status=200)
     else:
         return render(request, 'administracion/singin.html', {
@@ -184,5 +186,7 @@ def tareaView(request, tarea_id):
     })
 
 # def para la vista administrador
+@login_required
+@never_cache
 def vista_admin (request):
     return render (request,'administracion/vista_admin.html')
