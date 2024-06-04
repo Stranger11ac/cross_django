@@ -15,13 +15,13 @@
               {% csrf_token %} 
               <!-- user input -->
               <div class="form-outline mb-4" data-mdb-input-init>
-                <input type="text" id="username" name="username" class="form-control" />
+                <input type="text" id="username" name="username" required class="form-control" />
                 <label class="form-label" for="username">Usuario</label>
               </div>
 
               <!-- Password input -->
               <div class="form-outline mb-4" data-mdb-input-init>
-                <input type="password" id="password" name="password" class="form-control" />
+                <input type="password" id="password" name="password" required class="form-control" />
                 <label class="form-label" for="password">Password</label>
               </div>
               <!-- Submit button -->
@@ -65,9 +65,13 @@
         })
         .then(data => {
             if (data.success) {
-                window.location.href = "{% url 'dashb_admin' %}"
+                window.location.href = "{% url 'vista_admin' %}"
             } else {
+              if(data.prog_admin){
+                window.location.href = "{% url 'vista_programador' %}"
+              }else{
                 alertSToast('top', timerOut+2000, 'warning', data.message);
+              }
             }
         })
         .catch(error => {

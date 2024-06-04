@@ -13,6 +13,6 @@ urlpatterns = [
     path('administracion/tarea/<int:tarea_id>/', views.tareaView, name='tareaView'),
 # se agrego la url para la vista administrador
     path('administracion/vista_admin/', views.vista_admin, name='vista_admin'),
+    path('administracion/vista_programador/', views.vista_programador, name='vista_programador'),
     path('logout/', views.singoutpage, name='singout'),
-    path('ask/', views.ask, name='ask'),
 ]
