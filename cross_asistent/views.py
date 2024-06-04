@@ -1,11 +1,11 @@
 from django.shortcuts import render, redirect, get_object_or_404
+from django.urls import reverse  
 from django.contrib.auth import login, authenticate ,logout
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.cache import never_cache
 from django.contrib.auth.models import User
 from django.db import IntegrityError
 from django.http import JsonResponse
-from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 
 from django.views.decorators.csrf import csrf_exempt
 from django.conf import settings
@@ -68,9 +68,7 @@ def singuppage(request):
         else:
             return JsonResponse({'success': False, 'message': 'Datos incompletos 😅'}, status=400)
     else:
-        return render(request, 'administracion/singup.html', {
-            'form': UserCreationForm()
-        })
+        return render(request, 'administracion/singup.html')
 
 @never_cache
 def singinpage(request):
@@ -83,11 +81,14 @@ def singinpage(request):
             return JsonResponse({'success': False, 'message': 'Revisa el usuario o contraseña 😅. Verifica que tu cuenta esté habilitada'}, status=400)
         else:
             login(request, user)
+            if user.is_staff:
+                return JsonResponse({'success': False, 'prog_admin':True}, status=200)
+            if (request, user.is_staff):
+                return JsonResponse({'success': 'prog'}, status=200)
             return JsonResponse({'success': True}, status=200)
     else:
         return render(request, 'administracion/singin.html', {
-            'active_page': 'singin',
-            'form': AuthenticationForm()
+            'active_page': 'singin'
         })
 
 @login_required
@@ -141,5 +142,35 @@ def tareaView(request, tarea_id):
     })
 
 # def para la vista administrador
-def vista_admin (request):
-    return render (request,'administracion/vista_admin.html')
+@login_required
+@never_cache
+def vista_admin(request):
+    blogs_all = models.Articulos.objects.filter()
+    user = request.user
+    
+    context = {
+        'user': user,
+        'num_blogs': blogs_all.count(),  
+        'blogs_all': blogs_all, 
+    }
+
+    return render(request, 'administracion/vista_admin.html', context)
+
+@login_required
+@never_cache
+def vista_programador(request):
+  #  numero de blogs, preguntas y usuarios
+  num_blogs = models.Articulos.objects.filter().count()
+  num_preguntas = models.Preguntas.objects.filter().count()
+  user = request.user
+  users = User.objects.filter()
+  blogs_all = models.Articulos.objects.filter()
+  
+  return render(request, 'administracion/vista_programador.html', {
+      'num_blogs': num_blogs,
+      'num_preguntas': num_preguntas,
+      'user': user,  
+      'blogs_all': blogs_all,
+      'users': users,
+  
+  })

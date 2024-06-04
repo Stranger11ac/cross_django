@@ -3,12 +3,12 @@
 {% block extra_head %}
     {% if not user.is_authenticated %}
         <script>
-            window.location.href = "";
+            window.location.href = "{% url 'logout' %}";
         </script>
     {% endif %}
 {% endblock %}
 
-{% block link_home %}href="{% url 'dashb_admin' %}"{% endblock %}
+{% block link_home %}href="{% url 'vista_admin' %}"{% endblock %}
 
 {% block link_default %}
     {% include 'administracion/widget_links-admin.html' %}
@@ -18,7 +18,7 @@
 <main class="container container-fluid mb-5">
     <!-- Jumbotron -->
     <div class="p-5 text-center bg-body-tertiary">
-        <h1 class="mb-3">Vista administrador</h1>
+        <h4><p>Bienvenido {{ user.username }}</p></h4>
         <hr class="hr_divisor" />
     </div>
     <!-- Jumbotron -->
@@ -26,30 +26,26 @@
         <span class="text-danger">{{formError}}</span>
 
         <!-- Sección de Blogs -->
-        <div class="card text-center m-1">
-            <div class="card-header">Blogs</div>
-            <div class="card-body">
-                <div class="list-group list-group-light">
-                    {% for blog in blogs_all %}
-                    <li class="list-group-item px-3">
-                        <div class="d-flex justify-content-between">
-                            <div class="col-md">
-                                {{ blog.title }}
-                            </div>
-                            <div>
-                                <a href="" class="btn btn_detail btn-floating">
-                                    <i class="fa-solid fa-pencil fa-2x"></i>
-                                </a>
-                                <a href="" class="btn btn-danger btn-floating">
-                                    <i class="fa-regular fa-trash-can fa-2x"></i>
-                                </a>
-                            </div>
-                        </div>
-                    </li>
-                    {% endfor %}
-                </div>
+        <section>
+            <div class="text-center">
+                <h4><p>Total de Blogs subidos: {{ num_blogs }}</p></h4>
             </div>
-        </div>
+            <div class="row">
+        
+                {% for blog in blogs_all %}
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="card">
+                        <img src="" class="card-img-top" alt="">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ blog.titulo }}</h5>  <p class="card-text">
+                            </p>
+                            <a href="" class="btn btn-primary">Ver más</a>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            </section>
 
         <!-- Sección de Eventos -->
         <div class="card text-center m-1">
@@ -76,29 +72,5 @@
                 </div>
             </div>
         </div>
-    </section>
-
-    <!-- seccion de ver usuarios -->
-    <div class="card text-center m-1">
-        <div class="card-header">Usuarios registrados</div>
-        <div class="card-body">
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th scope="col">#</th>
-                        <th scope="col">Usuario</th>
-                        <th scope="col">Nombre</th>
-                        <th scope="col">Apellido</th>
-                        <th scope="col">Email</th>
-                        <th scope="col">Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    
-                    <!-- Más filas de usuarios aquí -->
-                </tbody>
-            </table>
-        </div>
-    </div>
     </section>
 {% endblock %}
