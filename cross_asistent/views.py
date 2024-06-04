@@ -1,20 +1,17 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login, authenticate ,logout
+from django.contrib.auth.decorators import login_required
+from django.views.decorators.cache import never_cache
 from django.contrib.auth.models import User
 from django.db import IntegrityError
 from django.http import JsonResponse
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
-from django.contrib.auth.decorators import login_required
-from django.views.decorators.cache import never_cache
 
 from django.views.decorators.csrf import csrf_exempt
 from django.conf import settings
-import openai
 
 from .forms import crearTarea
 from . import models
-
-openai.api_key = settings.OPENAI_API_KEY
 
 def index(request):
     banners_all = models.Banners.objects.all()
@@ -22,45 +19,6 @@ def index(request):
         'banners': banners_all,
         'active_page': 'inicio'
     })
-    
-@csrf_exempt
-def ask(request):
-    if request.method == 'POST':
-        questionPOST = request.POST.get('question')
-        # Obtener todas las preguntas y respuestas de la base de datos
-        all_faqs = models.Preguntas.objects.all()
-        context = ""
-        total_tokens = ""
-        completion_tokens = ""
-        for faq in all_faqs:
-            context += f"Question: {faq.pregunta}\nAnswer: {faq.respuesta}\n\n"
-        # Si hay preguntas en la base de datos, utilizarlas como contexto
-        if context:
-            response = openai.ChatCompletion.create(
-                model="gpt-3.5-turbo",
-                messages=[
-                    {"role": "system",
-                     "content": "You are a helpful assistant."},
-                    {"role": "user",
-                     "content": context + f"\nQuestion: {questionPOST}\nAnswer:"}
-                ],
-                max_tokens=150,
-                temperature=0.5,
-                top_p=1,
-                frequency_penalty=0,
-                presence_penalty=0
-            )
-            answer = response.choices[0].message['content'].strip()
-            total_tokens = response["usage"]["total_tokens"]
-            completion_tokens = response["usage"]["completion_tokens"]
-            answer = answer.replace('\n', '<br>')
-        else:
-            answer = "No se encontraron conincidencias en la base de datos."
-            total_tokens = "0"
-            completion_tokens = "😅"
-        return JsonResponse({'answer': answer, 'tokens': total_tokens, 'compltokens': completion_tokens})
-    return JsonResponse({'error': 'Petición inválida'}, status=400)
-
 
 def faq(request):
     questall = models.Preguntas.objects.all()
@@ -86,7 +44,7 @@ def about(request):
         'active_page': 'about'
     })
 
-# Administracion --------------------------------------------
+# Administracion ----------------------------------------------------------
 @never_cache
 def singuppage(request):
     if request.method == 'POST' and request.headers.get('X-Requested-With') == 'XMLHttpRequest':
@@ -101,7 +59,7 @@ def singuppage(request):
                 try:
                     newUser = User.objects.create_user(first_name=first_name, last_name=last_name  , username=username, password=password1, is_active=0)
                     newUser.save()
-                    login(request, newUser)
+                    # login(request, newUser)
                     return JsonResponse({'success': True, 'message': 'Usuario creado 🥳<br> Tu cuenta esta <u>INACTIVA</u>'}, status=200)
                 except IntegrityError:
                     return JsonResponse({'success': False, 'message': f'El usuario <u>{username}</u> ya existe 😯'}, status=400)
@@ -142,7 +100,6 @@ def singoutpage(request):
 @never_cache
 def dashbAdmin(request):
     errorMSG=''
-    # tareas = models.Tareas.objects.all()
     tareas = models.Tareas.objects.filter(propietario = request.user)
     if request.method == 'POST':
         try:
