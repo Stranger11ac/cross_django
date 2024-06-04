@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from django.urls import reverse  
+from django.urls import reverse
 from django.contrib.auth import login, authenticate ,logout
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.cache import never_cache
@@ -172,5 +172,4 @@ def vista_programador(request):
       'user': user,  
       'blogs_all': blogs_all,
       'users': users,
-  
   })
