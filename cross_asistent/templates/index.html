@@ -160,66 +160,9 @@
     });
 </script>
 
-<!-- <script>
+<script>
     document.getElementById('chatForm').addEventListener('submit', function(event) {
         event.preventDefault();
-        const output = document.getElementById('output');
-        const question = document.getElementById('question').value;
-
-        fetch('/ask/', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-                'X-CSRFToken': '{{ csrf_token }}'
-            },
-            body: new URLSearchParams({
-                'question': question
-            })
-        })
-        .then(response => response.json())
-        .then(data => {
-            var tokendid = generarCadenaAleatoria(5);
-            var datatokend = tokendid;
-            console.log(`var:${datatokend}`);
-            const valID = `${datatokend}_${data.compltokens}`;
-
-            const htmlBlock = `
-                <div class="output_block">
-                    <div class="btn_secondary chat_msg user_submit" data-tokeid="${valID}">
-                        ${question}
-                    </div>
-                </div>
-                <div class="btn_detail chat_msg asistent_response" data-tokeid="${valID}">
-                    <span>${data.answer}</span>
-                    <small>${data.tokens} - ${data.compltokens}</small>
-                </div>
-            `;
-
-            output.insertAdjacentHTML('beforeend', htmlBlock);
-            this.reset();
-
-            const user_submit = document.querySelector(`.user_submit[data-tokeid="${valID}"]`);
-            const asistent_response = document.querySelector(`.asistent_response[data-tokeid="${valID}"]`);
-
-            setTimeout(function() {
-                user_submit.classList.add('visible');
-            }, 500);
-            setTimeout(function() {
-                asistent_response.classList.add('visible');
-            }, 2000);
-        });
     });
-
-    document.addEventListener("DOMContentLoaded", function() {
-        output.scrollTop = output.scrollHeight;
-    });
-
-    output.scrollTop = output.scrollHeight;
-
-    var observer = new MutationObserver(function() {
-        output.scrollTop = output.scrollHeight;
-    });
-
-    observer.observe(output, { childList: true, subtree: true });
-</script> -->
+</script>
 {% endblock %}
