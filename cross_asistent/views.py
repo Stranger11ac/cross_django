@@ -296,7 +296,6 @@ def responder_preguntas(request):
     
     return redirect('vista_programador')
 
-# def para activar a los usuarios
 @login_required
 @never_cache
 def activar_usuario(request, user_id):
