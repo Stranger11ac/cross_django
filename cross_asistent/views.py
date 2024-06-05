@@ -29,24 +29,38 @@ def index(request):
     })
 
 def process_question(question):
-    # Preprocesamiento del texto
     lemmatizer = WordNetLemmatizer()
-    stop_words = set(stopwords.words('spanish'))  # Cambiar a 'english' si las preguntas están en inglés
+    stop_words = set(stopwords.words('spanish'))
     tokens = word_tokenize(question)
     tokens = [word.lower() for word in tokens if word.isalpha() and word not in stop_words]
     tokens = [lemmatizer.lemmatize(word) for word in tokens]
     
     return tokens
 
+def contains_keyword(tokens, keyword):
+    return keyword in tokens
+
 def find_answer(question):
     tokens = process_question(question)
     preguntasModel = models.Preguntas.objects.all()
     
     for pregunta in preguntasModel:
+        preguntaid = (pregunta.id)
         pregunta_tokens = process_question(pregunta.pregunta)
         if set(tokens).intersection(set(pregunta_tokens)):
             return pregunta.respuesta
-        
+    
+    if contains_keyword(tokens, 'horarios'):
+        # Aquí deberías devolver todas las respuestas relacionadas con el horario
+        horarios = [pregunta.respuesta for pregunta in preguntasModel if 'horario' in process_question(pregunta.pregunta)]
+        if horarios:
+            return "\n \n".join(horarios)
+        else:
+            return "Lo siento, no encontré información sobre los horarios."
+    
+    elif contains_keyword(tokens, 'hola'):
+        return "¡Hola! ¿Cómo puedo ayudarte hoy? Puedes preguntar sobre nuestros servicios, horarios, ubicación y más."
+    
     return "Lo siento, no encontré una respuesta a tu pregunta."
 
 def chat_view(request):
