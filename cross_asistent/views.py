@@ -165,6 +165,8 @@ def vista_programador(request):
   user = request.user
   users = User.objects.filter()
   blogs_all = models.Articulos.objects.filter()
+  preguntas = models.Preguntas.objects.filter()
+  preguntas_sin_responder = models.Preguntas.objects.filter(respuesta__isnull=True)
   
   return render(request, 'administracion/vista_programador.html', {
       'num_blogs': num_blogs,
@@ -172,4 +174,30 @@ def vista_programador(request):
       'user': user,  
       'blogs_all': blogs_all,
       'users': users,
+      'preguntas': preguntas,
+      'preguntas_sin_responder': preguntas_sin_responder,
   })
+
+# def para responder preguntas
+@login_required
+@never_cache
+def responder_preguntas(request):
+    if request.method == 'POST':
+        pregunta_id = request.POST.get('pregunta_id')
+        respuesta = request.POST.get('respuesta')
+        pregunta = models.Preguntas.objects.get(id=pregunta_id)
+        pregunta.respuesta = respuesta
+        pregunta.save()
+        return redirect('vista_programador')
+    
+    return redirect('vista_programador')
+
+# def para activar a los usuarios
+@login_required
+@never_cache
+def activar_usuario(request, user_id):
+    if request.user.is_staff:
+        user = User.objects.get(id=user_id)
+        user.is_active = True
+        user.save()
+    return redirect('vista_programador')
