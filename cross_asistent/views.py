@@ -281,3 +281,27 @@ def vista_programador(request):
         'blogs_all': blogs_all,
         'users': users,
     })
+
+# def para responder preguntas
+@login_required
+@never_cache
+def responder_preguntas(request):
+    if request.method == 'POST':
+        pregunta_id = request.POST.get('pregunta_id')
+        respuesta = request.POST.get('respuesta')
+        pregunta = models.Preguntas.objects.get(id=pregunta_id)
+        pregunta.respuesta = respuesta
+        pregunta.save()
+        return redirect('vista_programador')
+    
+    return redirect('vista_programador')
+
+# def para activar a los usuarios
+@login_required
+@never_cache
+def activar_usuario(request, user_id):
+    if request.user.is_staff:
+        user = User.objects.get(id=user_id)
+        user.is_active = True
+        user.save()
+    return redirect('vista_programador')
