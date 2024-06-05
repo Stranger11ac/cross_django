@@ -7,11 +7,19 @@ from django.contrib.auth.models import User
 from django.db import IntegrityError
 from django.http import JsonResponse
 
-from django.views.decorators.csrf import csrf_exempt
-from django.conf import settings
-
 from .forms import crearTarea
 from . import models
+
+import nltk
+from nltk.tokenize import word_tokenize
+from nltk.corpus import stopwords
+from nltk.stem import WordNetLemmatizer
+import string
+
+# Asegúrate de tener el siguiente código solo si no has descargado estos recursos antes
+nltk.download('punkt')
+nltk.download('stopwords')
+nltk.download('wordnet')
 
 def index(request):
     banners_all = models.Banners.objects.all()
@@ -19,6 +27,36 @@ def index(request):
         'banners': banners_all,
         'active_page': 'inicio'
     })
+
+def process_question(question):
+    # Preprocesamiento del texto
+    lemmatizer = WordNetLemmatizer()
+    stop_words = set(stopwords.words('spanish'))  # Cambiar a 'english' si las preguntas están en inglés
+    tokens = word_tokenize(question)
+    tokens = [word.lower() for word in tokens if word.isalpha() and word not in stop_words]
+    tokens = [lemmatizer.lemmatize(word) for word in tokens]
+    
+    return tokens
+
+def find_answer(question):
+    tokens = process_question(question)
+    preguntasModel = models.Preguntas.objects.all()
+    
+    for pregunta in preguntasModel:
+        pregunta_tokens = process_question(pregunta.pregunta)
+        if set(tokens).intersection(set(pregunta_tokens)):
+            return pregunta.respuesta
+        
+    return "Lo siento, no encontré una respuesta a tu pregunta."
+
+def chat_view(request):
+    if request.method == 'POST':
+        question = request.POST.get('question', '')
+        if question:
+            answer = find_answer(question)
+            return JsonResponse({'success': True, 'answer': answer})
+        return JsonResponse({'success': False, 'message': 'No se proporcionó ninguna pregunta.'})
+    return JsonResponse({'success': False, 'message': 'Método no permitido.'})
 
 def faq(request):
     questall = models.Preguntas.objects.all()
