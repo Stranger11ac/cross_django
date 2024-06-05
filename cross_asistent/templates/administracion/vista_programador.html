@@ -1,5 +1,5 @@
 {% extends 'widget.html' %}
-{% block title %}Inicio | Administración{% endblock %}
+{% block title %}Inicio | Programadores{% endblock %}
 {% block extra_head %}
     {% if not user.is_authenticated %}
         <script>
@@ -8,7 +8,7 @@
     {% endif %}
 {% endblock %}
 
-{% block link_home %}href="{% url 'dashb_admin' %}"{% endblock %}
+{% block link_home %}href="{% url 'vista_programador' %}"{% endblock %}
 
 {% block link_default %}
     {% include 'administracion/widget_links-admin.html' %}
@@ -92,7 +92,7 @@
     <br>
     <!-- Start your project here-->
     <div class="container my-5">
-      <section>
+      <>
         <!-- Carousel wrapper -->
         <div id="introCarousel" class="carousel slide carousel-fade shadow-2-strong" data-mdb-carousel-init>
           <!-- Indicators -->
@@ -101,7 +101,6 @@
             <li data-mdb-target="#introCarousel" data-mdb-slide-to="1"></li>
             <li data-mdb-target="#introCarousel" data-mdb-slide-to="2"></li>
           </div>
-      
           <!-- Inner -->
           <div class="carousel-inner">
             <!-- Single item -->
@@ -166,7 +165,7 @@
             <div class="row">
         
                 {% for blog in blogs_all %}
-                <div class="col-lg-4 col-md-6 mb-4">
+                <div class="col-lg-6 col-md-12 mb-4">
                     <div class="card">
                         <img src="" class="card-img-top" alt="">
                         <div class="card-body">
@@ -180,155 +179,77 @@
         
             </div>
             </section>
-          <!--Section: Cards-->
-          <section>
-            <div class="text-center">
-              <h4><p>Total de Preguntas: {{ num_preguntas }}</p></h4>
-            </div>
-            <!--Grid row-->
-            <div class="row">
-              <!--Grid column-->
-              <div class="col-lg-4 col-md-12 mb-4">
-                <div class="card mb-4">
-                  <div class="card-body">
-                    <h5 class="card-title">Card title</h5>
-                    <p class="card-text">
-                      Some quick example text to build on the card title and
-                      make up the bulk of the card's content.
-                    </p>
-                    <button type="button" class="btn btn-primary" data-mdb-ripple-init>
-                      Button
-                    </button>
-                  </div>
-                </div>
 
-                <div class="card bg-dark text-white shadow-1-strong">
-                  <img
-                    src="https://mdbootstrap.com/img/Photos/Horizontal/Nature/4-col/img%20(55).jpg"
-                    class="card-img"
-                    alt="..."
-                  />
-                  <div class="card-img-overlay">
-                    <h5 class="card-title">Card title</h5>
-                    <p class="card-text">
-                      This is a wider card with supporting text below as a
-                      natural lead-in to additional content. This content is a
-                      little bit longer.
-                    </p>
-                    <p class="card-text">Last updated 3 mins ago</p>
-                  </div>
+<section>
+    <div class="text-center">
+        <h4><p>Total de Preguntas: {{ num_preguntas }}</p></h4>
+    </div>
+    <div class="row">
+        <!-- Formulario para responder preguntas -->
+        <div class="col-lg-6 col-md-12 mb-4">
+            <form method="post" action="{}">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label for="pregunta" class="form-label">Selecciona una pregunta</label>
+                    <input list="preguntas" name="pregunta" id="pregunta" class="form-control">
+                    <datalist id="preguntas">
+                        {% for pregunta in preguntas %}
+                        <option value="{{ pregunta }}">{{ pregunta.pregunta }}</option>
+                        {% endfor %}
+                    </datalist>
                 </div>
-              </div>
-              <!--Grid column-->
-
-              <!--Grid column-->
-              <div class="col-lg-4 col-md-6 mb-4">
-                <div class="card">
-                  <div
-                    class="bg-image hover-overlay" data-mdb-ripple-init
-                    data-mdb-ripple-color="light"
-                  >
-                    <img
-                      src="https://mdbootstrap.com/img/new/standard/nature/111.jpg"
-                      class="img-fluid"
-                    />
-                    <a href="#!">
-                      <div
-                        class="mask"
-                        style="background-color: rgba(251, 251, 251, 0.15)"
-                      ></div>
-                    </a>
-                  </div>
-                  <div class="card-body">
-                    <h5 class="card-title">Card title</h5>
-                    <p class="card-text">
-                      Some quick example text to build on the card title and
-                      make up the bulk of the card's content.
-                    </p>
-                    <a href="#!" class="btn btn-primary" data-mdb-ripple-init>Button</a>
-                  </div>
+                <div class="mb-3">
+                    <label for="respuesta" class="form-label">Respuesta</label>
+                    <textarea class="form-control" id="respuesta" name="respuesta" rows="3"></textarea>
                 </div>
-              </div>
-              <!--Grid column-->
+                <button type="submit" class="btn btn-primary">Responder</button>
+            </form>
+        </div>
 
-              <!--Grid column-->
-              <div class="col-lg-4 col-md-6 mb-4">
-                <div class="card text-center mb-4">
-                  <div class="card-header">Featured</div>
-                  <div class="card-body">
-                    <h5 class="card-title">Special title treatment</h5>
-                    <p class="card-text">
-                      With supporting text below as a natural lead-in to
-                      additional content.
-                    </p>
-                    <a href="#" class="btn btn-primary" data-mdb-ripple-init>Button</a>
-                  </div>
-                  <div class="card-footer  text-muted">2 days ago</div>
-                </div>
-
-                <div class="card mb-3" style="max-width: 540px">
-                  <div class="row g-0">
-                    <div class="col-md-4">
-                      <img
-                        src="https://mdbcdn.b-cdn.net/wp-content/uploads/2020/06/vertical.jpg"
-                        alt="..."
-                        class="img-fluid"
-                      />
-                    </div>
-                    <div class="col-md-8">
-                      <div class="card-body">
-                        <h5 class="card-title">Card title</h5>
-                        <p class="card-text">
-                          This is a wider card with supporting text below as a
-                          natural lead-in to additional content. This content is
-                          a little bit longer.
-                        </p>
-                        <p class="card-text">
-                          <small class="text-muted"
-                            >Last updated 3 mins ago</small
-                          >
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <!--Grid column-->
-            </div>
-            <!--Grid row-->
-          </section>
-          <hr class="my-5" />
-
-          <!-- seccion de ver usuarios -->
-    <div class="card text-center m-1">
-      <div class="card-header">Usuarios registrados</div>
-      <div class="card-body">
-          <table class="table table-striped">
-              <thead>
-                <tr>
+        <!-- Lista de preguntas sin responder -->
+        <div class="col-lg-6 col-md-12 mb-4">
+            <h5>Preguntas sin responder</h5>
+            <ul class="list-group">
+                {% for pregunta in preguntas_sin_responder %}
+                <li class="list-group-item">{{ pregunta.pregunta }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+</section>
+   <!-- seccion de ver usuarios -->
+<div class="card text-center m-1">
+  <div class="card-header">Usuarios registrados</div>
+  <div class="card-body">
+      <table class="table table-striped">
+          <thead>
+              <tr>
                   <th>#</th>
                   <th>Usuario</th>
                   <th>Nombre</th>
                   <th>Apellido</th>
                   <th>Email</th>
                   <th>Acciones</th>
-                </tr>
-              </thead>
-              <tbody>
-                {% for user in users %}
-                <tr>
+              </tr>
+          </thead>
+          <tbody>
+              {% for user in users %}
+              <tr>
                   <td>{{ user.id }}</td>
                   <td>{{ user.username }}</td>
                   <td>{{ user.first_name }}</td>
                   <td>{{ user.last_name }}</td>
                   <td>{{ user.email }}</td>
-                  <td></td>
-                </tr>
-                {% endfor %}
-              </tbody>
-            </table>
-      </div>
+                  <td>
+                      {% if not user.is_active %}
+                      <a href="{% url 'activar_usuario' user.id %}" class="btn btn-primary">Activar</a>
+                      {% endif %}
+                  </td>
+              </tr>
+              {% endfor %}
+          </tbody>
+      </table>
   </div>
-  </section>
+</div>
 
 {% endblock %}
