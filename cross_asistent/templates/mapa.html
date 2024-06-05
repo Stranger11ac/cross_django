@@ -38,7 +38,7 @@
     // Coordenadas del Edificio 4
     var polygon1 = L.polygon([
         [25.55661,-100.93688],
-        [25.55633,-100.93647],
+        [25.55633,-100.93647],//ya no esta separado
         [25.55613,-100.93662],
         [25.55642,-100.93703]
     ], {
@@ -110,9 +110,10 @@
 // Coordenadas de Rectoria
 var polygon5 = L.polygon([
     [25.55767,-100.93590],
-    [25.55748,-100.93559],
+    [25.55747,-100.93560],
     [25.55719,-100.93581],
     [25.55741,-100.93612],
+    
 ], {
     color: 'red',
     fillColor: '#f03',
@@ -305,7 +306,7 @@ polygon15.on('click', function() {
     openOffcanvasWithText(imageUrl15, "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent volutpat ut metus at consequat. Curabitur euismod tortor nec purus tempor, vel viverra magna vehicula.");
 });
 
-// Coordenadas de Caceta 2
+// Coordenadas de Caceta 2 fleet
 var polygon16 = L.polygon([
     [25.55621,-100.93470],
     [25.55617,-100.93474],
@@ -321,6 +322,42 @@ var imageUrl16 = "{% static 'img/qr_2.png' %}";
 
 polygon16.on('click', function() {
     openOffcanvasWithText(imageUrl16, "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent volutpat ut metus at consequat. Curabitur euismod tortor nec purus tempor, vel viverra magna vehicula.");
+});
+
+// Coordenadas de Oxxo
+var polygon17 = L.polygon([
+    [25.55782,-100.93612],
+    [25.55777,-100.93606],
+    [25.55772,-100.93610],
+    [25.55777,-100.93616],
+], {
+    color: 'red',
+    fillColor: '#f03',
+    fillOpacity: 0.5
+}).addTo(map);
+
+var imageUrl17 = "{% static 'img/qr_2.png' %}";
+
+polygon17.on('click', function() {
+    openOffcanvasWithText(imageUrl17, "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent volutpat ut metus at consequat. Curabitur euismod tortor nec purus tempor, vel viverra magna vehicula.");
+});
+
+// Coordenadas de Papeleria
+var polygon18 = L.polygon([
+    [25.55706,-100.93707],
+    [25.55701,-100.93711],
+    [25.55699,-100.93707],
+    [25.55704,-100.93704],
+], {
+    color: 'red',
+    fillColor: '#f03',
+    fillOpacity: 0.5
+}).addTo(map);
+
+var imageUrl18 = "{% static 'img/qr_2.png' %}";
+
+polygon18.on('click', function() {
+    openOffcanvasWithText(imageUrl18, "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent volutpat ut metus at consequat. Curabitur euismod tortor nec purus tempor, vel viverra magna vehicula.");
 });
 
 function openOffcanvasWithText(imageUrl, text) {
