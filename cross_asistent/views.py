@@ -47,13 +47,14 @@ def find_answer(question):
         if set(tokens).intersection(set(pregunta_tokens)):
             return f'{pregunta.informacion} <br><br> ¿Pueda Ayudarte en algo más?'
     
-    return "Lo siento, no encontré una respuesta a tu pregunta."
+    return "Lo siento, no encontré una informacion sobre tu pregunta."
 
 def chat_view(request):
     if request.method == 'POST':
         question = request.POST.get('question', '')
         if question:
             answer = find_answer(question)
+            print(answer)
             return JsonResponse({'success': True, 'answer': answer})
         return JsonResponse({'success': False, 'message': 'No se proporcionó ninguna pregunta.'})
     return JsonResponse({'success': False, 'message': 'Método no permitido.'})
