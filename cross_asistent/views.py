@@ -7,11 +7,19 @@ from django.contrib.auth.models import User
 from django.db import IntegrityError
 from django.http import JsonResponse
 
-from django.views.decorators.csrf import csrf_exempt
-from django.conf import settings
-
 from .forms import crearTarea
 from . import models
+
+import nltk
+from nltk.tokenize import word_tokenize
+from nltk.corpus import stopwords
+from nltk.stem import WordNetLemmatizer
+import string
+
+# Asegúrate de tener el siguiente código solo si no has descargado estos recursos antes
+nltk.download('punkt')
+nltk.download('stopwords')
+nltk.download('wordnet')
 
 def index(request):
     banners_all = models.Banners.objects.all()
@@ -19,6 +27,50 @@ def index(request):
         'banners': banners_all,
         'active_page': 'inicio'
     })
+
+def process_question(question):
+    lemmatizer = WordNetLemmatizer()
+    stop_words = set(stopwords.words('spanish'))
+    tokens = word_tokenize(question)
+    tokens = [word.lower() for word in tokens if word.isalpha() and word not in stop_words]
+    tokens = [lemmatizer.lemmatize(word) for word in tokens]
+    
+    return tokens
+
+def contains_keyword(tokens, keyword):
+    return keyword in tokens
+
+def find_answer(question):
+    tokens = process_question(question)
+    preguntasModel = models.Preguntas.objects.all()
+    
+    for pregunta in preguntasModel:
+        preguntaid = (pregunta.id)
+        pregunta_tokens = process_question(pregunta.pregunta)
+        if set(tokens).intersection(set(pregunta_tokens)):
+            return pregunta.respuesta
+    
+    if contains_keyword(tokens, 'horarios'):
+        # Aquí deberías devolver todas las respuestas relacionadas con el horario
+        horarios = [pregunta.respuesta for pregunta in preguntasModel if 'horario' in process_question(pregunta.pregunta)]
+        if horarios:
+            return "\n \n".join(horarios)
+        else:
+            return "Lo siento, no encontré información sobre los horarios."
+    
+    elif contains_keyword(tokens, 'hola'):
+        return "¡Hola! ¿Cómo puedo ayudarte hoy? Puedes preguntar sobre nuestros servicios, horarios, ubicación y más."
+    
+    return "Lo siento, no encontré una respuesta a tu pregunta."
+
+def chat_view(request):
+    if request.method == 'POST':
+        question = request.POST.get('question', '')
+        if question:
+            answer = find_answer(question)
+            return JsonResponse({'success': True, 'answer': answer})
+        return JsonResponse({'success': False, 'message': 'No se proporcionó ninguna pregunta.'})
+    return JsonResponse({'success': False, 'message': 'Método no permitido.'})
 
 def faq(request):
     questall = models.Preguntas.objects.all()
