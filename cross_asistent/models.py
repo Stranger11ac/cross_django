@@ -3,19 +3,19 @@ from django.contrib.auth.models import User
 from django.conf import settings
 import os
 
-class Preguntas(models.Model):
-    pregunta = models.CharField(max_length=200, blank=False)
-    respuesta = models.TextField(blank=True, null=True)
+class Database(models.Model):
+    titulo = models.CharField(max_length=200, blank=False)
+    informacion = models.TextField(blank=True, null=True)
     redirigir = models.URLField(blank=True, null=True)
     documentos = models.FileField(upload_to='cross_asistent/static/files/documentos/', blank=True, null=True)
     imagenes =  models.ImageField(upload_to='cross_asistent/static/files/imagenes/', blank=True, null=True)
     fecha_modificacion = models.DateTimeField(auto_now=True)
     
     def __str__(self):
-        return self.pregunta
+        return self.titulo
 
 class Sugerencias_preg(models.Model):
-    pregunta_num = models.ForeignKey(Preguntas, on_delete=models.CASCADE)
+    pregunta_num = models.ForeignKey(Database, on_delete=models.CASCADE)
     sugerencia = models.TextField()
     sugerente = models.CharField(max_length=100, default='Anonimo')
     

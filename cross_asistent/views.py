@@ -40,26 +40,12 @@ def contains_keyword(tokens, keyword):
 
 def find_answer(question):
     tokens = process_question(question)
-    preguntasModel = models.Preguntas.objects.all()
+    preguntasModel = models.Database.objects.all()
     
     for pregunta in preguntasModel:
-        pregunta_tokens = process_question(pregunta.pregunta)
+        pregunta_tokens = process_question(pregunta.titulo)
         if set(tokens).intersection(set(pregunta_tokens)):
-            return f'{pregunta.respuesta} <br><br> ¿Pueda Ayudarte en algo más?'
-    
-    # if contains_keyword(tokens, 'horarios'):
-    #     # Aquí deberías devolver todas las respuestas relacionadas con el horario
-    #     horarios = [pregunta.respuesta for pregunta in preguntasModel if 'horario' in process_question(pregunta.pregunta)]
-    #     if horarios:
-    #         return "\n <br><br> \n".join(horarios)+'<br><br> ¿Pueda Ayudarte en algo más?'
-    #     else:
-    #         return "Lo siento, no encontré información sobre los horarios."
-    
-    if contains_keyword(tokens, 'horarios'):
-        return "En la UTC hay varios Departamentos con distintos horarios <br> Especifica cual es el horario que busca. <br> <br> <ul><li>Horario de la UTC en general</li><li>Horario de Servicios Escolares</li><li>Horario de Vinculacion</li><li>Horario de Departamento de Sistemas</li><li>Horario de Departamento de servicios Financieros</li></ul>"
-    
-    elif contains_keyword(tokens, 'hola'):
-        return "¡Hola! ¿Cómo puedo ayudarte hoy? Puedes preguntar sobre nuestros servicios, horarios, ubicación y más."
+            return f'{pregunta.informacion} <br><br> ¿Pueda Ayudarte en algo más?'
     
     return "Lo siento, no encontré una respuesta a tu pregunta."
 
@@ -230,6 +216,7 @@ def singuppage(request):
         else:
             return JsonResponse({'success': False, 'message': 'Datos incompletos 😅'}, status=400)
     else:
+        logout(request)
         return render(request, 'administracion/singup.html')
 
 @never_cache
@@ -249,6 +236,7 @@ def singinpage(request):
                 return JsonResponse({'success': 'prog'}, status=200)
             return JsonResponse({'success': True}, status=200)
     else:
+        logout(request)
         return render(request, 'administracion/singin.html', {
             'active_page': 'singin'
         })
@@ -321,7 +309,7 @@ def vista_admin(request):
 @never_cache
 def vista_programador(request):
     num_blogs = models.Articulos.objects.filter().count()
-    num_preguntas = models.Preguntas.objects.filter().count()
+    num_preguntas = models.Database.objects.filter().count()
     user = request.user
     users = User.objects.filter()
     blogs_all = models.Articulos.objects.filter()
@@ -341,7 +329,7 @@ def responder_preguntas(request):
     if request.method == 'POST':
         pregunta_id = request.POST.get('pregunta_id')
         respuesta = request.POST.get('respuesta')
-        pregunta = models.Preguntas.objects.get(id=pregunta_id)
+        pregunta = models.Database.objects.get(id=pregunta_id)
         pregunta.respuesta = respuesta
         pregunta.save()
         return redirect('vista_programador')
