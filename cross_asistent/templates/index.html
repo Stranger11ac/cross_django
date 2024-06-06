@@ -79,7 +79,8 @@
                     </button>
                 </div>
             </div>
-            <form id="chatForm" class="controls_input" method="POST">
+            <form id="chatForm" class="controls_input" method="POST" action="{% url 'chat' %}">
+                {% csrf_token %}
                 <div class="position-relative bottom-0 end-0">
                     <div class="form-outline" data-mdb-input-init>
                         <textarea class="form-control bg-body-tertiary" id="question" name="question" required maxlength="200"></textarea>
@@ -92,7 +93,7 @@
                         <button type="button" id="closeInput" class="btn btn_secondary btn-floating btn-sm toggle_controls">
                             <i class="fa-solid fa-microphone"></i>
                         </button>
-                        <button type="submit" class="btn btn_detail btn-floating">
+                        <button type="submit" id="chatForm_submit" class="btn btn_detail btn-floating">
                             <i class="fa-solid fa-paper-plane"></i>
                         </button>
                     </div>
@@ -176,9 +177,10 @@
         }
     });
 
+    var output = document.getElementById('output');
+
     document.getElementById('chatForm').addEventListener('submit', function(e) {
         e.preventDefault();
-        const output = document.getElementById('output');
         const question = document.getElementById('question').value;
         const chatForm = e.target;
         const formData = new FormData(chatForm);
@@ -202,8 +204,7 @@
         .then(data => {
             if (data.success) {
                 var tokendid = generarCadenaAleatoria(5);
-                var datatokend = tokendid;
-                const valID = `uuid${datatokend}`;
+                const valID = `uuid${tokendid}`;
 
                 const htmlBlock = `
                     <div class="output_block">
@@ -224,31 +225,34 @@
 
                 setTimeout(function() {
                     user_submit.classList.add('visible');
-                }, 50);
-                setTimeout(function() {
-                    asistent_response.classList.add('visible');
-                }, 1000);
+                    setTimeout(scrollToBottom, 500);
+                    setTimeout(function() {
+                        asistent_response.classList.add('visible');
+                        setTimeout(scrollToBottom, 350);
+                    }, 950); // Espera 950 ms después de la primera acción
+                }, 50); // Espera 50 ms antes de la primera acción
+
                 
             } else {
-                alert(`Error: ${data.message}`);
+                alertSToast('top', timerOut+2000, 'error', `Error: ${data.message}`);
             }
         })
         .catch(error => {
             console.error('😥 Error:', error);
-            alert('Ocurrió un error. Intente nuevamente. 😥');
+            alertSToast('top', timerOut+2000, 'warning', 'Ocurrió un error. Intente nuevamente. 😥');
         });
     });
-    
-    document.addEventListener("DOMContentLoaded", function() {
+
+    function scrollToBottom() {
         output.scrollTop = output.scrollHeight;
-        console.log(output.scrollTop = output.scrollHeight);
+    }
+
+    document.addEventListener("DOMContentLoaded", function() {
+        scrollToBottom();
     });
 
-    output.scrollTop = output.scrollHeight;
-
     var observer = new MutationObserver(function() {
-        console.log(output.scrollTop = output.scrollHeight);
-        output.scrollTop = output.scrollHeight;
+        scrollToBottom();
     });
 
     observer.observe(output, { childList: true, subtree: true });

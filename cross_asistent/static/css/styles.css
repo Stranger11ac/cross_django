@@ -439,7 +439,6 @@ main.main_anchor {
 .asistent_group .box_asistent .output_messages .chat_msg.asistent_response {
     padding: 0;
     transform: scale(0);
-    transition: var(--transitionCubic);
 }
 
 .asistent_group .box_asistent .output_messages .chat_msg.user_submit {
@@ -448,6 +447,7 @@ main.main_anchor {
     transform-origin: center right;
     margin-left: 80px;
     text-align: right;
+    transition: var(--transitionEase);
 }
 
 .asistent_group .box_asistent .output_messages .chat_msg.asistent_response {
@@ -455,6 +455,7 @@ main.main_anchor {
     margin-right: 80px;
     margin-block: 5px;
     transform-origin: center left;
+    transition: var(--transitionCubic);
 }
 
 .asistent_group .box_asistent .output_messages .chat_msg.visible {

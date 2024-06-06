@@ -14,12 +14,10 @@ import nltk
 from nltk.tokenize import word_tokenize
 from nltk.corpus import stopwords
 from nltk.stem import WordNetLemmatizer
-import string
 
-# Asegúrate de tener el siguiente código solo si no has descargado estos recursos antes
-nltk.download('punkt')
-nltk.download('stopwords')
-nltk.download('wordnet')
+# nltk.download('punkt')
+# nltk.download('stopwords')
+# nltk.download('wordnet')
 
 def index(request):
     banners_all = models.Banners.objects.all()
@@ -45,18 +43,20 @@ def find_answer(question):
     preguntasModel = models.Preguntas.objects.all()
     
     for pregunta in preguntasModel:
-        preguntaid = (pregunta.id)
         pregunta_tokens = process_question(pregunta.pregunta)
         if set(tokens).intersection(set(pregunta_tokens)):
-            return pregunta.respuesta
+            return f'{pregunta.respuesta} <br><br> ¿Pueda Ayudarte en algo más?'
+    
+    # if contains_keyword(tokens, 'horarios'):
+    #     # Aquí deberías devolver todas las respuestas relacionadas con el horario
+    #     horarios = [pregunta.respuesta for pregunta in preguntasModel if 'horario' in process_question(pregunta.pregunta)]
+    #     if horarios:
+    #         return "\n <br><br> \n".join(horarios)+'<br><br> ¿Pueda Ayudarte en algo más?'
+    #     else:
+    #         return "Lo siento, no encontré información sobre los horarios."
     
     if contains_keyword(tokens, 'horarios'):
-        # Aquí deberías devolver todas las respuestas relacionadas con el horario
-        horarios = [pregunta.respuesta for pregunta in preguntasModel if 'horario' in process_question(pregunta.pregunta)]
-        if horarios:
-            return "\n \n".join(horarios)
-        else:
-            return "Lo siento, no encontré información sobre los horarios."
+        return "En la UTC hay varios Departamentos con distintos horarios <br> Especifica cual es el horario que busca. <br> <br> <ul><li>Horario de la UTC en general</li><li>Horario de Servicios Escolares</li><li>Horario de Vinculacion</li><li>Horario de Departamento de Sistemas</li><li>Horario de Departamento de servicios Financieros</li></ul>"
     
     elif contains_keyword(tokens, 'hola'):
         return "¡Hola! ¿Cómo puedo ayudarte hoy? Puedes preguntar sobre nuestros servicios, horarios, ubicación y más."
