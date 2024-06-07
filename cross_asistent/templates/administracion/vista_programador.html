@@ -6,6 +6,50 @@
             window.location.href = "{% url 'logout' %}";
         </script>
     {% endif %}
+    
+    <style>
+      /* Carousel styling */
+      #introCarousel,
+      .carousel-inner,
+      .carousel-item,
+      .carousel-item.active {
+        height: 100vh;
+      }
+  
+      .carousel-item:nth-child(1) {
+        background-image: url('https://mdbootstrap.com/img/Photos/Others/images/76.jpg');
+        background-repeat: no-repeat;
+        background-size: cover;
+        background-position: center center;
+      }
+      .carousel-item:nth-child(2) {
+        background-image: url('https://mdbootstrap.com/img/Photos/Others/images/77.jpg');
+        background-repeat: no-repeat;
+        background-size: cover;
+        background-position: center center;
+      }
+      .carousel-item:nth-child(3) {
+        background-image: url('https://mdbootstrap.com/img/Photos/Others/images/78.jpg');
+        background-repeat: no-repeat;
+        background-size: cover;
+        background-position: center center;
+      }
+  
+      /* Height for devices larger than 576px */
+      @media (min-width: 992px) {
+        #introCarousel {
+          margin-top: -58.59px;
+        }
+        #introCarousel,
+        .carousel-inner,
+        .carousel-item,
+        .carousel-item.active {
+          height: 50vh;
+        }
+      }
+  
+    
+    </style>
 {% endblock %}
 
 {% block link_home %}href="{% url 'vista_programador' %}"{% endblock %}
@@ -15,84 +59,13 @@
 {% endblock %}
 
 {% block content %}
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1, shrink-to-fit=no"
-    />
-    <meta http-equiv="x-ua-compatible" content="ie=edge" />
-    <!-- MDB icon -->
-    <link rel="icon" href="img/mdb-favicon.ico" type="image/x-icon" />
-    <!-- Font Awesome -->
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
-    />
-    <!-- Google Fonts Roboto -->
-    <link
-      rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap"
-    />
-    <!-- Regular MDB theme -->
-    <link rel="stylesheet" href="css/mdb.min.css" />
-    
-    <style>
-    /* Carousel styling */
-    #introCarousel,
-    .carousel-inner,
-    .carousel-item,
-    .carousel-item.active {
-      height: 100vh;
-    }
-
-    .carousel-item:nth-child(1) {
-      background-image: url('https://mdbootstrap.com/img/Photos/Others/images/76.jpg');
-      background-repeat: no-repeat;
-      background-size: cover;
-      background-position: center center;
-    }
-    .carousel-item:nth-child(2) {
-      background-image: url('https://mdbootstrap.com/img/Photos/Others/images/77.jpg');
-      background-repeat: no-repeat;
-      background-size: cover;
-      background-position: center center;
-    }
-    .carousel-item:nth-child(3) {
-      background-image: url('https://mdbootstrap.com/img/Photos/Others/images/78.jpg');
-      background-repeat: no-repeat;
-      background-size: cover;
-      background-position: center center;
-    }
-
-    /* Height for devices larger than 576px */
-    @media (min-width: 992px) {
-      #introCarousel {
-        margin-top: -58.59px;
-      }
-      #introCarousel,
-      .carousel-inner,
-      .carousel-item,
-      .carousel-item.active {
-        height: 50vh;
-      }
-    }
-
-  
-  </style>
-  </head>
-  
-  <body data-mdb-theme="light">
     <br>
     <div class="text-center">
-    <h4><p>Bienvenido {{ user.username }}</p></h4>
+      <h4>Bienvenido {{ user.username }}</h4>
     </div>  
     <br>
     <!-- Start your project here-->
     <div class="container my-5">
-      <>
         <!-- Carousel wrapper -->
         <div id="introCarousel" class="carousel slide carousel-fade shadow-2-strong" data-mdb-carousel-init>
           <!-- Indicators -->
@@ -160,7 +133,8 @@
           <!--Section: Cards-->
           <section>
             <div class="text-center">
-                <h4><p>Total de Blogs subidos: {{ num_blogs }}</p></h4>
+                <h4>Total de Blogs subidos: {{ num_blogs }}</h4>
+                <hr class="hr_divisor">
             </div>
             <div class="row">
         
@@ -180,48 +154,55 @@
             </div>
             </section>
 
-<section>
-    <div class="text-center">
-        <h4><p>Total de Preguntas: {{ num_preguntas }}</p></h4>
-    </div>
-    <div class="row">
-        <!-- Formulario para responder preguntas -->
-        <div class="col-lg-6 col-md-12 mb-4">
-            <form method="post" action="{}">
-                {% csrf_token %}
-                <div class="mb-3">
-                    <label for="pregunta" class="form-label">Selecciona una pregunta</label>
-                    <input list="preguntas" name="pregunta" id="pregunta" class="form-control">
-                    <datalist id="preguntas">
-                        {% for pregunta in preguntas %}
-                        <option value="{{ pregunta }}">{{ pregunta.pregunta }}</option>
-                        {% endfor %}
-                    </datalist>
-                </div>
-                <div class="mb-3">
-                    <label for="respuesta" class="form-label">Respuesta</label>
-                    <textarea class="form-control" id="respuesta" name="respuesta" rows="3"></textarea>
-                </div>
-                <button type="submit" class="btn btn-primary">Responder</button>
-            </form>
-        </div>
-
-        <!-- Lista de preguntas sin responder -->
-        <div class="col-lg-6 col-md-12 mb-4">
-            <h5>Preguntas sin responder</h5>
-            <ul class="list-group">
-                {% for pregunta in preguntas_sin_responder %}
-                <li class="list-group-item">{{ pregunta.pregunta }}</li>
-                {% endfor %}
-            </ul>
-        </div>
-    </div>
-</section>
+            <section>
+              <div class="text-center">
+                  <h4>Total de Preguntas: {{ preguntas_sin_responder|length }}</h4>
+              </div>
+              <div class="row">
+                  <!-- Formulario para responder preguntas -->
+                  <div class="col-lg-6 col-md-12 mb-4">
+                      <form method="post" action="{% url 'responder_preguntas' %}">
+                          {% csrf_token %}
+                          <div class="mb-3">
+                              <label for="pregunta" class="form-label">Selecciona una pregunta</label>
+                              <input list="preguntas" name="pregunta_id" id="pregunta" class="form-control" autocomplete="off" autocapitalize="off">
+                              <datalist id="preguntas">
+                                  {% for pregunta in preguntas_sin_responder %}
+                                  <option value="{{ QUEST.id }}">{{ pregunta.titulo }}</option>
+                                  {% endfor %}
+                              </datalist>
+                          </div>
+                          <div class="mb-3">
+                              <label for="respuesta" class="form-label">Respuesta</label>
+                              <textarea class="form-control" id="respuesta" name="respuesta" rows="3"></textarea>
+                          </div>
+                          <button type="submit" class="btn btn-primary">Responder</button>
+                      </form>
+                  </div>
+          
+                  <!-- Lista de preguntas sin responder -->
+                  <div class="col-lg-6 col-md-12 mb-4">
+                      <h5>Preguntas sin responder</h5>
+                      <hr>
+                      <ul class="list-group">
+                          {% for pregunta in preguntas_sin_responder %}
+                          <li class="list-group-item">{{ pregunta.titulo }}</li>
+                          {% endfor %}
+                      </ul>
+                  </div>
+              </div>
+          </section>          
    <!-- seccion de ver usuarios -->
+   <hr class="hr_divisor">
+
 <div class="card text-center m-1">
-  <div class="card-header">Usuarios registrados</div>
+  <h4>Usuarios registrados</h4>
   <div class="card-body">
-      <table class="table table-striped">
+    <div class="form-outline my-4" data-mdb-input-init>
+      <input type="text" name="searchUser" id="searchInput" autocapitalize="off" class="form-control form-control-lg"/>
+      <label class="form-label" for="searchInput" >Buscar pregunta</label>
+  </div>
+      <table class="table table-striped" style="min-height: 250px; height: auto;">
           <thead>
               <tr>
                   <th>#</th>
@@ -234,7 +215,7 @@
           </thead>
           <tbody>
               {% for user in users %}
-              <tr>
+              <tr class="results_item">
                   <td>{{ user.id }}</td>
                   <td>{{ user.username }}</td>
                   <td>{{ user.first_name }}</td>

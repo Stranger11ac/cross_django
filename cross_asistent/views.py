@@ -7,6 +7,8 @@ from django.contrib.auth.models import User
 from django.db import IntegrityError
 from django.http import JsonResponse
 
+from .models import Database
+
 from .forms import crearTarea
 from . import models
 
@@ -15,9 +17,9 @@ from nltk.tokenize import word_tokenize
 from nltk.corpus import stopwords
 from nltk.stem import WordNetLemmatizer
 
-# nltk.download('punkt')
-# nltk.download('stopwords')
-# nltk.download('wordnet')
+nltk.download('punkt')
+nltk.download('stopwords')
+nltk.download('wordnet')
 
 def index(request):
     banners_all = models.Banners.objects.all()
@@ -338,12 +340,18 @@ def responder_preguntas(request):
     if request.method == 'POST':
         pregunta_id = request.POST.get('pregunta_id')
         respuesta = request.POST.get('respuesta')
-        pregunta = models.Database.objects.get(id=pregunta_id)
-        pregunta.respuesta = respuesta
+        
+        # Buscar la pregunta por ID y actualizar la respuesta
+        pregunta = get_object_or_404(models.Database, id=pregunta_id)
+        pregunta.informacion = respuesta
         pregunta.save()
         return redirect('vista_programador')
     
-    return redirect('vista_programador')
+    # Obtener todas las preguntas sin respuesta
+    preguntas_sin_responder = models.Database.objects.filter(informacion__isnull=True)
+    return render(request, 'responder_preguntas.html', {
+        'preguntas_sin_responder': preguntas_sin_responder,
+    })
 
 @login_required
 @never_cache

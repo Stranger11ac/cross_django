@@ -16,7 +16,7 @@
 
     <div class="accordion" id="accordionExampleY">
         {% for quest in quest_all %}
-        <div class="accordion-item">
+        <div class="accordion-item results_item">
             <h2 class="accordion-header" id="heading{{ quest.id }}">
                 <button
                     data-mdb-collapse-init
@@ -48,6 +48,18 @@
         </div>
         {% endfor %}
     </div>
+<br>
+    <section>
+        <div class="text-center">
+            <h1 class="mb-3">Contestaremos tus preguntas <i class="fa-solid fa-clipboard-question ms-1"></i></h1>
+            <hr class="hr_divisor">
+        </div>
+        <div class="mb-3">
+            <label for="respuesta" class="form-label align-items-center" >Respuesta</label>
+            <textarea class="form-control" id="respuesta" name="respuesta" rows="3" placeholder="Dejanos saber cualquier duda que tengas ..." ></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary">Preguntar</button>
+    </section>
 </main>
 
 {% include 'widget_footer.html' %}

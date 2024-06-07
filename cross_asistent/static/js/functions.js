@@ -6,7 +6,7 @@ $(document).ready(function () {
             var value = input.val().toLowerCase();
             $("#searchInput").text(value);
 
-            var result = $(".accordion-item").filter(function () {
+            var result = $(".results_item").filter(function () {
                 $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
                 return $(this).is(":visible");
             }).length;

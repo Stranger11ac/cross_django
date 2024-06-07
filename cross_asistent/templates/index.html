@@ -234,12 +234,12 @@
 
                 
             } else {
-                alertSToast('top', timerOut+2000, 'error', `Error: ${data.message}`);
+                alertSToast('top', 8000, 'error', `Error: ${data.message}`);
             }
         })
         .catch(error => {
             console.error('😥 Error:', error);
-            alertSToast('top', timerOut+2000, 'warning', 'Ocurrió un error. Intente nuevamente. 😥');
+            alertSToast('top', 8000, 'warning', 'Ocurrió un error. Intente nuevamente. 😥');
         });
     });
 
