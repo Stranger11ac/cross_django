@@ -32,7 +32,7 @@ def process_question(question):
     tokens = word_tokenize(question)
     tokens = [word.lower() for word in tokens if word.isalpha() and word not in stop_words]
     tokens = [lemmatizer.lemmatize(word) for word in tokens]
-    print(tokens)
+    print(f'Processed tokens for question "{question}": {tokens}')
     return tokens
 
 def contains_keyword(tokens, keyword):
@@ -41,18 +41,20 @@ def contains_keyword(tokens, keyword):
 def find_answer(question):
     tokens = process_question(question)
     
-    # Buscar sinónimos en la base de datos
-    for token in tokens:
-        synonym_obj = models.Synonym.objects.filter(synonym=token).first()
-        if synonym_obj:
-            keyword = synonym_obj.keyword
-            pregunta_model = models.Database.objects.filter(titulo=keyword).first()
-            if pregunta_model:
-                return pregunta_model.informacion
+    synonyms = models.Synonym.objects.filter(synonym__in=tokens)
+    synonym_dict = {synonym.synonym: synonym.keyword for synonym in synonyms}    
+    keywords = [synonym_dict[token] for token in tokens if token in synonym_dict]
+    
+    if keywords:
+        pregunta_model = models.Database.objects.filter(titulo__in=keywords).first()
+        if pregunta_model:
+            return pregunta_model.informacion
 
-    for pregunta in models.Database.objects.all():
-        pregunta_tokens = process_question(pregunta.titulo)
-        if set(tokens).intersection(set(pregunta_tokens)):
+    all_preguntas = models.Database.objects.all()
+    preguntas_tokens = [(pregunta, set(process_question(pregunta.titulo))) for pregunta in all_preguntas]
+    
+    for pregunta, pregunta_tokens in preguntas_tokens:
+        if set(tokens).intersection(pregunta_tokens):
             return f'{pregunta.informacion} <br><br> ¿Puedo ayudarte en algo más?'
 
     return "Lo siento, no encontré información sobre tu pregunta."
