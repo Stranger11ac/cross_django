@@ -3,7 +3,14 @@ from django.contrib.auth.models import User
 from django.conf import settings
 import os
 
+class Categorias(models.Model):
+    categoria = models.CharField(max_length=50)
+    
+    def __str__(self):
+        return self.categoria
+
 class Database(models.Model):
+    categoria = models.ForeignKey(Categorias, on_delete=models.SET_NULL, null=True)
     titulo = models.CharField(max_length=200, blank=False)
     informacion = models.TextField(blank=True, null=True)
     redirigir = models.URLField(blank=True, null=True)
@@ -21,6 +28,13 @@ class Sugerencias_preg(models.Model):
     
     def __str__(self):
         return f"pregunta #:{self.pregunta_num.id} sugiere: {self.sugerente}"
+
+class Synonym(models.Model):
+    synonym = models.CharField(max_length=255)
+    keyword = models.ForeignKey(Database, on_delete=models.CASCADE, related_name='synonyms')
+
+    def __str__(self):
+        return f"{self.synonym} -> {self.keyword.word}"
 
 class Articulos(models.Model):
     creacion = models.DateField(auto_now_add=True, blank=False)

@@ -27,7 +27,7 @@
                     aria-expanded="true"
                     aria-controls="quest-{{ quest.id }}"
                 >
-                    <i class="fas fa-question-circle fa-sm me-2 opacity-70"></i>{{ quest.pregunta }}
+                    <i class="fas fa-question-circle fa-sm me-2 opacity-70"></i>{{ quest.titulo }}
                 </button>
             </h2>
             <div
@@ -37,7 +37,7 @@
                 data-mdb-parent="#accordionExampleY"
             >
                 <div class="accordion-body">
-                    {{ quest.respuesta|truncatechars:150 }}
+                    {{ quest.informacion|truncatechars:150 }}
                     <div>
                         <a href="" class="btn btn_detail"
                             >Saber mas <i class="fa-solid fa-up-right-from-square ms-1"></i

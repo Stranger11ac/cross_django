@@ -40,27 +40,35 @@ def contains_keyword(tokens, keyword):
 
 def find_answer(question):
     tokens = process_question(question)
-    preguntasModel = models.Database.objects.all()
     
-    for pregunta in preguntasModel:
+    # Buscar sinónimos en la base de datos
+    for token in tokens:
+        synonym_obj = models.Synonym.objects.filter(synonym=token).first()
+        if synonym_obj:
+            keyword = synonym_obj.keyword.word
+            pregunta_model = models.Database.objects.filter(titulo=keyword).first()
+            if pregunta_model:
+                return pregunta_model.informacion
+
+    for pregunta in models.Database.objects.all():
         pregunta_tokens = process_question(pregunta.titulo)
         if set(tokens).intersection(set(pregunta_tokens)):
-            return f'{pregunta.informacion} <br><br> ¿Pueda Ayudarte en algo más?'
-    
-    return "Lo siento, no encontré una informacion sobre tu pregunta."
+            return f'{pregunta.informacion} <br><br> ¿Puedo ayudarte en algo más?'
+
+    return "Lo siento, no encontré información sobre tu pregunta."
+
 
 def chat_view(request):
     if request.method == 'POST':
         question = request.POST.get('question', '')
         if question:
             answer = find_answer(question)
-            print(answer)
             return JsonResponse({'success': True, 'answer': answer})
         return JsonResponse({'success': False, 'message': 'No se proporcionó ninguna pregunta.'})
     return JsonResponse({'success': False, 'message': 'Método no permitido.'})
 
 def faq(request):
-    questall = models.Preguntas.objects.all()
+    questall = models.Database.objects.all()
     return render(request, 'frecuentes.html', {
         'quest_all': questall,
         'active_page': 'faq'
@@ -107,7 +115,7 @@ def map(request):
         },
          {
             'nombre': 'Biblioteca',
-            'descripcion': 'Descripción de Biblioteca',
+            'descripcion': 'Descripción de Bibliotecaaaaaaaaaaaaaaaa',
             'imagen_url': 'img/qr_2.png',
             'coordenadas': [ [25.55651,-100.93613], [25.55639,-100.93594], [25.55615,-100.93616], [25.55628,-100.93633]]
         },
