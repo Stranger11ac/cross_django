@@ -15,9 +15,9 @@ from nltk.tokenize import word_tokenize
 from nltk.corpus import stopwords
 from nltk.stem import WordNetLemmatizer
 
-# nltk.download('punkt')
-# nltk.download('stopwords')
-# nltk.download('wordnet')
+nltk.download('punkt')
+nltk.download('stopwords')
+nltk.download('wordnet')
 
 def index(request):
     banners_all = models.Banners.objects.all()
@@ -32,7 +32,7 @@ def process_question(question):
     tokens = word_tokenize(question)
     tokens = [word.lower() for word in tokens if word.isalpha() and word not in stop_words]
     tokens = [lemmatizer.lemmatize(word) for word in tokens]
-    
+    print(tokens)
     return tokens
 
 def contains_keyword(tokens, keyword):
@@ -45,7 +45,7 @@ def find_answer(question):
     for token in tokens:
         synonym_obj = models.Synonym.objects.filter(synonym=token).first()
         if synonym_obj:
-            keyword = synonym_obj.keyword.word
+            keyword = synonym_obj.keyword
             pregunta_model = models.Database.objects.filter(titulo=keyword).first()
             if pregunta_model:
                 return pregunta_model.informacion
@@ -57,7 +57,6 @@ def find_answer(question):
 
     return "Lo siento, no encontré información sobre tu pregunta."
 
-
 def chat_view(request):
     if request.method == 'POST':
         question = request.POST.get('question', '')
@@ -68,7 +67,7 @@ def chat_view(request):
     return JsonResponse({'success': False, 'message': 'Método no permitido.'})
 
 def faq(request):
-    questall = models.Database.objects.all()
+    questall = models.Database.objects.filter(frecuencia__gt=0).order_by('-frecuencia')
     return render(request, 'frecuentes.html', {
         'quest_all': questall,
         'active_page': 'faq'

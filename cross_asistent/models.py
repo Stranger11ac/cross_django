@@ -14,6 +14,7 @@ class Database(models.Model):
     titulo = models.CharField(max_length=200, blank=False)
     informacion = models.TextField(blank=True, null=True)
     redirigir = models.URLField(blank=True, null=True)
+    frecuencia = models.IntegerField(default=0)
     documentos = models.FileField(upload_to='cross_asistent/static/files/documentos/', blank=True, null=True)
     imagenes =  models.ImageField(upload_to='cross_asistent/static/files/imagenes/', blank=True, null=True)
     fecha_modificacion = models.DateTimeField(auto_now=True)
@@ -34,7 +35,7 @@ class Synonym(models.Model):
     keyword = models.ForeignKey(Database, on_delete=models.CASCADE, related_name='synonyms')
 
     def __str__(self):
-        return f"{self.synonym} -> {self.keyword.word}"
+        return f"{self.synonym} -> {self.keyword}"
 
 class Articulos(models.Model):
     creacion = models.DateField(auto_now_add=True, blank=False)

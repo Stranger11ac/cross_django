@@ -61,10 +61,10 @@
                 src="{% static 'models/RobotExpressive.glb' %}"
                 tone-mapping="neutral"
                 camera-orbit="15deg 70deg 60m"
-                >
-                <!-- autoplay
-                    shadow-intensity="1"
-                animation-name="Idle" -->
+                poster="{% static 'img/poster.webp' %}"
+                shadow-intensity="1"
+                autoplay
+                animation-name="Wave">
             </model-viewer>
             <div class="box_asistent_controls">
                 <div class="controls_buttons">
@@ -142,9 +142,9 @@
             
             $(".toggle_controls").click(() => {
                 $(".asistent_group.open").toggleClass('close_controls open_keyboard open_controls');
-                // setTimeout(function() {
-                //     $('.controls_input #question').focus();
-                // }, 5000);
+                setTimeout(function() {
+                    $('.controls_input #question').focus();
+                }, 5000);
             });
 
             $(".controls_btn_close").click(() => {
@@ -234,12 +234,12 @@
 
                 
             } else {
-                alertSToast('top', timerOut+2000, 'error', `Error: ${data.message}`);
+                alertSToast('top', 8000, 'error', `Error: ${data.message}`);
             }
         })
         .catch(error => {
             console.error('😥 Error:', error);
-            alertSToast('top', timerOut+2000, 'warning', 'Ocurrió un error. Intente nuevamente. 😥');
+            alertSToast('top', 8000, 'warning', 'Ocurrió un error. Intente nuevamente. 😥');
         });
     });
 
