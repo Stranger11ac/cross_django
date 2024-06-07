@@ -435,6 +435,10 @@ main.main_anchor {
     border-radius: 15px;
 }
 
+.asistent_group .box_asistent .output_messages .chat_msg ul{
+    margin: 0 !important;
+}
+
 .asistent_group .box_asistent .output_messages .chat_msg.user_submit,
 .asistent_group .box_asistent .output_messages .chat_msg.asistent_response {
     padding: 0;
