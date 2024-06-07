@@ -64,7 +64,7 @@ def find_answer(question):
     
     if best_match:
         return f'{best_match.informacion}<br> ¿Puedo ayudarte en algo más?'
-
+    
     return "Lo siento, no encontré información sobre tu pregunta."
 
 def chat_view(request):
