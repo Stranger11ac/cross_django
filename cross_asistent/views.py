@@ -10,71 +10,12 @@ from django.http import JsonResponse
 from .forms import crearTarea
 from . import models
 
-import nltk
-from nltk.tokenize import word_tokenize
-from nltk.corpus import stopwords
-from nltk.stem import WordNetLemmatizer
-
-# nltk.download('punkt')
-# nltk.download('stopwords')
-# nltk.download('wordnet')
-
 def index(request):
     banners_all = models.Banners.objects.all()
     return render(request, 'index.html', {
         'banners': banners_all,
         'active_page': 'inicio'
     })
-
-def process_question(question):
-    lemmatizer = WordNetLemmatizer()
-    stop_words = set(stopwords.words('spanish'))
-    tokens = word_tokenize(question)
-    tokens = [word.lower() for word in tokens if word.isalpha() and word not in stop_words]
-    tokens = [lemmatizer.lemmatize(word) for word in tokens]
-    print(tokens)
-    return tokens
-
-def contains_keyword(tokens, keyword):
-    return keyword in tokens
-
-def find_answer(question):
-    tokens = process_question(question)
-    
-    synonyms = models.Synonym.objects.filter(synonym__in=tokens)
-    synonym_dict = {synonym.synonym: synonym.keyword for synonym in synonyms}
-    keywords = [synonym_dict[token] for token in tokens if token in synonym_dict]
-    
-    if keywords:
-        pregunta_model = models.Database.objects.filter(titulo__in=keywords).first()
-        if pregunta_model:
-            return pregunta_model.informacion
-    
-    all_preguntas = models.Database.objects.all()
-    preguntas_tokens = [(pregunta, set(process_question(pregunta.titulo))) for pregunta in all_preguntas]
-    
-    best_match = None
-    best_match_score = 0
-    
-    for pregunta, pregunta_tokens in preguntas_tokens:
-        match_count = len(set(tokens).intersection(pregunta_tokens))
-        if match_count > best_match_score:
-            best_match = pregunta
-            best_match_score = match_count
-    
-    if best_match:
-        return f'{best_match.informacion}<br> ¿Puedo ayudarte en algo más?'
-    
-    return "Lo siento, no encontré información sobre tu pregunta."
-
-def chat_view(request):
-    if request.method == 'POST':
-        question = request.POST.get('question', '')
-        if question:
-            answer = find_answer(question)
-            return JsonResponse({'success': True, 'answer': answer})
-        return JsonResponse({'success': False, 'message': 'No se proporcionó ninguna pregunta.'})
-    return JsonResponse({'success': False, 'message': 'Método no permitido.'})
 
 def faq(request):
     questall = models.Database.objects.filter(frecuencia__gt=0).order_by('-frecuencia')
