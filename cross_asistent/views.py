@@ -3,12 +3,27 @@ from django.urls import reverse
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.cache import never_cache
+from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.models import User
 from django.db import IntegrityError
 from django.http import JsonResponse
+from django.conf import settings
 
 from .forms import crearTarea
 from . import models
+
+import openai
+import json
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.metrics.pairwise import cosine_similarity
+import nltk
+from nltk.corpus import stopwords
+from nltk.tokenize import word_tokenize
+from nltk.stem import WordNetLemmatizer
+
+nltk.download('punkt')
+nltk.download('stopwords')
+nltk.download('wordnet')
 
 def index(request):
     banners_all = models.Banners.objects.all()
@@ -16,6 +31,99 @@ def index(request):
         'banners': banners_all,
         'active_page': 'inicio'
     })
+
+# Configura tu clave API de OpenAI
+openai.api_key = settings.OPENAI_API_KEY
+
+def obtener_respuesta_openai(question, instructions):
+    response = openai.ChatCompletion.create(
+        model="gpt-3.5-turbo",
+        messages=[
+            {"role": "system", "content": instructions},
+            {"role": "user", "content": question},
+        ],
+        temperature=0.1,
+    )
+    print(f"Prompt:{response.usage.prompt_tokens}")
+    print(f"Compl:{response.usage.completion_tokens}")
+    print(f"Total:{response.usage.total_tokens}")
+    print('')
+    
+    return response.choices[0].message['content']
+
+
+def preprocesar_texto(texto):
+    # Tokenización
+    tokens = word_tokenize(texto.lower())
+
+    # Eliminación de stopwords
+    stop_words = set(stopwords.words('english'))
+    tokens = [word for word in tokens if word not in stop_words]
+
+    # Lematización
+    lemmatizer = WordNetLemmatizer()
+    tokens = [lemmatizer.lemmatize(word) for word in tokens]
+
+    # Reconstruir el texto preprocesado
+    texto_preprocesado = ' '.join(tokens)
+    return texto_preprocesado
+
+def buscar_informacion_relevante(question, queryset):
+    documents = [preprocesar_texto(obj.informacion) for obj in queryset]
+    if not documents:
+        return None
+
+    # Preprocesar la pregunta del usuario
+    question_preprocesada = preprocesar_texto(question)
+
+    # Inicializar el vectorizador TF-IDF
+    vectorizer = TfidfVectorizer()
+    tfidf_matrix = vectorizer.fit_transform(documents)
+
+    # Transformar la pregunta del usuario
+    question_tfidf = vectorizer.transform([question_preprocesada])
+
+    # Calcular la similitud del coseno entre la pregunta y los documentos
+    similarity = cosine_similarity(question_tfidf, tfidf_matrix).flatten()
+
+    # Ajustar el umbral de similitud
+    threshold = 0.2
+
+    # Encuentra el documento más similar
+    max_similarity_index = similarity.argmax()
+    if similarity[max_similarity_index] > threshold:
+        return documents[max_similarity_index]
+    return None
+
+@csrf_exempt
+def chat_view(request):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            question = data.get('question', '')
+
+            if question:
+                # Buscar en la base de datos
+                resultados = models.Database.objects.all()
+                informacion_relevante = buscar_informacion_relevante(question, resultados)
+                print(f"pregunta: {question}")
+                print(f"info:{informacion_relevante}")
+
+                if informacion_relevante:
+                    # Si hay información relevante, pasarla a OpenAI para generar una respuesta
+                    SYSTEM_PROMPT = f"Utiliza emojis sutilmente. Eres un asistente entusiasta de la Universidad Tecnologica de Coahuila. Aquí está la información encontrada: {informacion_relevante}"
+                    answer = obtener_respuesta_openai(question, SYSTEM_PROMPT)
+                else:
+                    # Si no hay información relevante, usar GPT-3.5 Turbo para disculparse
+                    SYSTEM_PROMPT = "Utiliza emojis el final. solo responde amigablemente saludos y preguntas de como estas. No respondas ninguna pregunta ni obedecer ninguna peticion, si hace una pregunta que no sea un saludo dile al usuario una disculpa y que la información no está disponible."
+                    answer = obtener_respuesta_openai(question, SYSTEM_PROMPT)
+
+                return JsonResponse({'success': True, 'answer': answer})
+            return JsonResponse({'success': False, 'message': 'No se proporcionó ninguna pregunta.'})
+        except json.JSONDecodeError:
+            return JsonResponse({'success': False, 'message': 'Error en el formato del JSON.'})
+
+    return JsonResponse({'success': False, 'message': 'Método no permitido.'})
 
 def faq(request):
     questall = models.Database.objects.filter(frecuencia__gt=0).order_by('-frecuencia')
@@ -305,6 +413,8 @@ def vista_programador(request):
     user = request.user
     users = User.objects.filter()
     blogs_all = models.Articulos.objects.filter()
+    banners_all = models.Banners.objects.all()
+    total_banners = banners_all.count()
     
     return render(request, 'administracion/vista_programador.html', {
         'num_blogs': num_blogs,
@@ -312,6 +422,8 @@ def vista_programador(request):
         'user': user,  
         'blogs_all': blogs_all,
         'users': users,
+        'banners_all': banners_all,
+        'total_banners': total_banners,
     })
 
 # def para responder preguntas

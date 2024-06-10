@@ -11,6 +11,7 @@ urlpatterns = [
     path('administracion/registro/', views.singuppage, name='singup'),
     path('administracion/', views.dashbAdmin, name='dashb_admin'),
     path('administracion/tarea/<int:tarea_id>/', views.tareaView, name='tareaView'),
+    path('chat/', views.chat_view, name='chatbot'),
 # se agrego la url para la vista administrador
     path('administracion/vista_admin/', views.vista_admin, name='vista_admin'),
     path('administracion/vista_programador/', views.vista_programador, name='vista_programador'),
