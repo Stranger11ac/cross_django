@@ -42,7 +42,7 @@ class Articulos(models.Model):
     actualizacion = models.DateField(auto_now=True, blank=True, null=True)
     titulo = models.CharField(max_length=200, blank=False)
     contenido = models.TextField(blank=False)
-    Encabezado =  models.ImageField(upload_to='cross_asistent/static/files/imagenes/', blank=True, null=True)
+    encabezado =  models.ImageField(upload_to='cross_asistent/static/files/imagenes/', blank=True, null=True)
     autor = models.CharField(max_length=150, blank=False)
     
     def __str__(self):

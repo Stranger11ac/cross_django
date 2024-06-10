@@ -1,13 +1,12 @@
 <!-- se modifico para que no tuvieran problemas el ir al inicio los staff -->
 <li class="nav-item">
-    {% if user.is_authenticated %}
+{% if user.is_authenticated %}
     {% if user.is_staff %}
         <a class="btn btn_secondary m-1 my-lg-0 d-block" href="{% url 'vista_programador' %}">Inicio <i class="fa-solid fa-house-chimney ms-1"></i></a>
     {% else %}
         <a class="btn btn_secondary m-1 my-lg-0 d-block" href="{% url 'vista_admin' %}">Inicio <i class="fa-solid fa-house-chimney ms-1"></i></a>
     {% endif %}
 {% endif %}
-
 </li>
 <li class="nav-item">
     <a
