@@ -2,48 +2,67 @@
 {% load static %}
 {% block title %}Mapa de la UTC 🗺️{% endblock %}
 {% block extra_head %}
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
-<style>
-    #map { 
-        height: 100vh; 
-        width: 100%;
-    }
-</style>
+<link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+    crossorigin=""
+/>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" />
 {% endblock %}
-
 {% block content %}
-<main class="full_page" id='map'></main>
+<main class="full_page" id="map"></main>
 
 <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasImage" aria-labelledby="offcanvasImageLabel">
-  <div class="offcanvas-header">
-    <h5 class="offcanvas-title" id="offcanvasImageLabel">Mapa UTC</h5>
-    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-  </div>
-  <div class="offcanvas-body">
-    <img id="offcanvasImg" src="" alt="qr" class="img-fluid">
-    <div id="offcanvasText" class="mt-3"></div>
-  </div>
+    <div class="offcanvas-header">
+        <h5 class="offcanvas-title" id="offcanvasImageLabel">Mapa UTC</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body">
+        <img id="offcanvasImg" src="{% static 'img/default_image.png' %}" alt="qr" class="img-fluid" />
+        <div id="offcanvasText" class="mt-3"></div>
+        <div class="mt-3">
+            <label for="destinationInput" class="form-label">Selecciona tu destino:</label>
+            <input
+                class="form-control"
+                list="destinationOptions"
+                id="destinationInput"
+                placeholder="Escribe para buscar..."
+            />
+            <datalist id="destinationOptions">
+                <option value="Rectoría"></option>
+                <option value="Biblioteca"></option>
+                <option value="Laboratorios">
+                    <!-- Añade más opciones según sea necesario -->
+                </option>
+            </datalist>
+        </div>
+        <button id="calculateRouteBtn" class="btn btn-primary mt-3">Calcular Ruta</button>
+    </div>
 </div>
 {% endblock %}
-
 {% block scripts_end %}
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+<script
+    src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+    crossorigin=""
+></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.js"></script>
 <script>
     var map = L.map('map', {
-        maxZoom: 20, 
-        zoomControl: false 
+        maxZoom: 20,
+        zoomControl: false
     });
 
     var bounds = [
-        [25.5532,-100.9418],
-        [25.5601,-100.9291]  
+        [25.5455,-100.9431],
+        [25.5649,-100.9310]
     ];
 
     map.setMaxBounds(bounds);
 
-    map.setView([25.5569, -100.93595], 17); 
+    map.setView([25.5569, -100.93595], 17);
 
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         maxZoom: 19,
@@ -51,29 +70,32 @@
     }).addTo(map);
 
     var edificios = {{ edificios|safe }};
+    var selectedEdificioCoords;
 
-    function openOffcanvasWithText(imageUrl, text) {
+    function openOffcanvasWithText(imageUrl, text, coords) {
         document.getElementById('offcanvasImg').src = imageUrl;
         document.getElementById('offcanvasText').innerHTML = text;
+        selectedEdificioCoords = coords;
         var offcanvas = new bootstrap.Offcanvas(document.getElementById('offcanvasImage'));
         offcanvas.show();
     }
 
     edificios.forEach(function(edificio) {
         var polygon = L.polygon(edificio.coordenadas, {
-            color: 'blue',
-            fillColor: 'blue',
+            color: edificio.edifcolor,
+            fillColor: edificio.edifill,
             fillOpacity: 0.5
         }).addTo(map);
 
         polygon.on('click', function() {
             var content = `
-                <h2>${edificio.nombre}</h2>
+                <h1>${edificio.nombre}</h1>
+                <h3>${edificio.titulo}</h3>
                 <p>${edificio.descripcion}</p>
             `;
-            openOffcanvasWithText("/static/" + edificio.imagen_url, content);
-        });        
-     });
+            openOffcanvasWithText("/static/" + edificio.imagen_url, content, edificio.coordenadas[0]);
+        });
+    });
 
     L.control.zoom({
         position: 'bottomleft'
@@ -86,13 +108,47 @@
     });
 
     map.on('dragend', function() {
-        if (map.getCenter().lat < bounds[0][0] || 
+        if (map.getCenter().lat < bounds[0][0] ||
             map.getCenter().lat > bounds[1][0] ||
             map.getCenter().lng < bounds[0][1] ||
             map.getCenter().lng > bounds[1][1]) {
             map.panInsideBounds(bounds);
         }
     });
-    {% comment %} Hola {% endcomment %}
+
+    var control = L.Routing.control({
+        waypoints: [],
+        routeWhileDragging: true,
+        geocoder: L.Control.Geocoder.nominatim()
+    }).addTo(map);
+
+    document.getElementById('calculateRouteBtn').addEventListener('click', function() {
+        var destination = document.getElementById('destinationInput').value;
+        var destinationCoords;
+
+        // Coordenadas específicas para el destino
+        if (destination === 'Rectoría') {
+            destinationCoords = [25.55744, -100.93586];
+        } else if (destination === 'Biblioteca') {
+            destinationCoords = [25.5570, -100.9350];
+        } else if (destination === 'Laboratorios') {
+            destinationCoords = [25.5580, -100.9340];
+        }
+
+        if (selectedEdificioCoords && destinationCoords) {
+            control.setWaypoints([
+                L.latLng(selectedEdificioCoords),
+                L.latLng(destinationCoords)
+            ]);
+        }
+    });
+
+    var initialCoords = [25.55475, -100.93484]; // Coordenadas del Edificio 2
+    var rectoriaCoords = [25.55744, -100.93586]; // Coordenadas de la Rectoría
+
+    control.setWaypoints([
+        L.latLng(initialCoords),
+        L.latLng(rectoriaCoords)
+    ]);
 </script>
 {% endblock %}

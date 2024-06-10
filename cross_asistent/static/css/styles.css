@@ -547,6 +547,15 @@ main.main_anchor {
     background: linear-gradient(to bottom, hsla(0, 0%, 0%, 0), hsla(0, 0%, 0%, 0.5) 70%);
 }
 
+path.leaflet-interactive {
+    stroke-width: 0;
+}
+
+.offcanvas-body #offcanvasImg {
+    border: none;
+    border-radius: var(--border-radius) !important;
+}
+
 /*#################### Template Buttons ####################*/
 @media (min-width: 992px) {
     .btn_lg-circle {
