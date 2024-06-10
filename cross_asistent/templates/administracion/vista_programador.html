@@ -12,7 +12,7 @@
 {% block link_default %} {% include 'administracion/widget_links-admin.html' %}
 {% endblock %}
 {% block content %}
-<main class="container container-fluid">
+<main class="container container-fluid pb-5">
     <div class="p-5 text-center">
         <h1 class="mb-3">Bienvenido {{ user.username }}</h1>
         <hr class="hr_divisor" />
@@ -68,121 +68,126 @@
         </button>
     </div>
     <!-- Carousel wrapper -->
-</main>
-<hr class="my-5" />
-<!--Section: Cards-->
-<section>
-    <div class="text-center">
-        <h4>Total de Blogs subidos: {{ num_blogs }}</h4>
-        <hr class="hr_divisor" />
-    </div>
-    <div class="row">
-        {% for blog in blogs_all %}
-        <div class="col-lg-6 col-md-12 mb-4">
+
+    <div class="row mt-4">
+        <div class="col-6 col-md-4 col-xl-4 mb-4">
             <div class="card">
-                <img src="" class="card-img-top" alt="" />
                 <div class="card-body">
-                    <h5 class="card-title">{{ blog.titulo }}</h5>
-                    <p class="card-text"></p>
-                    <a href="" class="btn btn-primary">Ver más</a>
+                    <h6 class="card-title d-flex justify-content-between">
+                        <div>
+                            <i class="fa-solid fa-image"></i>
+                            <span class="d-none d-md-inline-flex">Total de</span> Banners:
+                        </div>
+                        <div class="ms-auto">{{total_banners}}</div>
+                    </h6>
                 </div>
             </div>
         </div>
-        {% endfor %}
-    </div>
-</section>
-
-<section>
-    <div class="text-center">
-        <h4>Total de Preguntas: {{ preguntas_sin_responder|length }}</h4>
-    </div>
-    <div class="row">
-        <!-- Formulario para responder preguntas -->
-        <div class="col-lg-6 col-md-12 mb-4">
-            <form method="post" action="{% url 'responder_preguntas' %}">
-                {% csrf_token %}
-                <div class="mb-3">
-                    <label for="pregunta" class="form-label">Selecciona una pregunta</label>
-                    <input
-                        list="preguntas"
-                        name="pregunta_id"
-                        id="pregunta"
-                        class="form-control"
-                        autocomplete="off"
-                        autocapitalize="off"
-                    />
-                    <datalist id="preguntas">
-                        {% for pregunta in preguntas_sin_responder %}
-                        <option value="{{ QUEST.id }}">{{ pregunta.titulo }}</option>
-                        {% endfor %}
-                    </datalist>
+        <div class="col-6 col-md-4 col-xl-4 mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <h6 class="card-title d-flex justify-content-between">
+                        <div>
+                            <i class="fa-solid fa-newspaper"></i>
+                            <span class="d-none d-md-inline-flex">Total de</span> Blogs:
+                        </div>
+                        <div class="ms-auto">{{ num_blogs }}</div>
+                    </h6>
                 </div>
-                <div class="mb-3">
-                    <label for="respuesta" class="form-label">Respuesta</label>
-                    <textarea class="form-control" id="respuesta" name="respuesta" rows="3"></textarea>
+            </div>
+        </div>
+        <div class="col-sm-12 col-md-4 col-xl-4 mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <h6 class="card-title d-flex justify-content-between">
+                        <div>
+                            <i class="fa-solid fa-clipboard-question"></i>
+                            <span class="d-sm-inline-flex d-md-none d-xl-inline-flex">Total de</span> Preguntas:
+                        </div>
+                        <div class="ms-auto">{{ num_preguntas }}</div>
+                    </h6>
                 </div>
-                <button type="submit" class="btn btn-primary">Responder</button>
-            </form>
-        </div>
-
-        <!-- Lista de preguntas sin responder -->
-        <div class="col-lg-6 col-md-12 mb-4">
-            <h5>Preguntas sin responder</h5>
-            <hr />
-            <ul class="list-group">
-                {% for pregunta in preguntas_sin_responder %}
-                <li class="list-group-item">{{ pregunta.titulo }}</li>
-                {% endfor %}
-            </ul>
+            </div>
         </div>
     </div>
-</section>
-<!-- seccion de ver usuarios -->
-<hr class="hr_divisor" />
 
-<div class="card text-center m-1">
-    <h4>Usuarios registrados</h4>
-    <div class="card-body">
-        <div class="form-outline my-4" data-mdb-input-init>
-            <input
-                type="text"
-                name="searchUser"
-                id="searchInput"
-                autocapitalize="off"
-                class="form-control form-control-lg"
-            />
-            <label class="form-label" for="searchInput">Buscar Usuario</label>
+    <section>
+        <div class="row">
+            <!-- Formulario para responder preguntas -->
+            <div class="col-lg-6 col-md-12 mb-4">
+                <form method="post" action="{% url 'responder_preguntas' %}">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="pregunta" class="form-label">Selecciona una pregunta</label>
+                        <input
+                            list="preguntas"
+                            name="pregunta_id"
+                            id="pregunta"
+                            class="form-control"
+                            autocomplete="off"
+                            autocapitalize="off"
+                        />
+                        <datalist id="preguntas">
+                            {% for pregunta in preguntas_sin_responder %}
+                            <option value="{{ QUEST.id }}">{{ pregunta.titulo }}</option>
+                            {% endfor %}
+                        </datalist>
+                    </div>
+                    <div class="mb-3">
+                        <label for="respuesta" class="form-label">Respuesta</label>
+                        <textarea class="form-control" id="respuesta" name="respuesta" rows="3"></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Responder</button>
+                </form>
+            </div>
         </div>
-        <table class="table table-striped" style="min-height: 250px; height: auto">
-            <thead>
-                <tr>
-                    <th>#</th>
-                    <th>Usuario</th>
-                    <th>Nombre</th>
-                    <th>Apellido</th>
-                    <th>Email</th>
-                    <th>Acciones</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for user in users %}
-                <tr class="results_item">
-                    <td>{{ user.id }}</td>
-                    <td>{{ user.username }}</td>
-                    <td>{{ user.first_name }}</td>
-                    <td>{{ user.last_name }}</td>
-                    <td>{{ user.email }}</td>
-                    <td>
-                        {% if not user.is_active %}
-                        <a href="{% url 'activar_usuario' user.id %}" class="btn btn-primary">Activar</a>
-                        {% endif %}
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+    </section>
+    <!-- seccion de ver usuarios -->
+
+    <div class="card text-center m-1 mt-2 pt-5">
+        <h4>Usuarios registrados</h4>
+        <div class="card-body">
+            <div class="form-outline mb-4" data-mdb-input-init>
+                <input
+                    type="text"
+                    name="searchUser"
+                    id="searchInput"
+                    autocapitalize="off"
+                    class="form-control form-control-lg"
+                />
+                <label class="form-label" for="searchInput">Buscar Usuario</label>
+            </div>
+            <table class="table table-striped" style="min-height: 250px; height: auto">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Usuario</th>
+                        <th>Nombre</th>
+                        <th>Apellido</th>
+                        <th>Email</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in users %}
+                    <tr class="results_item">
+                        <td>{{ user.id }}</td>
+                        <td>{{ user.username }}</td>
+                        <td>{{ user.first_name }}</td>
+                        <td>{{ user.last_name }}</td>
+                        <td>{{ user.email }}</td>
+                        <td>
+                            {% if not user.is_active %}
+                            <a href="{% url 'activar_usuario' user.id %}" class="btn btn-primary">Activar</a>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
     </div>
-</div>
+</main>
 
 {% endblock %}
 

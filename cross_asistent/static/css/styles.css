@@ -560,8 +560,7 @@ main.main_anchor {
 .carousel-fade .carousel-item.active,
 .carousel-fade .carousel-item-next.carousel-item-start,
 .carousel-fade .carousel-item-prev.carousel-item-end {
-    height: 230px !important;
-    max-height: 230px !important;
+    max-height: 30vh !important;
 }
 
 path.leaflet-interactive {
@@ -571,6 +570,10 @@ path.leaflet-interactive {
 .offcanvas-body #offcanvasImg {
     border: none;
     border-radius: var(--border-radius) !important;
+}
+
+.card{
+    box-shadow: 0 0 8px var(--darkA2) !important;
 }
 
 /*#################### Template Buttons ####################*/
