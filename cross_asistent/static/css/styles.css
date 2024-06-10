@@ -198,6 +198,14 @@ nav .navbar-collapse {
     transform: translateY(-50%);
     text-align: center;
 }
+
+.carousel-item p,
+.carousel-item h5{
+    font-size: initial !important;
+    display: block !important;
+    line-height: initial !important;
+}
+.carousel-item h5,
 .slide-inner .header-text h2 {
     position: relative;
     z-index: 2;
@@ -209,6 +217,7 @@ nav .navbar-collapse {
     line-height: 70px;
     text-shadow: 0 0 20px black, 0 0 40px black;
 }
+.carousel-item p,
 .slide-inner .header-text p {
     color: #fff;
     font-size: 1.5rem;
@@ -218,6 +227,7 @@ nav .navbar-collapse {
     display: none;
 }
 .text_detail,
+.carousel-item em,
 .slide-inner .header-text h2 em {
     color: var(--detalle);
 }
@@ -545,6 +555,13 @@ main.main_anchor {
 /*###################### Mask ######################*/
 .mask_dark{
     background: linear-gradient(to bottom, hsla(0, 0%, 0%, 0), hsla(0, 0%, 0%, 0.5) 70%);
+}
+
+.carousel-fade .carousel-item.active,
+.carousel-fade .carousel-item-next.carousel-item-start,
+.carousel-fade .carousel-item-prev.carousel-item-end {
+    height: 230px !important;
+    max-height: 230px !important;
 }
 
 path.leaflet-interactive {
