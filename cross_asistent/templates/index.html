@@ -80,7 +80,7 @@
                     </button>
                 </div>
             </div>
-            <form id="chatForm" class="controls_input" method="POST">
+            <form id="chatForm" class="controls_input" method="POST" action="{% url 'chatbot' %}">
                 {% csrf_token %}
                 <div class="position-relative bottom-0 end-0">
                     <div class="form-outline" data-mdb-input-init>
@@ -128,134 +128,134 @@
 {% endblock %}
 
 {% block scripts_end %}
-<script src="{% static 'js/owl-carousel.min.js' %}"></script>
-<script src="{% static 'js/swiper.min.js' %}"></script>
-<script src="{% static 'js/custom.js' %}"></script>
-<script src="{% static 'js/functions.js' %}"></script>
-<script>
-    $(document).ready(function () {
-        try {
-            $(".controls_btn_microphone").click(() => {
-                $(".asistent_group").addClass('open open_controls bg-body-tertiary');
-                $(".btn_controls").addClass('btn_detail').removeClass('btn_secondary');
-                $("#btn_controls_icon").removeClass('fa-comment').addClass('fa-microphone');
-            });
-            
-            $(".toggle_controls").click(() => {
-                $(".asistent_group.open").toggleClass('close_controls open_keyboard open_controls');
-                setTimeout(function() {
-                    $('.controls_input #question').focus();
-                }, 5000);
-            });
-
-            $(".controls_btn_close").click(() => {
-                $(".asistent_group").removeClass('open open_controls close_controls open_keyboard bg-body-tertiary');
-                $(".btn_controls").removeClass('btn_detail').addClass('btn_secondary');
-                $("#btn_controls_icon").addClass('fa-comment').removeClass('fa-microphone');
-            });
-        } catch (errorCatch) {
-            console.log("Error Inesperado: ", errorCatch);
-            alertSToast('top', 8000, 'error', `😥 Ah ocurrido un error ${errorCatch}`);
-        }
-    });
-</script>
-
-<script>
-    document.getElementById('question').addEventListener('keydown', function(event) {
-        if (event.key === 'Enter') {
-            if (event.shiftKey) {
-                const cursorPos = this.selectionStart;
-                const textBefore = this.value.substring(0, cursorPos);
-                const textAfter = this.value.substring(cursorPos);
-                this.value = textBefore + "\n" + textAfter;
-                this.selectionStart = cursorPos + 1;
-                this.selectionEnd = cursorPos + 1;
-                event.preventDefault();
-            } else {
-                event.preventDefault();
-                document.getElementById('chatForm_submit').click();
-            }
-        }
-    });
-
-    var output = document.getElementById('output');
-
-    document.getElementById('chatForm').addEventListener('submit', function(e) {
-        e.preventDefault();
-        const question = document.getElementById('question').value;
-        const chatForm = e.target;
-        const formData = new FormData(chatForm);
-
-        fetch(chatForm.action, {
-            method: 'POST',
-            body: formData,
-            headers: {
-                'X-Requested-With': 'XMLHttpRequest',
-                'X-CSRFToken': chatForm.querySelector('[name=csrfmiddlewaretoken]').value
-            }
-        })
-        .then(response => {
-            if (!response.ok) {
-                return response.json().then(data => {
-                    throw new Error(data.message || 'Error desconocido');
+    <script src="{% static 'js/owl-carousel.min.js' %}"></script>
+    <script src="{% static 'js/swiper.min.js' %}"></script>
+    <script src="{% static 'js/custom.js' %}"></script>
+    <script src="{% static 'js/functions.js' %}"></script>
+    <script>
+        $(document).ready(function () {
+            try {
+                $(".controls_btn_microphone").click(() => {
+                    $(".asistent_group").addClass('open open_controls bg-body-tertiary');
+                    $(".btn_controls").addClass('btn_detail').removeClass('btn_secondary');
+                    $("#btn_controls_icon").removeClass('fa-comment').addClass('fa-microphone');
                 });
-            }
-            return response.json();
-        })
-        .then(data => {
-            if (data.success) {
-                var tokendid = generarCadenaAleatoria(5);
-                const valID = `uuid${tokendid}`;
-
-                const htmlBlock = `
-                    <div class="output_block">
-                        <div class="btn_secondary chat_msg user_submit" data-tokeid="${valID}">
-                            ${question}
-                        </div>
-                    </div>
-                    <div class="btn_detail chat_msg asistent_response" data-tokeid="${valID}">
-                        <span>${data.answer}</span>
-                    </div>
-                `;
-
-                output.insertAdjacentHTML('beforeend', htmlBlock);
-                this.reset();
-
-                const user_submit = document.querySelector(`.user_submit[data-tokeid="${valID}"]`);
-                const asistent_response = document.querySelector(`.asistent_response[data-tokeid="${valID}"]`);
-
-                setTimeout(function() {
-                    user_submit.classList.add('visible');
-                    setTimeout(scrollToBottom, 500);
-                    setTimeout(function() {
-                        asistent_response.classList.add('visible');
-                        setTimeout(scrollToBottom, 350);
-                    }, 950);
-                }, 50);
-
                 
-            } else {
-                alertSToast('top', 8000, 'error', `Error: ${data.message}`);
+                $(".toggle_controls").click(() => {
+                    $(".asistent_group.open").toggleClass('close_controls open_keyboard open_controls');
+                    setTimeout(function() {
+                        $('.controls_input #question').focus();
+                    }, 5000);
+                });
+
+                $(".controls_btn_close").click(() => {
+                    $(".asistent_group").removeClass('open open_controls close_controls open_keyboard bg-body-tertiary');
+                    $(".btn_controls").removeClass('btn_detail').addClass('btn_secondary');
+                    $("#btn_controls_icon").addClass('fa-comment').removeClass('fa-microphone');
+                });
+            } catch (errorCatch) {
+                console.log("Error Inesperado: ", errorCatch);
+                alertSToast('top', 8000, 'error', `😥 Ah ocurrido un error ${errorCatch}`);
             }
-        })
-        .catch(error => {
-            console.error('😥 Error:', error);
-            alertSToast('top', 8000, 'warning', 'Ocurrió un error. Intente nuevamente. 😥');
         });
-    });
+    </script>
 
-    function scrollToBottom() {
-        output.scrollTop = output.scrollHeight;
-    }
+    <script>
+        document.getElementById('question').addEventListener('keydown', function(event) {
+            if (event.key === 'Enter') {
+                if (event.shiftKey) {
+                    const cursorPos = this.selectionStart;
+                    const textBefore = this.value.substring(0, cursorPos);
+                    const textAfter = this.value.substring(cursorPos);
+                    this.value = textBefore + "\n" + textAfter;
+                    this.selectionStart = cursorPos + 1;
+                    this.selectionEnd = cursorPos + 1;
+                    event.preventDefault();
+                } else {
+                    event.preventDefault();
+                    document.getElementById('chatForm_submit').click();
+                }
+            }
+        });
 
-    document.addEventListener("DOMContentLoaded", function() {
-        scrollToBottom();
-    });
+        var output = document.getElementById('output');
 
-    var observer = new MutationObserver(function() {
-        scrollToBottom();
-    });
+        document.getElementById('chatForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const pregunta = document.getElementById('question').value;
+            const chatForm = e.target;
 
-    observer.observe(output, { childList: true, subtree: true });
-</script>
+            fetch(chatForm.action, {
+                method: 'POST',
+                body: JSON.stringify({ question: pregunta }),
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'X-CSRFToken': chatForm.querySelector('[name=csrfmiddlewaretoken]').value
+                }
+            })
+            .then(response => {
+                if (!response.ok) {
+                    return response.json().then(data => {
+                        throw new Error(data.message || 'Error desconocido');
+                    });
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    var tokendid = generarCadenaAleatoria(5);
+                    const valID = `uuid${tokendid}`;
+
+                    const htmlBlock = `
+                        <div class="output_block">
+                            <div class="btn_secondary chat_msg user_submit" data-tokeid="${valID}">
+                                ${pregunta}
+                            </div>
+                        </div>
+                        <div class="btn_detail chat_msg asistent_response" data-tokeid="${valID}">
+                            <span>${data.answer}</span>
+                        </div>
+                    `;
+
+                    output.insertAdjacentHTML('beforeend', htmlBlock);
+                    this.reset();
+
+                    const user_submit = document.querySelector(`.user_submit[data-tokeid="${valID}"]`);
+                    const asistent_response = document.querySelector(`.asistent_response[data-tokeid="${valID}"]`);
+
+                    setTimeout(function() {
+                        user_submit.classList.add('visible');
+                        setTimeout(scrollToBottom, 500);
+                        setTimeout(function() {
+                            asistent_response.classList.add('visible');
+                            setTimeout(scrollToBottom, 350);
+                        }, 950);
+                    }, 50);
+
+                    
+                } else {
+                    alertSToast('top', 8000, 'error', `Error: ${data.message}`);
+                }
+            })
+            .catch(error => {
+                console.error('😥 Error:', error);
+                alertSToast('top', 8000, 'warning', 'Ocurrió un error. Intente nuevamente. 😥');
+            });
+        });
+
+        function scrollToBottom() {
+            output.scrollTop = output.scrollHeight;
+        }
+
+        document.addEventListener("DOMContentLoaded", function() {
+            scrollToBottom();
+        });
+
+        var observer = new MutationObserver(function() {
+            scrollToBottom();
+        });
+
+        observer.observe(output, { childList: true, subtree: true });
+    </script>
 {% endblock %}
