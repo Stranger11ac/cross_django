@@ -454,3 +454,32 @@ def activar_usuario(request, user_id):
         user.is_active = True
         user.save()
     return redirect('vista_programador')
+
+#desactivar usuarios
+@login_required
+@never_cache
+def desactivar_usuario(request, user_id):
+    user = get_object_or_404(User, id=user_id)
+    user.is_active = False
+    user.save()
+    return redirect('vista_programador')
+
+# eliminar usuarios
+@login_required
+@never_cache
+def eliminar_usuario(request, user_id):
+    user = get_object_or_404(User, id=user_id)
+    user.delete()
+    return redirect('vista_programador') 
+
+@login_required
+@never_cache
+def editar_usuario(request, user_id):
+    user = get_object_or_404(User, id=user_id)
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        if username:
+            user.username = username
+            user.save()
+            return redirect('vista_programador')
+    return redirect('vista_programador')

@@ -18,29 +18,21 @@
         <hr class="hr_divisor" />
     </div>
     <!-- Carousel wrapper -->
-    <div
-        id="carouselMaterialStyle"
-        class="carousel slide carousel-fade"
-        data-mdb-ride="carousel"
-        data-mdb-carousel-init
-    >
+    <div id="carouselMaterialStyle" class="carousel slide carousel-fade" data-mdb-ride="carousel"
+        data-mdb-carousel-init>
         <!-- Inner -->
         <div class="carousel-inner rounded-5 shadow-4-strong">
             {% for oneBanner in banners_all %}
             <div class="carousel-item" id="bannerid_{{oneBanner.id}}" data-mdb-interval="10000">
-              
+
                 {% with imagen_url=oneBanner.imagen.url|eliminar_prefijo:'cross_asistent/' %}
-                <img
-                    src="{{imagen_url}}"
-                    class="d-block w-100"
-                    alt="Sunset"
-                />
+                <img src="{{imagen_url}}" class="d-block w-100" alt="Sunset" />
                 {% endwith %}
                 <div class="carousel-caption">
-                  {% autoescape off %}
+                    {% autoescape off %}
                     <h5>{{oneBanner.titulo}}</h5>
                     <p>{{oneBanner.descripcion}}</p>
-                  {% endautoescape %}
+                    {% endautoescape %}
                 </div>
             </div>
             {% endfor %}
@@ -48,21 +40,13 @@
         <!-- Inner -->
 
         <!-- Controls -->
-        <button
-            class="carousel-control-prev"
-            type="button"
-            data-mdb-target="#carouselMaterialStyle"
-            data-mdb-slide="prev"
-        >
+        <button class="carousel-control-prev" type="button" data-mdb-target="#carouselMaterialStyle"
+            data-mdb-slide="prev">
             <span class="carousel-control-prev-icon" aria-hidden="true"></span>
             <span class="visually-hidden">Previous</span>
         </button>
-        <button
-            class="carousel-control-next"
-            type="button"
-            data-mdb-target="#carouselMaterialStyle"
-            data-mdb-slide="next"
-        >
+        <button class="carousel-control-next" type="button" data-mdb-target="#carouselMaterialStyle"
+            data-mdb-slide="next">
             <span class="carousel-control-next-icon" aria-hidden="true"></span>
             <span class="visually-hidden">Next</span>
         </button>
@@ -119,14 +103,8 @@
                     {% csrf_token %}
                     <div class="mb-3">
                         <label for="pregunta" class="form-label">Selecciona una pregunta</label>
-                        <input
-                            list="preguntas"
-                            name="pregunta_id"
-                            id="pregunta"
-                            class="form-control"
-                            autocomplete="off"
-                            autocapitalize="off"
-                        />
+                        <input list="preguntas" name="pregunta_id" id="pregunta" class="form-control" autocomplete="off"
+                            autocapitalize="off" />
                         <datalist id="preguntas">
                             {% for pregunta in preguntas_sin_responder %}
                             <option value="{{ QUEST.id }}">{{ pregunta.titulo }}</option>
@@ -148,13 +126,8 @@
         <h4>Usuarios registrados</h4>
         <div class="card-body">
             <div class="form-outline mb-4" data-mdb-input-init>
-                <input
-                    type="text"
-                    name="searchUser"
-                    id="searchInput"
-                    autocapitalize="off"
-                    class="form-control form-control-lg"
-                />
+                <input type="text" name="searchUser" id="searchInput" autocapitalize="off"
+                    class="form-control form-control-lg"/>
                 <label class="form-label" for="searchInput">Buscar Usuario</label>
             </div>
             <table class="table table-striped" style="min-height: 250px; height: auto">
@@ -177,9 +150,51 @@
                         <td>{{ user.last_name }}</td>
                         <td>{{ user.email }}</td>
                         <td>
-                            {% if not user.is_active %}
-                            <a href="{% url 'activar_usuario' user.id %}" class="btn btn-primary">Activar</a>
+                            {% if user.is_active %}
+                            <a href="{% url 'desactivar_usuario' user.id %}" class="btn btn-warning">
+                                <i class="fa-solid fa-user-minus"></i>
+                            </a>
+                            {% else %}
+                            <a href="{% url 'activar_usuario' user.id %}" class="btn btn-primary">
+                                <i class="fa-solid fa-user-check"></i>
+                            </a>
                             {% endif %}
+                            
+                            <form action="{% url 'eliminar_usuario' user.id %}" method="post" style="display:inline;">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-danger">
+                                    <i class="fa-solid fa-user-xmark"></i>
+                                </button>
+                            </form>
+                            <button type="button" class="btn btn-info" data-mdb-ripple-init data-mdb-modal-init data-mdb-target="#editar_modal_{{ user.id }}">
+                                <i class="fa-solid fa-user-pen"></i>
+                            </button>
+                            <!-- modal para editar username del usuario -->
+                            <div class="modal fade" id="editar_modal_{{ user.id }}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="exampleModalLabel">Editar Usuario</h5>
+                                            <button type="button" class="btn-close" data-mdb-ripple-init data-mdb-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <form method="post" action="{% url 'editar_usuario' user.id %}">
+                                                {% csrf_token %}
+                                                <div class="mb-3">
+                                                    <label for="username" class="form-label">Nuevo Nombre de Usuario</label>
+                                                    <input type="text" class="form-control" id="username" name="username" required>
+                                                </div>
+                                                <button type="button" class="btn btn-danger"    data-mdb-ripple-init data-mdb-dismiss="modal">Cancelar</button>
+                                                <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                                    </div>
+                                </div>
+                            </div>
                         </td>
                     </tr>
                     {% endfor %}
@@ -192,13 +207,13 @@
 {% endblock %}
 
 {% block scripts_end %}
-    <script>
-    $(document).ready(function() {
+<script>
+    $(document).ready(function () {
         var elements = $('[id^="bannerid_"]');
         var minIdElement = null;
         var minIdNumber = Infinity;
 
-        elements.each(function() {
+        elements.each(function () {
             var id = $(this).attr('id');
             var number = parseInt(id.split('_')[1]);
             if (number < minIdNumber) {
@@ -211,5 +226,5 @@
             minIdElement.addClass('active');
         }
     });
-  </script>
+</script>
 {% endblock %}
