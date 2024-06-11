@@ -32,6 +32,10 @@ def index(request):
     })
 
 client = openai.OpenAI(api_key=settings.OPENAI_API_KEY)
+# 'sk-
+# proj-
+# O21qAaaFdSIjPzrH2oB
+# 3T3BlbkFJElUlUyOWVJToJXXK5etn'
 
 def obtener_respuesta_openai(question, instructions):
     response = client.chat.completions.create(
