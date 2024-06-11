@@ -27,9 +27,9 @@
       <label for="destinationInput" class="form-label">Selecciona tu destino:</label>
       <input class="form-control" list="destinationOptions" id="destinationInput" placeholder="Escribe para buscar...">
       <datalist id="destinationOptions">
-        <option value="Rectoría">
-        <option value="Biblioteca">
-        <option value="Laboratorios">
+        {% for edificio in edificios %}
+          <option value="{{ edificio.nombre }}">
+        {% endfor %}
       </datalist>
     </div>
     <button id="calculateRouteBtn" class="btn btn-primary mt-3">Calcular Ruta</button>
@@ -108,12 +108,10 @@
     });
 
     // Create waypoints for internal campus paths
-    var waypoints = {
-        'Rectoría': [25.55744, -100.93586],
-        'Biblioteca': [25.5570, -100.9350],
-        'Laboratorios': [25.5580, -100.9340],
-        'Edificio 2': [25.55475, -100.93484]
-    };
+    var waypoints = {};
+    edificios.forEach(function(edificio) {
+        waypoints[edificio.nombre] = edificio.coordenadas[0];
+    });
 
     // Define the routing control without waypoints initially
     var control = L.Routing.control({
