@@ -131,34 +131,6 @@
     <script src="{% static 'js/owl-carousel.min.js' %}"></script>
     <script src="{% static 'js/swiper.min.js' %}"></script>
     <script src="{% static 'js/custom.js' %}"></script>
-    <script src="{% static 'js/functions.js' %}"></script>
-    <script>
-        $(document).ready(function () {
-            try {
-                $(".controls_btn_microphone").click(() => {
-                    $(".asistent_group").addClass('open open_controls bg-body-tertiary');
-                    $(".btn_controls").addClass('btn_detail').removeClass('btn_secondary');
-                    $("#btn_controls_icon").removeClass('fa-comment').addClass('fa-microphone');
-                });
-                
-                $(".toggle_controls").click(() => {
-                    $(".asistent_group.open").toggleClass('close_controls open_keyboard open_controls');
-                    setTimeout(function() {
-                        $('.controls_input #question').focus();
-                    }, 5000);
-                });
-
-                $(".controls_btn_close").click(() => {
-                    $(".asistent_group").removeClass('open open_controls close_controls open_keyboard bg-body-tertiary');
-                    $(".btn_controls").removeClass('btn_detail').addClass('btn_secondary');
-                    $("#btn_controls_icon").addClass('fa-comment').removeClass('fa-microphone');
-                });
-            } catch (errorCatch) {
-                console.log("Error Inesperado: ", errorCatch);
-                alertSToast('top', 8000, 'error', `😥 Ah ocurrido un error ${errorCatch}`);
-            }
-        });
-    </script>
 
     <script>
         document.getElementById('question').addEventListener('keydown', function(event) {

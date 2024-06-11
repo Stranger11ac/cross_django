@@ -8,22 +8,21 @@ from django.contrib.auth.models import User
 from django.db import IntegrityError
 from django.http import JsonResponse
 from django.conf import settings
-
 from .forms import crearTarea
 from . import models
-
-import openai
+from openai import OpenAI
+client = OpenAI()
 import json
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
-import nltk
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
 from nltk.stem import WordNetLemmatizer
 
-nltk.download('punkt')
-nltk.download('stopwords')
-nltk.download('wordnet')
+# import nltk
+# nltk.download('punkt')
+# nltk.download('stopwords')
+# nltk.download('wordnet')
 
 def index(request):
     banners_all = models.Banners.objects.all()
@@ -33,23 +32,23 @@ def index(request):
     })
 
 # Configura tu clave API de OpenAI
-openai.api_key = settings.OPENAI_API_KEY
+client.api_key = settings.OPENAI_API_KEY
 
 def obtener_respuesta_openai(question, instructions):
-    response = openai.ChatCompletion.create(
+    response = client.chat.completions.create(
         model="gpt-3.5-turbo",
         messages=[
             {"role": "system", "content": instructions},
             {"role": "user", "content": question},
         ],
-        temperature=0.1,
+        temperature=0,
     )
     print(f"Prompt:{response.usage.prompt_tokens}")
     print(f"Compl:{response.usage.completion_tokens}")
     print(f"Total:{response.usage.total_tokens}")
     print('')
     
-    return response.choices[0].message['content']
+    return response.choices[0].message.content
 
 
 def preprocesar_texto(texto):
@@ -57,7 +56,7 @@ def preprocesar_texto(texto):
     tokens = word_tokenize(texto.lower())
 
     # Eliminación de stopwords
-    stop_words = set(stopwords.words('english'))
+    stop_words = set(stopwords.words('spanish'))
     tokens = [word for word in tokens if word not in stop_words]
 
     # Lematización
@@ -66,6 +65,8 @@ def preprocesar_texto(texto):
 
     # Reconstruir el texto preprocesado
     texto_preprocesado = ' '.join(tokens)
+    print(f"procesado:{texto_preprocesado}")
+    print()
     return texto_preprocesado
 
 def buscar_informacion_relevante(question, queryset):
@@ -106,7 +107,10 @@ def chat_view(request):
                 # Buscar en la base de datos
                 resultados = models.Database.objects.all()
                 informacion_relevante = buscar_informacion_relevante(question, resultados)
+                print(f"database: {resultados}")
+                print()
                 print(f"pregunta: {question}")
+                print()
                 print(f"info:{informacion_relevante}")
 
                 if informacion_relevante:

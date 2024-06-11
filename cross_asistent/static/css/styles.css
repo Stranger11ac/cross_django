@@ -55,7 +55,10 @@
     --transitionCubicVal: cubic-bezier(0.68, -0.55, 0.27, 1.55);
     --border-input_items: 2px solid var(--blanco);
     --border-radius: 8px;
+    --nav_height: 60px;
+    --full_page: calc(100vh - var(--nav_height));
 }
+
 /*######### Generales #########*/
 html {
     overflow-x: hidden;
@@ -116,8 +119,8 @@ i.fa-solid {
 }
 /*########################## Navbar ##########################*/
 nav {
-    max-height: 60px;
-    padding-block: 5px !important;
+    height: var(--nav_height);
+    padding-block: 3px !important;
 }
 nav .navbar-brand img {
     height: 45px;
@@ -166,7 +169,7 @@ nav .navbar-collapse {
 /*########################## Carousel ##########################*/
 .swiper-container {
     min-height: 400px;
-    height: calc(100vh - 60px);
+    height: var(--full_page);
     width: 100vw;
     overflow: hidden;
 }
@@ -266,13 +269,15 @@ nav .navbar-collapse {
     background-color: black;
     background: black;
 }
+
+
 /*##################### Contenido #####################*/
 main {
     min-height: 400px;
 }
 main.full_page{
     width: 100%;
-    height: calc(100vh - 60px);
+    height: var(--full_page);
     z-index: 0;
 }
 main.main_anchor {
@@ -292,7 +297,7 @@ main.main_anchor {
 }
 .asistent_group.open{
     z-index: 2;
-    height: calc(100vh - 90px);
+    height: var(--full_page);
 }
 
 .asistent_group .box_asistent {
@@ -312,7 +317,7 @@ main.main_anchor {
 
 .asistent_group.open .box_asistent #asistent_model {
     width: 90%;
-    height: calc(100% - 90px);
+    height: var(--full_page);
     margin: 0 0 8vh 5%;
 }
 
@@ -576,6 +581,14 @@ path.leaflet-interactive {
     box-shadow: 0 0 8px var(--darkA2) !important;
 }
 
+.leaflet-control-zoom.leaflet-bar.leaflet-control {
+    border: none;
+    border-radius: var(--border-radius) !important;
+    overflow: hidden;
+    box-shadow: 0 0 5px var(--darkA5);
+}
+
+
 /*#################### Template Buttons ####################*/
 @media (min-width: 992px) {
     .btn_lg-circle {
@@ -601,6 +614,7 @@ path.leaflet-interactive {
         align-content: center;
     }
 }
+
 /*################ Alerts customClass Sweetalert ################*/
 .icon_alert {
     font-size: 1.5rem;
