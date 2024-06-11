@@ -10,8 +10,8 @@ from django.http import JsonResponse
 from django.conf import settings
 from .forms import crearTarea
 from . import models
-from openai import OpenAI
-client = OpenAI()
+
+import openai
 import json
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
@@ -31,8 +31,7 @@ def index(request):
         'active_page': 'inicio'
     })
 
-# Configura tu clave API de OpenAI
-client.api_key = settings.OPENAI_API_KEY
+client = openai.OpenAI(api_key=settings.OPENAI_API_KEY)
 
 def obtener_respuesta_openai(question, instructions):
     response = client.chat.completions.create(
