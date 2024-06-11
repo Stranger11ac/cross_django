@@ -156,7 +156,7 @@ def map(request):
             'edifcolor': 'orange','edifill': 'orange',
             'nombre': 'Centro de Idiomas',
             'descripcion': 'Descripción del Centro de Idiomas',
-            'imagen_url': 'img/Centro de Idiomas.webp',
+            'imagen_url': 'img/Centro_Idiomas.webp',
             'coordenadas': [[25.55715, -100.93684], [25.55742, -100.93724], [25.55757, -100.93711], [25.55731, -100.93670]]
         },
         {
@@ -269,21 +269,21 @@ def map(request):
             'edifcolor': 'blue','edifill': 'blue',
             'nombre': 'Papeleria',
             'descripcion': 'Descripción de Papeleria',
-            'imagen_url': 'img/default_image.png',
+            'imagen_url': 'img/papeleriautc.webp',
             'coordenadas': [[25.55700,-100.93713], [25.55708,-100.93709], [25.55704,-100.93701], [25.55697,-100.93706]]
         },
         {
             'edifcolor': 'green','edifill': 'green',
             'nombre': 'Campo De Fútbol',
             'descripcion': 'Descripción de Campo De Fútbol',
-            'imagen_url': 'img/default_image.png',
+            'imagen_url': 'img/futbol.webp',
             'coordenadas': [[25.55871,-100.93793], [25.55835,-100.93763], [25.55819,-100.93786], [25.55855,-100.93816]]
         },
         {
             'edifcolor': 'green','edifill': 'green',
             'nombre': 'Campo de Softbol',
             'descripcion': 'Descripción de Campo de Softbol',
-            'imagen_url': 'img/default_image.png',
+            'imagen_url': 'img/softbol.webp',
             'coordenadas': [[25.55886,-100.93881], [25.55844,-100.93925], [25.55796,-100.93869], [25.55848,-100.93837]]
         },
     ]
@@ -457,4 +457,33 @@ def activar_usuario(request, user_id):
         user = User.objects.get(id=user_id)
         user.is_active = True
         user.save()
+    return redirect('vista_programador')
+
+#desactivar usuarios
+@login_required
+@never_cache
+def desactivar_usuario(request, user_id):
+    user = get_object_or_404(User, id=user_id)
+    user.is_active = False
+    user.save()
+    return redirect('vista_programador')
+
+# eliminar usuarios
+@login_required
+@never_cache
+def eliminar_usuario(request, user_id):
+    user = get_object_or_404(User, id=user_id)
+    user.delete()
+    return redirect('vista_programador') 
+
+@login_required
+@never_cache
+def editar_usuario(request, user_id):
+    user = get_object_or_404(User, id=user_id)
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        if username:
+            user.username = username
+            user.save()
+            return redirect('vista_programador')
     return redirect('vista_programador')
