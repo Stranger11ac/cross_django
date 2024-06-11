@@ -10,7 +10,7 @@
         <title>{% block title %}TITULO{% endblock %} | Asistente UTC</title>
 
         <link rel="preload" href="{% static 'css/mdb.min.css' %}" as="style" />
-        <link rel="preload" href="{% static 'css/fontawesome-6.5.2.css' %}" as="style" />
+        <link rel="preload" href="{% static 'css/fontawesome-6.5.2.min.css' %}" as="style" />
         <link rel="stylesheet" href="https://necolas.github.io/normalize.css/8.0.0/normalize.css" />
 
         {% block extra_head %}{% endblock %}
@@ -57,14 +57,14 @@
                             <a
                                 class="btn {% if active_page == 'blog' %}btn_secondary{% else %}btn_detail{% endif %} m-1 my-lg-0 d-block"
                                 href="{% url 'blog' %}"
-                                >Blog<i class="fa-solid fa-calendar-days ms-1"></i
+                                >Blog <i class="fa-solid fa-newspaper"></i></i
                             ></a>
                         </li>
                         <li class="nav-item">
                             <a
                                 class="btn {% if active_page == 'map' %}btn_secondary{% else %}btn_detail{% endif %} m-1 my-lg-0 d-block"
                                 href="{% url 'map' %}"
-                                >Mapa<i class="fa-solid fa-map-location-dot ms-1"></i
+                                >Mapa <i class="fa-solid fa-map-location-dot ms-1"></i
                             ></a>
                         </li>
                         <li class="nav-item">
