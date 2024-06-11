@@ -19,5 +19,8 @@ urlpatterns = [
     path('responder_preguntas/', views.responder_preguntas, name='responder_preguntas'),
 # path para activar los usuarios
     path('activar_usuario/<int:user_id>/', views.activar_usuario, name='activar_usuario'),
+    path('desactivar_usuario/<int:user_id>/', views.desactivar_usuario, name='desactivar_usuario'),
+    path('eliminar_usuario/<int:user_id>/', views.eliminar_usuario, name='eliminar_usuario'),
+    path('editar_usuario/<int:user_id>/', views.editar_usuario, name='editar_usuario'),
     path('logout/', views.singoutpage, name='singout'),
 ]
