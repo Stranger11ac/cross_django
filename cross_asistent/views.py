@@ -54,10 +54,12 @@ def obtener_respuesta_openai(question, instructions):
 
     return response.choices[0].message.content
 
+now = 'hoy'
+
 def export_database_to_csv(request):
     # Crear la respuesta HTTP con el tipo de contenido adecuado
     response = HttpResponse(content_type='text/csv')
-    response['Content-Disposition'] = 'attachment; filename="database.csv"'
+    response['Content-Disposition'] = f'attachment; filename="database_{now}.csv"'
 
     writer = csv.writer(response)
     writer.writerow(['Categoria', 'Titulo', 'Informacion', 'Redirigir', 'Frecuencia', 'Documentos', 'Imagenes', 'Fecha Modificacion'])
