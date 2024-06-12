@@ -19,7 +19,7 @@
         <hr class="hr_divisor" />
     </div>
     <section class="row mb-md-4">
-        <div class="col-12 col-md-6">
+        <div class="carousel_container col-12 col-md-6 col-xl-4">
             <!-- Carousel wrapper -->
             <div id="carouselMaterialStyle" class="carousel slide carousel-fade" data-mdb-ride="carousel"
                 data-mdb-carousel-init>
@@ -29,7 +29,7 @@
                     <div class="carousel-item" id="bannerid_{{oneBanner.id}}" data-mdb-interval="10000">
 
                         {% with imagen_url=oneBanner.imagen.url|eliminar_prefijo:'cross_asistent/' %}
-                        <img src="{{imagen_url}}" class="d-block w-100" alt="Sunset" />
+                        <img src="{{imagen_url}}" class="h-100 d-block w-100" alt="Sunset" />
                         {% endwith %}
                         <div class="carousel-caption">
                             {% autoescape off %}
@@ -58,9 +58,9 @@
         </div>
 
         <!-- targetas de totales -->
-        <div class="mt-4 col-12 col-md-6">
+        <div class="mt-4 col-12 col-md-6 col-xl-8">
             <div class="row">
-                <div class="col-6 col-xl-4 mb-4 mb-md-2">
+                <div class="col-6 mb-4 mb-md-2">
                     <!-- Card 1: Banners -->
                     <div class="card">
                         <div class="card-body">
@@ -75,7 +75,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-6 col-xl-4 mb-4 mb-md-2">
+                <div class="col-6 mb-4 mb-md-2">
                     <!-- Card 2: Blogs / Articulos -->
                     <div class="card">
                         <div class="card-body">
@@ -90,7 +90,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-12 col-xl-4 mb-4 mb-md-2">
+                <div class="col-12 mb-4 mb-md-2">
                     <!-- Card 3: Preguntas / database -->
                     <div class="card">
                         <div class="card-body">
@@ -151,8 +151,8 @@
                 </datalist>
             </div>
             <!-- tabla de usuarios -->
-            <div class="table-responsive table-container">
-                <table class="table table-striped" style="min-height: 250px; height: auto">
+            <div class="table-responsive" id="table-container">
+                <table class="table table_odd" style="min-height: 250px; height: auto">
                     <thead>
                         <tr>
                             <th>#</th>
@@ -165,7 +165,7 @@
                     </thead>
                     <tbody>
                         {% for user in users %}
-                        <tr class="results_item">
+                        <tr class="results_item table_odd_items">
                             <td>{{ user.id }}</td>
                             <td>{{ user.username }}</td>
                             <td>{{ user.first_name }}</td>
@@ -173,26 +173,32 @@
                             <td>{{ user.email }}</td>
 
                             <!-- Botones de acciones -->
-                            <td class="d-flex flex-column align-items-center gap_10 fs-6">
+                            <td class="d-flex gap_10 fs-6">
                                 {% if user.is_active %}
-                                    <a href="{% url 'desactivar_usuario' user.id %}" class="btn btn-warning">
+                                <div>
+                                    <a title="Desactivar Usuario" href="{% url 'desactivar_usuario' user.id %}" class="btn btn-warning">
                                         <i class="fa-solid fa-user-minus"></i>
                                     </a>
+                                </div>
                                 {% else %}
-                                    <a href="{% url 'activar_usuario' user.id %}" class="btn btn-primary">
+                                <div>
+                                    <a title="Activar Usuario" href="{% url 'activar_usuario' user.id %}" class="btn btn-success bg_teal">
                                         <i class="fa-solid fa-user-check"></i>
                                     </a>
+                                </div>
                                 {% endif %}
                                 
                                 <form action="{% url 'eliminar_usuario' user.id %}" method="post" class="m-0">
                                     {% csrf_token %}
-                                    <button type="submit" class="btn btn-danger">
+                                    <button title="Eliminar Usuario" type="submit" class="btn btn-danger">
                                         <i class="fa-solid fa-user-xmark"></i>
                                     </button>
                                 </form>
-                                <button type="button" class="btn btn-info" data-mdb-ripple-init data-mdb-modal-init data-mdb-target="#editar_modal_{{ user.id }}">
-                                    <i class="fa-solid fa-user-pen"></i>
-                                </button>
+                                <div>
+                                    <button title="Editar Usuario" type="button" class="btn btn-info" data-mdb-ripple-init data-mdb-modal-init data-mdb-target="#editar_modal_{{ user.id }}">
+                                        <i class="fa-solid fa-user-pen"></i>
+                                    </button>
+                                </div>
                             </td>
                         </tr>
                         <!-- modal para editar username del usuario -->
@@ -252,7 +258,7 @@
         }
     });
 </script>
-<script>
+<!-- <script>
     const tableContainer = document.querySelector('.table-container');
 
     let isDown = false;
@@ -285,6 +291,14 @@
         const x = e.pageX - tableContainer.offsetLeft;
         const walk = (x - startX) * 2; // La cantidad de desplazamiento
         tableContainer.scrollLeft = scrollLeft - walk;
+    });
+</script> -->
+<script>
+    document.querySelector('#table-container').addEventListener('wheel', function(e) {
+        if (e.deltaY != 0) {
+            e.preventDefault();
+            this.scrollLeft += e.deltaY;
+        }
     });
 </script>
 {% endblock %}

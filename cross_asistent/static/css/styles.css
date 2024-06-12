@@ -10,12 +10,12 @@
 }
 :root {
     /* colors */
-    --blanco: #ffffff;
-    --secundario: #c2c2c2;
-    --oscuro: #292f38;
-    --gris_claro: #2f333a;
-    --extra: #02913c;
-    --detalle: #3b71ca;
+    --var-white: #ffffff;
+    --var-secondary: #c2c2c2;
+    --var-dark: #292f38;
+    --var-dark_second: #2f333a;
+    --var-extra: #02913c;
+    --var-detail: #3b71ca;
     --blue_img-filter: hue-rotate(60deg) saturate(120%);
     --original_img-filter: saturate(90%);
     
@@ -53,7 +53,7 @@
     --transitionEase: 0.3s all ease;
     --transitionCubic: 0.3s all cubic-bezier(0.68, -0.55, 0.27, 1.55);
     --transitionCubicVal: cubic-bezier(0.68, -0.55, 0.27, 1.55);
-    --border-input_items: 2px solid var(--blanco);
+    --border-input_items: 2px solid var(--var-white);
     --border-radius: 8px;
     --nav_height: 60px;
     --full_page: calc(100vh - var(--nav_height));
@@ -64,17 +64,17 @@ html {
     overflow-x: hidden;
     /* scrollbar-gutter: stable; */
 }
-/*######### Detalle de color #########*/
+/*######### detail de color #########*/
 .btn_detail {
-    background-color: var(--detalle) !important;
-    background: var(--detalle) !important;
-    color: var(--blanco) !important;
+    background-color: var(--var-detail) !important;
+    background: var(--var-detail) !important;
+    color: var(--var-white) !important;
     transition: filter 0.3s ease;
 }
 .btn_secondary {
-    background-color: var(--blanco) !important;
-    background: var(--blanco) !important;
-    color: var(--detalle) !important;
+    background-color: var(--var-white) !important;
+    background: var(--var-white) !important;
+    color: var(--var-detail) !important;
     filter: brightness(80%);
     transition: filter 0.3s ease;
 }
@@ -232,7 +232,7 @@ nav .navbar-collapse {
 .text_detail,
 .carousel-item em,
 .slide-inner .header-text h2 em {
-    color: var(--detalle);
+    color: var(--var-detail);
 }
 .slide-inner .buttons{
     min-height: 50px;
@@ -240,7 +240,7 @@ nav .navbar-collapse {
 .swiper-button-next,
 .swiper-button-prev {
     z-index: 2 !important;
-    color: var(--blanco) !important;
+    color: var(--var-white) !important;
     text-shadow: 0 0 10px black, 0 0 15px black;
 }
 .btn_slide:hover {
@@ -352,7 +352,7 @@ main.main_anchor {
 }
 
 .box_asistent_controls .controls_buttons .btn_controls.controls_btn_microphone {
-    box-shadow: 0 0 5px var(--oscuro);
+    box-shadow: 0 0 5px var(--var-dark);
     transform: scale(1.3);
 }
   
@@ -370,7 +370,7 @@ main.main_anchor {
 }
 .asistent_group.open.open_controls .controls_buttons{
     transition-delay: 0.2s;
-    background: var(--detalle);
+    background: var(--var-detail);
 }
 .asistent_group.open.open_controls .controls_btn_keyboard,
 .asistent_group.open.open_controls .controls_btn_close{
@@ -562,10 +562,13 @@ main.main_anchor {
     background: linear-gradient(to bottom, hsla(0, 0%, 0%, 0), hsla(0, 0%, 0%, 0.5) 70%);
 }
 
-.carousel-fade .carousel-item.active,
-.carousel-fade .carousel-item-next.carousel-item-start,
-.carousel-fade .carousel-item-prev.carousel-item-end {
-    max-height: 30vh !important;
+.carousel_container {min-height: 210px;}
+
+.carousel .carousel-item.active,
+.carousel .carousel-item-next.carousel-item-start,
+.carousel .carousel-item-prev.carousel-item-end {
+    height: 200px !important;
+    max-height: 200px !important;
 }
 
 path.leaflet-interactive {
@@ -588,6 +591,33 @@ path.leaflet-interactive {
     box-shadow: 0 0 5px var(--darkA5);
 }
 
+.table-responsive {
+    scroll-behavior: smooth;
+}
+
+.table_odd .table_odd_items {
+    --mdb-table-bg: var(--mdb-light);
+    transition: var(--transitionEase);
+}
+
+.table_odd .table_odd_items td {
+    min-height: 80px;
+}
+
+.table_odd .table_odd_items:nth-child(even) {
+    --mdb-table-bg: var(--var-secondary);
+}
+    
+.table_odd .table_odd_items:hover {
+    --mdb-table-bg: var(--var-detail);
+    --mdb-table-color: #fff;
+    color: var(--mdb-table-color);
+}
+
+.bg_teal {
+    background: #00695C;
+}
+    
 
 /*#################### Template Buttons ####################*/
 @media (min-width: 992px) {
