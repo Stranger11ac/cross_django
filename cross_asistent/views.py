@@ -63,18 +63,18 @@ def export_database_to_csv(request):
     writer.writerow(['Categoria', 'Titulo', 'Informacion', 'Redirigir', 'Frecuencia', 'Documentos', 'Imagenes', 'Fecha Modificacion'])
 
     # Obtener todos los objetos del modelo Database
-    databases = Database.objects.all()
+    databaseall = Database.objects.all()
 
-    for database in databases:
+    for info in databaseall:
         writer.writerow([
-            database.categoria.nombre if database.categoria else '',
-            database.titulo,
-            database.informacion,
-            database.redirigir,
-            database.frecuencia,
-            database.documentos.url if database.documentos else '',
-            database.imagenes.url if database.imagenes else '',
-            database.fecha_modificacion
+            info.categoria if info.categoria else '',
+            info.titulo,
+            info.informacion,
+            info.redirigir,
+            info.frecuencia,
+            info.documentos.url if info.documentos else '',
+            info.imagenes.url if info.imagenes else '',
+            info.fecha_modificacion
         ])
 
     return response
