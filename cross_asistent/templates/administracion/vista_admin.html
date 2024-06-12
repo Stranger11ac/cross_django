@@ -7,9 +7,7 @@
         </script>
     {% endif %}
 {% endblock %}
-
-{% block link_home %}href="{% url 'vista_admin' %}"{% endblock %}
-
+{% block link_home %}{% url 'vista_admin' %}{% endblock %}
 {% block link_default %}
     {% include 'administracion/widget_links-admin.html' %}
 {% endblock %}

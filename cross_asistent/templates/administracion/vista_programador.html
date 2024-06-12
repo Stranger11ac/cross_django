@@ -8,8 +8,9 @@
 </script>
 {% endif %}
 {% endblock %}
-{% block link_home %}href="{% url 'vista_programador' %}"{% endblock %}
-{% block link_default %} {% include 'administracion/widget_links-admin.html' %}
+{% block link_home %}{% url 'vista_programador' %}{% endblock %}
+{% block link_default %}
+    {% include 'administracion/widget_links-admin.html' %}
 {% endblock %}
 {% block content %}
 <main class="container container-fluid pb-5">
@@ -17,88 +18,101 @@
         <h1 class="mb-3">Bienvenido {{ user.username }}</h1>
         <hr class="hr_divisor" />
     </div>
-    <!-- Carousel wrapper -->
-    <div id="carouselMaterialStyle" class="carousel slide carousel-fade" data-mdb-ride="carousel"
-        data-mdb-carousel-init>
-        <!-- Inner -->
-        <div class="carousel-inner rounded-5 shadow-4-strong">
-            {% for oneBanner in banners_all %}
-            <div class="carousel-item" id="bannerid_{{oneBanner.id}}" data-mdb-interval="10000">
+    <section class="row mb-md-4">
+        <div class="col-12 col-md-6">
+            <!-- Carousel wrapper -->
+            <div id="carouselMaterialStyle" class="carousel slide carousel-fade" data-mdb-ride="carousel"
+                data-mdb-carousel-init>
+                <!-- Inner -->
+                <div class="carousel-inner rounded-5 shadow-4-strong">
+                    {% for oneBanner in banners_all %}
+                    <div class="carousel-item" id="bannerid_{{oneBanner.id}}" data-mdb-interval="10000">
 
-                {% with imagen_url=oneBanner.imagen.url|eliminar_prefijo:'cross_asistent/' %}
-                <img src="{{imagen_url}}" class="d-block w-100" alt="Sunset" />
-                {% endwith %}
-                <div class="carousel-caption">
-                    {% autoescape off %}
-                    <h5>{{oneBanner.titulo}}</h5>
-                    <p>{{oneBanner.descripcion}}</p>
-                    {% endautoescape %}
-                </div>
-            </div>
-            {% endfor %}
-        </div>
-        <!-- Inner -->
-
-        <!-- Controls -->
-        <button class="carousel-control-prev" type="button" data-mdb-target="#carouselMaterialStyle"
-            data-mdb-slide="prev">
-            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-            <span class="visually-hidden">Previous</span>
-        </button>
-        <button class="carousel-control-next" type="button" data-mdb-target="#carouselMaterialStyle"
-            data-mdb-slide="next">
-            <span class="carousel-control-next-icon" aria-hidden="true"></span>
-            <span class="visually-hidden">Next</span>
-        </button>
-    </div>
-    <!-- Carousel wrapper -->
-
-    <div class="row mt-4">
-        <div class="col-6 col-md-4 col-xl-4 mb-4">
-            <div class="card">
-                <div class="card-body">
-                    <h6 class="card-title d-flex justify-content-between">
-                        <div>
-                            <i class="fa-solid fa-image"></i>
-                            <span class="d-none d-md-inline-flex">Total de</span> Banners:
+                        {% with imagen_url=oneBanner.imagen.url|eliminar_prefijo:'cross_asistent/' %}
+                        <img src="{{imagen_url}}" class="d-block w-100" alt="Sunset" />
+                        {% endwith %}
+                        <div class="carousel-caption">
+                            {% autoescape off %}
+                            <h5>{{oneBanner.titulo}}</h5>
+                            <p>{{oneBanner.descripcion}}</p>
+                            {% endautoescape %}
                         </div>
-                        <div class="ms-auto">{{total_banners}}</div>
-                    </h6>
+                    </div>
+                    {% endfor %}
                 </div>
-            </div>
-        </div>
-        <div class="col-6 col-md-4 col-xl-4 mb-4">
-            <div class="card">
-                <div class="card-body">
-                    <h6 class="card-title d-flex justify-content-between">
-                        <div>
-                            <i class="fa-solid fa-newspaper"></i>
-                            <span class="d-none d-md-inline-flex">Total de</span> Blogs:
-                        </div>
-                        <div class="ms-auto">{{ num_blogs }}</div>
-                    </h6>
-                </div>
-            </div>
-        </div>
-        <div class="col-sm-12 col-md-4 col-xl-4 mb-4">
-            <div class="card">
-                <div class="card-body">
-                    <h6 class="card-title d-flex justify-content-between">
-                        <div>
-                            <i class="fa-solid fa-clipboard-question"></i>
-                            <span class="d-sm-inline-flex d-md-none d-xl-inline-flex">Total de</span> Preguntas:
-                        </div>
-                        <div class="ms-auto">{{ num_preguntas }}</div>
-                    </h6>
-                </div>
-            </div>
-        </div>
-    </div>
+                <!-- Inner -->
 
-    <section>
-        <div class="row">
+                <!-- Controls -->
+                <button class="carousel-control-prev" type="button" data-mdb-target="#carouselMaterialStyle"
+                    data-mdb-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Previous</span>
+                </button>
+                <button class="carousel-control-next" type="button" data-mdb-target="#carouselMaterialStyle"
+                    data-mdb-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Next</span>
+                </button>
+            </div>
+            <!-- Carousel wrapper -->
+        </div>
+
+        <!-- targetas de totales -->
+        <div class="mt-4 col-12 col-md-6">
+            <div class="row">
+                <div class="col-6 col-xl-4 mb-4 mb-md-2">
+                    <!-- Card 1: Banners -->
+                    <div class="card">
+                        <div class="card-body">
+                            <h6 class="card-title d-flex justify-content-between m-0">
+                                <!-- titulo y total -->
+                                <div>
+                                    <i class="fa-solid fa-image"></i>
+                                    <span class="d-none d-md-inline-flex">Total de</span> Banners:
+                                </div>
+                                <div class="ms-auto">{{total_banners}}</div>
+                            </h6>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6 col-xl-4 mb-4 mb-md-2">
+                    <!-- Card 2: Blogs / Articulos -->
+                    <div class="card">
+                        <div class="card-body">
+                            <h6 class="card-title d-flex justify-content-between m-0">
+                                <!-- titulo y total -->
+                                <div>
+                                    <i class="fa-solid fa-newspaper"></i>
+                                    <span class="d-none d-md-inline-flex">Total de</span> Blogs:
+                                </div>
+                                <div class="ms-auto">{{ num_blogs }}</div>
+                            </h6>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-xl-4 mb-4 mb-md-2">
+                    <!-- Card 3: Preguntas / database -->
+                    <div class="card">
+                        <div class="card-body">
+                            <h6 class="card-title d-flex justify-content-between m-0">
+                                <!-- titulo y total -->
+                                <div>
+                                    <i class="fa-solid fa-clipboard-question"></i>
+                                    <span class="d-sm-inline-flex d-md-none d-xl-inline-flex">Total de</span> Preguntas:
+                                </div>
+                                <div class="ms-auto">{{ num_preguntas }}</div>
+                            </h6>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section class="card mb-4 col-lg-6 col-md-12">
+        <h3 class="text-center my-4">Responder una pregunta</h3>
+        <div class="card-body">
             <!-- Formulario para responder preguntas -->
-            <div class="col-lg-6 col-md-12 mb-4">
+            <div>
                 <form method="post" action="{% url 'responder_preguntas' %}">
                     {% csrf_token %}
                     <div class="mb-3">
@@ -115,91 +129,102 @@
                         <label for="respuesta" class="form-label">Respuesta</label>
                         <textarea class="form-control" id="respuesta" name="respuesta" rows="3"></textarea>
                     </div>
-                    <button type="submit" class="btn btn-primary">Responder</button>
+                    <button type="submit" class="btn btn-primary w-100 d-block">Responder</button>
                 </form>
             </div>
         </div>
     </section>
-    <!-- seccion de ver usuarios -->
 
-    <div class="card text-center m-1 mt-2 pt-5">
+    <!-- Todos los usuarios registrados -->
+    <div class="card text-center mt-2 pt-5">
         <h4>Usuarios registrados</h4>
         <div class="card-body">
             <div class="form-outline mb-4" data-mdb-input-init>
+                <!-- campo de busqueda de usuario -->
                 <input type="text" name="searchUser" id="searchInput" autocapitalize="off"
-                    class="form-control form-control-lg"/>
+                    class="form-control form-control-lg" list="usersList"/>
                 <label class="form-label" for="searchInput">Buscar Usuario</label>
-            </div>
-            <table class="table table-striped" style="min-height: 250px; height: auto">
-                <thead>
-                    <tr>
-                        <th>#</th>
-                        <th>Usuario</th>
-                        <th>Nombre</th>
-                        <th>Apellido</th>
-                        <th>Email</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
+                <datalist id="usersList">
                     {% for user in users %}
-                    <tr class="results_item">
-                        <td>{{ user.id }}</td>
-                        <td>{{ user.username }}</td>
-                        <td>{{ user.first_name }}</td>
-                        <td>{{ user.last_name }}</td>
-                        <td>{{ user.email }}</td>
-                        <td>
-                            {% if user.is_active %}
-                            <a href="{% url 'desactivar_usuario' user.id %}" class="btn btn-warning">
-                                <i class="fa-solid fa-user-minus"></i>
-                            </a>
-                            {% else %}
-                            <a href="{% url 'activar_usuario' user.id %}" class="btn btn-primary">
-                                <i class="fa-solid fa-user-check"></i>
-                            </a>
-                            {% endif %}
-                            
-                            <form action="{% url 'eliminar_usuario' user.id %}" method="post" style="display:inline;">
-                                {% csrf_token %}
-                                <button type="submit" class="btn btn-danger">
-                                    <i class="fa-solid fa-user-xmark"></i>
-                                </button>
-                            </form>
-                            <button type="button" class="btn btn-info" data-mdb-ripple-init data-mdb-modal-init data-mdb-target="#editar_modal_{{ user.id }}">
-                                <i class="fa-solid fa-user-pen"></i>
-                            </button>
-                            <!-- modal para editar username del usuario -->
-                            <div class="modal fade" id="editar_modal_{{ user.id }}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                <div class="modal-dialog">
-                                    <div class="modal-content">
-                                        <div class="modal-header">
-                                            <h5 class="modal-title" id="exampleModalLabel">Editar Usuario</h5>
-                                            <button type="button" class="btn-close" data-mdb-ripple-init data-mdb-dismiss="modal" aria-label="Close"></button>
-                                        </div>
-                                        <div class="modal-body">
-                                            <form method="post" action="{% url 'editar_usuario' user.id %}">
-                                                {% csrf_token %}
-                                                <div class="mb-3">
-                                                    <label for="username" class="form-label">Nuevo Nombre de Usuario</label>
-                                                    <input type="text" class="form-control" id="username" name="username" required>
-                                                </div>
-                                                <button type="button" class="btn btn-danger"    data-mdb-ripple-init data-mdb-dismiss="modal">Cancelar</button>
-                                                <button type="submit" class="btn btn-primary">Guardar Cambios</button>
-                                            </form>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                                    </div>
-                                </div>
-                            </div>
-                        </td>
-                    </tr>
+                        <option value="{{ user.username }}"></option>
                     {% endfor %}
-                </tbody>
-            </table>
+                </datalist>
+            </div>
+            <!-- tabla de usuarios -->
+            <div class="table-responsive table-container">
+                <table class="table table-striped" style="min-height: 250px; height: auto">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Usuario</th>
+                            <th>Nombre</th>
+                            <th>Apellido</th>
+                            <th>Email</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for user in users %}
+                        <tr class="results_item">
+                            <td>{{ user.id }}</td>
+                            <td>{{ user.username }}</td>
+                            <td>{{ user.first_name }}</td>
+                            <td>{{ user.last_name }}</td>
+                            <td>{{ user.email }}</td>
+
+                            <!-- Botones de acciones -->
+                            <td class="d-flex flex-column align-items-center gap_10 fs-6">
+                                {% if user.is_active %}
+                                    <a href="{% url 'desactivar_usuario' user.id %}" class="btn btn-warning">
+                                        <i class="fa-solid fa-user-minus"></i>
+                                    </a>
+                                {% else %}
+                                    <a href="{% url 'activar_usuario' user.id %}" class="btn btn-primary">
+                                        <i class="fa-solid fa-user-check"></i>
+                                    </a>
+                                {% endif %}
+                                
+                                <form action="{% url 'eliminar_usuario' user.id %}" method="post" class="m-0">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-danger">
+                                        <i class="fa-solid fa-user-xmark"></i>
+                                    </button>
+                                </form>
+                                <button type="button" class="btn btn-info" data-mdb-ripple-init data-mdb-modal-init data-mdb-target="#editar_modal_{{ user.id }}">
+                                    <i class="fa-solid fa-user-pen"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        <!-- modal para editar username del usuario -->
+                        <div class="modal fade " id="editar_modal_{{ user.id }}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="exampleModalLabel">Editar Usuario</h5>
+                                        <button type="button" class="btn-close" data-mdb-ripple-init data-mdb-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <h3 class="text-center mb-3 mt-2">Usuario: {{user.username}}</h3>
+                                        <form method="post" action="{% url 'editar_usuario' user.id %}">
+                                            {% csrf_token %}
+                                            <div class="form-outline" data-mdb-input-init>
+                                                <input type="text" id="username" class="form-control" name="username" required autocapitalize="off" autocomplete="off"/>
+                                                <label class="form-label" for="username">Cambiar Nombre de Usuario:</label>
+                                            </div>
+                                            <hr class="my-4">
+                                            <div class="d-flex justify-content-between">
+                                                <button type="button" class="btn btn-danger" data-mdb-ripple-init data-mdb-dismiss="modal">Cancelar</button>
+                                                <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 </main>
@@ -225,6 +250,41 @@
         if (minIdElement !== null) {
             minIdElement.addClass('active');
         }
+    });
+</script>
+<script>
+    const tableContainer = document.querySelector('.table-container');
+
+    let isDown = false;
+    let startX;
+    let scrollLeft;
+
+    tableContainer.addEventListener('mousedown', (e) => {
+        isDown = true;
+        tableContainer.classList.add('active');
+        startX = e.pageX - tableContainer.offsetLeft;
+        scrollLeft = tableContainer.scrollLeft;
+        tableContainer.style.cursor = 'grabbing'; /* Cambia el cursor mientras arrastras */
+    });
+
+    tableContainer.addEventListener('mouseleave', () => {
+        isDown = false;
+        tableContainer.classList.remove('active');
+        tableContainer.style.cursor = 'grab'; /* Restaura el cursor cuando sueltas */
+    });
+
+    tableContainer.addEventListener('mouseup', () => {
+        isDown = false;
+        tableContainer.classList.remove('active');
+        tableContainer.style.cursor = 'grab'; /* Restaura el cursor cuando sueltas */
+    });
+
+    tableContainer.addEventListener('mousemove', (e) => {
+        if(!isDown) return;
+        e.preventDefault();
+        const x = e.pageX - tableContainer.offsetLeft;
+        const walk = (x - startX) * 2; // La cantidad de desplazamiento
+        tableContainer.scrollLeft = scrollLeft - walk;
     });
 </script>
 {% endblock %}
