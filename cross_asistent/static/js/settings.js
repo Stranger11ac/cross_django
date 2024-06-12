@@ -1,6 +1,6 @@
 $(document).ready(function () {
     try {
-        // Filtro de busqueda ###################################################
+        // Filtro de busqueda ###################################################################
         var input = $("#searchInput");
         function filtertable() {
             var value = input.val().toLowerCase();
@@ -13,7 +13,7 @@ $(document).ready(function () {
 
         input.on("input", filtertable);
 
-        // abrir menu del asistente ###############################################
+        // abrir menu del asistente ##############################################################
         $(".controls_btn_microphone").click(() => {
             $(".asistent_group").addClass("open open_controls bg-body-tertiary");
             $(".btn_controls").addClass("btn_detail").removeClass("btn_secondary");
@@ -37,6 +37,28 @@ $(document).ready(function () {
             $(".btn_controls").removeClass("btn_detail").addClass("btn_secondary");
             $("#btn_controls_icon").addClass("fa-comment").removeClass("fa-microphone");
         });
+
+        // Envia el formulario al chat con un enter ###############################
+        $("#question").keydown(chatSubmit);
+
+        // Vista de Programador
+        // Agrega la clase active al banner con la id mas baja #######################################
+        var elements = $('[id^="bannerid_"]');
+        var minIdElement = null;
+        var minIdNumber = Infinity;
+
+        elements.each(function () {
+            var id = $(this).attr('id');
+            var number = parseInt(id.split('_')[1]);
+            if (number < minIdNumber) {
+                minIdNumber = number;
+                minIdElement = $(this);
+            }
+        });
+
+        if (minIdElement !== null) {
+            minIdElement.addClass('active');
+        }
     } catch (error) {
         console.log("Error Inesperado: ", error);
         alertSToast("top", 8000, "error", "😥 Ah ocurrido un error en el filtro de busqueda. Code:#CC320");
@@ -53,6 +75,23 @@ function generarCadenaAleatoria(longitud) {
     }
     return cadenaAleatoria;
 }
+
+function chatSubmit(event) {
+    if (event.key === 'Enter') {
+        if (event.shiftKey) {
+            const cursorPos = this.selectionStart;
+            const textBefore = this.value.substring(0, cursorPos);
+            const textAfter = this.value.substring(cursorPos);
+            this.value = textBefore + "\n" + textAfter;
+            this.selectionStart = cursorPos + 1;
+            this.selectionEnd = cursorPos + 1;
+            event.preventDefault();
+        } else {
+            event.preventDefault();
+            document.getElementById('chatForm_submit').click();
+        }
+    }
+};
 
 // context menu disabled ####################################
 document.oncontextmenu = function () {

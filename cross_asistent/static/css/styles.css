@@ -571,6 +571,16 @@ main.main_anchor {
     max-height: 200px !important;
 }
 
+.carousel .carousel-item .carousel-caption{
+    border: none;
+    border-radius: var(--border-radius);
+    background: var(--darkA6);
+    background-color: var(--darkA6);
+    backdrop-filter: blur(3px);
+    text-shadow: 0 0 15px var(--whiteA9) !important;
+    padding: 10px !important;
+}
+
 path.leaflet-interactive {
     stroke-width: 0;
 }
@@ -601,13 +611,14 @@ path.leaflet-interactive {
 }
 
 .table_odd .table_odd_items td {
-    min-height: 80px;
+    height: 80px;
+    max-height: 80px;
 }
 
 .table_odd .table_odd_items:nth-child(even) {
     --mdb-table-bg: var(--var-secondary);
 }
-    
+
 .table_odd .table_odd_items:hover {
     --mdb-table-bg: var(--var-detail);
     --mdb-table-color: #fff;
@@ -617,7 +628,13 @@ path.leaflet-interactive {
 .bg_teal {
     background: #00695C;
 }
-    
+
+.modal,
+body.modal-open {
+    padding: 0 !important;
+    padding-right: 0 !important;
+}
+
 
 /*#################### Template Buttons ####################*/
 @media (min-width: 992px) {

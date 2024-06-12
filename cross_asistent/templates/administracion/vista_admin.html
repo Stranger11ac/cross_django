@@ -11,15 +11,13 @@
 {% block link_default %}
     {% include 'administracion/widget_links-admin.html' %}
 {% endblock %}
-
 {% block content %}
 <main class="container container-fluid mb-5">
-    <!-- Jumbotron -->
-    <div class="p-5 text-center bg-body-tertiary">
+    <!-- bienvenida al programadro -->
+    <div class="p-5 text-center">
         <h4><p>Bienvenido {{ user.username }}</p></h4>
         <hr class="hr_divisor" />
     </div>
-    <!-- Jumbotron -->
     <section class="d-flex flex-column" style="gap: 2rem;">
         <span class="text-danger">{{formError}}</span>
 

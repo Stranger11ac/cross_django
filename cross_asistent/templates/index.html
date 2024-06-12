@@ -133,29 +133,13 @@
     <script src="{% static 'js/custom.js' %}"></script>
 
     <script>
-        document.getElementById('question').addEventListener('keydown', function(event) {
-            if (event.key === 'Enter') {
-                if (event.shiftKey) {
-                    const cursorPos = this.selectionStart;
-                    const textBefore = this.value.substring(0, cursorPos);
-                    const textAfter = this.value.substring(cursorPos);
-                    this.value = textBefore + "\n" + textAfter;
-                    this.selectionStart = cursorPos + 1;
-                    this.selectionEnd = cursorPos + 1;
-                    event.preventDefault();
-                } else {
-                    event.preventDefault();
-                    document.getElementById('chatForm_submit').click();
-                }
-            }
-        });
-
         var output = document.getElementById('output');
 
         document.getElementById('chatForm').addEventListener('submit', function(e) {
             e.preventDefault();
             const pregunta = document.getElementById('question').value;
             const chatForm = e.target;
+            this.reset();
 
             fetch(chatForm.action, {
                 method: 'POST',
@@ -191,7 +175,6 @@
                     `;
 
                     output.insertAdjacentHTML('beforeend', htmlBlock);
-                    this.reset();
 
                     const user_submit = document.querySelector(`.user_submit[data-tokeid="${valID}"]`);
                     const asistent_response = document.querySelector(`.asistent_response[data-tokeid="${valID}"]`);

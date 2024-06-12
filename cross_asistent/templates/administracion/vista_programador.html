@@ -14,6 +14,7 @@
 {% endblock %}
 {% block content %}
 <main class="container container-fluid pb-5">
+    <!-- Nombre del usuario -->
     <div class="p-5 text-center">
         <h1 class="mb-3">Bienvenido {{ user.username }}</h1>
         <hr class="hr_divisor" />
@@ -34,7 +35,7 @@
                         <div class="carousel-caption">
                             {% autoescape off %}
                             <h5>{{oneBanner.titulo}}</h5>
-                            <p>{{oneBanner.descripcion}}</p>
+                            <p class="mb-0">{{oneBanner.descripcion}}</p>
                             {% endautoescape %}
                         </div>
                     </div>
@@ -139,20 +140,28 @@
     <div class="card text-center mt-2 pt-5">
         <h4>Usuarios registrados</h4>
         <div class="card-body">
-            <div class="form-outline mb-4" data-mdb-input-init>
+            <div class="d-flex align-items-center mb-3">
                 <!-- campo de busqueda de usuario -->
-                <input type="text" name="searchUser" id="searchInput" autocapitalize="off"
-                    class="form-control form-control-lg" list="usersList"/>
-                <label class="form-label" for="searchInput">Buscar Usuario</label>
-                <datalist id="usersList">
-                    {% for user in users %}
-                        <option value="{{ user.username }}"></option>
-                    {% endfor %}
-                </datalist>
+                <div class="form-outline" data-mdb-input-init>
+                    <input type="text" name="searchUser" id="searchInput" autocapitalize="off"
+                        class="form-control form-control-lg" list="usersList"/>
+                    <label class="form-label" for="searchInput">Buscar Usuario</label>
+                    <datalist id="usersList">
+                        {% for user in users %}
+                            <option value="{{ user.username }}"></option>
+                        {% endfor %}
+                    </datalist>
+                </div>
+                <!-- modal: crea nuevo usuario -->
+                <div>
+                    <button type="button" class="btn btn-primary btn-floating btn-lg ms-4" title="Crear Nuevo usuario" data-mdb-ripple-init data-mdb-modal-init data-mdb-target="#createUserModal">
+                        <i class="fa-solid fa-user-plus"></i>
+                    </button>
+                </div>
             </div>
             <!-- tabla de usuarios -->
             <div class="table-responsive" id="table-container">
-                <table class="table table_odd" style="min-height: 250px; height: auto">
+                <table class="table table_odd" style="min-height: 100px; height: auto">
                     <thead>
                         <tr>
                             <th>#</th>
@@ -173,44 +182,42 @@
                             <td>{{ user.email }}</td>
 
                             <!-- Botones de acciones -->
-                            <td class="d-flex gap_10 fs-6">
+                            <td class="d-flex align-items-center justify-content-center gap_10 fs-6">
                                 {% if user.is_active %}
                                 <div>
-                                    <a title="Desactivar Usuario" href="{% url 'desactivar_usuario' user.id %}" class="btn btn-warning">
+                                    <a title="Desactivar Usuario" href="{% url 'desactivar_usuario' user.id %}" class="btn btn-floating btn-warning">
                                         <i class="fa-solid fa-user-minus"></i>
                                     </a>
                                 </div>
                                 {% else %}
                                 <div>
-                                    <a title="Activar Usuario" href="{% url 'activar_usuario' user.id %}" class="btn btn-success bg_teal">
+                                    <a title="Activar Usuario" href="{% url 'activar_usuario' user.id %}" class="btn btn-floating btn-success bg_teal">
                                         <i class="fa-solid fa-user-check"></i>
                                     </a>
                                 </div>
                                 {% endif %}
-                                
                                 <form action="{% url 'eliminar_usuario' user.id %}" method="post" class="m-0">
                                     {% csrf_token %}
-                                    <button title="Eliminar Usuario" type="submit" class="btn btn-danger">
+                                    <button title="Eliminar Usuario" type="submit" class="btn btn-floating btn-danger">
                                         <i class="fa-solid fa-user-xmark"></i>
                                     </button>
                                 </form>
                                 <div>
-                                    <button title="Editar Usuario" type="button" class="btn btn-info" data-mdb-ripple-init data-mdb-modal-init data-mdb-target="#editar_modal_{{ user.id }}">
+                                    <button title="Editar Usuario" type="button" class="btn btn-floating btn-info" data-mdb-ripple-init data-mdb-modal-init data-mdb-target="#editar_modal_{{ user.id }}">
                                         <i class="fa-solid fa-user-pen"></i>
                                     </button>
                                 </div>
                             </td>
                         </tr>
-                        <!-- modal para editar username del usuario -->
-                        <div class="modal fade " id="editar_modal_{{ user.id }}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <!-- modal: editar usuario -->
+                        <div class="modal fade " id="editar_modal_{{ user.id }}" tabindex="-1" aria-labelledby="labelModal0{{ user.id }}" aria-hidden="true">
                             <div class="modal-dialog modal-dialog-centered">
                                 <div class="modal-content">
                                     <div class="modal-header">
-                                        <h5 class="modal-title" id="exampleModalLabel">Editar Usuario</h5>
+                                        <h5 class="modal-title" id="labelModal0{{ user.id }}">Editar Usuario</h5>
                                         <button type="button" class="btn-close" data-mdb-ripple-init data-mdb-dismiss="modal" aria-label="Close"></button>
                                     </div>
                                     <div class="modal-body">
-                                        <h3 class="text-center mb-3 mt-2">Usuario: {{user.username}}</h3>
                                         <form method="post" action="{% url 'editar_usuario' user.id %}">
                                             {% csrf_token %}
                                             <div class="form-outline" data-mdb-input-init>
@@ -222,6 +229,52 @@
                                                 <button type="button" class="btn btn-danger" data-mdb-ripple-init data-mdb-dismiss="modal">Cancelar</button>
                                                 <button type="submit" class="btn btn-primary">Guardar Cambios</button>
                                             </div>
+                                        </form>
+                                        <form method="post" action="{% url 'editar_usuario' user.id %}">
+                                            <!-- Nomnre de usuario -->
+                                            <div data-mdb-input-init class="form-outline mb-4">
+                                                <input type="email" id="form3Example3" class="form-control" autocomplete="off" />
+                                                <label class="form-label" for="form3Example3">Email address</label>
+                                            </div>
+                                        
+                                            <div class="row mb-4">
+                                                <div class="col">
+                                                    <div data-mdb-input-init class="form-outline">
+                                                        <input type="text" id="form3Example1" class="form-control" autocomplete="off" />
+                                                        <label class="form-label" for="form3Example1">First name</label>
+                                                    </div>
+                                                </div>
+                                                <div class="col">
+                                                    <div data-mdb-input-init class="form-outline">
+                                                        <input type="text" id="form3Example2" class="form-control" autocomplete="off" />
+                                                        <label class="form-label" for="form3Example2">Last name</label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        
+                                            <!-- Email input -->
+                                            <div data-mdb-input-init class="form-outline mb-4">
+                                                <input type="email" id="form3Example3" class="form-control" autocomplete="off" />
+                                                <label class="form-label" for="form3Example3">Email address</label>
+                                            </div>
+                                        
+                                            <!-- Password input -->
+                                            <div data-mdb-input-init class="form-outline mb-4">
+                                                <input type="password" id="form3Example4" class="form-control" autocomplete="off" />
+                                                <label class="form-label" for="form3Example4">Password</label>
+                                            </div>
+                                        
+                                            <!-- Checkbox -->
+                                            <div class="form-check mb-4">
+                                                <input class="form-check-input me-2" type="checkbox" value="" id="form2Example33" checked />
+                                                <label class="form-check-label" for="form2Example33">
+                                                    Activar usuario
+                                                </label>
+                                            </div>
+                                        
+                                            <!-- Submit button -->
+                                            <button data-mdb-ripple-init type="button"
+                                                class="btn btn-primary btn-block mb-4">Registrar</button>
                                         </form>
                                     </div>
                                 </div>
@@ -235,70 +288,80 @@
     </div>
 </main>
 
+<!-- Modal -->
+<div class="modal fade" id="createUserModal" tabindex="-1" aria-labelledby="createUserModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="createUserModalLabel">Crea nuevo Usuario</h5>
+                <button type="button" class="btn-close" data-mdb-ripple-init
+                    data-mdb-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <!-- Nomnre de usuario -->
+                    <div data-mdb-input-init class="form-outline mb-4">
+                        <input type="email" id="form3Example3" class="form-control" autocomplete="off" />
+                        <label class="form-label" for="form3Example3">Email address</label>
+                    </div>
+                
+                    <div class="row mb-4">
+                        <div class="col">
+                            <div data-mdb-input-init class="form-outline">
+                                <input type="text" id="form3Example1" class="form-control" autocomplete="off" />
+                                <label class="form-label" for="form3Example1">First name</label>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div data-mdb-input-init class="form-outline">
+                                <input type="text" id="form3Example2" class="form-control" autocomplete="off" />
+                                <label class="form-label" for="form3Example2">Last name</label>
+                            </div>
+                        </div>
+                    </div>
+                
+                    <!-- Email input -->
+                    <div data-mdb-input-init class="form-outline mb-4">
+                        <input type="email" id="form3Example3" class="form-control" autocomplete="off" />
+                        <label class="form-label" for="form3Example3">Email address</label>
+                    </div>
+                
+                    <!-- Password input -->
+                    <div data-mdb-input-init class="form-outline mb-4">
+                        <input type="password" id="form3Example4" class="form-control" autocomplete="off" />
+                        <label class="form-label" for="form3Example4">Password</label>
+                    </div>
+                
+                    <!-- Checkbox -->
+                    <div class="form-check mb-4">
+                        <input class="form-check-input me-2" type="checkbox" value="" id="form2Example33" checked />
+                        <label class="form-check-label" for="form2Example33">
+                            Activar usuario
+                        </label>
+                    </div>
+                
+                    <!-- Submit button -->
+                    <button data-mdb-ripple-init type="button"
+                        class="btn btn-primary btn-block mb-4">Registrar</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}
 
 {% block scripts_end %}
-<script>
-    $(document).ready(function () {
-        var elements = $('[id^="bannerid_"]');
-        var minIdElement = null;
-        var minIdNumber = Infinity;
 
-        elements.each(function () {
-            var id = $(this).attr('id');
-            var number = parseInt(id.split('_')[1]);
-            if (number < minIdNumber) {
-                minIdNumber = number;
-                minIdElement = $(this);
-            }
-        });
-
-        if (minIdElement !== null) {
-            minIdElement.addClass('active');
-        }
-    });
-</script>
-<!-- <script>
-    const tableContainer = document.querySelector('.table-container');
-
-    let isDown = false;
-    let startX;
-    let scrollLeft;
-
-    tableContainer.addEventListener('mousedown', (e) => {
-        isDown = true;
-        tableContainer.classList.add('active');
-        startX = e.pageX - tableContainer.offsetLeft;
-        scrollLeft = tableContainer.scrollLeft;
-        tableContainer.style.cursor = 'grabbing'; /* Cambia el cursor mientras arrastras */
-    });
-
-    tableContainer.addEventListener('mouseleave', () => {
-        isDown = false;
-        tableContainer.classList.remove('active');
-        tableContainer.style.cursor = 'grab'; /* Restaura el cursor cuando sueltas */
-    });
-
-    tableContainer.addEventListener('mouseup', () => {
-        isDown = false;
-        tableContainer.classList.remove('active');
-        tableContainer.style.cursor = 'grab'; /* Restaura el cursor cuando sueltas */
-    });
-
-    tableContainer.addEventListener('mousemove', (e) => {
-        if(!isDown) return;
-        e.preventDefault();
-        const x = e.pageX - tableContainer.offsetLeft;
-        const walk = (x - startX) * 2; // La cantidad de desplazamiento
-        tableContainer.scrollLeft = scrollLeft - walk;
-    });
-</script> -->
 <script>
     document.querySelector('#table-container').addEventListener('wheel', function(e) {
-        if (e.deltaY != 0) {
-            e.preventDefault();
-            this.scrollLeft += e.deltaY;
-        }
+        // if (e.deltaY != 0) {
+        //     e.preventDefault();
+        //     this.scrollLeft += e.deltaY;
+        // }
+        if (e.deltaY > 0) this.scrollLeft += 300;
+        else this.scrollLeft -= 300;
+        e.preventDefault();
     });
 </script>
 {% endblock %}
