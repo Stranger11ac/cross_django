@@ -81,6 +81,7 @@ def export_database_to_csv(request):
 
 def preprocesar_texto(texto):
     # Tokenización
+    #hola
     tokens = word_tokenize(texto.lower())
 
     # Eliminación de stopwords
