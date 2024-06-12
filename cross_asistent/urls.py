@@ -1,4 +1,5 @@
 from django.urls import path
+from .views import export_database_to_csv
 from . import views
 
 urlpatterns = [
@@ -23,4 +24,7 @@ urlpatterns = [
     path('eliminar_usuario/<int:user_id>/', views.eliminar_usuario, name='eliminar_usuario'),
     path('editar_usuario/<int:user_id>/', views.editar_usuario, name='editar_usuario'),
     path('logout/', views.singoutpage, name='singout'),
+#path para exportar a csv
+      path('export/csv/', export_database_to_csv, name='export_database_to_csv'),
+
 ]
