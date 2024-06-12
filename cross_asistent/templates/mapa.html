@@ -6,16 +6,18 @@
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
 <style>
-    #map { height: 100vh; width: 100%; }
+    #map { 
+        height: 100vh; 
+        width: 100%;
+    }
 </style>
 {% endblock %}
-
 {% block content %}
-<main id='map'></main>
+<main class="full_page" id='map'></main>
 
-<div class="offcanvas offcanvas-start" id="offcanvasImage" tabindex="-1" aria-labelledby="offcanvasImageLabel">
+<div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasImage" aria-labelledby="offcanvasImageLabel">
   <div class="offcanvas-header">
-    <h5 id="offcanvasImageLabel">Mapa UTC</h5>
+    <h5 class="offcanvas-title" id="offcanvasImageLabel">Mapa UTC</h5>
     <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
   </div>
   <div class="offcanvas-body">
@@ -34,76 +36,110 @@
   </div>
 </div>
 {% endblock %}
-
 {% block scripts_end %}
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.js"></script>
 <script>
-    // Inicializar el mapa
-    var map = L.map('map', { maxZoom: 20, zoomControl: false })
-               .setView([25.5569, -100.93595], 17)
-               .setMaxBounds([[25.5455, -100.9431], [25.5649, -100.9310]]);
+    var map = L.map('map', {
+        maxZoom: 20, 
+        zoomControl: false 
+    });
 
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        maxZoom: 19,
-        attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-    }).addTo(map);
+    var bounds = [
+        [25.5455, -100.9431],
+        [25.5649, -100.9310]
+    ];
 
-    var edificios = {{ edificios|safe }};
-    var selectedEdificioCoords;
+    map.setMaxBounds(bounds);
+    map.setView([25.5569, -100.93595], 17);
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+        }).addTo(map);
+
+        var edificios = {{ edificios|safe }};
+        var selectedEdificioCoords;
 
     function openOffcanvasWithText(imageUrl, text, coords) {
         document.getElementById('offcanvasImg').src = imageUrl;
         document.getElementById('offcanvasText').innerHTML = text;
         selectedEdificioCoords = coords;
-        new bootstrap.Offcanvas(document.getElementById('offcanvasImage')).show();
+        var offcanvas = new bootstrap.Offcanvas(document.getElementById('offcanvasImage'));
+        offcanvas.show();
     }
 
-    // Añadir polígonos y eventos
-    edificios.forEach(edificio => {
-        L.polygon(edificio.coordenadas, {
+    edificios.forEach(function(edificio) {
+        var polygon = L.polygon(edificio.coordenadas, {
             color: edificio.edifcolor, 
             fillColor: edificio.edifill,
             fillOpacity: 0.5
-        }).addTo(map).on('click', () => {
-            openOffcanvasWithText("/static/" + edificio.imagen_url, `
+        }).addTo(map);
+
+        polygon.on('click', function() {
+            var content = `
                 <h1>${edificio.nombre}</h1>
                 <h3>${edificio.titulo}</h3>
                 <p>${edificio.descripcion}</p>
-            `, edificio.centro); 
+            `;
+            openOffcanvasWithText("/static/" + edificio.imagen_url, content, edificio.coordenadas[0]);
         });
     });
 
-    // Limitar el zoom y el arrastre fuera de los límites
-    L.control.zoom({ position: 'bottomleft' }).addTo(map);
-    map.on('zoomend', () => {
-        if (map.getZoom() < 16) map.setZoom(16);
-        if (map.getZoom() > 18) map.setZoom(18);
-    });
-
-    map.on('dragend', () => {
-        if (!map.getBounds().contains(map.getCenter())) map.panInsideBounds(map.options.maxBounds);
-    });
-
-    // Control de rutas
-    var control = L.Routing.control({
-        routeWhileDragging: true,
-        createMarker: (i, wp) => L.marker(wp.latLng, { draggable: true }),
-        lineOptions: { styles: [{ color: 'blue', opacity: 1, weight: 5 }] },
-        router: L.Routing.osrmv1({ serviceUrl: 'https://router.project-osrm.org/route/v1', profile: 'foot' })
+    L.control.zoom({
+        position: 'bottomleft'
     }).addTo(map);
 
-    // Waypoints de edificios
-    var waypoints = {};
-    edificios.forEach(edificio => { waypoints[edificio.nombre] = edificio.centro; }); // Usar coordenada central
-
-    document.getElementById('calculateRouteBtn').addEventListener('click', () => {
-        var destination = document.getElementById('destinationInput').value;
-        var destinationCoords = waypoints[destination];
-        if (selectedEdificioCoords && destinationCoords) {
-            control.setWaypoints([L.latLng(selectedEdificioCoords), L.latLng(destinationCoords)]);
+    map.on('zoomend', function() {
+        if (map.getZoom() < 16) {
+            map.setZoom(16);
         }
     });
+
+    map.on('dragend', function() {
+        if (map.getCenter().lat < bounds[0][0] || 
+            map.getCenter().lat > bounds[1][0] ||
+            map.getCenter().lng < bounds[0][1] ||
+            map.getCenter().lng > bounds[1][1]) {
+            map.panInsideBounds(bounds);
+        }
+    });
+
+    // Create waypoints for internal campus paths
+    var waypoints = {};
+    edificios.forEach(function(edificio) {
+        waypoints[edificio.nombre] = edificio.coordenadas[0];
+    });
+
+    // Define the routing control without waypoints initially
+    var control = L.Routing.control({
+        routeWhileDragging: true,
+        createMarker: function(i, wp) {
+            return L.marker(wp.latLng, {
+                draggable: true
+            });
+        },
+        lineOptions: {
+            styles: [{color: 'blue', opacity: 1, weight: 5}]
+        },
+        router: L.Routing.osrmv1({
+            serviceUrl: 'https://router.project-osrm.org/route/v1',
+            profile: 'foot' // Profile for walking
+        })
+    }).addTo(map);
+
+    document.getElementById('calculateRouteBtn').addEventListener('click', function() {
+        var destination = document.getElementById('destinationInput').value;
+        var destinationCoords = waypoints[destination];
+
+        if (selectedEdificioCoords && destinationCoords) {
+            control.setWaypoints([
+                L.latLng(selectedEdificioCoords),
+                L.latLng(destinationCoords)
+            ]);
+        }
+    });
+
 </script>
 {% endblock %}
