@@ -220,61 +220,52 @@
                                     <div class="modal-body">
                                         <form method="post" action="{% url 'editar_usuario' user.id %}">
                                             {% csrf_token %}
-                                            <div class="form-outline" data-mdb-input-init>
-                                                <input type="text" id="username" class="form-control" name="username" required autocapitalize="off" autocomplete="off"/>
-                                                <label class="form-label" for="username">Cambiar Nombre de Usuario:</label>
-                                            </div>
-                                            <hr class="my-4">
-                                            <div class="d-flex justify-content-between">
-                                                <button type="button" class="btn btn-danger" data-mdb-ripple-init data-mdb-dismiss="modal">Cancelar</button>
-                                                <button type="submit" class="btn btn-primary">Guardar Cambios</button>
-                                            </div>
-                                        </form>
-                                        <form method="post" action="{% url 'editar_usuario' user.id %}">
                                             <!-- Nomnre de usuario -->
                                             <div data-mdb-input-init class="form-outline mb-4">
-                                                <input type="email" id="form3Example3" class="form-control" autocomplete="off" />
-                                                <label class="form-label" for="form3Example3">Email address</label>
+                                                <input type="text" id="createusername_{{user.id}}" name="username" class="form-control"
+                                                    autocomplete="off" placeholder=" " value="{{user.username}}" aria-label="disabled input example" disabled/>
+                                                <label class="form-label" for="createusername_{{user.id}}">Email address</label>
                                             </div>
-                                        
                                             <div class="row mb-4">
                                                 <div class="col">
                                                     <div data-mdb-input-init class="form-outline">
-                                                        <input type="text" id="form3Example1" class="form-control" autocomplete="off" />
-                                                        <label class="form-label" for="form3Example1">First name</label>
+                                                        <input type="text" id="firstName_{{user.id}}" class="form-control" autocomplete="off" placeholder=" " value="{{user.first_name}}" aria-label="disabled input example" disabled/>
+                                                        <label class="form-label" for="firstName_{{user.id}}">First name</label>
                                                     </div>
                                                 </div>
                                                 <div class="col">
                                                     <div data-mdb-input-init class="form-outline">
-                                                        <input type="text" id="form3Example2" class="form-control" autocomplete="off" />
-                                                        <label class="form-label" for="form3Example2">Last name</label>
+                                                        <input type="text" id="lastName_{{user.id}}" class="form-control" autocomplete="off" placeholder=" " value="{{user.last_name}}" aria-label="disabled input example" disabled/>
+                                                        <label class="form-label" for="lastName_{{user.id}}">Last name</label>
                                                     </div>
                                                 </div>
                                             </div>
                                         
                                             <!-- Email input -->
                                             <div data-mdb-input-init class="form-outline mb-4">
-                                                <input type="email" id="form3Example3" class="form-control" autocomplete="off" />
-                                                <label class="form-label" for="form3Example3">Email address</label>
+                                                <input type="email" id="email_{{user.id}}" class="form-control" autocomplete="off" placeholder=" " value="{{user.email}}" aria-label="disabled input example" disabled/>
+                                                <label class="form-label" for="email_{{user.id}}">Email address</label>
                                             </div>
                                         
                                             <!-- Password input -->
                                             <div data-mdb-input-init class="form-outline mb-4">
-                                                <input type="password" id="form3Example4" class="form-control" autocomplete="off" />
-                                                <label class="form-label" for="form3Example4">Password</label>
+                                                <input type="text" id="pass_{{user.id}}" class="form-control" autocomplete="off" placeholder=" " value="{{user.password}}" data-input_pass="generatePass" aria-label="disabled input example" disabled/>
+                                                <label class="form-label" for="pass_{{user.id}}">Password</label>
                                             </div>
                                         
                                             <!-- Checkbox -->
-                                            <div class="form-check mb-4">
-                                                <input class="form-check-input me-2" type="checkbox" value="" id="form2Example33" checked />
-                                                <label class="form-check-label" for="form2Example33">
+                                            <div class="form-check d-flex justify-content-start mb-4">
+                                                <input class="form-check-input me-2" type="checkbox" value="" id="isActive_{{user.id}}" checked />
+                                                <label class="form-check-label" for="isActive_{{user.id}}">
                                                     Activar usuario
                                                 </label>
                                             </div>
                                         
-                                            <!-- Submit button -->
-                                            <button data-mdb-ripple-init type="button"
-                                                class="btn btn-primary btn-block mb-4">Registrar</button>
+                                            <hr class="my-4">
+                                            <div class="d-flex justify-content-between">
+                                                <button type="button" class="btn btn-danger" data-mdb-ripple-init data-mdb-dismiss="modal">Cancelar</button>
+                                                <button type="submit" class="btn btn-primary">Registrar</button>
+                                            </div>
                                         </form>
                                     </div>
                                 </div>
@@ -302,8 +293,8 @@
                 <form>
                     <!-- Nomnre de usuario -->
                     <div data-mdb-input-init class="form-outline mb-4">
-                        <input type="email" id="form3Example3" class="form-control" autocomplete="off" />
-                        <label class="form-label" for="form3Example3">Email address</label>
+                        <input type="text" id="createusername" name="username" class="form-control" autocomplete="off" />
+                        <label class="form-label" for="createusername">Email address</label>
                     </div>
                 
                     <div class="row mb-4">

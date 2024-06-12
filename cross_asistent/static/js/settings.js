@@ -59,6 +59,10 @@ $(document).ready(function () {
         if (minIdElement !== null) {
             minIdElement.addClass('active');
         }
+
+        // generate password random
+        console.log($('[data-input_pass^="generatePass"]'));
+
     } catch (error) {
         console.log("Error Inesperado: ", error);
         alertSToast("top", 8000, "error", "😥 Ah ocurrido un error en el filtro de busqueda. Code:#CC320");
