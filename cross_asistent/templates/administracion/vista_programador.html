@@ -234,8 +234,7 @@
                                                     class="form-control" autocomplete="off" placeholder=" "
                                                     value="{{user.username}}" aria-label="disabled input example"
                                                     disabled />
-                                                <label class="form-label" for="createusername_{{user.id}}">Email
-                                                    address</label>
+                                                <label class="form-label" for="createusername_{{user.id}}">usario</label>
                                             </div>
                                             <div class="row mb-4">
                                                 <div class="col">
@@ -268,16 +267,16 @@
                                             <div data-mdb-input-init class="form-outline mb-4">
                                                 <input type="text" id="pass_{{user.id}}" class="form-control"
                                                     autocomplete="off" placeholder=" " value=""
-                                                    data-input_pass="generatePass" aria-label="readonly input example"
-                                                    readonly />
+                                                    data-input_pass="generatePass"/>
                                                 <label class="form-label" for="pass_{{user.id}}">Password</label>
                                             </div>
                                             <!-- Checkbox -->
+                                             <!-- se quito el readonly -->
                                             <div class="form-check d-flex justify-content-start mb-4">
                                                 <input class="form-check-input me-2" type="checkbox" value=""
                                                     id="isActive_{{user.id}}" checked />
                                                 <label class="form-check-label" for="isActive_{{user.id}}">
-                                                    Activar usuario
+                                                    Activar Programador
                                                 </label>
                                             </div>
                                             <hr class="my-4">
@@ -310,24 +309,25 @@
                     data-mdb-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form>
-                    <!-- Nomnre de usuario -->
+                <form method="post">
+                    {% csrf_token %}
+                    <!-- Nombre de usuario -->
                     <div data-mdb-input-init class="form-outline mb-4">
                         <input type="text" id="createusername" name="username" class="form-control"
                             autocomplete="off" />
                         <label class="form-label" for="createusername">Nombre de usuario</label>
                     </div>
-                
+                    <!-- Primer Nombre y Apellidos -->
                     <div class="row mb-4">
                         <div class="col">
                             <div data-mdb-input-init class="form-outline">
-                                <input type="text" id="form3Example1" class="form-control" autocomplete="off" />
+                                <input type="text" id="form3Example1" name="first_name" class="form-control" autocomplete="off" />
                                 <label class="form-label" for="form3Example1">Primer Nombre</label>
                             </div>
                         </div>
                         <div class="col">
                             <div data-mdb-input-init class="form-outline">
-                                <input type="text" id="form3Example2" class="form-control" autocomplete="off" />
+                                <input type="text" id="form3Example2" name="last_name" class="form-control" autocomplete="off" />
                                 <label class="form-label" for="form3Example2">Apellidos</label>
                             </div>
                         </div>
@@ -335,22 +335,21 @@
                 
                     <!-- Email input -->
                     <div data-mdb-input-init class="form-outline mb-4">
-                        <input type="email" id="form3Example3" class="form-control" autocomplete="off" />
+                        <input type="email" id="form3Example3" name="email" class="form-control" autocomplete="off" />
                         <label class="form-label" for="form3Example3">Dirección Email</label>
                     </div>
                 
                     <!-- Password input -->
                     <div data-mdb-input-init class="form-outline mb-4">
-                        <input type="text" id="pass_newuser" class="form-control" autocomplete="off" aria-label="readonly input example"
-                        readonly />
-                        <label class="form-label" for="pass_newuser" >Contraseña</label>
+                        <input type="text" id="pass_newuser" name="password" class="form-control" autocomplete="off" aria-label="readonly input example" readonly />
+                        <label class="form-label" for="pass_newuser">Contraseña</label>
                     </div>
                 
+                    <!-- Activar usuario y Usuario Programador checkboxes -->
                     <div class="row mb-4 px-1">
                         <div class="col">
                             <div class="form-check">
-                                <input class="form-check-input me-2" type="checkbox" value="" id="userIsactive"
-                                    checked />
+                                <input class="form-check-input me-2" type="checkbox" name="is_active" value="1" id="userIsactive" checked />
                                 <label class="form-check-label" for="userIsactive">
                                     Activar usuario
                                 </label>
@@ -358,7 +357,7 @@
                         </div>
                         <div class="col">
                             <div class="form-check">
-                                <input class="form-check-input me-2" type="checkbox" value="" id="userIsStaff"/>
+                                <input class="form-check-input me-2" type="checkbox" name="is_staff" value="1" id="userIsStaff" />
                                 <label class="form-check-label" for="userIsStaff">
                                     Usuario Programador
                                 </label>
@@ -367,8 +366,7 @@
                     </div>
                 
                     <!-- Submit button -->
-                    <button data-mdb-ripple-init type="button"
-                        class="btn btn_detail btn-block mb-4">Registrar</button>
+                    <button type="submit" class="btn btn_detail btn-block mb-4">Registrar</button>
                 </form>
             </div>
         </div>
