@@ -122,12 +122,6 @@
             <div class="modal-body">
                 <img src="{% static 'img/qr_2.png' %}" alt="qr" class="img-fluid" />
             </div>
-            <div class="modal-footer">
-                <form action="{% url 'export_database_to_csv' %}" method="get">
-                    {% csrf_token %}
-                    <button type="submit" class="btn btn-primary">Descargar CSV</button>
-                </form>
-            </div>
         </div>
     </div>
 </div>

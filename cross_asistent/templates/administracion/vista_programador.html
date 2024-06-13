@@ -20,7 +20,7 @@
         <hr class="hr_divisor" />
     </div>
     <section class="row mb-md-4">
-        <div class="carousel_container col-12 col-md-6 col-xl-4">
+        <div class="carousel_container col-12 col-md-6 col-xl-4 mb-4 mb-md-0">
             <!-- Carousel wrapper -->
             <div id="carouselMaterialStyle" class="carousel slide carousel-fade" data-mdb-ride="carousel"
                 data-mdb-carousel-init>
@@ -59,49 +59,57 @@
         </div>
 
         <!-- targetas de totales -->
-        <div class="mt-4 col-12 col-md-6 col-xl-8">
+        <div class="mt-md-3 col-12 col-md-6 col-xl-8">
             <div class="row">
-                <div class="col-6 mb-4 mb-md-2">
+                <div class="col-6 mb-4">
                     <!-- Card 1: Banners -->
                     <div class="card">
-                        <div class="card-body">
+                        <div class="card-body p-4">
                             <h6 class="card-title d-flex justify-content-between m-0">
                                 <!-- titulo y total -->
                                 <div>
-                                    <i class="fa-solid fa-image"></i>
-                                    <span class="d-none d-md-inline-flex">Total de</span> Banners:
+                                    <i class="fa-solid fa-image position-absolute bottom-0 start-0 opacity-25 text_detail fs-25 ms-2 mb-2"></i>
+                                    <span class="d-none d-xl-inline-flex">Total de</span> Banners:
                                 </div>
-                                <div class="ms-auto">{{total_banners}}</div>
+                                <div class="text_detail ms-auto">{{total_banners}}</div>
                             </h6>
                         </div>
                     </div>
                 </div>
-                <div class="col-6 mb-4 mb-md-2">
+                <div class="col-6 mb-4">
                     <!-- Card 2: Blogs / Articulos -->
                     <div class="card">
-                        <div class="card-body">
+                        <div class="card-body p-4">
                             <h6 class="card-title d-flex justify-content-between m-0">
                                 <!-- titulo y total -->
                                 <div>
-                                    <i class="fa-solid fa-newspaper"></i>
-                                    <span class="d-none d-md-inline-flex">Total de</span> Blogs:
+                                    <i class="fa-solid fa-newspaper position-absolute bottom-0 start-0 opacity-25 text_detail fs-25 ms-2 mb-2"></i>
+                                    <span class="d-none d-xl-inline-flex">Total de</span> Blogs:
                                 </div>
-                                <div class="ms-auto">{{ num_blogs }}</div>
+                                <div class="text_detail ms-auto">{{ num_blogs }}</div>
                             </h6>
                         </div>
                     </div>
                 </div>
-                <div class="col-12 mb-4 mb-md-2">
+                <div class="col-12 mb-4">
                     <!-- Card 3: Preguntas / database -->
                     <div class="card">
-                        <div class="card-body">
-                            <h6 class="card-title d-flex justify-content-between m-0">
+                        <div class="card-body p-4">
+                            <h6 class="card-title d-flex justify-content-between align-items-center m-0">
                                 <!-- titulo y total -->
                                 <div>
-                                    <i class="fa-solid fa-clipboard-question"></i>
-                                    <span class="d-sm-inline-flex d-md-none d-xl-inline-flex">Total de</span> Preguntas:
+                                    <i class="fa-solid fa-clipboard-question position-absolute bottom-0 start-0 opacity-25 text_detail fs-25 ms-2 mb-2"></i>
+                                    Total de Preguntas:
                                 </div>
-                                <div class="ms-auto">{{ num_preguntas }}</div>
+                                <div class="text_detail ms-auto d-flex align-items-center">
+                                    {{ num_preguntas }}
+                                    <form action="{% url 'export_database_to_csv' %}" method="get">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn_detail btn-sm btn-floating p-0 ms-2">
+                                            <i class="fa-solid fa-file-arrow-down"></i>
+                                        </button>
+                                    </form>
+                                </div>
                             </h6>
                         </div>
                     </div>
@@ -110,7 +118,7 @@
         </div>
     </section>
     <section class="card mb-4 col-lg-6 col-md-12">
-        <h3 class="text-center my-4">Responder una pregunta</h3>
+        <h3 class="text-center my-4">Responder pregunta</h3>
         <div class="card-body">
             <!-- Formulario para responder preguntas -->
             <div>
