@@ -612,7 +612,7 @@ path.leaflet-interactive {
 
 .table_odd .table_odd_items td {
     height: 80px;
-    max-height: 80px;
+    max-height: 80px !important;
 }
 
 .table_odd .table_odd_items:nth-child(even) {
