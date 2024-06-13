@@ -1,19 +1,12 @@
 {% extends 'widget.html' %}
 {% load filtros %}
 {% block title %}Inicio | Programadores{% endblock %}
-{% block extra_head %}
-{% if not user.is_authenticated %}
-<script>
-    window.location.href = "{% url 'logout' %}";
-</script>
-{% endif %}
-{% endblock %}
 {% block link_home %}{% url 'vista_programador' %}{% endblock %}
 {% block link_default %}
     {% include 'administracion/widget_links-admin.html' %}
 {% endblock %}
 {% block content %}
-<main class="container container-fluid pb-5">
+<main class="container container-fluid pb-5 {% if not user.is_authenticated %}main_container{% endif %}">
     <!-- Nombre del usuario -->
     <div class="p-5 text-center">
         <h1 class="mb-3">Bienvenido {{ user.username }}</h1>

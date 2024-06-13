@@ -9,12 +9,12 @@ urlpatterns = [
     path('acercade/', views.about, name='about'),
     path('administracion/acceder/', views.singinpage, name='singin'),
     path('administracion/registro/', views.singuppage, name='singup'),
-    path('administracion/', views.dashbAdmin, name='dashb_admin'),
+    path('administracion/old/', views.dashbAdmin, name='dashb_admin'),
     path('administracion/tarea/<int:tarea_id>/', views.tareaView, name='tareaView'),
     path('chat/', views.chat_view, name='chatbot'),
 # se agrego la url para la vista administrador
-    path('administracion/vista_admin/', views.vista_admin, name='vista_admin'),
-    path('administracion/vista_programador/', views.vista_programador, name='vista_programador'),
+    path('administracion/', views.vista_admin, name='vista_admin'),
+    path('administracion/programador/', views.vista_programador, name='vista_programador'),
     # path de responder preguntas
     path('responder_preguntas/', views.responder_preguntas, name='responder_preguntas'),
 #path para exportar a csv

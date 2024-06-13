@@ -378,27 +378,28 @@ def singoutpage(request):
     return redirect('singin')
 
 @login_required
+@never_cache
 def export_database_to_csv(request):
     now = timezone.localtime(timezone.now()).strftime('%d-%m-%Y_%H%M%S')
-
-    response = HttpResponse(content_type='text/csv')
-    response['Content-Disposition'] = f'attachment; filename="database_{now}.csv"'
-    writer = csv.writer(response)
-    writer.writerow(['Categoria', 'Titulo', 'Informacion', 'Redirigir', 'Frecuencia', 'Documentos', 'Imagenes', 'Fecha Modificacion'])
-    # Obtener todos los objetos del modelo Database
-    databaseall = Database.objects.all()
-    for info in databaseall:
-        writer.writerow([
-            info.categoria if info.categoria else '',
-            info.titulo,
-            info.informacion,
-            info.redirigir,
-            info.frecuencia,
-            info.documentos.url if info.documentos else '',
-            info.imagenes.url if info.imagenes else '',
-            info.fecha_modificacion
-        ])
-    return response
+    if request.user.is_staff:
+        response = HttpResponse(content_type='text/csv')
+        response['Content-Disposition'] = f'attachment; filename="database_{now}.csv"'
+        writer = csv.writer(response)
+        writer.writerow(['Categoria', 'Titulo', 'Informacion', 'Redirigir', 'Frecuencia', 'Documentos', 'Imagenes', 'Fecha Modificacion'])
+        # Obtener todos los objetos del modelo Database
+        databaseall = Database.objects.all()
+        for info in databaseall:
+            writer.writerow([
+                info.categoria if info.categoria else '',
+                info.titulo,
+                info.informacion,
+                info.redirigir,
+                info.frecuencia,
+                info.documentos.url if info.documentos else '',
+                info.imagenes.url if info.imagenes else '',
+                info.fecha_modificacion
+            ])
+        return response
 
 @login_required
 @never_cache
