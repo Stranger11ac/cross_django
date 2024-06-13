@@ -31,7 +31,7 @@ $(document).ready(function () {
                 }, 1000);
             }
         });
-        
+
         $(".controls_btn_close").click(() => {
             $(".asistent_group").removeClass("open open_controls close_controls open_keyboard bg-body-tertiary");
             $(".btn_controls").removeClass("btn_detail").addClass("btn_secondary");
@@ -61,7 +61,11 @@ $(document).ready(function () {
         }
 
         // generate password random
-        console.log($('[data-input_pass^="generatePass"]'));
+        // console.log($('[data-input_pass^="generatePass"]'));
+
+        // generar contraseña para usuarios nuevos
+        var pass_random = generarCadenaAleatoria(8)
+        $('#pass_newuser').val(pass_random);
 
     } catch (error) {
         console.log("Error Inesperado: ", error);
