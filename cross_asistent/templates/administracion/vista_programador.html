@@ -267,8 +267,8 @@
                                             <div data-mdb-input-init class="form-outline mb-4">
                                                 <input type="text" id="pass_{{user.id}}" class="form-control"
                                                     autocomplete="off" placeholder=" " value=""
-                                                    data-input_pass="generatePass" aria-label="disabled input example"
-                                                    disabled />
+                                                    data-input_pass="generatePass" aria-label="readonly input example"
+                                                    readonly />
                                                 <label class="form-label" for="pass_{{user.id}}">Password</label>
                                             </div>
                                             <!-- Checkbox -->
@@ -340,8 +340,9 @@
                 
                     <!-- Password input -->
                     <div data-mdb-input-init class="form-outline mb-4">
-                        <input type="password" id="form3Example4" class="form-control" autocomplete="off" />
-                        <label class="form-label" for="form3Example4">Contraseña</label>
+                        <input type="text" id="pass_newuser" class="form-control" autocomplete="off" aria-label="readonly input example"
+                        readonly />
+                        <label class="form-label" for="pass_newuser" >Contraseña</label>
                     </div>
                 
                     <div class="row mb-4 px-1">
