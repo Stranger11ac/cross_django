@@ -273,10 +273,10 @@ nav .navbar-collapse {
 
 /*##################### Contenido #####################*/
 main {
-    min-height: 400px;
+    width: 100%;
+    min-height: 80vh;
 }
 main.full_page{
-    width: 100%;
     height: var(--full_page);
     z-index: 0;
 }

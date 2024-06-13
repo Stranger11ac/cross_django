@@ -25,9 +25,9 @@ from nltk.stem import WordNetLemmatizer
 
 
 import nltk
-nltk.download('punkt')
-nltk.download('stopwords')
-nltk.download('wordnet')
+# nltk.download('punkt')
+# nltk.download('stopwords')
+# nltk.download('wordnet')
 
 def index(request):
     logout(request)
@@ -336,13 +336,14 @@ def singuppage(request):
         username = request.POST.get('username')
         first_name = request.POST.get('first_name')
         last_name = request.POST.get('last_name')
+        email = request.POST.get('email')
 
         if password1 and password2 and username:
             if password1 == password2:
                 try:
-                    newUser = User.objects.create_user(first_name=first_name, last_name=last_name, username=username, password=password1, is_active=0)
+                    newUser = User.objects.create_user(first_name=first_name, last_name=last_name, username=username, password=password1, email=email, is_active=0)
                     newUser.save()
-                    return JsonResponse({'success': True, 'message': 'Usuario creado 🥳<br> Tu cuenta esta <u>INACTIVA</u>'}, status=200)
+                    return JsonResponse({'success': True, 'message': '🥳🥳🥳 <br>Usuario creado<br> Tu cuenta esta <u>INACTIVA</u>'}, status=200)
                 except IntegrityError:
                     return JsonResponse({'success': False, 'message': f'El usuario <u>{username}</u> ya existe 😯'}, status=400)
             else:
@@ -351,7 +352,7 @@ def singuppage(request):
             return JsonResponse({'success': False, 'message': 'Datos incompletos 😅'}, status=400)
     else:
         logout(request)
-        return render(request, 'administracion/singup.html')
+        return render('singin')
 
 @never_cache
 def singinpage(request):
@@ -365,10 +366,8 @@ def singinpage(request):
         else:
             login(request, user)
             if user.is_staff:
-                return JsonResponse({'success': False, 'prog_admin': True}, status=200)
-            if (request, user.is_staff):
-                return JsonResponse({'success': 'prog'}, status=200)
-            return JsonResponse({'success': True}, status=200)
+                return JsonResponse({'success': True, 'redirect_url': reverse('vista_programador')}, status=200)
+            return JsonResponse({'success': True, 'redirect_url': reverse('vista_admin')}, status=200)
     else:
         logout(request)
         return render(request, 'administracion/singin.html', {

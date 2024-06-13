@@ -48,8 +48,8 @@ $(document).ready(function () {
         var minIdNumber = Infinity;
 
         elements.each(function () {
-            var id = $(this).attr('id');
-            var number = parseInt(id.split('_')[1]);
+            var id = $(this).attr("id");
+            var number = parseInt(id.split("_")[1]);
             if (number < minIdNumber) {
                 minIdNumber = number;
                 minIdElement = $(this);
@@ -57,16 +57,18 @@ $(document).ready(function () {
         });
 
         if (minIdElement !== null) {
-            minIdElement.addClass('active');
+            minIdElement.addClass("active");
         }
+
+        // iniciar sesion ######################################################
+        $('#singinForm').submit(singinFunction);
 
         // generate password random
         // console.log($('[data-input_pass^="generatePass"]'));
 
         // generar contraseña para usuarios nuevos
-        var pass_random = generarCadenaAleatoria(8)
-        $('#pass_newuser').val(pass_random);
-
+        var pass_random = generarCadenaAleatoria(8);
+        $("#pass_newuser").val(pass_random);
     } catch (error) {
         console.log("Error Inesperado: ", error);
         alertSToast("top", 8000, "error", "😥 Ah ocurrido un error en el filtro de busqueda. Code:#CC320");
@@ -74,9 +76,9 @@ $(document).ready(function () {
 });
 
 // Cerrar la sesion ##########################################################
-if (document.querySelector('main').classList.contains('main_container')) {
-    window.location.href = '/logout';
-  }  
+if (document.querySelector("main").classList.contains("main_container")) {
+    window.location.href = "/logout";
+}
 
 // Crear una cadena aleatoria de la longitud que se dese ###########################
 function generarCadenaAleatoria(longitud) {
@@ -89,22 +91,57 @@ function generarCadenaAleatoria(longitud) {
     return cadenaAleatoria;
 }
 
-function chatSubmit(event) {
-    if (event.key === 'Enter') {
-        if (event.shiftKey) {
+function chatSubmit(e) {
+    e.preventDefault();
+    if (e.key === "Enter") {
+        if (e.shiftKey) {
             const cursorPos = this.selectionStart;
             const textBefore = this.value.substring(0, cursorPos);
             const textAfter = this.value.substring(cursorPos);
             this.value = textBefore + "\n" + textAfter;
             this.selectionStart = cursorPos + 1;
             this.selectionEnd = cursorPos + 1;
-            event.preventDefault();
         } else {
-            event.preventDefault();
-            document.getElementById('chatForm_submit').click();
+            document.getElementById("chatForm_submit").click();
         }
     }
-};
+}
+
+function singinFunction(e) {
+    e.preventDefault();
+    const signinForm = e.target;
+    const formData = new FormData(signinForm);
+    const timerOut = 8000;
+
+    fetch(signinForm.action, {
+        method: "POST",
+        body: formData,
+        headers: {
+            "X-Requested-With": "XMLHttpRequest",
+            "X-CSRFToken": signinForm.querySelector("[name=csrfmiddlewaretoken]").value,
+        },
+    })
+        .then((response) => {
+            if (!response.ok) {
+                return response.json().then((data) => {
+                    throw new Error(data.message || "Error desconocido");
+                });
+            }
+            return response.json();
+        })
+        .then((data) => {
+            if (data.success) {
+                window.location.href = data.redirect_url;
+            } else {
+                alertSToast("top", timerOut + 2000, "warning", data.message);
+            }
+        })
+        .catch((error) => {
+            console.error("😥 Error:", error);
+            errorMessage = error.message || "Ocurrió un error. Intente nuevamente. 😥";
+            alertSToast("center", timerOut + 3000, "error", errorMessage);
+        });
+}
 
 // context menu disabled ####################################
 document.oncontextmenu = function () {

@@ -15,7 +15,7 @@ urlpatterns = [
 # se agrego la url para la vista administrador
     path('administracion/', views.vista_admin, name='vista_admin'),
     path('administracion/programador/', views.vista_programador, name='vista_programador'),
-    # path de responder preguntas
+# path de responder preguntas
     path('responder_preguntas/', views.responder_preguntas, name='responder_preguntas'),
 #path para exportar a csv
     path('export/csv/', views.export_database_to_csv, name='export_database_to_csv'),
