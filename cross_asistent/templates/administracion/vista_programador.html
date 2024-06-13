@@ -268,7 +268,7 @@
                                             <!-- Password input -->
                                             <div data-mdb-input-init class="form-outline mb-4">
                                                 <input type="text" id="pass_{{user.id}}" class="form-control"
-                                                    autocomplete="off" placeholder=" " value="{{user.password}}"
+                                                    autocomplete="off" placeholder=" " value=""
                                                     data-input_pass="generatePass" aria-label="disabled input example"
                                                     disabled />
                                                 <label class="form-label" for="pass_{{user.id}}">Password</label>
@@ -302,7 +302,7 @@
     </div>
 </main>
 
-<!-- Modal -->
+<!-- Modal: Crea ususrio nuevo -->
 <div class="modal fade" id="createUserModal" tabindex="-1" aria-labelledby="createUserModalLabel"
     aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
@@ -316,21 +316,22 @@
                 <form>
                     <!-- Nomnre de usuario -->
                     <div data-mdb-input-init class="form-outline mb-4">
-                        <input type="text" id="createusername" name="username" class="form-control" autocomplete="off" />
-                        <label class="form-label" for="createusername">Email address</label>
+                        <input type="text" id="createusername" name="username" class="form-control"
+                            autocomplete="off" />
+                        <label class="form-label" for="createusername">Nombre de usuario</label>
                     </div>
                 
                     <div class="row mb-4">
                         <div class="col">
                             <div data-mdb-input-init class="form-outline">
                                 <input type="text" id="form3Example1" class="form-control" autocomplete="off" />
-                                <label class="form-label" for="form3Example1">First name</label>
+                                <label class="form-label" for="form3Example1">Primer Nombre</label>
                             </div>
                         </div>
                         <div class="col">
                             <div data-mdb-input-init class="form-outline">
                                 <input type="text" id="form3Example2" class="form-control" autocomplete="off" />
-                                <label class="form-label" for="form3Example2">Last name</label>
+                                <label class="form-label" for="form3Example2">Apellidos</label>
                             </div>
                         </div>
                     </div>
@@ -338,21 +339,33 @@
                     <!-- Email input -->
                     <div data-mdb-input-init class="form-outline mb-4">
                         <input type="email" id="form3Example3" class="form-control" autocomplete="off" />
-                        <label class="form-label" for="form3Example3">Email address</label>
+                        <label class="form-label" for="form3Example3">Dirección Email</label>
                     </div>
                 
                     <!-- Password input -->
                     <div data-mdb-input-init class="form-outline mb-4">
                         <input type="password" id="form3Example4" class="form-control" autocomplete="off" />
-                        <label class="form-label" for="form3Example4">Password</label>
+                        <label class="form-label" for="form3Example4">Contraseña</label>
                     </div>
                 
-                    <!-- Checkbox -->
-                    <div class="form-check mb-4">
-                        <input class="form-check-input me-2" type="checkbox" value="" id="form2Example33" checked />
-                        <label class="form-check-label" for="form2Example33">
-                            Activar usuario
-                        </label>
+                    <div class="row mb-4 px-1">
+                        <div class="col">
+                            <div class="form-check">
+                                <input class="form-check-input me-2" type="checkbox" value="" id="userIsactive"
+                                    checked />
+                                <label class="form-check-label" for="userIsactive">
+                                    Activar usuario
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="form-check">
+                                <input class="form-check-input me-2" type="checkbox" value="" id="userIsStaff"/>
+                                <label class="form-check-label" for="userIsStaff">
+                                    Usuario Programador
+                                </label>
+                            </div>
+                        </div>
                     </div>
                 
                     <!-- Submit button -->
