@@ -30,6 +30,7 @@ nltk.download('stopwords')
 nltk.download('wordnet')
 
 def index(request):
+    logout(request)
     banners_all = models.Banners.objects.all()
     return render(request, 'index.html', {
         'banners': banners_all,
@@ -54,34 +55,6 @@ def obtener_respuesta_openai(question, instructions):
     print('')
 
     return response.choices[0].message.content
-
-
-def export_database_to_csv(request):
-    now = timezone.localtime(timezone.now()).strftime('%d-%m-%Y/%H:%M:%S')
-
-    response = HttpResponse(content_type='text/csv')
-    response['Content-Disposition'] = f'attachment; filename="database_{now}.csv"'
-
-
-    writer = csv.writer(response)
-    writer.writerow(['Categoria', 'Titulo', 'Informacion', 'Redirigir', 'Frecuencia', 'Documentos', 'Imagenes', 'Fecha Modificacion'])
-
-    # Obtener todos los objetos del modelo Database
-    databaseall = Database.objects.all()
-
-    for info in databaseall:
-        writer.writerow([
-            info.categoria if info.categoria else '',
-            info.titulo,
-            info.informacion,
-            info.redirigir,
-            info.frecuencia,
-            info.documentos.url if info.documentos else '',
-            info.imagenes.url if info.imagenes else '',
-            info.fecha_modificacion
-        ])
-
-    return response
 
 def preprocesar_texto(texto):
     # Tokenización
@@ -163,6 +136,7 @@ def chat_view(request):
     return JsonResponse({'success': False, 'message': 'Método no permitido.'})
 
 def faq(request):
+    logout(request)
     questall = models.Database.objects.filter(frecuencia__gt=0).order_by('-frecuencia')
     return render(request, 'frecuentes.html', {
         'quest_all': questall,
@@ -170,6 +144,7 @@ def faq(request):
     })
 
 def blog(request):
+    logout(request)
     blogs = models.Articulos.objects.all()
     return render(request, 'blog.html', {
         'blogs_all': blogs,
@@ -177,6 +152,7 @@ def blog(request):
     })
 
 def map(request):
+    logout(request)
     edificios = [
         {
             'edifcolor': 'red','edifill': 'red',
@@ -404,6 +380,30 @@ def singinpage(request):
 def singoutpage(request):
     logout(request)
     return redirect('singin')
+
+@login_required
+@never_cache
+def export_database_to_csv(request):
+    now = timezone.localtime(timezone.now()).strftime('%d-%m-%Y_%H%M%S')
+    if request.user.is_staff:
+        response = HttpResponse(content_type='text/csv')
+        response['Content-Disposition'] = f'attachment; filename="database_{now}.csv"'
+        writer = csv.writer(response)
+        writer.writerow(['Categoria', 'Titulo', 'Informacion', 'Redirigir', 'Frecuencia', 'Documentos', 'Imagenes', 'Fecha Modificacion'])
+        # Obtener todos los objetos del modelo Database
+        databaseall = Database.objects.all()
+        for info in databaseall:
+            writer.writerow([
+                info.categoria if info.categoria else '',
+                info.titulo,
+                info.informacion,
+                info.redirigir,
+                info.frecuencia,
+                info.documentos.url if info.documentos else '',
+                info.imagenes.url if info.imagenes else '',
+                info.fecha_modificacion
+            ])
+        return response
 
 @login_required
 @never_cache

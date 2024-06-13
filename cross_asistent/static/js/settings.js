@@ -73,6 +73,11 @@ $(document).ready(function () {
     }
 });
 
+// Cerrar la sesion ##########################################################
+if (document.querySelector('main').classList.contains('main_container')) {
+    window.location.href = '/logout';
+  }  
+
 // Crear una cadena aleatoria de la longitud que se dese ###########################
 function generarCadenaAleatoria(longitud) {
     var caracteres = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
