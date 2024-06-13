@@ -474,6 +474,24 @@ def vista_programador(request):
     banners_all = models.Banners.objects.all()
     total_banners = banners_all.count()
 
+    # Procesar la creación de usuario
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        is_staff = request.POST.get('is_staff', False)
+        is_active = request.POST.get('is_active', False)
+        first_name = request.POST.get('first_name')
+        last_name = request.POST.get('last_name')
+        email = request.POST.get('email')
+        password = request.POST.get('password')
+
+        if username:
+            # Crear el usuario
+            new_user = User.objects.create_user(username=username, is_staff=is_staff, is_active=is_active,
+            first_name=first_name, last_name=last_name, email=email)
+            new_user.set_password(password)
+            new_user.save()
+            return redirect('vista_programador')
+
     return render(request, 'administracion/vista_programador.html', {
         'num_blogs': num_blogs,
         'num_preguntas': num_preguntas,
