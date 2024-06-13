@@ -30,6 +30,7 @@ nltk.download('stopwords')
 nltk.download('wordnet')
 
 def index(request):
+    logout(request)
     banners_all = models.Banners.objects.all()
     return render(request, 'index.html', {
         'banners': banners_all,
@@ -135,6 +136,7 @@ def chat_view(request):
     return JsonResponse({'success': False, 'message': 'Método no permitido.'})
 
 def faq(request):
+    logout(request)
     questall = models.Database.objects.filter(frecuencia__gt=0).order_by('-frecuencia')
     return render(request, 'frecuentes.html', {
         'quest_all': questall,
@@ -142,6 +144,7 @@ def faq(request):
     })
 
 def blog(request):
+    logout(request)
     blogs = models.Articulos.objects.all()
     return render(request, 'blog.html', {
         'blogs_all': blogs,
@@ -149,6 +152,7 @@ def blog(request):
     })
 
 def map(request):
+    logout(request)
     edificios = [
         {
             'edifcolor': 'red','edifill': 'red',
