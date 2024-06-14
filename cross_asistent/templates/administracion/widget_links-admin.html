@@ -12,8 +12,15 @@
     <a
         class="btn {% if active_page == 'blog' %}btn_secondary{% else %}btn_detail{% endif %} m-1 my-lg-0 d-block"
         href="#"
-        >Blog<i class="fa-solid fa-calendar-days ms-1"></i
-    ></a>
+        >Blogs<i class="fa-solid fa-newspaper ms-1"></i>
+    </a>
+</li>
+<li class="nav-item">
+    <a
+        class="btn {% if active_page == 'forms' %}btn_secondary{% else %}btn_detail{% endif %} m-1 my-lg-0 d-block"
+        href="{% url 'forms' %}"
+        >Formularios<i class="fa-solid fa-paragraph ms-1"></i>
+    </a>
 </li>
 <li class="nav-item">
     <div class="dropdown">

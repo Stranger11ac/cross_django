@@ -1,0 +1,44 @@
+{% extends 'widget.html' %}
+{% load filtros %}
+{% block title %}Formularios | Programadores{% endblock %}
+{% block link_home %}{% url 'vista_programador' %}{% endblock %}
+{% block link_default %}
+{% include 'administracion/widget_links-admin.html' %}
+{% endblock %}
+{% block content %}
+<main
+    class="container container-fluid pb-5 {% if not user.is_authenticated %}main_container{% endif %}">
+    <!-- Nombre del usuario -->
+    <div class="p-5 text-center">
+        <h1 class="mb-3">Formularios {{ user.username }}</h1>
+        <hr class="hr_divisor" />
+    </div>
+    <section class="card mb-4 col-lg-6 col-md-12">
+        <h3 class="text-center my-4">Mapa</h3>
+        <div class="card-body">
+            <!-- Formulario para responder preguntas -->
+            <div>
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="form-outline mb-4" data-mdb-input-init>
+                        <input type="text" id="lugar" name="lugar" class="form-control" />
+                        <label class="form-label" for="lugar">Lugar</label>
+                    </div>
+
+                    <div class="form-outline mb-4" data-mdb-input-init>
+                        <textarea class="form-control" id="descripcion" name="descripcion" rows="4"></textarea>
+                        <label class="form-label" for="descripcion">Descripcion</label>
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="imagenes" class="form-label">Imagenes</label>
+                        <input class="form-control" type="file" id="imagenes" name="imagenes" multiple accept="image/*"/>
+                    </div>
+
+                    <button type="submit" class="btn btn_detail w-100 d-block">Responder</button>
+                </form>
+            </div>
+        </div>
+    </section>
+</main>
+{% endblock %}

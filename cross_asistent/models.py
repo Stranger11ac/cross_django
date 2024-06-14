@@ -66,6 +66,15 @@ class Banners(models.Model):
                 os.remove(image_path)
         super(Banners, self).delete(*args, **kwargs)
 
+class Mapa(models.Model):
+    lugar = models.ForeignKey(Database, on_delete=models.CASCADE)
+    descripcion = models.TextField()
+
+class MapaImagenes(models.Model):
+    mapa = models.ForeignKey(Mapa, related_name='imagenes', on_delete=models.CASCADE)
+    imagen = models.ImageField(upload_to='cross_asistent/static/files/imagenes/mapa/')
+
+
 class Tareas(models.Model):
     tarea = models.CharField(max_length=255)
     importante = models.BooleanField(default=False)

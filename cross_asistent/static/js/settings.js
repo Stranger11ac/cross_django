@@ -60,21 +60,63 @@ $(document).ready(function () {
             minIdElement.addClass("active");
         }
 
-        // iniciar sesion ######################################################
-        $('#singinForm').submit(singinFunction);
+        // iniciar sesion ####################################################
+        $("#singinForm").submit(singinFunction);
 
         // generate password random
         // console.log($('[data-input_pass^="generatePass"]'));
 
         // generar contraseña para usuarios nuevos
-        var pass_random = generarCadenaAleatoria(8);
+        var pass_random = generarPassAleatoria(8);
         $("#pass_newuser").val(pass_random);
+
+        // Editar usuario generar nueva contraseña aleatoria
+        $('button[data-editpass="edit_newpass"]').on('click', function() {
+            $(this).addClass('active');
+            var newRandomPass = generarPassAleatoria(8);
+            var editInputId = $(this).data('editinput');
+            setTimeout(() => {
+                $(this).removeClass('active');
+            }, 1000);
+            $('#' + editInputId).val(newRandomPass).focus();
+        });
+    
+
+        // Hacer el scroll vertical en horizontal ############################
+        var $tableContainer = $("#table-container");
+        if (!$tableContainer.length) {
+            return;
+        }
+        function isOverflowing($element) {
+            var element = $element[0];
+            return element.scrollWidth > element.clientWidth;
+        }
+        function handleWheelEvent(e) {
+            if (e.originalEvent.deltaY > 0) {
+                this.scrollLeft += 300;
+            } else {
+                this.scrollLeft -= 300;
+            }
+            e.preventDefault();
+        }
+        function toggleWheelEvent() {
+            if (isOverflowing($tableContainer)) {
+                $tableContainer.on("wheel", handleWheelEvent);
+            } else {
+                $tableContainer.off("wheel", handleWheelEvent);
+            }
+        }
+        toggleWheelEvent();
+        $(window).on("resize", function () {
+            toggleWheelEvent();
+        });
     } catch (error) {
         console.log("Error Inesperado: ", error);
-        alertSToast("top", 8000, "error", "😥 Ah ocurrido un error en el filtro de busqueda. Code:#CC320");
+        alertSToast("center", 8000, "error", `😥 Ah ocurrido un error JQ. ${error}`);
     }
 });
 
+// Funciones JAVASCRIPT ###########################
 // Cerrar la sesion ##########################################################
 if (document.querySelector("main").classList.contains("main_container")) {
     window.location.href = "/logout";
@@ -83,6 +125,16 @@ if (document.querySelector("main").classList.contains("main_container")) {
 // Crear una cadena aleatoria de la longitud que se dese ###########################
 function generarCadenaAleatoria(longitud) {
     var caracteres = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    var cadenaAleatoria = "";
+    for (var i = 0; i < longitud; i++) {
+        var indice = Math.floor(Math.random() * caracteres.length);
+        cadenaAleatoria += caracteres.charAt(indice);
+    }
+    return cadenaAleatoria;
+}
+
+function generarPassAleatoria(longitud) {
+    var caracteres = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_-%$#@!*&^.";
     var cadenaAleatoria = "";
     for (var i = 0; i < longitud; i++) {
         var indice = Math.floor(Math.random() * caracteres.length);

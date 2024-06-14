@@ -55,7 +55,7 @@
     --transitionCubicVal: cubic-bezier(0.68, -0.55, 0.27, 1.55);
     --border-input_items: 2px solid var(--var-white);
     --border-radius: 8px;
-    --nav_height: 60px;
+    --nav_height: 70px;
     --full_page: calc(100vh - var(--nav_height));
 }
 
@@ -84,6 +84,19 @@ html {
 .btn_secondary:hover {
     filter: brightness(90%);
 }
+
+.btn_genpass{
+    transition: transform 0.5s var(--transitionCubicVal);
+}
+
+.btn_genpass:hover{
+    transform: scale(0.9);
+}
+
+.btn_genpass.active{
+    transform: rotate(180deg);
+}
+
 /*######### Generales #########*/
 body {
     min-height: 100vh;
@@ -120,7 +133,7 @@ i.fa-solid {
 /*########################## Navbar ##########################*/
 nav {
     height: var(--nav_height);
-    padding-block: 3px !important;
+    padding-block: 5px !important;
 }
 nav .navbar-brand img {
     height: 45px;
@@ -635,6 +648,10 @@ body.modal-open {
     padding-right: 0 !important;
 }
 
+.leaflet-top.leaflet-right{
+    display: none !important;
+}
+
 /*#################### Template Buttons ####################*/
 @media (min-width: 992px) {
     .btn_lg-circle {
@@ -789,6 +806,9 @@ body.modal-open {
 }
 .mb-55{
     margin-bottom: 55px;
+}
+.mb-100{
+    margin-bottom: 100px;
 }
 
 .gap_0 {
