@@ -12,10 +12,13 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 import os
 from pathlib import Path
 import environ
+import warnings
 
 env = environ.Env()
 environ.Env.read_env()
 OPENAI_API_KEY = env('OPENAI_API_KEY', default=None)
+if OPENAI_API_KEY is None:
+    warnings.warn('OPENAI_API_KEY no está definida.')
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
