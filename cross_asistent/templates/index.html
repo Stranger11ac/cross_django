@@ -67,19 +67,7 @@
                 <!-- autoplay
                 animation-name="Wave" -->
             </model-viewer>
-            <div class="box_asistent_controls">
-                <div class="controls_buttons">
-                    <button type="button" class="btn btn_controls btn_secondary controls_btn_keyboard toggle_controls">
-                        <i class="fa-regular fa-keyboard"></i>
-                    </button>
-                    <button type="button" class="btn btn_controls btn_secondary controls_btn_microphone">
-                        <i class="fa-solid fa-comment" id="btn_controls_icon"></i>
-                    </button>
-                    <button type="button" class="btn btn_controls btn_secondary controls_btn_close">
-                        <i class="fa-solid fa-xmark"></i>
-                    </button>
-                </div>
-            </div>
+            <!-- button chat -->
             <form id="chatForm" class="controls_input" method="POST" action="{% url 'chatbot' %}">
                 {% csrf_token %}
                 <div class="position-relative bottom-0 end-0">

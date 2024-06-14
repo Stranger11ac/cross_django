@@ -5,12 +5,11 @@ from django.contrib.auth.decorators import login_required
 from django.views.decorators.cache import never_cache
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.models import User
-from django.db import IntegrityError
+from django.db import IntegrityError, transaction
 from django.http import JsonResponse
 from django.conf import settings
 from .forms import crearTarea
 from django.http import HttpResponse
-from .models import Database
 from django.utils import timezone
 from . import models
 
@@ -25,12 +24,13 @@ from nltk.stem import WordNetLemmatizer
 
 
 import nltk
-nltk.download('punkt')
-nltk.download('stopwords')
-nltk.download('wordnet')
+# nltk.download('punkt')
+# nltk.download('stopwords')
+# nltk.download('wordnet')
 
 def index(request):
-    logout(request)
+    if not request.user.is_staff:
+        logout(request)
     banners_all = models.Banners.objects.all()
     return render(request, 'index.html', {
         'banners': banners_all,
@@ -136,7 +136,8 @@ def chat_view(request):
     return JsonResponse({'success': False, 'message': 'Método no permitido.'})
 
 def faq(request):
-    logout(request)
+    if not request.user.is_staff:
+        logout(request)
     questall = models.Database.objects.filter(frecuencia__gt=0).order_by('-frecuencia')
     return render(request, 'frecuentes.html', {
         'quest_all': questall,
@@ -144,7 +145,8 @@ def faq(request):
     })
 
 def blog(request):
-    logout(request)
+    if not request.user.is_staff:
+        logout(request)
     blogs = models.Articulos.objects.all()
     return render(request, 'blog.html', {
         'blogs_all': blogs,
@@ -152,7 +154,8 @@ def blog(request):
     })
 
 def map(request):
-    logout(request)
+    if not request.user.is_staff:
+        logout(request)
     edificios = [
         {
             'edifcolor': 'red','edifill': 'red',
@@ -336,22 +339,27 @@ def singuppage(request):
         username = request.POST.get('username')
         first_name = request.POST.get('first_name')
         last_name = request.POST.get('last_name')
+        email = request.POST.get('email')
 
-        if password1 and password2 and username:
+        if password1 and password2 and username and email:
             if password1 == password2:
-                try:
-                    newUser = User.objects.create_user(first_name=first_name, last_name=last_name, username=username, password=password1, is_active=0)
-                    newUser.save()
-                    return JsonResponse({'success': True, 'message': 'Usuario creado 🥳<br> Tu cuenta esta <u>INACTIVA</u>'}, status=200)
-                except IntegrityError:
+                if User.objects.filter(username=username).exists():
                     return JsonResponse({'success': False, 'message': f'El usuario <u>{username}</u> ya existe 😯'}, status=400)
+                if User.objects.filter(email=email).exists():
+                    return JsonResponse({'success': False, 'message': f'El correo electrónico <u>{email}</u> ya está registrado 😯'}, status=400)
+                try:
+                    newUser = User.objects.create_user(first_name=first_name,last_name=last_name,username=username,password=password1,email=email,is_active=0)
+                    newUser.save()
+                    return JsonResponse({'success': True, 'message': '🥳🥳🥳 <br>Usuario creado<br> Tu cuenta está <u>INACTIVA</u>'}, status=200)
+                except IntegrityError:
+                    return JsonResponse({'success': False, 'message': 'Ocurrió un error durante el registro. Intente nuevamente.'}, status=400)
             else:
                 return JsonResponse({'success': False, 'message': 'Las contraseñas no coinciden 😬'}, status=400)
         else:
             return JsonResponse({'success': False, 'message': 'Datos incompletos 😅'}, status=400)
     else:
         logout(request)
-        return render(request, 'administracion/singup.html')
+        return render('singin')
 
 @never_cache
 def singinpage(request):
@@ -365,10 +373,8 @@ def singinpage(request):
         else:
             login(request, user)
             if user.is_staff:
-                return JsonResponse({'success': False, 'prog_admin': True}, status=200)
-            if (request, user.is_staff):
-                return JsonResponse({'success': 'prog'}, status=200)
-            return JsonResponse({'success': True}, status=200)
+                return JsonResponse({'success': True, 'redirect_url': reverse('vista_programador')}, status=200)
+            return JsonResponse({'success': True, 'redirect_url': reverse('vista_admin')}, status=200)
     else:
         logout(request)
         return render(request, 'administracion/singin.html', {
@@ -391,7 +397,7 @@ def export_database_to_csv(request):
         writer = csv.writer(response)
         writer.writerow(['Categoria', 'Titulo', 'Informacion', 'Redirigir', 'Frecuencia', 'Documentos', 'Imagenes', 'Fecha Modificacion'])
         # Obtener todos los objetos del modelo Database
-        databaseall = Database.objects.all()
+        databaseall = models.Database.objects.all()
         for info in databaseall:
             writer.writerow([
                 info.categoria if info.categoria else '',
@@ -454,37 +460,51 @@ def tareaView(request, tarea_id):
 def vista_admin(request):
     blogs_all = models.Articulos.objects.filter()
     user = request.user
-
     context = {
         'user': user,
         'num_blogs': blogs_all.count(),
         'blogs_all': blogs_all,
     }
-
     return render(request, 'administracion/vista_admin.html', context)
 
 @login_required
 @never_cache
 def vista_programador(request):
-    num_blogs = models.Articulos.objects.filter().count()
-    num_preguntas = models.Database.objects.filter().count()
-    user = request.user
-    users = User.objects.filter()
-    blogs_all = models.Articulos.objects.filter()
+    blogs_all = models.Articulos.objects.all()
     banners_all = models.Banners.objects.all()
-    total_banners = banners_all.count()
-
-    return render(request, 'administracion/vista_programador.html', {
-        'num_blogs': num_blogs,
-        'num_preguntas': num_preguntas,
-        'user': user,
-        'blogs_all': blogs_all,
+    users = User.objects.all()
+    contexto = {
+        'user': request.user,
         'users': users,
+        'total_usuarios': users.count(),
         'banners_all': banners_all,
-        'total_banners': total_banners,
-    })
+        'total_banners': banners_all.count(),
+        'blogs_all': blogs_all,
+        'num_blogs': blogs_all.count(),
+        'num_preguntas': models.Database.objects.filter().count(),
+        'preguntas_sin_responder': models.Database.objects.all(),
+    }
+    # Procesar creación de usuario
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        is_staff = request.POST.get('is_staff', False)
+        is_active = request.POST.get('is_active', False)
+        first_name = request.POST.get('first_name')
+        last_name = request.POST.get('last_name')
+        email = request.POST.get('email')
+        password = request.POST.get('password')
 
-# def para responder preguntas
+        if username:
+            # Crear usuario
+            new_user = User.objects.create_user(username=username, is_staff=is_staff, is_active=is_active,
+            first_name=first_name, last_name=last_name, email=email)
+            new_user.set_password(password)
+            new_user.save()
+            return redirect('vista_programador')
+
+    return render(request, 'administracion/vista_programador.html', contexto)
+
+# def responder preguntas
 @login_required
 @never_cache
 def responder_preguntas(request):
@@ -541,3 +561,20 @@ def editar_usuario(request, user_id):
             user.save()
             return redirect('vista_programador')
     return redirect('vista_programador')
+
+
+@login_required
+@never_cache
+def forms_admin(request):
+    if request.method == 'POST':
+        lugar = request.POST['lugar']
+        descripcion = request.POST['descripcion']
+        imagenes = request.FILES.getlist('imagenes')
+        
+        with transaction.atomic():
+            mapa = models.Mapa.objects.create(lugar=lugar, descripcion=descripcion)
+            for imagen in imagenes:
+                models.MapaImagenes.objects.create(mapa=mapa, imagen=imagen)
+        return redirect('forms')
+
+    return render(request, 'administracion/vista_formularios.html')
