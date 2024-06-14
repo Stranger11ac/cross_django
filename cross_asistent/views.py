@@ -8,7 +8,8 @@ from django.contrib.auth.models import User
 from django.db import IntegrityError, transaction
 from django.http import JsonResponse
 from django.conf import settings
-from .forms import crearTarea
+from .forms import crearTarea, MapaForm, MapaImagenesForm
+from django.forms import modelformset_factory
 from django.http import HttpResponse
 from django.utils import timezone
 from . import models
@@ -567,14 +568,16 @@ def editar_usuario(request, user_id):
 @never_cache
 def forms_admin(request):
     if request.method == 'POST':
-        lugar = request.POST['lugar']
-        descripcion = request.POST['descripcion']
+        mapa_form = MapaForm(request.POST)
         imagenes = request.FILES.getlist('imagenes')
         
-        with transaction.atomic():
-            mapa = models.Mapa.objects.create(lugar=lugar, descripcion=descripcion)
+        if mapa_form.is_valid():
+            mapa = mapa_form.save()
+
             for imagen in imagenes:
                 models.MapaImagenes.objects.create(mapa=mapa, imagen=imagen)
-        return redirect('forms')
 
-    return render(request, 'administracion/vista_formularios.html')
+    else:
+        mapa_form = MapaForm()
+
+    return render(request, 'administracion/vista_formularios.html', {'mapa_form': mapa_form})
