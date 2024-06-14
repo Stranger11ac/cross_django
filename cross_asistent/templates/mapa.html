@@ -35,105 +35,82 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.js"></script>
 <script>
-    var map = L.map('map', {
-        maxZoom: 20, 
-        zoomControl: false 
-    });
+    // Inicializar el mapa
+    var map = L.map('map', { maxZoom: 20, zoomControl: false })
+               .setView([25.5569, -100.93595], 17)
+               .setMaxBounds([[25.5455, -100.9431], [25.5649, -100.9310]]);
 
-    var bounds = [
-        [25.5455, -100.9431],
-        [25.5649, -100.9310]
-    ];
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+    }).addTo(map);
 
-    map.setMaxBounds(bounds);
-    map.setView([25.5569, -100.93595], 17);
-
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            maxZoom: 19,
-            attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-        }).addTo(map);
-
-        var edificios = {{ edificios|safe }};
-        var selectedEdificioCoords;
+    var edificios = {{ edificios|safe }};
+    var selectedEdificioCoords;
 
     function openOffcanvasWithText(imageUrl, text, coords) {
         document.getElementById('offcanvasImg').src = imageUrl;
         document.getElementById('offcanvasText').innerHTML = text;
         selectedEdificioCoords = coords;
-        var offcanvas = new bootstrap.Offcanvas(document.getElementById('offcanvasImage'));
-        offcanvas.show();
+        new bootstrap.Offcanvas(document.getElementById('offcanvasImage')).show();
     }
 
-    edificios.forEach(function(edificio) {
-        var polygon = L.polygon(edificio.coordenadas, {
+    // Añadir polígonos y eventos
+    edificios.forEach(edificio => {
+        L.polygon(edificio.coordenadas, {
             color: edificio.edifcolor, 
             fillColor: edificio.edifill,
             fillOpacity: 0.5
-        }).addTo(map);
-
-        polygon.on('click', function() {
-            var content = `
+        }).addTo(map).on('click', () => {
+            openOffcanvasWithText("/static/" + edificio.imagen_url, `
                 <h1>${edificio.nombre}</h1>
                 <h3>${edificio.titulo}</h3>
                 <p>${edificio.descripcion}</p>
-            `;
-            openOffcanvasWithText("/static/" + edificio.imagen_url, content, edificio.coordenadas[0]);
+            `, edificio.centro); // Usar coordenada central
         });
     });
 
-    L.control.zoom({
-        position: 'bottomleft'
-    }).addTo(map);
+    L.control.zoom({ position: 'bottomleft' }).addTo(map);
 
-    map.on('zoomend', function() {
-        if (map.getZoom() < 16) {
-            map.setZoom(16);
-        }
+    // Limitar el zoom y el arrastre fuera de los límites
+    map.on('zoomend', () => {
+        if (map.getZoom() < 16) map.setZoom(16);
+        if (map.getZoom() > 18) map.setZoom(18);
     });
 
-    map.on('dragend', function() {
-        if (map.getCenter().lat < bounds[0][0] || 
-            map.getCenter().lat > bounds[1][0] ||
-            map.getCenter().lng < bounds[0][1] ||
-            map.getCenter().lng > bounds[1][1]) {
-            map.panInsideBounds(bounds);
-        }
+    map.on('dragend', () => {
+        if (!map.getBounds().contains(map.getCenter())) map.panInsideBounds(map.options.maxBounds);
     });
 
-    // Create waypoints for internal campus paths
+    // Waypoints de edificios
     var waypoints = {};
-    edificios.forEach(function(edificio) {
-        waypoints[edificio.nombre] = edificio.coordenadas[0];
-    });
+    edificios.forEach(edificio => { waypoints[edificio.nombre] = edificio.centro; }); // Usar coordenada central
 
-    // Define the routing control without waypoints initially
+    // Control de rutas
     var control = L.Routing.control({
         routeWhileDragging: true,
         createMarker: function(i, wp) {
-            return L.marker(wp.latLng, {
-                draggable: true
-            });
+            return L.marker(wp.latLng, { draggable: true });
         },
-        lineOptions: {
-            styles: [{color: 'blue', opacity: 1, weight: 5}]
-        },
-        router: L.Routing.osrmv1({
-            serviceUrl: 'https://router.project-osrm.org/route/v1',
-            profile: 'foot' // Profile for walking
-        })
+        lineOptions: { styles: [{ color: 'blue', opacity: 1, weight: 5 }] },
+        router: L.Routing.osrmv1({ serviceUrl: 'https://router.project-osrm.org/route/v1', profile: 'foot' })
     }).addTo(map);
 
-    document.getElementById('calculateRouteBtn').addEventListener('click', function() {
+    document.getElementById('calculateRouteBtn').addEventListener('click', () => {
         var destination = document.getElementById('destinationInput').value;
         var destinationCoords = waypoints[destination];
-
         if (selectedEdificioCoords && destinationCoords) {
-            control.setWaypoints([
-                L.latLng(selectedEdificioCoords),
-                L.latLng(destinationCoords)
-            ]);
+            control.setWaypoints([L.latLng(selectedEdificioCoords), L.latLng(destinationCoords)]);
         }
     });
 
+    // Agregar un listener para el evento 'routesfound' para verificar la ruta encontrada
+    control.on('routesfound', function(e) {
+        var routes = e.routes;
+        console.log('Routes found:', routes);
+        var summary = routes[0].summary;
+        console.log('Total distance: ' + summary.totalDistance + ' meters');
+        console.log('Total time: ' + summary.totalTime + ' seconds');
+    });
 </script>
 {% endblock %}
