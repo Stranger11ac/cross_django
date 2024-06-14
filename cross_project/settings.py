@@ -18,6 +18,7 @@ env = environ.Env()
 environ.Env.read_env()
 OPENAI_API_KEY = env('OPENAI_API_KEY', default=None)
 if OPENAI_API_KEY is None:
+    print('falta de openAI')
     warnings.warn('OPENAI_API_KEY no está definida.')
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
