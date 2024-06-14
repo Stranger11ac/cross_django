@@ -20,10 +20,6 @@ OPENAI_API_KEY = env('OPENAI_API_KEY', default=None)
 if OPENAI_API_KEY is None:
     pass
 
-# sk-
-# proj-
-# O21qAaaFdSIjPzrH2oB3
-# T3BlbkFJElUlUyOWVJToJXXK5etn
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
