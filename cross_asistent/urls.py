@@ -1,5 +1,6 @@
 from django.urls import path
 from . import views
+from .views import preguntas_view
 
 urlpatterns = [
     path('', views.index, name='home'),
@@ -25,6 +26,6 @@ urlpatterns = [
     path('administracion/eliminar_usuario/<int:user_id>/', views.eliminar_usuario, name='eliminar_usuario'),
     path('administracion/editar_usuario/<int:user_id>/', views.editar_usuario, name='editar_usuario'),
     path('administracion/formularios/', views.forms_admin, name='forms'),
-    
+     path('preguntas/', preguntas_view, name='preguntas'),
     path('logout/', views.singoutpage, name='singout'),
 ]
