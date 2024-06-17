@@ -315,8 +315,8 @@ aria-labelledby="labelModal0{{ oneuser.id }}" aria-hidden="true">
                 <div class="position-relative">
                     <div data-mdb-input-init class="form-outline mb-4">
                         <input type="text" id="pass_{{oneuser.id}}"
-                            class="form-control pe-5" autocomplete="off"
-                            data-input_pass="generatePass" />
+                            name="password" class="form-control pe-5"
+                            autocomplete="off" data-input_pass="generatePass" aria-label="readonly input example" readonly />
                         <label class="form-label"
                             for="pass_{{oneuser.id}}">Password</label>
                     </div>

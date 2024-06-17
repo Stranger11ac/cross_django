@@ -20,7 +20,7 @@
             <div class="tab-content">
                 <div class="tab-pane fade show active" id="pills-login" role="tabpanel"
                     aria-labelledby="tab-login">
-                    <form id="singinForm" method="POST" action="{% url 'singin' %}">
+                    <form id="singinForm" method="POST" action="{% url 'singin' %}" autocomplete="off">
                         {% csrf_token %}
                         <div data-mdb-input-init class="form-outline mb-4">
                             <input type="text" id="username" name="username" required
@@ -39,7 +39,7 @@
                 </div>
                 <div class="tab-pane fade" id="pills-register" role="tabpanel"
                     aria-labelledby="tab-register">
-                    <form id="signupForm" method="POST" action="{% url 'singup' %}">
+                    <form id="signupForm" method="POST" action="{% url 'singup' %}" autocomplete="off">
                         {% csrf_token %}
                         <!-- Name input -->
                         <div class="row mb-4">
@@ -59,13 +59,13 @@
 
                         <!-- Username input -->
                         <div data-mdb-input-init class="form-outline mb-4">
-                            <input type="text" id="username" name="username" class="form-control" required/>
-                            <label class="form-label" for="username">Nombre de Usuario:</label>
+                            <input type="text" id="usernameUp" name="username" class="form-control" required autocapitalize="off"/>
+                            <label class="form-label" for="usernameUp">Nombre de Usuario:</label>
                         </div>
 
                         <!-- Email input -->
                         <div data-mdb-input-init class="form-outline mb-4">
-                            <input type="email" id="email" name="email" class="form-control" required/>
+                            <input type="email" id="email" name="email" class="form-control" required autocapitalize="off"/>
                             <label class="form-label" for="email">Email:</label>
                         </div>
 
@@ -93,47 +93,4 @@
 </main>
 
 {% include 'widget_footer.html' %}
-{% endblock %}
-{% block scripts_end %}
-<script>
-    document.getElementById('signupForm').addEventListener('submit', function (e) {
-        e.preventDefault();
-        const signupForm = e.target;
-        const formData = new FormData(signupForm);
-        const timerOut = 8000;
-
-        fetch(signupForm.action, {
-            method: 'POST',
-            body: formData,
-            headers: {
-                'X-Requested-With': 'XMLHttpRequest',
-                'X-CSRFToken': signupForm.querySelector('[name=csrfmiddlewaretoken]').value
-            }
-        })
-            .then(response => {
-                if (!response.ok) {
-                    return response.json().then(data => {
-                        throw new Error(data.message || 'Error desconocido');
-                    });
-                }
-                return response.json();
-            })
-            .then(data => {
-                if (data.success) {
-                    signupForm.reset();
-                    alertSToast('center', timerOut + 4000, 'success', data.message, function () {
-                        location.reload();
-                    });
-                } else {
-                    errorMessage = data.message;
-                    alertSToast('top', timerOut + 2000, 'warning', errorMessage);
-                }
-            })
-            .catch(error => {
-                console.error('😥 Error:', error);
-                errorMessage = error.message || 'Ocurrió un error. Intente nuevamente. 😥';
-                alertSToast('top', timerOut + 3000, 'error', errorMessage);
-            });
-    });
-</script>
 {% endblock %}

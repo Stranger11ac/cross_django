@@ -44,8 +44,8 @@ $(document).ready(function () {
         // Vista de Programador
         // Agrega la clase active al banner con la id mas baja #######################################
         var elements = $('[id^="bannerid_"]');
-        var minIdElement = null;
         var minIdNumber = Infinity;
+        let minIdElement = null;
 
         elements.each(function () {
             var id = $(this).attr("id");
@@ -61,7 +61,8 @@ $(document).ready(function () {
         }
 
         // iniciar sesion ####################################################
-        $("#singinForm").submit(singinFunction);
+        $("#singinForm").submit(singInUp);
+        $("#signupForm").submit(singInUp);
 
         // generate password random
         // console.log($('[data-input_pass^="generatePass"]'));
@@ -72,16 +73,17 @@ $(document).ready(function () {
 
         // Editar usuario
         // generar nueva contraseña aleatoria ##################################
-        $('button[data-editpass="edit_newpass"]').on('click', function() {
-            $(this).addClass('active');
+        $('button[data-editpass="edit_newpass"]').on("click", function () {
+            $(this).addClass("active");
             var newRandomPass = generarPassAleatoria(8);
-            var editInputId = $(this).data('editinput');
+            var editInputId = $(this).data("editinput");
             setTimeout(() => {
-                $(this).removeClass('active');
+                $(this).removeClass("active");
             }, 1000);
-            $('#' + editInputId).val(newRandomPass).focus();
+            $("#" + editInputId)
+                .val(newRandomPass)
+                .focus();
         });
-    
 
         // Convertir scroll vertical en horizontal ############################
         var $tableContainer = $("#table-container");
@@ -159,19 +161,19 @@ function chatSubmit(e) {
         }
     }
 }
-// function signin######################################################################
-function singinFunction(e) {
+// Funcion de iniciar secion y Registrar nuevo Usuario ######################################################################
+function singInUp(e) {
     e.preventDefault();
-    const signinForm = e.target;
-    const formData = new FormData(signinForm);
+    const thisForm = e.target;
+    const formData = new FormData(thisForm);
     const timerOut = 8000;
 
-    fetch(signinForm.action, {
+    fetch(thisForm.action, {
         method: "POST",
         body: formData,
         headers: {
             "X-Requested-With": "XMLHttpRequest",
-            "X-CSRFToken": signinForm.querySelector("[name=csrfmiddlewaretoken]").value,
+            "X-CSRFToken": thisForm.querySelector("[name=csrfmiddlewaretoken]").value,
         },
     })
         .then((response) => {
@@ -183,10 +185,18 @@ function singinFunction(e) {
             return response.json();
         })
         .then((data) => {
+            dataMessage = data.message;
             if (data.success) {
-                window.location.href = data.redirect_url;
+                if (data.functionForm == "singin") {
+                    window.location.href = data.redirect_url;
+                } else {
+                    thisForm.reset();
+                    alertSToast("center", timerOut + 4000, "success", dataMessage, function () {
+                        location.reload();
+                    });
+                }
             } else {
-                alertSToast("top", timerOut + 2000, "warning", data.message);
+                alertSToast("top", timerOut + 2000, "warning", dataMessage);
             }
         })
         .catch((error) => {

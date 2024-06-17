@@ -359,19 +359,19 @@ def singuppage(request):
         if password1 and password2 and username and email:
             if password1 == password2:
                 if User.objects.filter(username=username).exists():
-                    return JsonResponse({'success': False, 'message': f'El usuario <u>{username}</u> ya existe 😯'}, status=400)
+                    return JsonResponse({'success': False, 'functionForm': 'singup','message': f'El usuario <u>{username}</u> ya existe 😯'}, status=400)
                 if User.objects.filter(email=email).exists():
-                    return JsonResponse({'success': False, 'message': f'El correo electrónico <u>{email}</u> ya está registrado 😯'}, status=400)
+                    return JsonResponse({'success': False, 'functionForm': 'singup','message': f'El correo electrónico <u>{email}</u> ya está registrado 😯'}, status=400)
                 try:
                     newUser = User.objects.create_user(first_name=first_name,last_name=last_name,username=username,password=password1,email=email,is_active=0)
                     newUser.save()
-                    return JsonResponse({'success': True, 'message': '🥳🥳🥳 <br>Usuario creado<br> Tu cuenta está <u>INACTIVA</u>'}, status=200)
+                    return JsonResponse({'success': True, 'functionForm': 'singup','message': '🥳🥳🥳 <br>Usuario creado<br> Tu cuenta está <u>INACTIVA</u>'}, status=200)
                 except IntegrityError:
-                    return JsonResponse({'success': False, 'message': 'Ocurrió un error durante el registro. Intente nuevamente.'}, status=400)
+                    return JsonResponse({'success': False, 'functionForm': 'singup','message': 'Ocurrió un error durante el registro. Intente nuevamente.'}, status=400)
             else:
-                return JsonResponse({'success': False, 'message': 'Las contraseñas no coinciden 😬'}, status=400)
+                return JsonResponse({'success': False, 'functionForm': 'singup','message': 'Las contraseñas no coinciden 😬'}, status=400)
         else:
-            return JsonResponse({'success': False, 'message': 'Datos incompletos 😅'}, status=400)
+            return JsonResponse({'success': False, 'functionForm': 'singup','message': 'Datos incompletos 😅'}, status=400)
     else:
         logout(request)
         return render('singin')
@@ -384,12 +384,12 @@ def singinpage(request):
 
         user = authenticate(request, username=usernamePOST, password=passwordPOST)
         if user is None:
-            return JsonResponse({'success': False, 'message': 'Revisa el usuario o contraseña 😅. Verifica que tu cuenta esté habilitada'}, status=400)
+            return JsonResponse({'success': False, 'functionForm': 'singin','message': 'Revisa el usuario o contraseña 😅. Verifica que tu cuenta esté habilitada'}, status=400)
         else:
             login(request, user)
             if user.is_staff:
-                return JsonResponse({'success': True, 'redirect_url': reverse('vista_programador')}, status=200)
-            return JsonResponse({'success': True, 'redirect_url': reverse('vista_admin')}, status=200)
+                return JsonResponse({'success': True, 'functionForm': 'singin','redirect_url': reverse('vista_programador')}, status=200)
+            return JsonResponse({'success': True, 'functionForm': 'singin','redirect_url': reverse('vista_admin')}, status=200)
     else:
         logout(request)
         return render(request, 'admin/singin.html', {
@@ -520,7 +520,7 @@ def vista_programador(request):
                 first_name=first_name, last_name=last_name, email=email)
                 new_user.set_password(password)
                 new_user.save()
-                return redirect('vista_programador')
+                return JsonResponse({'success': True, 'message': 'Usuario creado exitosamente'}, status=200)
             except IntegrityError:
                 return JsonResponse({'success': False, 'message': 'Ocurrió un error durante el registro. Intente nuevamente.'}, status=400)
         else:
@@ -580,14 +580,46 @@ def editar_usuario(request, user_id):
     user = get_object_or_404(User, id=user_id)
     if request.method == 'POST':
         username = request.POST.get('username')
+        password = request.POST.get('password')
         is_staff = request.POST.get('is_staff') == 'on'
+        
         if username:
             user.username = username
+        if password:
+            user.set_password(password)
         user.is_staff = is_staff
         user.save()
         return redirect('vista_programador')
     return redirect('vista_programador')
 
 
-def forms_admin(request):
-    return render(request, 'admin/vista_formularios.html')
+@login_required
+@never_cache
+def admin_blogs(request):
+    return render(request, 'admin/blogs.html')
+
+@login_required
+@never_cache
+def crear_articulo(request):
+    if request.method == 'POST':
+        tituloPOST = request.POST['titulo']
+        contenidoPOST = request.POST['contenido']
+        autorPOST = request.POST['autor']
+        imagen_encabezadoPOST = request.FILES['imagen_encabezado']
+
+        articulo = models.Articulos(
+            titulo=tituloPOST,
+            contenido=contenidoPOST,
+            autor=autorPOST,
+            imagen_encabezado=imagen_encabezadoPOST
+        )
+        articulo.save()
+
+        return JsonResponse({'mensaje': 'Artículo subido con éxito'})
+    return JsonResponse({'error': 'Método no permitido'}, status=405)
+
+
+@login_required
+@never_cache
+def mapa_form(request):
+    return render(request, 'admin/mapa_form.html')
