@@ -397,7 +397,7 @@ aria-labelledby="labelModal0{{ oneuser.id }}" aria-hidden="true">
                     data-mdb-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form method="post">
+                <form method="POST" id="createuserprog">
                     {% csrf_token %}
                     <!-- Nombre de usuario -->
                     <div data-mdb-input-init class="form-outline mb-4">
@@ -466,4 +466,47 @@ aria-labelledby="labelModal0{{ oneuser.id }}" aria-hidden="true">
         </div>
     </div>
 </div>
+{% endblock %}
+{% block scripts_end %}
+<script>
+    document.getElementById('createuserprog').addEventListener('submit', function (e) {
+        e.preventDefault();
+        const signupForm = e.target;
+        const formData = new FormData(signupForm);
+        const timerOut = 8000;
+
+        fetch(signupForm.action, {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+                'X-CSRFToken': signupForm.querySelector('[name=csrfmiddlewaretoken]').value
+            }
+        })
+            .then(response => {
+                if (!response.ok) {
+                    return response.json().then(data => {
+                        throw new Error(data.message || 'Error desconocido');
+                    });
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    signupForm.reset();
+                    alertSToast('center', timerOut + 4000, 'success', data.message, function () {
+                        location.reload();
+                    });
+                } else {
+                    errorMessage = data.message;
+                    alertSToast('top', timerOut + 2000, 'warning', errorMessage);
+                }
+            })
+            .catch(error => {
+                console.error('😥 Error:', error);
+                errorMessage = error.message || 'Ocurrió un error. Intente nuevamente. 😥';
+                alertSToast('top', timerOut + 3000, 'error', errorMessage);
+            });
+    });
+</script>
 {% endblock %}
