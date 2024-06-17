@@ -508,13 +508,22 @@ def vista_programador(request):
         email = request.POST.get('email')
         password = request.POST.get('password')
 
-        if username:
-            # Crear usuario
-            new_user = User.objects.create_user(username=username, is_staff=is_staff, is_active=is_active,
-            first_name=first_name, last_name=last_name, email=email)
-            new_user.set_password(password)
-            new_user.save()
-            return redirect('vista_programador')
+        if username and email:
+            if User.objects.filter(username=username).exists():
+                return JsonResponse({'success': False, 'message': f'El usuario <u>{username}</u> ya existe 😯'}, status=400)
+            if User.objects.filter(email=email).exists():
+                return JsonResponse({'success': False, 'message': f'El correo electrónico <u>{email}</u> ya está registrado 😯'}, status=400)
+            try:
+                    # Crear usuario
+                new_user = User.objects.create_user(username=username, is_staff=is_staff, is_active=is_active,
+                first_name=first_name, last_name=last_name, email=email)
+                new_user.set_password(password)
+                new_user.save()
+                return redirect('vista_programador')
+            except IntegrityError:
+                return JsonResponse({'success': False, 'message': 'Ocurrió un error durante el registro. Intente nuevamente.'}, status=400)
+        else:
+            return JsonResponse({'success': False, 'message': 'Datos incompletos 😅'}, status=400)
 
     return render(request, 'admin/vista_programador.html', contexto)
 
