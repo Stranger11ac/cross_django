@@ -394,11 +394,11 @@ def singoutpage(request):
 
 @login_required
 @never_cache
-def export_database_to_csv(request):
+def export_database(request):
     now = timezone.localtime(timezone.now()).strftime('%d-%m-%Y_%H%M%S')
     if request.user.is_staff:
         response = HttpResponse(content_type='text/csv')
-        response['Content-Disposition'] = f'attachment; filename="database_{now}.csv"'
+        response['Content-Disposition'] = f'attachment; filename="UTC_database_{now}.csv"'
         writer = csv.writer(response)
         writer.writerow(['Categoria', 'Titulo', 'Informacion', 'Redirigir', 'Frecuencia', 'Documentos', 'Imagenes', 'Fecha Modificacion'])
         # Obtener todos los objetos del modelo Database
