@@ -2,7 +2,7 @@
 {% block title %}Editar Tarea | Administracion{% endblock %}
 {% block link_home %}href="{% url 'dashb_admin' %}"{% endblock %}
 {% block link_default %}
-    {% include 'administracion/widget_links-admin.html' %}
+    {% include 'admin/widget_links-admin.html' %}
 {% endblock %}
 {% block content %}
 <main class="container container-fluid {% if not user.is_authenticated %}main_container{% endif %}">

@@ -382,7 +382,7 @@ def singinpage(request):
             return JsonResponse({'success': True, 'redirect_url': reverse('vista_admin')}, status=200)
     else:
         logout(request)
-        return render(request, 'administracion/singin.html', {
+        return render(request, 'admin/singin.html', {
             'active_page': 'singin'
         })
 
@@ -431,7 +431,7 @@ def dashbAdmin(request):
         except ValueError:
             errorMSG = 'Por favor introduzca datos válidos'
 
-    return render(request, 'administracion/dashboard.html', {
+    return render(request, 'admin/dashboard.html', {
         'form_crearTarea': crearTarea,
         'formError': errorMSG,
         'tareas_all': tareas,
@@ -453,7 +453,7 @@ def tareaView(request, tarea_id):
         except ValueError:
             errorMSG = 'No se puede actualizar la tarea, datos inválidos'
 
-    return render(request, 'administracion/tarea_view.html', {
+    return render(request, 'admin/tarea_view.html', {
         'tareaNum': tarea,
         'formEditar': tareaActualizar,
         'formError': errorMSG
@@ -470,7 +470,7 @@ def vista_admin(request):
         'num_blogs': blogs_all.count(),
         'blogs_all': blogs_all,
     }
-    return render(request, 'administracion/vista_admin.html', context)
+    return render(request, 'admin/vista_admin.html', context)
 
 @login_required
 @never_cache
@@ -507,7 +507,7 @@ def vista_programador(request):
             new_user.save()
             return redirect('vista_programador')
 
-    return render(request, 'administracion/vista_programador.html', contexto)
+    return render(request, 'admin/vista_programador.html', contexto)
 
 # def responder preguntas
 @login_required
@@ -569,4 +569,4 @@ def editar_usuario(request, user_id):
 
 
 def forms_admin(request):
-    return render(request, 'vista_formularios.html')
+    return render(request, 'admin/vista_formularios.html')

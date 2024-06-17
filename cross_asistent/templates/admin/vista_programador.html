@@ -3,7 +3,7 @@
 {% block title %}Inicio | Programadores{% endblock %}
 {% block link_home %}{% url 'vista_programador' %}{% endblock %}
 {% block link_default %}
-{% include 'administracion/widget_links-admin.html' %}
+{% include 'admin/widget_links-admin.html' %}
 {% endblock %}
 {% block content %}
 <main
@@ -217,7 +217,7 @@
                             <td>{{ oneuser.email }}</td>
                             <!-- Botones de acciones -->
                             <td>
-                                <div class="d-flex align-items-center justify-content-center gap_10 fs-5">
+                                <div class="d-flex align-items-center justify-content-center h-100 gap_10 fs-5">
                                     {% if oneuser.is_active %}
                                     <div>
                                         <a title="Desactivar Usuario"
