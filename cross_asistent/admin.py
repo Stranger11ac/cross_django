@@ -7,7 +7,7 @@ class TareasProg(admin.ModelAdmin):
 
 # Register your models here.
 admin.site.register(models.Mapa)
-admin.site.register(models.Synonym)
+admin.site.register(models.MapaImagenes)
 admin.site.register(models.Banners)
 admin.site.register(models.Database)
 admin.site.register(models.Articulos)

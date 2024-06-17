@@ -8,7 +8,8 @@ from django.contrib.auth.models import User
 from django.db import IntegrityError, transaction
 from django.http import JsonResponse
 from django.conf import settings
-from .forms import crearTarea
+from .forms import crearTarea, PreguntaForm
+from django.forms import modelformset_factory
 from django.http import HttpResponse
 from django.utils import timezone
 from . import models
@@ -39,7 +40,6 @@ def index(request):
 
 client = openai.OpenAI(api_key=settings.OPENAI_API_KEY)
 
-
 def obtener_respuesta_openai(question, instructions):
     response = client.chat.completions.create(
         model="gpt-3.5-turbo",
@@ -53,7 +53,6 @@ def obtener_respuesta_openai(question, instructions):
     print(f"Compl:{response.usage.completion_tokens}")
     print(f"Total:{response.usage.total_tokens}")
     print('')
-
     return response.choices[0].message.content
 
 def preprocesar_texto(texto):
@@ -82,20 +81,15 @@ def buscar_informacion_relevante(question, queryset):
 
     # Preprocesar la pregunta del usuario
     question_preprocesada = preprocesar_texto(question)
-
     # Inicializar el vectorizador TF-IDF
     vectorizer = TfidfVectorizer()
     tfidf_matrix = vectorizer.fit_transform(documents)
-
     # Transformar la pregunta del usuario
     question_tfidf = vectorizer.transform([question_preprocesada])
-
     # Calcular la similitud del coseno entre la pregunta y los documentos
     similarity = cosine_similarity(question_tfidf, tfidf_matrix).flatten()
-
     # Ajustar el umbral de similitud
     threshold = 0.2
-
     # Encuentra el documento más similar
     max_similarity_index = similarity.argmax()
     if similarity[max_similarity_index] > threshold:
@@ -143,6 +137,17 @@ def faq(request):
         'quest_all': questall,
         'active_page': 'faq'
     })
+
+def preguntas_view(request):
+    quest_all = models.Database.objects.all()
+    if request.method == "POST":
+        form = PreguntaForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('preguntas') 
+    else:
+        form = PreguntaForm()
+    return render(request, 'frecuentes.html', {'quest_all': quest_all, 'form': form})
 
 def blog(request):
     if not request.user.is_staff:
@@ -377,7 +382,7 @@ def singinpage(request):
             return JsonResponse({'success': True, 'redirect_url': reverse('vista_admin')}, status=200)
     else:
         logout(request)
-        return render(request, 'administracion/singin.html', {
+        return render(request, 'admin/singin.html', {
             'active_page': 'singin'
         })
 
@@ -389,11 +394,11 @@ def singoutpage(request):
 
 @login_required
 @never_cache
-def export_database_to_csv(request):
+def export_database(request):
     now = timezone.localtime(timezone.now()).strftime('%d-%m-%Y_%H%M%S')
     if request.user.is_staff:
         response = HttpResponse(content_type='text/csv')
-        response['Content-Disposition'] = f'attachment; filename="database_{now}.csv"'
+        response['Content-Disposition'] = f'attachment; filename="UTC_database_{now}.csv"'
         writer = csv.writer(response)
         writer.writerow(['Categoria', 'Titulo', 'Informacion', 'Redirigir', 'Frecuencia', 'Documentos', 'Imagenes', 'Fecha Modificacion'])
         # Obtener todos los objetos del modelo Database
@@ -426,7 +431,7 @@ def dashbAdmin(request):
         except ValueError:
             errorMSG = 'Por favor introduzca datos válidos'
 
-    return render(request, 'administracion/dashboard.html', {
+    return render(request, 'admin/dashboard.html', {
         'form_crearTarea': crearTarea,
         'formError': errorMSG,
         'tareas_all': tareas,
@@ -448,7 +453,7 @@ def tareaView(request, tarea_id):
         except ValueError:
             errorMSG = 'No se puede actualizar la tarea, datos inválidos'
 
-    return render(request, 'administracion/tarea_view.html', {
+    return render(request, 'admin/tarea_view.html', {
         'tareaNum': tarea,
         'formEditar': tareaActualizar,
         'formError': errorMSG
@@ -465,7 +470,7 @@ def vista_admin(request):
         'num_blogs': blogs_all.count(),
         'blogs_all': blogs_all,
     }
-    return render(request, 'administracion/vista_admin.html', context)
+    return render(request, 'admin/vista_admin.html', context)
 
 @login_required
 @never_cache
@@ -502,7 +507,7 @@ def vista_programador(request):
             new_user.save()
             return redirect('vista_programador')
 
-    return render(request, 'administracion/vista_programador.html', contexto)
+    return render(request, 'admin/vista_programador.html', contexto)
 
 # def responder preguntas
 @login_required
@@ -563,18 +568,5 @@ def editar_usuario(request, user_id):
     return redirect('vista_programador')
 
 
-@login_required
-@never_cache
 def forms_admin(request):
-    if request.method == 'POST':
-        lugar = request.POST['lugar']
-        descripcion = request.POST['descripcion']
-        imagenes = request.FILES.getlist('imagenes')
-        
-        with transaction.atomic():
-            mapa = models.Mapa.objects.create(lugar=lugar, descripcion=descripcion)
-            for imagen in imagenes:
-                models.MapaImagenes.objects.create(mapa=mapa, imagen=imagen)
-        return redirect('forms')
-
-    return render(request, 'administracion/vista_formularios.html')
+    return render(request, 'admin/vista_formularios.html')
