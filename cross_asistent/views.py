@@ -561,10 +561,12 @@ def editar_usuario(request, user_id):
     user = get_object_or_404(User, id=user_id)
     if request.method == 'POST':
         username = request.POST.get('username')
+        is_staff = request.POST.get('is_staff') == 'on'
         if username:
             user.username = username
-            user.save()
-            return redirect('vista_programador')
+        user.is_staff = is_staff
+        user.save()
+        return redirect('vista_programador')
     return redirect('vista_programador')
 
 
