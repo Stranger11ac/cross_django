@@ -9,7 +9,6 @@ from django.db import IntegrityError, transaction
 from django.http import JsonResponse
 from django.conf import settings
 from .forms import crearTarea, PreguntaForm
-from django.forms import modelformset_factory
 from django.http import HttpResponse
 from django.utils import timezone
 from . import models
@@ -141,13 +140,23 @@ def faq(request):
 def preguntas_view(request):
     quest_all = models.Database.objects.all()
     if request.method == "POST":
-        form = PreguntaForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect('preguntas') 
+        if request.content_type == 'application/json':
+            try:
+                data = json.loads(request.body)
+                tituloPOST = data['pregunta']
+
+                pregunta = models.Database(titulo=tituloPOST )
+                pregunta.save()
+
+                return JsonResponse({'success': True, 'message': 'gracias por tu pregunta❤️💕😁👍 '}, status=200)
+            except Exception as e:
+                print( f'Hay un error en:  {e}')
+                return JsonResponse({'success': False, 'message': 'La pregunta no se registro :( '}, status=400)
+        else:
+             print('error, no JSON')
+             return HttpResponse('Solicitud no JSON', status=400)
     else:
-        form = PreguntaForm()
-    return render(request, 'frecuentes.html', {'quest_all': quest_all, 'form': form})
+         return render(request, 'frecuentes.html', {'quest_all': quest_all})
 
 def blog(request):
     if not request.user.is_staff:
