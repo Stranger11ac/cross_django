@@ -58,16 +58,7 @@
     var edificiosNEWAll = [...edificiosNEW];
     console.log(edificiosNEWAll);
 
-<<<<<<< HEAD
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        maxZoom: 19,
-        attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-    }).addTo(map);
-
-    var edificios = {{ edificios|safe }};
-=======
     var edificios = {{ edificios| safe }};
->>>>>>> 037d185d44e5d86a0032f4c71e006a8bd2c97963
     var selectedEdificioCoords;
 
     function openOffcanvasWithText(imageUrl, text, coords) {
@@ -114,39 +105,18 @@
         if (!map.getBounds().contains(map.getCenter())) map.panInsideBounds(map.options.maxBounds);
     });
 
-<<<<<<< HEAD
-=======
     // Waypoints de edificios
->>>>>>> 037d185d44e5d86a0032f4c71e006a8bd2c97963
     var waypoints = {};
     edificios.forEach(edificio => { waypoints[edificio.nombre] = edificio.centro; }); // Usar coordenada central
 
-<<<<<<< HEAD
-=======
     // Control de rutas
->>>>>>> 037d185d44e5d86a0032f4c71e006a8bd2c97963
     var control = L.Routing.control({
         routeWhileDragging: true,
         createMarker: function (i, wp) {
             return L.marker(wp.latLng, { draggable: true });
         },
-<<<<<<< HEAD
-        lineOptions: {
-            styles: [
-                {color: 'blue', opacity: 1, weight: 5}
-            ]
-        },
-        router: L.Routing.osrmv1({
-            serviceUrl: 'https://router.project-osrm.org/route/v1',
-            profile: 'foot' // Perfil para caminar
-        }),
-        addWaypoints: false,
-        show: false,
-        fitSelectedRoutes: true
-=======
         lineOptions: { styles: [{ color: 'blue', opacity: 1, weight: 5 }] },
         router: L.Routing.osrmv1({ serviceUrl: 'https://router.project-osrm.org/route/v1', profile: 'foot' })
->>>>>>> 037d185d44e5d86a0032f4c71e006a8bd2c97963
     }).addTo(map);
 
     document.getElementById('calculateRouteBtn').addEventListener('click', () => {
@@ -157,18 +127,6 @@
         }
     });
 
-<<<<<<< HEAD
-    control.on('routesfound', function(e) {
-        var routes = e.routes;
-        var summary = routes[0].summary;
-        var instructions = routes[0].instructions;
-
-        var instructionsDiv = document.getElementById('instructions');
-        instructionsDiv.innerHTML = `<strong>Distancia:</strong> ${summary.totalDistance} m<br><strong>Duración:</strong> ${Math.round(summary.totalTime / 60)} minutos<br><br><strong>Instrucciones:</strong><br>`;
-        instructions.forEach(function(instr) {
-            instructionsDiv.innerHTML += `${instr.text}<br>`;
-        });
-=======
     // Agregar un listener para el evento 'routesfound' para verificar la ruta encontrada
     control.on('routesfound', function (e) {
         var routes = e.routes;
@@ -176,7 +134,6 @@
         var summary = routes[0].summary;
         console.log('Total distance: ' + summary.totalDistance + ' meters');
         console.log('Total time: ' + summary.totalTime + ' seconds');
->>>>>>> 037d185d44e5d86a0032f4c71e006a8bd2c97963
     });
 </script>
 {% endblock %}
