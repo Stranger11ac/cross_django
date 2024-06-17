@@ -70,7 +70,8 @@ $(document).ready(function () {
         var pass_random = generarPassAleatoria(8);
         $("#pass_newuser").val(pass_random);
 
-        // Editar usuario generar nueva contraseña aleatoria
+        // Editar usuario
+        // generar nueva contraseña aleatoria ##################################
         $('button[data-editpass="edit_newpass"]').on('click', function() {
             $(this).addClass('active');
             var newRandomPass = generarPassAleatoria(8);
@@ -82,7 +83,7 @@ $(document).ready(function () {
         });
     
 
-        // Hacer el scroll vertical en horizontal ############################
+        // Convertir scroll vertical en horizontal ############################
         var $tableContainer = $("#table-container");
         if (!$tableContainer.length) {
             return;
