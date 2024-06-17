@@ -139,12 +139,13 @@ def faq(request):
 
 def preguntas_view(request):
     quest_all = models.Database.objects.all()
+    
     if request.method == "POST":
         if request.content_type == 'application/json':
             try:
                 data = json.loads(request.body)
                 tituloPOST = data['pregunta']
-
+    #Hola Mundo
                 pregunta = models.Database(titulo=tituloPOST )
                 pregunta.save()
 
