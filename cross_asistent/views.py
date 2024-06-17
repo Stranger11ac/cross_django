@@ -510,7 +510,7 @@ def vista_programador(request):
                 first_name=first_name, last_name=last_name, email=email)
                 new_user.set_password(password)
                 new_user.save()
-                return redirect('vista_programador')
+                return JsonResponse({'success': True, 'message': 'Usuario creado exitosamente'}, status=200)
             except IntegrityError:
                 return JsonResponse({'success': False, 'message': 'Ocurrió un error durante el registro. Intente nuevamente.'}, status=400)
         else:
@@ -570,9 +570,13 @@ def editar_usuario(request, user_id):
     user = get_object_or_404(User, id=user_id)
     if request.method == 'POST':
         username = request.POST.get('username')
+        password = request.POST.get('password')
         is_staff = request.POST.get('is_staff') == 'on'
+        
         if username:
             user.username = username
+        if password:
+            user.set_password(password)
         user.is_staff = is_staff
         user.save()
         return redirect('vista_programador')
