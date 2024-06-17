@@ -10,7 +10,7 @@ class crearTarea(ModelForm):
 class MapaForm(forms.ModelForm):
     class Meta:
         model = Mapa
-        fields = ['lugar', 'descripcion']
+        fields = ['lugar', 'informacion']
 
 class MapaImagenesForm(forms.ModelForm):
     class Meta:

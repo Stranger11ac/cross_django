@@ -20,7 +20,6 @@
             <div>
                 <form method="post" enctype="multipart/form-data">
                     {% csrf_token %}
-                    {{ mapa_form.as_p }}
                     <label for="id_imagenes">Imágenes:</label>
                     <input type="file" name="imagenes" id="id_imagenes" multiple>
                     <!-- <div class="form-outline mb-4" data-mdb-input-init>

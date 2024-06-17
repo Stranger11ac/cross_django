@@ -30,13 +30,6 @@ class Sugerencias_preg(models.Model):
     def __str__(self):
         return f"pregunta #:{self.pregunta_num.id} sugiere: {self.sugerente}"
 
-class Synonym(models.Model):
-    synonym = models.CharField(max_length=255)
-    keyword = models.ForeignKey(Database, on_delete=models.CASCADE, related_name='synonyms')
-
-    def __str__(self):
-        return f"{self.synonym} -> {self.keyword}"
-
 class Articulos(models.Model):
     creacion = models.DateField(auto_now_add=True, blank=False)
     actualizacion = models.DateField(auto_now=True, blank=True, null=True)
@@ -68,12 +61,11 @@ class Banners(models.Model):
 
 class Mapa(models.Model):
     lugar = models.ForeignKey(Database, on_delete=models.CASCADE)
-    descripcion = models.TextField()
+    informacion = models.TextField()
 
 class MapaImagenes(models.Model):
     mapa = models.ForeignKey(Mapa, related_name='imagenes', on_delete=models.CASCADE)
     imagen = models.ImageField(upload_to='cross_asistent/static/files/imagenes/mapa/')
-
 
 class Tareas(models.Model):
     tarea = models.CharField(max_length=255)
