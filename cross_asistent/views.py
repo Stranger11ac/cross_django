@@ -12,6 +12,8 @@ from .forms import crearTarea
 from django.forms import modelformset_factory
 from django.http import HttpResponse
 from django.utils import timezone
+from .models import Database, Categorias
+from .forms import PreguntaForm
 from . import models
 
 import openai
@@ -40,6 +42,16 @@ def index(request):
 
 client = openai.OpenAI(api_key=settings.OPENAI_API_KEY)
 
+def preguntas_view(request):
+    quest_all = Database.objects.all()
+    if request.method == "POST":
+        form = PreguntaForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('preguntas') 
+    else:
+        form = PreguntaForm()
+    return render(request, 'preguntas.html', {'quest_all': quest_all, 'form': form})
 
 def obtener_respuesta_openai(question, instructions):
     response = client.chat.completions.create(
