@@ -255,106 +255,101 @@
                             </td>
                         </tr>
                         <!-- modal: editar usuario -->
-                        <div class="modal fade " id="editar_modal_{{ oneuser.id }}" tabindex="-1"
-                            aria-labelledby="labelModal0{{ oneuser.id }}" aria-hidden="true">
-                            <div class="modal-dialog modal-dialog-centered">
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <h5 class="modal-title" id="labelModal0{{ oneuser.id }}">Editar
-                                            Usuario</h5>
-                                        <button type="button" class="btn-close" data-mdb-ripple-init
-                                            data-mdb-dismiss="modal" aria-label="Close"></button>
-                                    </div>
-                                    <div class="modal-body">
-                                        <form method="post"
-                                            action="{% url 'editar_usuario' oneuser.id %}">
-                                            {% csrf_token %}
-                                            <!-- Nomnre de usuario -->
-                                            <div data-mdb-input-init class="form-outline mb-4">
-                                                <input type="text" id="createusername_{{oneuser.id}}"
-                                                    name="username" class="form-control"
-                                                    autocomplete="off" placeholder=" "
-                                                    value="{{oneuser.username}}"
-                                                    aria-label="disabled input example" disabled />
-                                                <label class="form-label"
-                                                    for="createusername_{{oneuser.id}}">usario</label>
-                                            </div>
-                                            <div class="row mb-4">
-                                                <div class="col">
-                                                    <div data-mdb-input-init class="form-outline">
-                                                        <input type="text"
-                                                            id="firstName_{{oneuser.id}}"
-                                                            class="form-control" autocomplete="off"
-                                                            placeholder=" "
-                                                            value="{{oneuser.first_name}}"
-                                                            aria-label="disabled input example"
-                                                            disabled />
-                                                        <label class="form-label"
-                                                            for="firstName_{{oneuser.id}}">First
-                                                            name</label>
-                                                    </div>
-                                                </div>
-                                                <div class="col">
-                                                    <div data-mdb-input-init class="form-outline">
-                                                        <input type="text" id="lastName_{{oneuser.id}}"
-                                                            class="form-control" autocomplete="off"
-                                                            placeholder=" "
-                                                            value="{{oneuser.last_name}}"
-                                                            aria-label="disabled input example"
-                                                            disabled />
-                                                        <label class="form-label"
-                                                            for="lastName_{{oneuser.id}}">Last
-                                                            name</label>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <!-- Email input -->
-                                            <div data-mdb-input-init class="form-outline mb-4">
-                                                <input type="email" id="email_{{oneuser.id}}"
-                                                    class="form-control" autocomplete="off"
-                                                    placeholder=" " value="{{oneuser.email}}"
-                                                    aria-label="disabled input example" disabled />
-                                                <label class="form-label"
-                                                    for="email_{{oneuser.id}}">Email address</label>
-                                            </div>
-                                            <!-- Password input -->
-                                             <div class="position-relative">
-                                                    <div data-mdb-input-init class="form-outline mb-4">
-                                                        <input type="text" id="pass_{{oneuser.id}}"
-                                                            class="form-control pe-5" autocomplete="off"
-                                                            data-input_pass="generatePass" />
-                                                        <label class="form-label"
-                                                            for="pass_{{oneuser.id}}">Password</label>
-                                                    </div>
-                                                <div class="position-absolute bottom-0 end-0">
-                                                    <button type="button" id="editPass_{{oneuser.id}}" data-editpass="edit_newpass" data-editinput="pass_{{oneuser.id}}" class="btn btn_detail btn-floating btn_genpass fs-15">
-                                                        <i class="fa-solid fa-dice-five"></i>
-                                                    </button>
-                                                </div>
-                                            </div>
-                                            <!-- Checkbox -->
-                                            <div
-                                                class="form-check d-flex justify-content-start mb-4">
-                                                <input class="form-check-input me-2" type="checkbox"
-                                                    value="" id="isActive_{{oneuser.id}}" {% if oneuser.is_staff %}checked{% endif %} />
-                                                <label class="form-check-label"
-                                                    for="isActive_{{oneuser.id}}">
-                                                    Programador
-                                                </label>
-                                            </div>
-                                            <hr class="my-4">
-                                            <div class="d-flex justify-content-between">
-                                                <button type="button" class="btn btn-danger"
-                                                    data-mdb-ripple-init
-                                                    data-mdb-dismiss="modal">Cancelar</button>
-                                                <button type="submit"
-                                                    class="btn btn_detail">Registrar</button>
-                                            </div>
-                                        </form>
-                                    </div>
-                                </div>
-                            </div>
+<div class="modal fade " id="editar_modal_{{ oneuser.id }}" tabindex="-1"
+aria-labelledby="labelModal0{{ oneuser.id }}" aria-hidden="true">
+<div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title" id="labelModal0{{ oneuser.id }}">Editar Usuario</h5>
+            <button type="button" class="btn-close" data-mdb-ripple-init
+                data-mdb-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            <form method="post" action="{% url 'editar_usuario' oneuser.id %}">
+                {% csrf_token %}
+                <!-- Nombre de usuario -->
+                <div data-mdb-input-init class="form-outline mb-4">
+                    <input type="text" id="createusername_{{oneuser.id}}"
+                        name="username" class="form-control"
+                        autocomplete="off" placeholder=" "
+                        value="{{oneuser.username}}"
+                        aria-label="disabled input example" disabled />
+                    <label class="form-label"
+                        for="createusername_{{oneuser.id}}">Usuario</label>
+                </div>
+                <div class="row mb-4">
+                    <div class="col">
+                        <div data-mdb-input-init class="form-outline">
+                            <input type="text"
+                                id="firstName_{{oneuser.id}}"
+                                class="form-control" autocomplete="off"
+                                placeholder=" "
+                                value="{{oneuser.first_name}}"
+                                aria-label="disabled input example"
+                                disabled />
+                            <label class="form-label"
+                                for="firstName_{{oneuser.id}}">First name</label>
                         </div>
+                    </div>
+                    <div class="col">
+                        <div data-mdb-input-init class="form-outline">
+                            <input type="text" id="lastName_{{oneuser.id}}"
+                                class="form-control" autocomplete="off"
+                                placeholder=" "
+                                value="{{oneuser.last_name}}"
+                                aria-label="disabled input example"
+                                disabled />
+                            <label class="form-label"
+                                for="lastName_{{oneuser.id}}">Last name</label>
+                        </div>
+                    </div>
+                </div>
+                <!-- Email input -->
+                <div data-mdb-input-init class="form-outline mb-4">
+                    <input type="email" id="email_{{oneuser.id}}"
+                        class="form-control" autocomplete="off"
+                        placeholder=" " value="{{oneuser.email}}"
+                        aria-label="disabled input example" disabled />
+                    <label class="form-label"
+                        for="email_{{oneuser.id}}">Email address</label>
+                </div>
+                <!-- Password input -->
+                <div class="position-relative">
+                    <div data-mdb-input-init class="form-outline mb-4">
+                        <input type="text" id="pass_{{oneuser.id}}"
+                            class="form-control pe-5" autocomplete="off"
+                            data-input_pass="generatePass" />
+                        <label class="form-label"
+                            for="pass_{{oneuser.id}}">Password</label>
+                    </div>
+                    <div class="position-absolute bottom-0 end-0">
+                        <button type="button" id="editPass_{{oneuser.id}}" data-editpass="edit_newpass" data-editinput="pass_{{oneuser.id}}" class="btn btn_detail btn-floating btn_genpass fs-15">
+                            <i class="fa-solid fa-dice-five"></i>
+                        </button>
+                    </div>
+                </div>
+                <!-- Checkbox -->
+                <div class="form-check d-flex justify-content-start mb-4">
+                    <input class="form-check-input me-2" type="checkbox"
+                        name="is_staff" id="isActive_{{oneuser.id}}" {% if oneuser.is_staff %}checked{% endif %} />
+                    <label class="form-check-label"
+                        for="isActive_{{oneuser.id}}">
+                        Programador
+                    </label>
+                </div>
+                <hr class="my-4">
+                <div class="d-flex justify-content-between">
+                    <button type="button" class="btn btn-danger"
+                        data-mdb-ripple-init
+                        data-mdb-dismiss="modal">Cancelar</button>
+                    <button type="submit"
+                        class="btn btn_detail">Registrar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+</div>
                         <!-- modal: Eliminar usuario -->
                         <div class="modal fade " id="eliminar_modal_{{ oneuser.id }}" tabindex="-1"
                             aria-labelledby="labelModal0{{ oneuser.id }}" aria-hidden="true">
@@ -408,7 +403,7 @@
                     <!-- Nombre de usuario -->
                     <div data-mdb-input-init class="form-outline mb-4">
                         <input type="text" id="createusername" name="username" class="form-control"
-                            autocomplete="off" />
+                            autocomplete="off" required/>
                         <label class="form-label" for="createusername">Nombre de usuario</label>
                     </div>
                     <!-- Primer Nombre y Apellidos -->
@@ -416,14 +411,14 @@
                         <div class="col">
                             <div data-mdb-input-init class="form-outline">
                                 <input type="text" id="form3Example1" name="first_name"
-                                    class="form-control" autocomplete="off" />
+                                    class="form-control" autocomplete="off" required/>
                                 <label class="form-label" for="form3Example1">Primer Nombre</label>
                             </div>
                         </div>
                         <div class="col">
                             <div data-mdb-input-init class="form-outline">
                                 <input type="text" id="form3Example2" name="last_name"
-                                    class="form-control" autocomplete="off" />
+                                    class="form-control" autocomplete="off" required/>
                                 <label class="form-label" for="form3Example2">Apellidos</label>
                             </div>
                         </div>
@@ -432,7 +427,7 @@
                     <!-- Email input -->
                     <div data-mdb-input-init class="form-outline mb-4">
                         <input type="email" id="form3Example3" name="email" class="form-control"
-                            autocomplete="off" />
+                            autocomplete="off" required />
                         <label class="form-label" for="form3Example3">Dirección Email</label>
                     </div>
 
