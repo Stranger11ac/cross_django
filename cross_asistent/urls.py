@@ -25,6 +25,8 @@ urlpatterns = [
     path('administracion/desactivar_usuario/<int:user_id>/', views.desactivar_usuario, name='desactivar_usuario'),
     path('administracion/export/csv/', views.export_database, name='export_database_to_csv'),
     
-    path('administracion/formularios/', views.forms_admin, name='forms'),
+    path('administracion/blogs/', views.admin_blogs, name='admin_blogs'),
+    path('administracion/send_blog/', views.crear_articulo, name='send_blog'),
+    path('administracion/mapa/', views.mapa_form, name='admin_forms'),
     path('administracion/tarea/<int:tarea_id>/', views.tareaView, name='tareaView'),
 ]
