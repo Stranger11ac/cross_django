@@ -9,7 +9,6 @@ from django.db import IntegrityError, transaction
 from django.http import JsonResponse
 from django.conf import settings
 from .forms import crearTarea, PreguntaForm
-from django.forms import modelformset_factory
 from django.http import HttpResponse
 from django.utils import timezone
 from . import models
@@ -141,13 +140,23 @@ def faq(request):
 def preguntas_view(request):
     quest_all = models.Database.objects.all()
     if request.method == "POST":
-        form = PreguntaForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect('preguntas') 
+        if request.content_type == 'application/json':
+            try:
+                data = json.loads(request.body)
+                tituloPOST = data['pregunta']
+
+                pregunta = models.Database(titulo=tituloPOST )
+                pregunta.save()
+
+                return JsonResponse({'success': True, 'message': 'gracias por tu pregunta❤️💕😁👍 '}, status=200)
+            except Exception as e:
+                print( f'Hay un error en:  {e}')
+                return JsonResponse({'success': False, 'message': 'La pregunta no se registro :( '}, status=400)
+        else:
+             print('error, no JSON')
+             return HttpResponse('Solicitud no JSON', status=400)
     else:
-        form = PreguntaForm()
-    return render(request, 'frecuentes.html', {'quest_all': quest_all, 'form': form})
+         return render(request, 'frecuentes.html', {'quest_all': quest_all})
 
 def blog(request):
     if not request.user.is_staff:
@@ -499,13 +508,22 @@ def vista_programador(request):
         email = request.POST.get('email')
         password = request.POST.get('password')
 
-        if username:
-            # Crear usuario
-            new_user = User.objects.create_user(username=username, is_staff=is_staff, is_active=is_active,
-            first_name=first_name, last_name=last_name, email=email)
-            new_user.set_password(password)
-            new_user.save()
-            return redirect('vista_programador')
+        if username and email:
+            if User.objects.filter(username=username).exists():
+                return JsonResponse({'success': False, 'message': f'El usuario <u>{username}</u> ya existe 😯'}, status=400)
+            if User.objects.filter(email=email).exists():
+                return JsonResponse({'success': False, 'message': f'El correo electrónico <u>{email}</u> ya está registrado 😯'}, status=400)
+            try:
+                    # Crear usuario
+                new_user = User.objects.create_user(username=username, is_staff=is_staff, is_active=is_active,
+                first_name=first_name, last_name=last_name, email=email)
+                new_user.set_password(password)
+                new_user.save()
+                return JsonResponse({'success': True, 'message': 'Usuario creado exitosamente'}, status=200)
+            except IntegrityError:
+                return JsonResponse({'success': False, 'message': 'Ocurrió un error durante el registro. Intente nuevamente.'}, status=400)
+        else:
+            return JsonResponse({'success': False, 'message': 'Datos incompletos 😅'}, status=400)
 
     return render(request, 'admin/vista_programador.html', contexto)
 
@@ -561,9 +579,13 @@ def editar_usuario(request, user_id):
     user = get_object_or_404(User, id=user_id)
     if request.method == 'POST':
         username = request.POST.get('username')
+        password = request.POST.get('password')
         is_staff = request.POST.get('is_staff') == 'on'
+        
         if username:
             user.username = username
+        if password:
+            user.set_password(password)
         user.is_staff = is_staff
         user.save()
         return redirect('vista_programador')
