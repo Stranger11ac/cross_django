@@ -88,6 +88,12 @@ $(document).ready(function () {
         // Registrar un nuevo articulo con TinyMCE ##################################
         $("#formularioArticulo").submit(articleForm);
 
+        
+            // $("#edificio").change(function() {
+            //     $("#filtroEdificio").submit();
+            // });
+        
+
         // Convertir scroll vertical en horizontal ############################
         var $tableContainer = $("#table-container");
         if (!$tableContainer.length) {

@@ -5,12 +5,13 @@ from django.contrib.auth.decorators import login_required
 from django.views.decorators.cache import never_cache
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.models import User
-from django.db import IntegrityError, transaction
+from django.db import IntegrityError
 from django.http import JsonResponse
 from django.conf import settings
-from .forms import crearTarea, PreguntaForm
+from .forms import crearTarea
 from django.http import HttpResponse
 from django.utils import timezone
+from .models import Database, Categorias
 from . import models
 
 import openai
@@ -250,7 +251,6 @@ def map(request):
             'edifcolor': 'red','edifill': 'red',
             'nombre': 'Edificio Docente 2',
             'titulo': 'Tecnologias de la Informacion y Comunicacion',
-            'descripcion': '<h5>Carreras:</h5> <ul>Desarrollo y Gestion de Software Multiplataforma<br>Entornos Virtuales y Negocios Digitales<br>Diseño y Gestion de Redes Logisticas</ul> ',
             'imagen_url': 'img/Edificio_2.webp',
             'coordenadas': [[25.55495, -100.93495], [25.55471, -100.93458], [25.55455, -100.93471], [25.55479, -100.93508]],
             'centro': [25.55474, -100.93482]
@@ -623,8 +623,52 @@ def crear_articulo(request):
             return JsonResponse({'success': False, 'message': f'Ocurrio un error😯😥 <br>{str(e)}'}, status=400)
     return JsonResponse({'success': False, 'message': 'Método no permitido'}, status=405)
 
+#Consulta para informacion del Mapa##################
 
+def consultaMap(request):
+        categoria_mapa =models. Categorias.objects.get(categoria="Mapa")
+        
+        articulos_mapa = models.Database.objects.filter(categoria=categoria_mapa)
+        
+        return render(request, 'admin/mapa_form.html', {'articulos_mapa': articulos_mapa})
+    
 
+# #Editar la informacion del Mapa
+# def editar_articulo(request, articulo_id):
+#     if request.method == 'POST':
+#         try:
+#             articulo = get_object_or_404(Database, pk=articulo_id)
+#             articulo.titulo = request.POST.get('titulo')
+#             articulo.informacion = request.POST.get('informacion')
+#             # Ajusta según los campos que necesites actualizar
+#             articulo.save()
+
+#             return JsonResponse({'success': True, 'message': 'El artículo ha sido actualizado correctamente.'}, status=200)
+#         except Exception as e:
+#             return JsonResponse({'success': False, 'message': f'Ocurrió un error al intentar actualizar el artículo: {str(e)}'}, status=400)
+    
+#     else:
+#         return JsonResponse({'success': False, 'message': 'Método no permitido'}, status=405)
+    
+#     def crear_articulo(request):
+#         if request.method == 'POST':
+#             try:
+#                 tituloPOST = request.POST.get('titulo')
+#                 informacionPOST = request.POST.get('informacion')
+#                 # Ajusta según los campos y validaciones necesarias
+#                 nuevo_articulo = Database(
+#                     titulo=tituloPOST,
+#                     informacion=informacionPOST,
+#                     categoria_id=1  # Aquí debes asignar el ID correcto de la categoría "Mapa" en tu base de datos
+#                 )
+#                 nuevo_articulo.save()
+
+#                 return JsonResponse({'success': True, 'message': 'El artículo ha sido creado correctamente.'}, status=200)
+#             except Exception as e:
+#                 return JsonResponse({'success': False, 'message': f'Ocurrió un error al intentar crear el artículo: {str(e)}'}, status=400)
+#         else:
+#             return JsonResponse({'success': False, 'message': 'Método no permitido'}, status=405)
+    
 @login_required
 @never_cache
 def mapa_form(request):

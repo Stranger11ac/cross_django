@@ -10,6 +10,7 @@ urlpatterns = [
     path('acercade/', views.about, name='about'),
     path('preguntas-frecuentes/', views.faq, name='faq'),
     path('preguntas/', views.preguntas_view, name='preguntas'),
+    path('consultarMap/', views.consultaMap, name='consultaMap'),
     # Sesion y registro
     path('logout/', views.singoutpage, name='singout'),
     path('administracion/acceder/', views.singinpage, name='singin'),
