@@ -25,7 +25,8 @@
                     </div>
 
                     <div class="mb-4">
-                        <textarea id="mainTiny" name="contenido" placeholder="Escribe tu articulo..."></textarea>
+                        <textarea id="mainTiny" name="contenido"
+                            placeholder="Escribe tu articulo..."></textarea>
                     </div>
 
                     <div class="mb-4">
@@ -48,39 +49,5 @@
 </main>
 {% endblock %}
 {% block scripts_end %}
-<script>
-    document.getElementById('formularioArticulo').addEventListener('submit', function (e) {
-        e.preventDefault();
-        const thisForm = e.target;
-        
-        // Obtener el contenido HTML del editor TinyMCE
-        const contenidoTiny = tinymce.activeEditor.getContent();
-        
-        var formData = new FormData(thisForm);
-        
-        // Añadir el contenido HTML de TinyMCE al formData
-        formData.set('contenido', contenidoTiny);
-
-        fetch(thisForm.action, {
-            method: 'POST',
-            headers: {
-                'X-CSRFToken': formData.get('csrfmiddlewaretoken')
-            },
-            body: formData
-        })
-        .then(response => response.json())
-        .then(data => {
-            alert(data.mensaje);
-            thisForm.reset();
-            // Aquí puedes manejar la respuesta del servidor
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert('Error:', error);
-        });
-    });
-</script>
-
-
 <script src="{% static 'tinymce/tinymce.min.js' %}"></script>
 {% endblock %}
