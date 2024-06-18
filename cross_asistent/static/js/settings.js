@@ -212,7 +212,7 @@ tinymce.init({
     language: "es_MX",
     branding: false,
     plugins:
-        "advlist autolink lists link image charmap preview anchor searchreplace visualblocks code fullscreen insertdatetime media table code help wordcount quickbars image pagebreak editimage",
+        "advlist autolink lists link image charmap preview anchor searchreplace visualblocks code fullscreen insertdatetime media table code help wordcount quickbars image pagebreak",
     toolbar:
         "undo redo | styles formatting forecolor backcolor | alignleft aligncenter alignright alignjustify | bullist numlist | table tabledelete | outdent indent | removeformat | help | image media | insertfile | preview ",
     quickbars_selection_toolbar: "bold italic | blocks | quicklink blockquote",
@@ -251,7 +251,6 @@ tinymce.init({
 
         input.click();
     },
-    // statusbar: false,
     promotion: false,
 });
 
