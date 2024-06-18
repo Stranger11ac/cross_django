@@ -145,18 +145,21 @@ def preguntas_view(request):
             try:
                 data = json.loads(request.body)
                 tituloPOST = data['pregunta']
-                pregunta = models.Database(titulo=tituloPOST )
+
+                categoria_preguntas = models.Categorias.objects.get(id=1) 
+
+                pregunta = models.Database(titulo=tituloPOST, categoria=categoria_preguntas)
                 pregunta.save()
 
-                return JsonResponse({'success': True, 'message': 'gracias por tu pregunta❤️💕😁👍 '}, status=200)
+                return JsonResponse({'success': True, 'message': 'Gracias por tu pregunta ❤️💕😁👍 '}, status=200)
             except Exception as e:
-                print( f'Hay un error en:  {e}')
-                return JsonResponse({'success': False, 'message': 'La pregunta no se registro :( '}, status=400)
+                print(f'Hay un error en: {e}')
+                return JsonResponse({'success': False, 'message': 'La pregunta no se registró :( '}, status=400)
         else:
-             print('error, no JSON')
-             return HttpResponse('Solicitud no JSON', status=400)
+            print('error, no JSON')
+            return HttpResponse('Solicitud no JSON', status=400)
     else:
-         return render(request, 'frecuentes.html', {'quest_all': quest_all})
+        return render(request, 'frecuentes.html', {'quest_all': quest_all})
 
 def blog(request):
     if not request.user.is_staff:
@@ -604,7 +607,7 @@ def crear_articulo(request):
             tituloPOST = request.POST.get('titulo')
             contenidoPOST = request.POST.get('contenido')
             autorPOST = request.POST.get('autor')
-            encabezadoPOST = request.FILES.get('encabezadoImg')
+            encabezadoPOST = request.FILES.get('encabezadoImg')#este no
 
             articulo = models.Articulos(
                 titulo=tituloPOST,
@@ -618,7 +621,7 @@ def crear_articulo(request):
         except Exception as e:
             return JsonResponse({'error': str(e)}, status=400)
     return JsonResponse({'error': 'Método no permitido'}, status=405)
-
+#Aqui
 
 
 @login_required

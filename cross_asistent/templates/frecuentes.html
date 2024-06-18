@@ -87,32 +87,18 @@
             </div>
         </div>
 
-        <!-- Hacer una Pregunta -->
-        <div
-            class="tab-pane fade"
-            id="ex2-tabs-2"
-            role="tabpanel"
-            aria-labelledby="ex2-tab-2">
-            <form method="POST" id="hacerPregunta"
-                action="{% url 'preguntas' %}">
+    <!-- Hacer una Pregunta -->
+        <div class="tab-pane fade" id="ex2-tabs-2" role="tabpanel" aria-labelledby="ex2-tab-2">
+            <form method="POST" id="hacerPregunta" action="{% url 'preguntas' %}" class="text-center">
                 {% csrf_token %}
-                <div class="form-outline" data-mdb-input-init>
-                    <input type="text" id="preguntaPOST" name="pregunta"
-                        class="form-control" />
-                    <label class="form-label" for="preguntaPOST">Hacer
-                        Pregunta</label>
+                <div class="form-outline mb-4" data-mdb-input-init>
+                    <input type="text" id="preguntaPOST" name="pregunta" class="form-control mx-auto" style="max-width: 300px;" />
+                    <label class="form-label" for="preguntaPOST">Hacer Pregunta</label>
                 </div>
-                <button type="submit" class="btn btn-primary">Enviar
-                    Pregunta</button>
+                <button type="submit" class="btn btn-primary mx-auto" style="max-width: 150px;">Enviar Pregunta</button>
             </form>
         </div>
     </div>
-<div class="col-6" >
-    <div class="card">
-        <div class="c ard-body" aria-colcount="6" id="data.message">
-        </div>
-    </div>
-</div>
 
 </main>
 
