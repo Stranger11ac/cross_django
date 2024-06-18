@@ -386,9 +386,10 @@ def singinpage(request):
             return JsonResponse({'success': False, 'functionForm': 'singin','message': 'Revisa el usuario o contraseña 😅. Verifica que tu cuenta esté habilitada'}, status=400)
         else:
             login(request, user)
+            pageRedirect = reverse('vista_admin')
             if user.is_staff:
-                return JsonResponse({'success': True, 'functionForm': 'singin','redirect_url': reverse('vista_programador')}, status=200)
-            return JsonResponse({'success': True, 'functionForm': 'singin','redirect_url': reverse('vista_admin')}, status=200)
+                pageRedirect = reverse('vista_programador')
+            return JsonResponse({'success': True, 'functionForm': 'singin','redirect_url': pageRedirect}, status=200)
     else:
         logout(request)
         return render(request, 'admin/singin.html', {
@@ -510,7 +511,7 @@ def vista_programador(request):
 
         if username and email:
             if User.objects.filter(username=username).exists():
-                return JsonResponse({'success': False, 'message': f'El usuario <u>{username}</u> ya existe 😯'}, status=400)
+                return JsonResponse({'success': False, 'message': f'El usuario <u>{username}</u> ya existe 😯🤔'}, status=400)
             if User.objects.filter(email=email).exists():
                 return JsonResponse({'success': False, 'message': f'El correo electrónico <u>{email}</u> ya está registrado 😯'}, status=400)
             try:
@@ -518,11 +519,11 @@ def vista_programador(request):
                 first_name=first_name, last_name=last_name, email=email)
                 new_user.set_password(password)
                 new_user.save()
-                return JsonResponse({'success': True, 'message': 'Usuario creado exitosamente'}, status=200)
+                return JsonResponse({'success': True, 'message': 'Usuario creado exitosamente 🥳😬🎈'}, status=200)
             except IntegrityError:
                 return JsonResponse({'success': False, 'message': 'Ocurrió un error durante el registro. Intente nuevamente.'}, status=400)
         else:
-            return JsonResponse({'success': False, 'message': 'Datos incompletos 😅'}, status=400)
+            return JsonResponse({'success': False, 'message': 'Datos incompletos 😅😯😥'}, status=400)
 
     return render(request, 'admin/vista_programador.html', contexto)
 
@@ -614,10 +615,10 @@ def crear_articulo(request):
             )
             articulo.save()
 
-            return JsonResponse({'mensaje': 'Artículo subido con éxito'})
+            return JsonResponse({'success': True, 'message': 'Excelente 🥳🎈🎉. Tu articulo ya fue publicado. Puedes editarlo cuando gustes. 🧐😊'}, status=200)
         except Exception as e:
-            return JsonResponse({'error': str(e)}, status=400)
-    return JsonResponse({'error': 'Método no permitido'}, status=405)
+            return JsonResponse({'success': False, 'message': f'Ocurrio un error😯😥 <br>{str(e)}'}, status=400)
+    return JsonResponse({'success': False, 'message': 'Método no permitido'}, status=405)
 
 
 
