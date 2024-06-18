@@ -600,21 +600,25 @@ def admin_blogs(request):
 @never_cache
 def crear_articulo(request):
     if request.method == 'POST':
-        tituloPOST = request.POST['titulo']
-        contenidoPOST = request.POST['contenido']
-        autorPOST = request.POST['autor']
-        imagen_encabezadoPOST = request.FILES.get('encabezadoImg')
+        try:
+            tituloPOST = request.POST.get('titulo')
+            contenidoPOST = request.POST.get('contenido')
+            autorPOST = request.POST.get('autor')
+            encabezadoPOST = request.FILES.get('encabezadoImg')
 
-        articulo = models.Articulos(
-            titulo=tituloPOST,
-            contenido=contenidoPOST,
-            autor=autorPOST,
-            encabezado=imagen_encabezadoPOST
-        )
-        articulo.save()
+            articulo = models.Articulos(
+                titulo=tituloPOST,
+                contenido=contenidoPOST,
+                autor=autorPOST,
+                encabezado=encabezadoPOST
+            )
+            articulo.save()
 
-        return JsonResponse({'mensaje': 'Artículo subido con éxito'})
+            return JsonResponse({'mensaje': 'Artículo subido con éxito'})
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=400)
     return JsonResponse({'error': 'Método no permitido'}, status=405)
+
 
 
 @login_required
