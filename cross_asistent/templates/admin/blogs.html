@@ -1,24 +1,22 @@
 {% extends 'widget.html' %}
-{% load filtros %}
-{% block title %}Formularios | Programadores{% endblock %}
+{% load static %}
+{% block title %}Crear Articulo | Programadores{% endblock %}
 {% block link_home %}{% url 'vista_programador' %}{% endblock %}
 {% block link_default %}
-{% include 'admin/widget_links-admin.html' %}
+{% include 'widget_links-admin.html' %}
 {% endblock %}
 {% block content %}
 <main
     class="container container-fluid pb-5 {% if not user.is_authenticated %}main_container{% endif %}">
-    <!-- Nombre del usuario -->
     <div class="p-5 text-center">
         <h1 class="mb-3">Blogs <i class="fa-solid fa-newspaper ms-1"></i></h1>
         <hr class="hr_divisor" />
     </div>
-    <section class="card mb-4 col-lg-6 col-md-12">
-        <div class="card-body">
-            <h3 class="text-center mb-4">Crear nuevo Articulo</h3>
-            <!-- Formulario para responder preguntas -->
-            <div>
-                <form method="POST" id="formularioArticulo" action="{% url 'send_blog' %}"
+    <section class="d-flex justify-content-center align-items-center h-100 p-md-2">
+        <div class="card mb-4 col-lg-10 col-md-12">
+            <div class="card-body">
+                <h3 class="text-center mb-4">Crear nuevo Articulo</h3>
+                <form method="post" id="formularioArticulo" action="{% url 'send_blog' %}"
                     enctype="multipart/form-data">
                     {% csrf_token %}
                     <div class="form-outline mb-4" data-mdb-input-init>
@@ -32,15 +30,13 @@
                     </div>
 
                     <div class="form-outline mb-4" data-mdb-input-init>
-                        <textarea class="form-control" id="contenido" name="contenido" rows="4"
-                            data-mdb-showcounter="true" maxlength="50"></textarea>
-                        <label class="form-label" for="contenido">Articulo:</label>
-                        <div class="form-helper"></div>
+                        <textarea class="form-control" id="mainTiny" name="contenido" placeholder="Escribe tu articulo..."></textarea>
                     </div>
 
                     <div class="mb-4">
-                        <label class="form-label" for="customFile">Imagen de Encabezado</label>
-                        <input type="file" class="form-control" id="customFile" />
+                        <label class="form-label" for="encabezadoImg">Imagen de Encabezado</label>
+                        <input type="file" class="form-control" id="encabezadoImg"
+                            name="encabezadoImg" />
                     </div>
 
                     <button type="submit" class="btn btn_detail w-100 d-block">Publicar <i
@@ -54,16 +50,18 @@
 {% block scripts_end %}
 <script>
     document.getElementById('formularioArticulo').addEventListener('submit', function (e) {
-        const thisForm = e.target;
         e.preventDefault();
-        var formData = new FormData(this);
+        const thisForm = e.target;
+        var formData = new FormData(thisForm);
+
         fetch(thisForm.action, {
             method: 'POST',
             body: formData
         })
             .then(response => response.json())
             .then(data => {
-                alert(data);
+                alert(data.mensaje);
+                thisForm.reset();
                 // Aquí puedes manejar la respuesta del servidor
             })
             .catch(error => {
@@ -71,4 +69,5 @@
             });
     });
 </script>
+<script src="{% static 'tinymce/tinymce.min.js' %}"></script>
 {% endblock %}

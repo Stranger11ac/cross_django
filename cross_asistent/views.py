@@ -145,7 +145,6 @@ def preguntas_view(request):
             try:
                 data = json.loads(request.body)
                 tituloPOST = data['pregunta']
-    #Hola Mundo
                 pregunta = models.Database(titulo=tituloPOST )
                 pregunta.save()
 
@@ -499,7 +498,7 @@ def vista_programador(request):
         'num_preguntas': models.Database.objects.filter().count(),
         'preguntas_sin_responder': models.Database.objects.all(),
     }
-    # Procesar creación de usuario
+    # Crear Nuevo usuario
     if request.method == 'POST':
         username = request.POST.get('username')
         is_staff = request.POST.get('is_staff', False)
@@ -515,7 +514,6 @@ def vista_programador(request):
             if User.objects.filter(email=email).exists():
                 return JsonResponse({'success': False, 'message': f'El correo electrónico <u>{email}</u> ya está registrado 😯'}, status=400)
             try:
-                    # Crear usuario
                 new_user = User.objects.create_user(username=username, is_staff=is_staff, is_active=is_active,
                 first_name=first_name, last_name=last_name, email=email)
                 new_user.set_password(password)
@@ -605,13 +603,13 @@ def crear_articulo(request):
         tituloPOST = request.POST['titulo']
         contenidoPOST = request.POST['contenido']
         autorPOST = request.POST['autor']
-        imagen_encabezadoPOST = request.FILES['imagen_encabezado']
+        imagen_encabezadoPOST = request.FILES.get('encabezadoImg')
 
         articulo = models.Articulos(
             titulo=tituloPOST,
             contenido=contenidoPOST,
             autor=autorPOST,
-            imagen_encabezado=imagen_encabezadoPOST
+            encabezado=imagen_encabezadoPOST
         )
         articulo.save()
 

@@ -1,9 +1,9 @@
 {% extends 'widget.html' %}
-{% load filtros %}
+{% load static filtros %}
 {% block title %}Inicio | Programadores{% endblock %}
 {% block link_home %}{% url 'vista_programador' %}{% endblock %}
 {% block link_default %}
-{% include 'admin/widget_links-admin.html' %}
+{% include 'widget_links-admin.html' %}
 {% endblock %}
 {% block content %}
 <main
