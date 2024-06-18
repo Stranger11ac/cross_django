@@ -572,3 +572,14 @@ def editar_usuario(request, user_id):
 
 def forms_admin(request):
     return render(request, 'admin/vista_formularios.html')
+
+from django.shortcuts import render
+
+def mapa2(request):
+    return render(request, 'mapa2.html')
+
+
+from django.shortcuts import render
+
+def mapa2(request):
+    return render(request, 'mapa2.html')
