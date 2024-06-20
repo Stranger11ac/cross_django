@@ -72,8 +72,8 @@
                 {% csrf_token %}
                 <div class="position-relative bottom-0 end-0">
                     <div class="form-outline" data-mdb-input-init>
-                        <textarea class="form-control bg-body-tertiary" id="question" name="question" required maxlength="200"></textarea>
-                        <label class="form-label bg-body-tertiary" for="question">Haz una pregunta:</label>
+                        <textarea class="form-control bg-body-tertiary" id="txtQuestion" name="question" required maxlength="200"></textarea>
+                        <label class="form-label bg-body-tertiary" for="txtQuestion">Haz una pregunta:</label>
                     </div>
                     <div class="controls_input-buttons position-absolute top-0 end-0">
                         <button type="button" id="closeChat" class="btn btn_secondary btn-floating btn-sm controls_btn_close">
@@ -93,7 +93,7 @@
     </section>
 </main>
 
-<!-- Modal -->
+<!-- Modal QR -->
 <div class="modal fade" id="modalqr" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content text-center">
@@ -122,21 +122,19 @@
     <script src="{% static 'js/custom.js' %}"></script>
 
     <script>
-        var output = document.getElementById('output');
-
-        document.getElementById('chatForm').addEventListener('submit', function(e) {
+        chatForm.addEventListener('submit', function(e) {
             e.preventDefault();
-            const pregunta = document.getElementById('question').value;
-            const chatForm = e.target;
+            const pregunta = document.txtQuestion.value;
+            const FormTarget = e.target;
             this.reset();
 
-            fetch(chatForm.action, {
+            fetch(FormTarget.action, {
                 method: 'POST',
                 body: JSON.stringify({ question: pregunta }),
                 headers: {
                     'Content-Type': 'application/json',
                     'X-Requested-With': 'XMLHttpRequest',
-                    'X-CSRFToken': chatForm.querySelector('[name=csrfmiddlewaretoken]').value
+                    'X-CSRFToken': FormTarget.querySelector('[name=csrfmiddlewaretoken]').value
                 }
             })
             .then(response => {

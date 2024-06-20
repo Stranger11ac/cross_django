@@ -24,6 +24,7 @@ $(document).ready(function () {
             $(".asistent_group.open").toggleClass("close_controls open_keyboard open_controls");
             // Detectar si es un dispositivo móvil
             const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+            console.log(navigator.userAgent);
             // Solo ejecutar el setTimeout si no es un dispositivo móvil
             if (!isMobile) {
                 setTimeout(function () {
@@ -63,6 +64,7 @@ $(document).ready(function () {
         // iniciar sesion ####################################################
         $("#singinForm").submit(singInUp);
         $("#signupForm").submit(singInUp);
+        $("#createuserprog").submit(singInUp);
 
         // generate password random
         // console.log($('[data-input_pass^="generatePass"]'));
@@ -88,11 +90,9 @@ $(document).ready(function () {
         // Registrar un nuevo articulo con TinyMCE ##################################
         $("#formularioArticulo").submit(articleForm);
 
-        
-            // $("#edificio").change(function() {
-            //     $("#filtroEdificio").submit();
-            // });
-        
+        // $("#edificio").change(function() {
+        //     $("#filtroEdificio").submit();
+        // });
 
         // Convertir scroll vertical en horizontal ############################
         var $tableContainer = $("#table-container");
@@ -166,7 +166,8 @@ function chatSubmit(e) {
             this.selectionStart = cursorPos + 1;
             this.selectionEnd = cursorPos + 1;
         } else {
-            document.getElementById("chatForm_submit").click();
+            chatForm_submit.click();
+            // document.getElementById("chatForm_submit").click();
         }
     }
 }
@@ -197,10 +198,10 @@ function singInUp(e) {
         .then((data) => {
             dataMessage = data.message;
             if (data.success) {
+                thisForm.reset();
                 if (data.functionForm == "singin") {
                     window.location.href = data.redirect_url;
                 } else {
-                    thisForm.reset();
                     alertSToast("center", timerOut + 4000, "success", dataMessage, function () {
                         location.reload();
                     });
@@ -216,64 +217,6 @@ function singInUp(e) {
             alertSToast("center", timerOut + 3000, "error", errorMessage);
         });
 }
-
-// Functionamiento de TinyMCE #################################################################
-tinymce.init({
-    selector: "#mainTiny",
-    language: "es_MX",
-    branding: false,
-    plugins:
-        "advlist autolink lists link image charmap preview anchor searchreplace visualblocks code fullscreen insertdatetime media table code help wordcount quickbars image pagebreak",
-    menubar: "file edit view format table",
-    menu: {
-        file: { title: "File", items: "newdocument restoredraft | preview | print" },
-        edit: { title: "Edit", items: "undo redo | cut copy paste | selectall | searchreplace" },
-        view: { title: "View", items: "visualaid visualchars visualblocks | spellchecker | preview fullscreen" },
-        format: {
-            title: "Format",
-            items: "bold italic underline strikethrough superscript subscript | styles blockformats align | removeformat",
-        },
-        table: { title: "Table", items: "inserttable tableprops deletetable | cell row column" },
-    },
-    toolbar:
-        "undo redo | styles formatting forecolor backcolor | alignleft aligncenter alignright alignjustify | bullist numlist | table tabledelete | outdent indent | removeformat | help | image media | insertfile | preview ",
-    quickbars_selection_toolbar: "bold italic | blocks | quicklink blockquote",
-    quickbars_insert_toolbar: "image quicktable | hr pagebreak",
-    quickbars_image_toolbar: "image|alignleft aligncenter alignright | rotateleft rotateright | imageoptions",
-    toolbar_groups: {
-        formatting: {
-            icon: "bold",
-            tooltip: "Formatting",
-            items: "bold italic underline | superscript subscript",
-        },
-    },
-    image_title: true,
-    automatic_uploads: true,
-    file_picker_types: "image",
-    file_picker_callback: (cb, value, meta) => {
-        const input = document.createElement("input");
-        input.setAttribute("type", "file");
-        input.setAttribute("accept", "image/*");
-
-        input.addEventListener("change", (e) => {
-            const file = e.target.files[0];
-            const reader = new FileReader();
-            reader.addEventListener("load", () => {
-                const id = "blobid" + new Date().getTime();
-                const blobCache = tinymce.activeEditor.editorUpload.blobCache;
-                const base64 = reader.result.split(",")[1];
-                const blobInfo = blobCache.create(id, file, base64);
-                blobCache.add(blobInfo);
-
-                cb(blobInfo.blobUri(), { title: file.name });
-            });
-            reader.readAsDataURL(file);
-        });
-
-        input.click();
-    },
-    promotion: false,
-});
 
 // Registrar Articulo ###############################################
 function articleForm(e) {
@@ -307,7 +250,7 @@ function articleForm(e) {
             errorMessage = error.message || "Ocurrió un error. Intente nuevamente. 😥";
             alertSToast("center", timerOut + 3000, "error", errorMessage);
         });
-};
+}
 
 // context menu disabled ####################################
 document.oncontextmenu = function () {

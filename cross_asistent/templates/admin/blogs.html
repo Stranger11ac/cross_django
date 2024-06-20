@@ -20,8 +20,8 @@
                     enctype="multipart/form-data">
                     {% csrf_token %}
                     <div class="form-outline mb-4" data-mdb-input-init>
-                        <input type="text" id="titulo" name="titulo" class="form-control" />
-                        <label class="form-label" for="titulo">Titulo:</label>
+                        <input type="text" id="titulo" name="titulo" class="form-control text-center" />
+                        <label class="form-label" for="titulo">Titulo / Encabezado:</label>
                     </div>
 
                     <div class="mb-4">
@@ -38,6 +38,7 @@
                     <div class="form-outline mb-4" data-mdb-input-init>
                         <input type="text" id="autor" name="autor" class="form-control" readonly
                             aria-label="readonly input example" value="{{user.username}}" />
+                            <label class="form-label" for="autor">Autor:</label>
                     </div>
 
                     <button type="submit" class="btn btn_detail w-100 d-block">Publicar <i
@@ -50,4 +51,5 @@
 {% endblock %}
 {% block scripts_end %}
 <script src="{% static 'tinymce/tinymce.min.js' %}"></script>
+<script src="{% static 'js/settings_tinymce.js' %}"></script>
 {% endblock %}
