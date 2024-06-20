@@ -383,16 +383,24 @@ def singinpage(request):
     if request.method == 'POST' and request.headers.get('X-Requested-With') == 'XMLHttpRequest':
         usernamePOST = request.POST.get('username')
         passwordPOST = request.POST.get('password')
-
-        user = authenticate(request, username=usernamePOST, password=passwordPOST)
-        if user is None:
-            return JsonResponse({'success': False, 'functionForm': 'singin','message': 'Revisa el usuario o contraseña 😅. Verifica que tu cuenta esté habilitada'}, status=400)
+        
+        try: user = User.objects.get(username=usernamePOST)
+        except User.DoesNotExist: user = None
+        if user is not None:
+            if not user.is_active:
+                return JsonResponse({'success': False, 'functionForm': 'singin', 'message': '🧐😥😯 UPS! <br> Al parecer tu cuenta esta <u>Inactiva</u>. Tu cuenta será activada si estas autorizado'}, status=400)
+            
+            user = authenticate(request, username=usernamePOST, password=passwordPOST)
+            if user is None:
+                return JsonResponse({'success': False, 'functionForm': 'singin', 'message': 'Revisa el usuario o contraseña 😅.'}, status=400)
+            else:
+                login(request, user)
+                pageRedirect = reverse('vista_admin')
+                if user.is_staff:
+                    pageRedirect = reverse('vista_programador')
+                return JsonResponse({'success': True, 'functionForm': 'singin', 'redirect_url': pageRedirect}, status=200)
         else:
-            login(request, user)
-            pageRedirect = reverse('vista_admin')
-            if user.is_staff:
-                pageRedirect = reverse('vista_programador')
-            return JsonResponse({'success': True, 'functionForm': 'singin','redirect_url': pageRedirect}, status=200)
+            return JsonResponse({'success': False, 'functionForm': 'singin', 'message': 'Usuario no registrado 😅. Vrifica tu nombre de usuario'}, status=400)
     else:
         logout(request)
         return render(request, 'admin/singin.html', {
@@ -624,7 +632,6 @@ def crear_articulo(request):
     return JsonResponse({'success': False, 'message': 'Método no permitido'}, status=405)
 
 #Consulta para informacion del Mapa##################
-
 def consultaMap(request):
         categoria_mapa =models. Categorias.objects.get(categoria="Mapa")
         
