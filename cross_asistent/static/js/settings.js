@@ -90,9 +90,58 @@ $(document).ready(function () {
         // Registrar un nuevo articulo con TinyMCE ##################################
         $("#formularioArticulo").submit(articleForm);
 
-        // $("#edificio").change(function() {
-        //     $("#filtroEdificio").submit();
-        // });
+        //  ##################################
+        function obtenerDatosEdificio(articuloId) {
+            if (articuloId) {
+                $.ajax({
+                    url: "/obtenerEdificio/",
+                    type: 'GET',
+                    data: { 'id': articuloId },
+                    success: function(data) {
+                        $("#edificio_id").val(data.id);
+                        $("#titulo").val(data.titulo);
+                        $("#informacion").val(data.informacion);
+                        if (data.imagen_url) {
+                            $("#imagen_actual").attr("src", data.imagen_url).show();
+                        } else {
+                            $("#imagen_actual").hide();
+                        }
+                    }
+                });
+            } else {
+                $("#edificio_id").val('');
+                $("#titulo").val('');
+                $("#informacion").val('');
+                $("#imagen_actual").hide();
+            }
+        }
+    
+        $("#selectArticulo").change(function() {
+            var articuloId = $(this).val();
+            sessionStorage.setItem('ultimoArticuloId', articuloId);
+            obtenerDatosEdificio(articuloId);
+        });
+    
+        var ultimoArticuloId = sessionStorage.getItem('ultimoArticuloId');
+        if (ultimoArticuloId) {
+            $("#selectArticulo").val(ultimoArticuloId);
+            obtenerDatosEdificio(ultimoArticuloId);
+        }
+    
+        $("#edificioForm").on('submit', function(event) {
+            event.preventDefault();
+    
+            $.ajax({
+                url: $(this).attr('action'),
+                type: $(this).attr('method'),
+                data: new FormData(this),
+                processData: false,
+                contentType: false,
+                success: function(response) {
+                    $("#successMessage").show().delay(3000).fadeOut();
+                }
+            });
+        });
 
         // Convertir scroll vertical en horizontal ############################
         var $tableContainer = $("#table-container");

@@ -638,44 +638,47 @@ def consultaMap(request):
         articulos_mapa = models.Database.objects.filter(categoria=categoria_mapa)
         
         return render(request, 'admin/mapa_form.html', {'articulos_mapa': articulos_mapa})
-    
 
-# #Editar la informacion del Mapa
-# def editar_articulo(request, articulo_id):
-#     if request.method == 'POST':
-#         try:
-#             articulo = get_object_or_404(Database, pk=articulo_id)
-#             articulo.titulo = request.POST.get('titulo')
-#             articulo.informacion = request.POST.get('informacion')
-#             # Ajusta según los campos que necesites actualizar
-#             articulo.save()
+def obtenerEdificio(request):
+    if request.method == 'GET':
+        edificio_id = request.GET.get('id')
+        if (edificio_id):
+            edificio = get_object_or_404(models.Database, id=edificio_id)
+            data = {
+                'id': edificio.id,
+                'titulo': edificio.titulo,
+                'informacion': edificio.informacion,
+                'imagen_url': edificio.imagenes.url if edificio.imagenes else None,
+            }
+            return JsonResponse(data)
+    return JsonResponse({'error': 'Invalid request'}, status=400)
 
-#             return JsonResponse({'success': True, 'message': 'El artículo ha sido actualizado correctamente.'}, status=200)
-#         except Exception as e:
-#             return JsonResponse({'success': False, 'message': f'Ocurrió un error al intentar actualizar el artículo: {str(e)}'}, status=400)
-    
-#     else:
-#         return JsonResponse({'success': False, 'message': 'Método no permitido'}, status=405)
-    
-#     def crear_articulo(request):
-#         if request.method == 'POST':
-#             try:
-#                 tituloPOST = request.POST.get('titulo')
-#                 informacionPOST = request.POST.get('informacion')
-#                 # Ajusta según los campos y validaciones necesarias
-#                 nuevo_articulo = Database(
-#                     titulo=tituloPOST,
-#                     informacion=informacionPOST,
-#                     categoria_id=1  # Aquí debes asignar el ID correcto de la categoría "Mapa" en tu base de datos
-#                 )
-#                 nuevo_articulo.save()
+def crearEditar(request):
+    if request.method == 'POST':
+        edificio_id = request.POST.get('edificio_id')
+        titulo = request.POST.get('titulo')
+        informacion = request.POST.get('informacion')
+        categoria = models.Categorias.objects.get(categoria="Mapa")
+        imagen = request.FILES.get('imagenes')
 
-#                 return JsonResponse({'success': True, 'message': 'El artículo ha sido creado correctamente.'}, status=200)
-#             except Exception as e:
-#                 return JsonResponse({'success': False, 'message': f'Ocurrió un error al intentar crear el artículo: {str(e)}'}, status=400)
-#         else:
-#             return JsonResponse({'success': False, 'message': 'Método no permitido'}, status=405)
-    
+        if edificio_id:
+            # Editar edificio existente
+            edificio = get_object_or_404(models.Database, id=edificio_id)
+            edificio.titulo = titulo
+            edificio.informacion = informacion
+            if imagen:
+                edificio.imagenes = imagen
+            edificio.save()
+        else:
+            # Crear nuevo edificio
+            models.Database.objects.create(
+                categoria=categoria,
+                titulo=titulo,
+                informacion=informacion,
+                imagenes=imagen
+            )
+    return redirect('consultaMap')
+
 @login_required
 @never_cache
 def mapa_form(request):
