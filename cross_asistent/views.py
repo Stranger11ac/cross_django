@@ -603,7 +603,6 @@ def editar_usuario(request, user_id):
     return redirect('vista_programador')
 
 
-<<<<<<< HEAD
 def forms_admin(request):
     return render(request, 'admin/vista_formularios.html')
 
@@ -617,7 +616,7 @@ from django.shortcuts import render
 
 def mapa2(request):
     return render(request, 'mapa2.html')
-=======
+
 @login_required
 @never_cache
 def admin_blogs(request):
@@ -715,4 +714,3 @@ def crearEditar(request):
 @never_cache
 def mapa_form(request):
     return render(request, 'admin/mapa_form.html')
->>>>>>> d3a91a2c4f193b97d02f2ee408369f75243aa032
