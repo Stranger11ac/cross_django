@@ -39,7 +39,7 @@ $(document).ready(function () {
         });
 
         // Envia el formulario al chat con un enter ###############################
-        $("#question").keydown(chatSubmit);
+        $("#question").keydown(submitChat);
 
         // Vista de Programador
         // Agrega la clase active al banner con la id mas baja #######################################
@@ -61,21 +61,18 @@ $(document).ready(function () {
         }
 
         // iniciar sesion ####################################################
-        $("#singinForm").submit(singInUp);
-        $("#signupForm").submit(singInUp);
+        $("#singinForm").submit(jsonSubmit);
+        $("#signupForm").submit(jsonSubmit);
+        // Crea usuario nuevo desde programador ####################################
+        $("#createuserprog").submit(jsonSubmit);
+        // Registrar un nuevo articulo con TinyMCE ##################################
+        $("#formularioArticulo").submit(jsonSubmit);
 
-        // generate password random
-        // console.log($('[data-input_pass^="generatePass"]'));
-
-        // generar contraseña para usuarios nuevos
-        var pass_random = generarPassAleatoria(8);
-        $("#pass_newuser").val(pass_random);
-
-        // Editar usuario
+        // Editar/Crear usuario
         // generar nueva contraseña aleatoria ##################################
         $('button[data-editpass="edit_newpass"]').on("click", function () {
             $(this).addClass("active");
-            var newRandomPass = generarPassAleatoria(8);
+            var newRandomPass = cadenaRandom(8, caracteres);
             var editInputId = $(this).data("editinput");
             setTimeout(() => {
                 $(this).removeClass("active");
@@ -85,8 +82,62 @@ $(document).ready(function () {
                 .focus();
         });
 
+<<<<<<< HEAD
         // Registrar un nuevo articulo con TinyMCE ##################################
         $("#formularioArticulo").submit(articleForm);
+
+        //  ##################################
+        function obtenerDatosEdificio(articuloId) {
+            if (articuloId) {
+                $.ajax({
+                    url: "/obtenerEdificio/",
+                    type: 'GET',
+                    data: { 'id': articuloId },
+                    success: function(data) {
+                        $("#edificio_id").val(data.id);
+                        $("#titulo").val(data.titulo);
+                        $("#informacion").val(data.informacion);
+                        if (data.imagen_url) {
+                            $("#imagen_actual").attr("src", data.imagen_url).show();
+                        } else {
+                            $("#imagen_actual").hide();
+                        }
+                    }
+                });
+            } else {
+                $("#edificio_id").val('');
+                $("#titulo").val('');
+                $("#informacion").val('');
+                $("#imagen_actual").hide();
+            }
+        }
+    
+        $("#selectArticulo").change(function() {
+            var articuloId = $(this).val();
+            sessionStorage.setItem('ultimoArticuloId', articuloId);
+            obtenerDatosEdificio(articuloId);
+        });
+    
+        var ultimoArticuloId = sessionStorage.getItem('ultimoArticuloId');
+        if (ultimoArticuloId) {
+            $("#selectArticulo").val(ultimoArticuloId);
+            obtenerDatosEdificio(ultimoArticuloId);
+        }
+    
+        $("#edificioForm").on('submit', function(event) {
+            event.preventDefault();
+    
+            $.ajax({
+                url: $(this).attr('action'),
+                type: $(this).attr('method'),
+                data: new FormData(this),
+                processData: false,
+                contentType: false,
+                success: function(response) {
+                    $("#successMessage").show().delay(3000).fadeOut();
+                }
+            });
+        });
 
         // Convertir scroll vertical en horizontal ############################
         var $tableContainer = $("#table-container");
@@ -116,21 +167,32 @@ $(document).ready(function () {
         $(window).on("resize", function () {
             toggleWheelEvent();
         });
+=======
+        // $("#edificio").change(function() {
+        //     $("#filtroEdificio").submit();
+        // });
+>>>>>>> 3f89d094b41d807cad7ec02bc0e574c22bbd6451
     } catch (error) {
         console.log("Error Inesperado: ", error);
-        alertSToast("center", 8000, "error", `😥 Ah ocurrido un error JQ. ${error}`);
+        alertSToast("center", 8000, "error", `😥 Ah ocurrido un error JQ.`);
     }
 });
 
-// Funciones JAVASCRIPT ###########################
+// ############################################################################
+// ########################### Funciones JAVASCRIPT ###########################
+// ############################################################################
+
 // Cerrar la sesion ##########################################################
 if (document.querySelector("main").classList.contains("main_container")) {
     window.location.href = "/logout";
 }
 
 // Crear una cadena aleatoria de la longitud que se dese ###########################
-function generarCadenaAleatoria(longitud) {
-    var caracteres = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+var alfabetico = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+var alfanumerico = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+var caracteres = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_-%$#@!*&^.";
+
+function cadenaRandom(longitud, caracteres) {
     var cadenaAleatoria = "";
     for (var i = 0; i < longitud; i++) {
         var indice = Math.floor(Math.random() * caracteres.length);
@@ -139,20 +201,10 @@ function generarCadenaAleatoria(longitud) {
     return cadenaAleatoria;
 }
 
-function generarPassAleatoria(longitud) {
-    var caracteres = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_-%$#@!*&^.";
-    var cadenaAleatoria = "";
-    for (var i = 0; i < longitud; i++) {
-        var indice = Math.floor(Math.random() * caracteres.length);
-        cadenaAleatoria += caracteres.charAt(indice);
-    }
-    return cadenaAleatoria;
-}
-
-function chatSubmit(e) {
-    e.preventDefault();
-    if (e.key === "Enter") {
-        if (e.shiftKey) {
+function submitChat(event) {
+    event.preventDefault();
+    if (event.key === "Enter") {
+        if (event.shiftKey) {
             const cursorPos = this.selectionStart;
             const textBefore = this.value.substring(0, cursorPos);
             const textAfter = this.value.substring(cursorPos);
@@ -160,17 +212,22 @@ function chatSubmit(e) {
             this.selectionStart = cursorPos + 1;
             this.selectionEnd = cursorPos + 1;
         } else {
-            document.getElementById("chatForm_submit").click();
+            chatForm_submit.click();
         }
     }
 }
 
 // Funcion de iniciar secion y Registrar nuevo Usuario ######################################################################
-function singInUp(e) {
+function jsonSubmit(e) {
     e.preventDefault();
+    const timerOut = 6000;
     const thisForm = e.target;
     const formData = new FormData(thisForm);
-    const timerOut = 6000;
+
+    if (formData.has("contenidoWord")) {
+        const contenidoTiny = tinymce.activeEditor.getContent();
+        formData.set("contenidoWord", contenidoTiny);
+    }
 
     fetch(thisForm.action, {
         method: "POST",
@@ -191,10 +248,10 @@ function singInUp(e) {
         .then((data) => {
             dataMessage = data.message;
             if (data.success) {
+                thisForm.reset();
                 if (data.functionForm == "singin") {
                     window.location.href = data.redirect_url;
                 } else {
-                    thisForm.reset();
                     alertSToast("center", timerOut + 4000, "success", dataMessage, function () {
                         location.reload();
                     });
@@ -211,97 +268,18 @@ function singInUp(e) {
         });
 }
 
-// Functionamiento de TinyMCE #################################################################
-tinymce.init({
-    selector: "#mainTiny",
-    language: "es_MX",
-    branding: false,
-    plugins:
-        "advlist autolink lists link image charmap preview anchor searchreplace visualblocks code fullscreen insertdatetime media table code help wordcount quickbars image pagebreak",
-    menubar: "file edit view format table",
-    menu: {
-        file: { title: "File", items: "newdocument restoredraft | preview | print" },
-        edit: { title: "Edit", items: "undo redo | cut copy paste | selectall | searchreplace" },
-        view: { title: "View", items: "visualaid visualchars visualblocks | spellchecker | preview fullscreen" },
-        format: {
-            title: "Format",
-            items: "bold italic underline strikethrough superscript subscript | styles blockformats align | removeformat",
-        },
-        table: { title: "Table", items: "inserttable tableprops deletetable | cell row column" },
-    },
-    toolbar:
-        "undo redo | styles formatting forecolor backcolor | alignleft aligncenter alignright alignjustify | bullist numlist | table tabledelete | outdent indent | removeformat | help | image media | insertfile | preview ",
-    quickbars_selection_toolbar: "bold italic | blocks | quicklink blockquote",
-    quickbars_insert_toolbar: "image quicktable | hr pagebreak",
-    quickbars_image_toolbar: "image|alignleft aligncenter alignright | rotateleft rotateright | imageoptions",
-    toolbar_groups: {
-        formatting: {
-            icon: "bold",
-            tooltip: "Formatting",
-            items: "bold italic underline | superscript subscript",
-        },
-    },
-    image_title: true,
-    automatic_uploads: true,
-    file_picker_types: "image",
-    file_picker_callback: (cb, value, meta) => {
-        const input = document.createElement("input");
-        input.setAttribute("type", "file");
-        input.setAttribute("accept", "image/*");
-
-        input.addEventListener("change", (e) => {
-            const file = e.target.files[0];
-            const reader = new FileReader();
-            reader.addEventListener("load", () => {
-                const id = "blobid" + new Date().getTime();
-                const blobCache = tinymce.activeEditor.editorUpload.blobCache;
-                const base64 = reader.result.split(",")[1];
-                const blobInfo = blobCache.create(id, file, base64);
-                blobCache.add(blobInfo);
-
-                cb(blobInfo.blobUri(), { title: file.name });
-            });
-            reader.readAsDataURL(file);
-        });
-
-        input.click();
-    },
-    promotion: false,
-});
-
-// Registrar Articulo ###############################################
-function articleForm(e) {
-    e.preventDefault();
-    const contenidoTiny = tinymce.activeEditor.getContent();
-    const thisForm = e.target;
-    const timerOut = 8000;
-    var formData = new FormData(thisForm);
-    formData.set("contenido", contenidoTiny);
-
-    fetch(thisForm.action, {
-        method: "POST",
-        headers: {
-            "X-CSRFToken": formData.get("csrfmiddlewaretoken"),
-        },
-        body: formData,
-    })
-        .then((response) => response.json())
-        .then((data) => {
-            dataMessage = data.message;
-            if (data.success) {
-                thisForm.reset();
-                alertSToast("center", timerOut + 4000, "success", dataMessage);
-            } else {
-                console.error(dataMessage);
-                alertSToast("top", timerOut + 2000, "warning", dataMessage);
-            }
-        })
-        .catch((error) => {
-            console.error("😥 Error:", error);
-            errorMessage = error.message || "Ocurrió un error. Intente nuevamente. 😥";
-            alertSToast("center", timerOut + 3000, "error", errorMessage);
-        });
-};
+// Función para obtener el token CSRF de manera segura #############################################
+function getCSRFToken() {
+    const csrfCookie = document.querySelector("[name=csrfmiddlewaretoken]").value;
+    return csrfCookie;
+    // const csrfCookie = document.cookie.split(";").find((cookie) => cookie.trim().startsWith("csrftoken="));
+    // if (csrfCookie) {
+    //     return csrfCookie.split("=")[1];
+    // } else {
+    //     console.error("CSRF token not found in cookies.");
+    //     return "";
+    // }
+}
 
 // context menu disabled ####################################
 document.oncontextmenu = function () {

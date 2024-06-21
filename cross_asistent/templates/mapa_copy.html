@@ -1,0 +1,52 @@
+{% extends 'base/widget.html' %}
+{% block title %}Mapa de la UTC 🗺️{% endblock %}
+{% block extra_head %}
+<link href='https://api.mapbox.com/mapbox-gl-js/v2.9.1/mapbox-gl.css' rel='stylesheet' />
+<link rel="stylesheet" href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-directions/v4.1.1/mapbox-gl-directions.css" type="text/css" />
+<style>
+    .directions-control.directions-control-instructions { display: none !important; }
+</style>
+{% endblock %}
+
+{% block content %}
+<main class="full_page" id='map'>
+</main>
+{% endblock %}
+
+{% block scripts_end %}
+<script src='https://api.mapbox.com/mapbox-gl-js/v2.9.1/mapbox-gl.js'></script>
+<script src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-directions/v4.1.1/mapbox-gl-directions.js"></script>
+<script>
+    mapboxgl.accessToken = 'pk.eyJ1Ijoic2FsdmFoZHotMTEiLCJhIjoiY2x3czBoYTJiMDI1OTJqb2VmZzVueG1ocCJ9.dDJweS7MAR5N2U3SF64_Xw';
+    var lng = -100.93662;
+    var lat = 25.55707;
+
+    const map = new mapboxgl.Map({
+        container: 'map',
+        style: 'mapbox://styles/mapbox/streets-v11',
+        center: [lng, lat],
+        zoom: 16,
+    });
+
+    // Añadir un marcador
+    // new mapboxgl.Marker()
+    //     .setLngLat([-100.93483, 25.55475])
+    //     .addTo(map);
+
+    // Añadir control de navegación (zoom y rotación)
+    map.addControl(new mapboxgl.NavigationControl());
+
+    // Añadir funcionalidad de dirección
+    const directions = new MapboxDirections({
+        accessToken: mapboxgl.accessToken,
+        unit: 'metric',
+        profile: 'mapbox/walking'
+    });
+
+    map.addControl(directions, 'top-left');
+
+    // Establecer puntos de inicio y fin
+    // directions.setOrigin([-100.93419, 25.55491]);
+    // directions.setDestination([-100.93476, 25.55480]);
+</script>
+{% endblock %}

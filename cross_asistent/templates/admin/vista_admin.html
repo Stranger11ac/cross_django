@@ -1,8 +1,8 @@
-{% extends 'widget.html' %}
+{% extends 'base/widget.html' %}
 {% block title %}Inicio | Administración{% endblock %}
 {% block link_home %}{% url 'vista_admin' %}{% endblock %}
 {% block link_default %}
-    {% include 'widget_links-admin.html' %}
+    {% include 'base/widget_links-admin.html' %}
 {% endblock %}
 {% block content %}
 <main class="container container-fluid mb-5 {% if not user.is_authenticated %}main_container{% endif %}">

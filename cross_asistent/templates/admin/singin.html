@@ -1,4 +1,4 @@
-{% extends 'widget.html' %}
+{% extends 'base/widget.html' %}
 {% block title %}Administracion | Iniciar Sesion{% endblock %}
 {% block content %}
 <!-- Se modificoc la parte del inicio de sesion para los usuarios que vayan a entrar -->
@@ -6,7 +6,7 @@
     <section class="card col-12 col-md-8 col-xl-6 my-2">
         <div class="card-body">
             <!-- barra de nevegacion de formulario -->
-            <ul class="nav nav-pills nav-justified mb-5" id="ex1" role="tablist">
+            <ul class="nav nav-pills nav-justified mb-4" id="ex1" role="tablist">
                 <li class="nav-item" role="presentation">
                     <a class="nav-link active" id="tab-login" data-mdb-pill-init href="#pills-login"
                         role="tab" aria-controls="pills-login" aria-selected="true">Acceder</a>
@@ -18,18 +18,21 @@
             </ul>
 
             <div class="tab-content">
+                <!-- Ingresar -->
                 <div class="tab-pane fade show active" id="pills-login" role="tabpanel"
                     aria-labelledby="tab-login">
+                    <h3 class="text-center">Iniciar Sesión</h3>
+                    <hr class="hr_divisor mb-5">
                     <form id="singinForm" method="POST" action="{% url 'singin' %}" autocomplete="off">
                         {% csrf_token %}
                         <div data-mdb-input-init class="form-outline mb-4">
-                            <input type="text" id="username" name="username" required
-                                class="form-control" />
+                            <i class="fa-solid fa-circle-user trailing"></i>
+                            <input type="text" id="username" name="username" required class="form-control form-icon-trailing" />
                             <label class="form-label" for="username">Nombre de Usuario</label>
                         </div>
                         <div data-mdb-input-init class="form-outline mb-4">
-                            <input type="password" id="password" name="password" required
-                                class="form-control" />
+                            <i class="fa-solid fa-key trailing"></i>
+                            <input type="password" id="password" name="password" required class="form-control form-icon-trailing" />
                             <label class="form-label" for="password">Password</label>
                         </div>
                         <button type="submit" class="btn btn-primary btn-block">
@@ -37,51 +40,55 @@
                         </button>
                     </form>
                 </div>
+                <!-- Registrar -->
                 <div class="tab-pane fade" id="pills-register" role="tabpanel"
                     aria-labelledby="tab-register">
+                    <h3 class="text-center">Registrate!</h3>
+                    <hr class="hr_divisor mb-5">
                     <form id="signupForm" method="POST" action="{% url 'singup' %}" autocomplete="off">
                         {% csrf_token %}
-                        <!-- Name input -->
-                        <div class="row mb-4">
-                            <div class="col-12 col-md-6 mb-4 mb-md-0">
+                        <div class="row">
+                            <div class="col-12 col-md-6 mb-4">
                                 <div data-mdb-input-init class="form-outline">
-                                    <input type="text" id="first_name" name="first_name" class="form-control" required/>
+                                    <i class="fa-solid fa-address-card trailing"></i>
+                                    <input type="text" id="first_name" name="first_name" class="form-control form-icon-trailing" required/>
                                     <label class="form-label" for="first_name">Nombre:</label>
                                 </div>
                             </div>
-                            <div class="col-12 col-md-6">
+                            <div class="col-12 col-md-6 mb-4">
                                 <div data-mdb-input-init class="form-outline">
-                                    <input type="text" id="last_name" name="last_name" class="form-control" required/>
+                                    <i class="fa-regular fa-address-card trailing"></i>
+                                    <input type="text" id="last_name" name="last_name" class="form-control form-icon-trailing" required/>
                                     <label class="form-label" for="last_name">Apellidos:</label>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Username input -->
                         <div data-mdb-input-init class="form-outline mb-4">
-                            <input type="text" id="usernameUp" name="username" class="form-control" required autocapitalize="off"/>
+                            <i class="fa-solid fa-circle-user trailing"></i>
+                            <input type="text" id="usernameUp" name="username" class="form-control form-icon-trailing" required autocapitalize="off"/>
                             <label class="form-label" for="usernameUp">Nombre de Usuario:</label>
                         </div>
 
-                        <!-- Email input -->
                         <div data-mdb-input-init class="form-outline mb-4">
-                            <input type="email" id="email" name="email" class="form-control" required autocapitalize="off"/>
+                            <i class="fa-regular fa-envelope trailing"></i>
+                            <input type="email" id="email" name="email" class="form-control form-icon-trailing" required autocapitalize="off"/>
                             <label class="form-label" for="email">Email:</label>
                         </div>
 
-                        <!-- Password input -->
                         <div data-mdb-input-init class="form-outline mb-4">
-                            <input type="password" id="password1" name="password1" class="form-control" required/>
+                            <!-- <i class="fa-solid fa-lock trailing"></i> --> <!-- f023 -->
+                            <i class="fa-solid fa-lock-open trailing"></i> <!-- f3c1 -->
+                            <input type="password" id="password1" name="password1" class="form-control form-icon-trailing" required/>
                             <label class="form-label" for="password1">Contraseña:</label>
                         </div>
 
-                        <!-- Repeat Password input -->
                         <div data-mdb-input-init class="form-outline mb-4">
-                            <input type="password" id="password2" name="password2" class="form-control" required/>
+                            <i class="fa-solid fa-key trailing"></i>
+                            <input type="password" id="password2" name="password2" class="form-control form-icon-trailing" required/>
                             <label class="form-label" for="password2">Confirmar Contraseña</label>
                         </div>
 
-                        <!-- Submit button -->
                         <button data-mdb-ripple-init type="submit"
                             class="btn btn-primary btn-block">Registrarme
                         </button>
@@ -92,5 +99,5 @@
     </section>
 </main>
 
-{% include 'widget_footer.html' %}
+{% include 'base/widget_footer.html' %}
 {% endblock %}

@@ -5,12 +5,13 @@ from django.contrib.auth.decorators import login_required
 from django.views.decorators.cache import never_cache
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.models import User
-from django.db import IntegrityError, transaction
+from django.db import IntegrityError
 from django.http import JsonResponse
 from django.conf import settings
-from .forms import crearTarea, PreguntaForm
+from .forms import crearTarea
 from django.http import HttpResponse
 from django.utils import timezone
+from .models import Database, Categorias
 from . import models
 
 import openai
@@ -250,7 +251,6 @@ def map(request):
             'edifcolor': 'red','edifill': 'red',
             'nombre': 'Edificio Docente 2',
             'titulo': 'Tecnologias de la Informacion y Comunicacion',
-            'descripcion': '<h5>Carreras:</h5> <ul>Desarrollo y Gestion de Software Multiplataforma<br>Entornos Virtuales y Negocios Digitales<br>Diseño y Gestion de Redes Logisticas</ul> ',
             'imagen_url': 'img/Edificio_2.webp',
             'coordenadas': [[25.55495, -100.93495], [25.55471, -100.93458], [25.55455, -100.93471], [25.55479, -100.93508]],
             'centro': [25.55474, -100.93482]
@@ -383,16 +383,24 @@ def singinpage(request):
     if request.method == 'POST' and request.headers.get('X-Requested-With') == 'XMLHttpRequest':
         usernamePOST = request.POST.get('username')
         passwordPOST = request.POST.get('password')
-
-        user = authenticate(request, username=usernamePOST, password=passwordPOST)
-        if user is None:
-            return JsonResponse({'success': False, 'functionForm': 'singin','message': 'Revisa el usuario o contraseña 😅. Verifica que tu cuenta esté habilitada'}, status=400)
+        
+        try: user = User.objects.get(username=usernamePOST)
+        except User.DoesNotExist: user = None
+        if user is not None:
+            if not user.is_active:
+                return JsonResponse({'success': False, 'functionForm': 'singin', 'message': '🧐😥😯 UPS! <br> Al parecer tu cuenta esta <u>Inactiva</u>. Tu cuenta será activada si estas autorizado'}, status=400)
+            
+            user = authenticate(request, username=usernamePOST, password=passwordPOST)
+            if user is None:
+                return JsonResponse({'success': False, 'functionForm': 'singin', 'message': 'Revisa el usuario o contraseña 😅.'}, status=400)
+            else:
+                login(request, user)
+                pageRedirect = reverse('vista_admin')
+                if user.is_staff:
+                    pageRedirect = reverse('vista_programador')
+                return JsonResponse({'success': True, 'functionForm': 'singin', 'redirect_url': pageRedirect}, status=200)
         else:
-            login(request, user)
-            pageRedirect = reverse('vista_admin')
-            if user.is_staff:
-                pageRedirect = reverse('vista_programador')
-            return JsonResponse({'success': True, 'functionForm': 'singin','redirect_url': pageRedirect}, status=200)
+            return JsonResponse({'success': False, 'functionForm': 'singin', 'message': 'Usuario no registrado 😅. Vrifica tu nombre de usuario'}, status=400)
     else:
         logout(request)
         return render(request, 'admin/singin.html', {
@@ -621,9 +629,9 @@ def crear_articulo(request):
     if request.method == 'POST':
         try:
             tituloPOST = request.POST.get('titulo')
-            contenidoPOST = request.POST.get('contenido')
             autorPOST = request.POST.get('autor')
-            encabezadoPOST = request.FILES.get('encabezadoImg')#este no
+            contenidoPOST = request.POST.get('contenidoWord')
+            encabezadoPOST = request.FILES.get('encabezadoImg')
 
             articulo = models.Articulos(
                 titulo=tituloPOST,
@@ -638,7 +646,70 @@ def crear_articulo(request):
             return JsonResponse({'success': False, 'message': f'Ocurrio un error😯😥 <br>{str(e)}'}, status=400)
     return JsonResponse({'success': False, 'message': 'Método no permitido'}, status=405)
 
+@login_required
+@never_cache
+def upload_image(request):
+    if request.method == 'POST':
+        try:
+            image_file = request.FILES['file']
+            imagen_articulo = models.ImagenArticulo(imagen=image_file)
+            imagen_articulo.save()
+            image_url = imagen_articulo.imagen.url.replace("/cross_asistent/", "/")
 
+            return JsonResponse({'location': image_url})
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=400)
+    return JsonResponse({'error': 'Error al subir la imagen'}, status=400)
+
+
+
+#Consulta para informacion del Mapa##################
+def consultaMap(request):
+        categoria_mapa =models. Categorias.objects.get(categoria="Mapa")
+        
+        articulos_mapa = models.Database.objects.filter(categoria=categoria_mapa)
+        
+        return render(request, 'admin/mapa_form.html', {'articulos_mapa': articulos_mapa})
+
+def obtenerEdificio(request):
+    if request.method == 'GET':
+        edificio_id = request.GET.get('id')
+        if (edificio_id):
+            edificio = get_object_or_404(models.Database, id=edificio_id)
+            data = {
+                'id': edificio.id,
+                'titulo': edificio.titulo,
+                'informacion': edificio.informacion,
+                'imagen_url': edificio.imagenes.url if edificio.imagenes else None,
+            }
+            return JsonResponse(data)
+    return JsonResponse({'error': 'Invalid request'}, status=400)
+
+def crearEditar(request):
+    if request.method == 'POST':
+        edificio_id = request.POST.get('edificio_id')
+        titulo = request.POST.get('titulo')
+        informacion = request.POST.get('informacion')
+        categoria = models.Categorias.objects.get(categoria="Mapa")
+        imagen = request.FILES.get('imagenes')
+
+        if edificio_id:
+            # Editar edificio existente
+            edificio = get_object_or_404(models.Database, id=edificio_id)
+            edificio.titulo = titulo
+            edificio.informacion = informacion
+            if imagen:
+                edificio.imagenes = imagen
+            edificio.save()
+        else:
+            # Crear nuevo edificio
+            models.Database.objects.create(
+                categoria=categoria,
+                titulo=titulo,
+                informacion=informacion,
+                imagenes=imagen
+            )
+    return redirect('consultaMap')
 
 @login_required
 @never_cache
