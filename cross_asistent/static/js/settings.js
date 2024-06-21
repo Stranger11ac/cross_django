@@ -199,3 +199,54 @@ function alertSToast(posittionS, timerS, iconS, titleS, didDestroyS) {
 }
 
 // alertSToast('top', 8000, 'success', '<br>lo normal');
+
+function obtenerDatosEdificio(articuloId) {
+    if (articuloId) {
+        $.ajax({
+            url: "/obtenerEdificio/",
+            type: 'GET',
+            data: { 'id': articuloId },
+            success: function(data) {
+                $("#edificio_id").val(data.id);
+                $("#titulo").val(data.titulo);
+                $("#informacion").val(data.informacion);
+                if (data.imagen_url) {
+                    $("#imagen_actual").attr("src", data.imagen_url).show();
+                } else {
+                    $("#imagen_actual").hide();
+                }
+            }
+        });
+    } else {
+        $("#edificio_id").val('');
+        $("#titulo").val('');
+        $("#informacion").val('');
+        $("#imagen_actual").hide();
+    }
+}
+
+$("#selectArticulo").change(function() {
+    var articuloId = $(this).val();
+    sessionStorage.setItem('ultimoArticuloId', articuloId);
+    obtenerDatosEdificio(articuloId);
+});
+
+var ultimoArticuloId = sessionStorage.getItem('ultimoArticuloId');
+if (ultimoArticuloId) {
+    $("#selectArticulo").val(ultimoArticuloId);
+    obtenerDatosEdificio(ultimoArticuloId);
+}
+
+$("#edificioForm").on('submit', function(event) {
+    event.preventDefault();
+    
+    var formData = new FormData(this); 
+
+    $.ajax({
+        url: $(this).attr('action'),
+        type: $(this).attr('method'),
+        data: formData,
+        contentType: false,
+        processData: false,
+    });
+});
