@@ -30,17 +30,6 @@ class Sugerencias_preg(models.Model):
     def __str__(self):
         return f"pregunta #:{self.pregunta_num.id} sugiere: {self.sugerente}"
 
-class Articulos(models.Model):
-    creacion = models.DateField(auto_now_add=True, blank=False)
-    actualizacion = models.DateField(auto_now=True, blank=True, null=True)
-    titulo = models.CharField(max_length=200, blank=False)
-    contenido = models.TextField(blank=False)
-    encabezado =  models.ImageField(upload_to='cross_asistent/static/files/imagenes/blogs/', blank=True, null=True)
-    autor = models.CharField(max_length=150, blank=False)
-    
-    def __str__(self):
-        return f"{self.titulo} - {self.autor}"
-
 class Banners(models.Model):
     titulo = models.CharField(max_length=40, blank=False)
     descripcion = models.CharField(max_length=350, blank=False)
@@ -69,3 +58,17 @@ class Tareas(models.Model):
     
     def __str__(self):
         return f"{self.tarea} - de:{self.propietario.username}"
+
+class Articulos(models.Model):
+    creacion = models.DateField(auto_now_add=True, blank=False)
+    actualizacion = models.DateField(auto_now=True, blank=True, null=True)
+    titulo = models.CharField(max_length=200, blank=False)
+    contenido = models.TextField(blank=False)
+    encabezado =  models.ImageField(upload_to='cross_asistent/static/files/imagenes/blogs/', blank=True, null=True)
+    autor = models.CharField(max_length=150, blank=False)
+    
+    def __str__(self):
+        return f"{self.titulo} - {self.autor}"
+
+class ImagenArticulo(models.Model):
+    imagen = models.ImageField(upload_to='cross_asistent/static/files/imagenes/blogs/imgs_blogs/', blank=True, null=True)
