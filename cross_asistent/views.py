@@ -115,7 +115,7 @@ def chat_view(request):
 
                 if informacion_relevante:
                     # Si hay información relevante, pasarla a OpenAI para generar una respuesta
-                    SYSTEM_PROMPT = f"Utiliza emojis sutilmente. Eres un asistente entusiasta de la Universidad Tecnologica de Coahuila. Aquí está la información encontrada: {informacion_relevante}"
+                    SYSTEM_PROMPT = f"Utiliza emojis sutilmente. Eres un asistente de la Universidad Tecnologica de Coahuila. Aquí está la información encontrada: {informacion_relevante}"
                     answer = obtener_respuesta_openai(question, SYSTEM_PROMPT)
                 else:
                     # Si no hay información relevante, usar GPT-3.5 Turbo para disculparse

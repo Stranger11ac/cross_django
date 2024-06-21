@@ -127,8 +127,8 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 
-LOGIN_URL = '/administracion/acceder'
-LOGOUT_URL = '/administracion/acceder'
+LOGIN_URL = '/acceder'
+LOGOUT_URL = '/acceder'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field

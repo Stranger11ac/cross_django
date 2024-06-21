@@ -67,7 +67,19 @@
                 <!-- autoplay
                 animation-name="Wave" -->
             </model-viewer>
-            <!-- button chat -->
+            <div class="box_asistent_controls">
+                <div class="controls_buttons">
+                    <button type="button" class="btn btn_controls btn_secondary controls_btn_keyboard toggle_controls">
+                        <i class="fa-regular fa-keyboard"></i>
+                    </button>
+                    <button type="button" class="btn btn_controls btn_secondary controls_btn_microphone">
+                        <i class="fa-solid fa-comment" id="btn_controls_icon"></i>
+                    </button>
+                    <button type="button" class="btn btn_controls btn_secondary controls_btn_close">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+            </div>
             <form id="chatForm" class="controls_input" method="POST" action="{% url 'chatbot' %}">
                 {% csrf_token %}
                 <div class="position-relative bottom-0 end-0">
@@ -93,7 +105,7 @@
     </section>
 </main>
 
-<!-- Modal QR -->
+<!-- Modal -->
 <div class="modal fade" id="modalqr" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content text-center">
@@ -124,17 +136,17 @@
     <script>
         chatForm.addEventListener('submit', function(e) {
             e.preventDefault();
-            const pregunta = document.txtQuestion.value;
-            const FormTarget = e.target;
+            const pregunta = txtQuestion.value;
+            const chatForm = e.target;
             this.reset();
 
-            fetch(FormTarget.action, {
+            fetch(chatForm.action, {
                 method: 'POST',
                 body: JSON.stringify({ question: pregunta }),
                 headers: {
                     'Content-Type': 'application/json',
                     'X-Requested-With': 'XMLHttpRequest',
-                    'X-CSRFToken': FormTarget.querySelector('[name=csrfmiddlewaretoken]').value
+                    'X-CSRFToken': chatForm.querySelector('[name=csrfmiddlewaretoken]').value
                 }
             })
             .then(response => {

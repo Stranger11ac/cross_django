@@ -22,9 +22,7 @@ $(document).ready(function () {
 
         $(".toggle_controls").click(() => {
             $(".asistent_group.open").toggleClass("close_controls open_keyboard open_controls");
-            // Detectar si es un dispositivo móvil
             const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-            // Solo ejecutar el setTimeout si no es un dispositivo móvil
             if (!isMobile) {
                 setTimeout(function () {
                     $(".controls_input #question").focus();
@@ -37,9 +35,6 @@ $(document).ready(function () {
             $(".btn_controls").removeClass("btn_detail").addClass("btn_secondary");
             $("#btn_controls_icon").addClass("fa-comment").removeClass("fa-microphone");
         });
-
-        // Envia el formulario al chat con un enter ###############################
-        $("#question").keydown(submitChat);
 
         // Vista de Programador
         // Agrega la clase active al banner con la id mas baja #######################################
@@ -91,9 +86,9 @@ $(document).ready(function () {
     }
 });
 
-// ############################################################################
-// ########################### Funciones JAVASCRIPT ###########################
-// ############################################################################
+// ################################################################################
+// ############################# Funciones JAVASCRIPT #############################
+// ################################################################################
 
 // Cerrar la sesion ##########################################################
 if (document.querySelector("main").classList.contains("main_container")) {
@@ -112,22 +107,6 @@ function cadenaRandom(longitud, caracteres) {
         cadenaAleatoria += caracteres.charAt(indice);
     }
     return cadenaAleatoria;
-}
-
-function submitChat(event) {
-    event.preventDefault();
-    if (event.key === "Enter") {
-        if (event.shiftKey) {
-            const cursorPos = this.selectionStart;
-            const textBefore = this.value.substring(0, cursorPos);
-            const textAfter = this.value.substring(cursorPos);
-            this.value = textBefore + "\n" + textAfter;
-            this.selectionStart = cursorPos + 1;
-            this.selectionEnd = cursorPos + 1;
-        } else {
-            chatForm_submit.click();
-        }
-    }
 }
 
 // Funcion de iniciar secion y Registrar nuevo Usuario ######################################################################
@@ -185,13 +164,6 @@ function jsonSubmit(e) {
 function getCSRFToken() {
     const csrfCookie = document.querySelector("[name=csrfmiddlewaretoken]").value;
     return csrfCookie;
-    // const csrfCookie = document.cookie.split(";").find((cookie) => cookie.trim().startsWith("csrftoken="));
-    // if (csrfCookie) {
-    //     return csrfCookie.split("=")[1];
-    // } else {
-    //     console.error("CSRF token not found in cookies.");
-    //     return "";
-    // }
 }
 
 // context menu disabled ####################################
