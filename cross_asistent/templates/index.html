@@ -147,7 +147,7 @@
             })
             .then(data => {
                 if (data.success) {
-                    var tokendid = generarCadenaAleatoria(5);
+                    var tokendid = cadenaRandom(5, alfabetico);
                     const valID = `uuid${tokendid}`;
 
                     const htmlBlock = `

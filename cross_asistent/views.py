@@ -614,9 +614,9 @@ def crear_articulo(request):
     if request.method == 'POST':
         try:
             tituloPOST = request.POST.get('titulo')
-            contenidoPOST = request.POST.get('contenido')
             autorPOST = request.POST.get('autor')
-            encabezadoPOST = request.FILES.get('encabezadoImg')#este no
+            contenidoPOST = request.POST.get('contenidoWord')
+            encabezadoPOST = request.FILES.get('encabezadoImg')
 
             articulo = models.Articulos(
                 titulo=tituloPOST,
@@ -630,6 +630,23 @@ def crear_articulo(request):
         except Exception as e:
             return JsonResponse({'success': False, 'message': f'Ocurrio un error😯😥 <br>{str(e)}'}, status=400)
     return JsonResponse({'success': False, 'message': 'Método no permitido'}, status=405)
+
+@login_required
+@never_cache
+def upload_image(request):
+    if request.method == 'POST':
+        try:
+            image_file = request.FILES['file']
+            imagen_articulo = models.ImagenArticulo(imagen=image_file)
+            imagen_articulo.save()
+            image_url = imagen_articulo.imagen.url.replace("/cross_asistent/", "/")
+
+            return JsonResponse({'location': image_url})
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=400)
+    return JsonResponse({'error': 'Error al subir la imagen'}, status=400)
+
+
 
 #Consulta para informacion del Mapa##################
 def consultaMap(request):

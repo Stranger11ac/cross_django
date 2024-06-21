@@ -24,7 +24,6 @@ $(document).ready(function () {
             $(".asistent_group.open").toggleClass("close_controls open_keyboard open_controls");
             // Detectar si es un dispositivo móvil
             const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-            console.log(navigator.userAgent);
             // Solo ejecutar el setTimeout si no es un dispositivo móvil
             if (!isMobile) {
                 setTimeout(function () {
@@ -40,7 +39,7 @@ $(document).ready(function () {
         });
 
         // Envia el formulario al chat con un enter ###############################
-        $("#question").keydown(chatSubmit);
+        $("#question").keydown(submitChat);
 
         // Vista de Programador
         // Agrega la clase active al banner con la id mas baja #######################################
@@ -62,22 +61,18 @@ $(document).ready(function () {
         }
 
         // iniciar sesion ####################################################
-        $("#singinForm").submit(singInUp);
-        $("#signupForm").submit(singInUp);
-        $("#createuserprog").submit(singInUp);
+        $("#singinForm").submit(jsonSubmit);
+        $("#signupForm").submit(jsonSubmit);
+        // Crea usuario nuevo desde programador ####################################
+        $("#createuserprog").submit(jsonSubmit);
+        // Registrar un nuevo articulo con TinyMCE ##################################
+        $("#formularioArticulo").submit(jsonSubmit);
 
-        // generate password random
-        // console.log($('[data-input_pass^="generatePass"]'));
-
-        // generar contraseña para usuarios nuevos
-        var pass_random = generarPassAleatoria(8);
-        $("#pass_newuser").val(pass_random);
-
-        // Editar usuario
+        // Editar/Crear usuario
         // generar nueva contraseña aleatoria ##################################
         $('button[data-editpass="edit_newpass"]').on("click", function () {
             $(this).addClass("active");
-            var newRandomPass = generarPassAleatoria(8);
+            var newRandomPass = cadenaRandom(8, caracteres);
             var editInputId = $(this).data("editinput");
             setTimeout(() => {
                 $(this).removeClass("active");
@@ -87,56 +82,30 @@ $(document).ready(function () {
                 .focus();
         });
 
-        // Registrar un nuevo articulo con TinyMCE ##################################
-        $("#formularioArticulo").submit(articleForm);
-
         // $("#edificio").change(function() {
         //     $("#filtroEdificio").submit();
         // });
-
-        // Convertir scroll vertical en horizontal ############################
-        var $tableContainer = $("#table-container");
-        if (!$tableContainer.length) {
-            return;
-        }
-        function isOverflowing($element) {
-            var element = $element[0];
-            return element.scrollWidth > element.clientWidth;
-        }
-        function handleWheelEvent(e) {
-            if (e.originalEvent.deltaY > 0) {
-                this.scrollLeft += 300;
-            } else {
-                this.scrollLeft -= 300;
-            }
-            e.preventDefault();
-        }
-        function toggleWheelEvent() {
-            if (isOverflowing($tableContainer)) {
-                $tableContainer.on("wheel", handleWheelEvent);
-            } else {
-                $tableContainer.off("wheel", handleWheelEvent);
-            }
-        }
-        toggleWheelEvent();
-        $(window).on("resize", function () {
-            toggleWheelEvent();
-        });
     } catch (error) {
         console.log("Error Inesperado: ", error);
-        alertSToast("center", 8000, "error", `😥 Ah ocurrido un error JQ. ${error}`);
+        alertSToast("center", 8000, "error", `😥 Ah ocurrido un error JQ.`);
     }
 });
 
-// Funciones JAVASCRIPT ###########################
+// ############################################################################
+// ########################### Funciones JAVASCRIPT ###########################
+// ############################################################################
+
 // Cerrar la sesion ##########################################################
 if (document.querySelector("main").classList.contains("main_container")) {
     window.location.href = "/logout";
 }
 
 // Crear una cadena aleatoria de la longitud que se dese ###########################
-function generarCadenaAleatoria(longitud) {
-    var caracteres = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+var alfabetico = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+var alfanumerico = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+var caracteres = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_-%$#@!*&^.";
+
+function cadenaRandom(longitud, caracteres) {
     var cadenaAleatoria = "";
     for (var i = 0; i < longitud; i++) {
         var indice = Math.floor(Math.random() * caracteres.length);
@@ -145,20 +114,10 @@ function generarCadenaAleatoria(longitud) {
     return cadenaAleatoria;
 }
 
-function generarPassAleatoria(longitud) {
-    var caracteres = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_-%$#@!*&^.";
-    var cadenaAleatoria = "";
-    for (var i = 0; i < longitud; i++) {
-        var indice = Math.floor(Math.random() * caracteres.length);
-        cadenaAleatoria += caracteres.charAt(indice);
-    }
-    return cadenaAleatoria;
-}
-
-function chatSubmit(e) {
-    e.preventDefault();
-    if (e.key === "Enter") {
-        if (e.shiftKey) {
+function submitChat(event) {
+    event.preventDefault();
+    if (event.key === "Enter") {
+        if (event.shiftKey) {
             const cursorPos = this.selectionStart;
             const textBefore = this.value.substring(0, cursorPos);
             const textAfter = this.value.substring(cursorPos);
@@ -167,17 +126,21 @@ function chatSubmit(e) {
             this.selectionEnd = cursorPos + 1;
         } else {
             chatForm_submit.click();
-            // document.getElementById("chatForm_submit").click();
         }
     }
 }
 
 // Funcion de iniciar secion y Registrar nuevo Usuario ######################################################################
-function singInUp(e) {
+function jsonSubmit(e) {
     e.preventDefault();
+    const timerOut = 6000;
     const thisForm = e.target;
     const formData = new FormData(thisForm);
-    const timerOut = 6000;
+
+    if (formData.has("contenidoWord")) {
+        const contenidoTiny = tinymce.activeEditor.getContent();
+        formData.set("contenidoWord", contenidoTiny);
+    }
 
     fetch(thisForm.action, {
         method: "POST",
@@ -218,38 +181,17 @@ function singInUp(e) {
         });
 }
 
-// Registrar Articulo ###############################################
-function articleForm(e) {
-    e.preventDefault();
-    const contenidoTiny = tinymce.activeEditor.getContent();
-    const thisForm = e.target;
-    const timerOut = 8000;
-    var formData = new FormData(thisForm);
-    formData.set("contenido", contenidoTiny);
-
-    fetch(thisForm.action, {
-        method: "POST",
-        headers: {
-            "X-CSRFToken": formData.get("csrfmiddlewaretoken"),
-        },
-        body: formData,
-    })
-        .then((response) => response.json())
-        .then((data) => {
-            dataMessage = data.message;
-            if (data.success) {
-                thisForm.reset();
-                alertSToast("center", timerOut + 4000, "success", dataMessage);
-            } else {
-                console.error(dataMessage);
-                alertSToast("top", timerOut + 2000, "warning", dataMessage);
-            }
-        })
-        .catch((error) => {
-            console.error("😥 Error:", error);
-            errorMessage = error.message || "Ocurrió un error. Intente nuevamente. 😥";
-            alertSToast("center", timerOut + 3000, "error", errorMessage);
-        });
+// Función para obtener el token CSRF de manera segura #############################################
+function getCSRFToken() {
+    const csrfCookie = document.querySelector("[name=csrfmiddlewaretoken]").value;
+    return csrfCookie;
+    // const csrfCookie = document.cookie.split(";").find((cookie) => cookie.trim().startsWith("csrftoken="));
+    // if (csrfCookie) {
+    //     return csrfCookie.split("=")[1];
+    // } else {
+    //     console.error("CSRF token not found in cookies.");
+    //     return "";
+    // }
 }
 
 // context menu disabled ####################################
