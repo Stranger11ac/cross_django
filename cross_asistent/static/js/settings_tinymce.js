@@ -81,4 +81,29 @@ tinymce.init({
     autosave_interval: "20m",
     promotion: false,
     insertdatetime_formats: ["%d-%m-%Y", "%Y-%m-%d", "%H:%M:%S", "%I:%M:%S %p"],
+    beforeunload: function (event) {
+        const editorContent = tinymce.get("mainTiny").getContent();
+        if (editorContent.trim() !== "") {
+            event.preventDefault();
+            event.returnValue = ""; // Evitar mensaje por defecto del navegador
+            Swal.fire({
+                title: "¿Estás seguro que quieres salir?",
+                text: "Si sales de la página, los cambios realizados en el editor se perderán.",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Salir",
+                cancelButtonText: "Cancelar",
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Si confirman la salida, no hacer nada (se cierra la página)
+                } else {
+                    // Si cancelan, evitar que el evento beforeunload cierre la página
+                    event.preventDefault();
+                    return false;
+                }
+            });
+        }
+    },
 });
