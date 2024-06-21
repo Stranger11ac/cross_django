@@ -82,9 +82,96 @@ $(document).ready(function () {
                 .focus();
         });
 
+<<<<<<< HEAD
+        // Registrar un nuevo articulo con TinyMCE ##################################
+        $("#formularioArticulo").submit(articleForm);
+
+        //  ##################################
+        function obtenerDatosEdificio(articuloId) {
+            if (articuloId) {
+                $.ajax({
+                    url: "/obtenerEdificio/",
+                    type: 'GET',
+                    data: { 'id': articuloId },
+                    success: function(data) {
+                        $("#edificio_id").val(data.id);
+                        $("#titulo").val(data.titulo);
+                        $("#informacion").val(data.informacion);
+                        if (data.imagen_url) {
+                            $("#imagen_actual").attr("src", data.imagen_url).show();
+                        } else {
+                            $("#imagen_actual").hide();
+                        }
+                    }
+                });
+            } else {
+                $("#edificio_id").val('');
+                $("#titulo").val('');
+                $("#informacion").val('');
+                $("#imagen_actual").hide();
+            }
+        }
+    
+        $("#selectArticulo").change(function() {
+            var articuloId = $(this).val();
+            sessionStorage.setItem('ultimoArticuloId', articuloId);
+            obtenerDatosEdificio(articuloId);
+        });
+    
+        var ultimoArticuloId = sessionStorage.getItem('ultimoArticuloId');
+        if (ultimoArticuloId) {
+            $("#selectArticulo").val(ultimoArticuloId);
+            obtenerDatosEdificio(ultimoArticuloId);
+        }
+    
+        $("#edificioForm").on('submit', function(event) {
+            event.preventDefault();
+    
+            $.ajax({
+                url: $(this).attr('action'),
+                type: $(this).attr('method'),
+                data: new FormData(this),
+                processData: false,
+                contentType: false,
+                success: function(response) {
+                    $("#successMessage").show().delay(3000).fadeOut();
+                }
+            });
+        });
+
+        // Convertir scroll vertical en horizontal ############################
+        var $tableContainer = $("#table-container");
+        if (!$tableContainer.length) {
+            return;
+        }
+        function isOverflowing($element) {
+            var element = $element[0];
+            return element.scrollWidth > element.clientWidth;
+        }
+        function handleWheelEvent(e) {
+            if (e.originalEvent.deltaY > 0) {
+                this.scrollLeft += 300;
+            } else {
+                this.scrollLeft -= 300;
+            }
+            e.preventDefault();
+        }
+        function toggleWheelEvent() {
+            if (isOverflowing($tableContainer)) {
+                $tableContainer.on("wheel", handleWheelEvent);
+            } else {
+                $tableContainer.off("wheel", handleWheelEvent);
+            }
+        }
+        toggleWheelEvent();
+        $(window).on("resize", function () {
+            toggleWheelEvent();
+        });
+=======
         // $("#edificio").change(function() {
         //     $("#filtroEdificio").submit();
         // });
+>>>>>>> 3f89d094b41d807cad7ec02bc0e574c22bbd6451
     } catch (error) {
         console.log("Error Inesperado: ", error);
         alertSToast("center", 8000, "error", `😥 Ah ocurrido un error JQ.`);
