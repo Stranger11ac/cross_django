@@ -2,10 +2,11 @@
 {% block title %}Inicio | Administracion{% endblock %}
 {% block link_home %}href="{% url 'dashb_admin' %}"{% endblock %}
 {% block link_default %}
-    {% include 'admin/widget_links-admin.html' %}
+{% include 'widget_links-admin.html' %}
 {% endblock %}
 {% block content %}
-<main class="container container-fluid mb-5 {% if not user.is_authenticated %}main_container{% endif %}">
+<main
+    class="container container-fluid mb-5 {% if not user.is_authenticated %}main_container{% endif %}">
     <!-- Jumbotron -->
     <div class="p-5 text-center bg-body-tertiary">
         <h1 class="mb-3">Administracion</h1>
@@ -20,8 +21,10 @@
                 <div class="card-header">Crear Tarea</div>
                 <div class="card-body">
                     <form method="POST">
-                        {% csrf_token %} {{form_crearTarea.as_p}}
-                        <button data-mdb-ripple-init type="submit" class="btn btn-primary btn-block">Crear</button>
+                        {% csrf_token %}
+                        {{form_crearTarea.as_p}}
+                        <button data-mdb-ripple-init type="submit"
+                            class="btn btn-primary btn-block">Crear</button>
                     </form>
                 </div>
             </div>
@@ -33,24 +36,22 @@
                 <li class="list-group-item px-3">
                     <div class="d-flex justify-content-between">
                         <div class="col-md">
-                            <input
-                            style="height: 60%; aspect-ratio: 1/1;"
-                                type="checkbox"
-                                value="1"
+                            <input style="height: 60%; aspect-ratio: 1/1;" type="checkbox" value="1"
                                 {% if tareaItem.completar %}checked{% endif %}
-                                id="tarea0{{tareaItem.id}}"
-                            />
+                                id="tarea0{{tareaItem.id}}" />
                             {{tareaItem.tarea}}
                         </div>
                         <div>
                             <a href="" class="btn btn-danger btn-floating">
                                 <i class="fa-regular fa-trash-can fa-2x"></i>
                             </a>
-                            <a href="{% url 'tareaView' tareaItem.id %}" class="btn btn_detail btn-floating">
+                            <a href="{% url 'tareaView' tareaItem.id %}"
+                                class="btn btn_detail btn-floating">
                                 <i class="fa-solid fa-pencil fa-2x"></i>
                             </a>
                             <a href="" class="btn btn-secondary btn-floating">
-                                <i class="{% if tareaItem.importante %}text-warning fa-solid{%else%}fa-regular{%endif%} fa-star fa-2x"></i>
+                                <i
+                                    class="{% if tareaItem.importante %}text-warning fa-solid{%else%}fa-regular{%endif%} fa-star fa-2x"></i>
                             </a>
                         </div>
                     </div>

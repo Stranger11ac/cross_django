@@ -9,7 +9,6 @@ from django.db import IntegrityError, transaction
 from django.http import JsonResponse
 from django.conf import settings
 from .forms import crearTarea, PreguntaForm
-from django.forms import modelformset_factory
 from django.http import HttpResponse
 from django.utils import timezone
 from . import models
@@ -140,14 +139,27 @@ def faq(request):
 
 def preguntas_view(request):
     quest_all = models.Database.objects.all()
+    
     if request.method == "POST":
-        form = PreguntaForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect('preguntas') 
+        if request.content_type == 'application/json':
+            try:
+                data = json.loads(request.body)
+                tituloPOST = data['pregunta']
+
+                categoria_preguntas = models.Categorias.objects.get(id=1) 
+
+                pregunta = models.Database(titulo=tituloPOST, categoria=categoria_preguntas)
+                pregunta.save()
+
+                return JsonResponse({'success': True, 'message': 'Gracias por tu pregunta ❤️💕😁👍 '}, status=200)
+            except Exception as e:
+                print(f'Hay un error en: {e}')
+                return JsonResponse({'success': False, 'message': 'La pregunta no se registró :( '}, status=400)
+        else:
+            print('error, no JSON')
+            return HttpResponse('Solicitud no JSON', status=400)
     else:
-        form = PreguntaForm()
-    return render(request, 'frecuentes.html', {'quest_all': quest_all, 'form': form})
+        return render(request, 'frecuentes.html', {'quest_all': quest_all})
 
 def blog(request):
     if not request.user.is_staff:
@@ -349,19 +361,19 @@ def singuppage(request):
         if password1 and password2 and username and email:
             if password1 == password2:
                 if User.objects.filter(username=username).exists():
-                    return JsonResponse({'success': False, 'message': f'El usuario <u>{username}</u> ya existe 😯'}, status=400)
+                    return JsonResponse({'success': False, 'functionForm': 'singup','message': f'El usuario <u>{username}</u> ya existe 😯'}, status=400)
                 if User.objects.filter(email=email).exists():
-                    return JsonResponse({'success': False, 'message': f'El correo electrónico <u>{email}</u> ya está registrado 😯'}, status=400)
+                    return JsonResponse({'success': False, 'functionForm': 'singup','message': f'El correo electrónico <u>{email}</u> ya está registrado 😯'}, status=400)
                 try:
                     newUser = User.objects.create_user(first_name=first_name,last_name=last_name,username=username,password=password1,email=email,is_active=0)
                     newUser.save()
-                    return JsonResponse({'success': True, 'message': '🥳🥳🥳 <br>Usuario creado<br> Tu cuenta está <u>INACTIVA</u>'}, status=200)
+                    return JsonResponse({'success': True, 'functionForm': 'singup','message': '🥳🥳🥳 <br>Usuario creado<br> Tu cuenta está <u>INACTIVA</u>'}, status=200)
                 except IntegrityError:
-                    return JsonResponse({'success': False, 'message': 'Ocurrió un error durante el registro. Intente nuevamente.'}, status=400)
+                    return JsonResponse({'success': False, 'functionForm': 'singup','message': 'Ocurrió un error durante el registro. Intente nuevamente.'}, status=400)
             else:
-                return JsonResponse({'success': False, 'message': 'Las contraseñas no coinciden 😬'}, status=400)
+                return JsonResponse({'success': False, 'functionForm': 'singup','message': 'Las contraseñas no coinciden 😬'}, status=400)
         else:
-            return JsonResponse({'success': False, 'message': 'Datos incompletos 😅'}, status=400)
+            return JsonResponse({'success': False, 'functionForm': 'singup','message': 'Datos incompletos 😅'}, status=400)
     else:
         logout(request)
         return render('singin')
@@ -374,12 +386,13 @@ def singinpage(request):
 
         user = authenticate(request, username=usernamePOST, password=passwordPOST)
         if user is None:
-            return JsonResponse({'success': False, 'message': 'Revisa el usuario o contraseña 😅. Verifica que tu cuenta esté habilitada'}, status=400)
+            return JsonResponse({'success': False, 'functionForm': 'singin','message': 'Revisa el usuario o contraseña 😅. Verifica que tu cuenta esté habilitada'}, status=400)
         else:
             login(request, user)
+            pageRedirect = reverse('vista_admin')
             if user.is_staff:
-                return JsonResponse({'success': True, 'redirect_url': reverse('vista_programador')}, status=200)
-            return JsonResponse({'success': True, 'redirect_url': reverse('vista_admin')}, status=200)
+                pageRedirect = reverse('vista_programador')
+            return JsonResponse({'success': True, 'functionForm': 'singin','redirect_url': pageRedirect}, status=200)
     else:
         logout(request)
         return render(request, 'admin/singin.html', {
@@ -489,7 +502,7 @@ def vista_programador(request):
         'num_preguntas': models.Database.objects.filter().count(),
         'preguntas_sin_responder': models.Database.objects.all(),
     }
-    # Procesar creación de usuario
+    # Crear Nuevo usuario
     if request.method == 'POST':
         username = request.POST.get('username')
         is_staff = request.POST.get('is_staff', False)
@@ -499,13 +512,21 @@ def vista_programador(request):
         email = request.POST.get('email')
         password = request.POST.get('password')
 
-        if username:
-            # Crear usuario
-            new_user = User.objects.create_user(username=username, is_staff=is_staff, is_active=is_active,
-            first_name=first_name, last_name=last_name, email=email)
-            new_user.set_password(password)
-            new_user.save()
-            return redirect('vista_programador')
+        if username and email:
+            if User.objects.filter(username=username).exists():
+                return JsonResponse({'success': False, 'message': f'El usuario <u>{username}</u> ya existe 😯🤔'}, status=400)
+            if User.objects.filter(email=email).exists():
+                return JsonResponse({'success': False, 'message': f'El correo electrónico <u>{email}</u> ya está registrado 😯'}, status=400)
+            try:
+                new_user = User.objects.create_user(username=username, is_staff=is_staff, is_active=is_active,
+                first_name=first_name, last_name=last_name, email=email)
+                new_user.set_password(password)
+                new_user.save()
+                return JsonResponse({'success': True, 'message': 'Usuario creado exitosamente 🥳😬🎈'}, status=200)
+            except IntegrityError:
+                return JsonResponse({'success': False, 'message': 'Ocurrió un error durante el registro. Intente nuevamente.'}, status=400)
+        else:
+            return JsonResponse({'success': False, 'message': 'Datos incompletos 😅😯😥'}, status=400)
 
     return render(request, 'admin/vista_programador.html', contexto)
 
@@ -561,15 +582,20 @@ def editar_usuario(request, user_id):
     user = get_object_or_404(User, id=user_id)
     if request.method == 'POST':
         username = request.POST.get('username')
+        password = request.POST.get('password')
         is_staff = request.POST.get('is_staff') == 'on'
+        
         if username:
             user.username = username
+        if password:
+            user.set_password(password)
         user.is_staff = is_staff
         user.save()
         return redirect('vista_programador')
     return redirect('vista_programador')
 
 
+<<<<<<< HEAD
 def forms_admin(request):
     return render(request, 'admin/vista_formularios.html')
 
@@ -583,3 +609,39 @@ from django.shortcuts import render
 
 def mapa2(request):
     return render(request, 'mapa2.html')
+=======
+@login_required
+@never_cache
+def admin_blogs(request):
+    return render(request, 'admin/blogs.html')
+
+@login_required
+@never_cache
+def crear_articulo(request):
+    if request.method == 'POST':
+        try:
+            tituloPOST = request.POST.get('titulo')
+            contenidoPOST = request.POST.get('contenido')
+            autorPOST = request.POST.get('autor')
+            encabezadoPOST = request.FILES.get('encabezadoImg')#este no
+
+            articulo = models.Articulos(
+                titulo=tituloPOST,
+                contenido=contenidoPOST,
+                autor=autorPOST,
+                encabezado=encabezadoPOST
+            )
+            articulo.save()
+
+            return JsonResponse({'success': True, 'message': 'Excelente 🥳🎈🎉. Tu articulo ya fue publicado. Puedes editarlo cuando gustes. 🧐😊'}, status=200)
+        except Exception as e:
+            return JsonResponse({'success': False, 'message': f'Ocurrio un error😯😥 <br>{str(e)}'}, status=400)
+    return JsonResponse({'success': False, 'message': 'Método no permitido'}, status=405)
+
+
+
+@login_required
+@never_cache
+def mapa_form(request):
+    return render(request, 'admin/mapa_form.html')
+>>>>>>> d3a91a2c4f193b97d02f2ee408369f75243aa032

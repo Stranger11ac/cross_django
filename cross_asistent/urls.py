@@ -26,8 +26,15 @@ urlpatterns = [
     path('administracion/eliminar_usuario/<int:user_id>/', views.eliminar_usuario, name='eliminar_usuario'),
     path('administracion/desactivar_usuario/<int:user_id>/', views.desactivar_usuario, name='desactivar_usuario'),
     path('administracion/export/csv/', views.export_database, name='export_database_to_csv'),
+<<<<<<< HEAD
 
     path('administracion/formularios/', views.forms_admin, name='forms'),
+=======
+    
+    path('administracion/blogs/', views.admin_blogs, name='admin_blogs'),
+    path('administracion/send_blog/', views.crear_articulo, name='send_blog'),
+    path('administracion/mapa/', views.mapa_form, name='admin_forms'),
+>>>>>>> d3a91a2c4f193b97d02f2ee408369f75243aa032
     path('administracion/tarea/<int:tarea_id>/', views.tareaView, name='tareaView'),
 
     # Nueva ruta para mapa2

@@ -44,8 +44,8 @@ $(document).ready(function () {
         // Vista de Programador
         // Agrega la clase active al banner con la id mas baja #######################################
         var elements = $('[id^="bannerid_"]');
-        var minIdElement = null;
         var minIdNumber = Infinity;
+        let minIdElement = null;
 
         elements.each(function () {
             var id = $(this).attr("id");
@@ -61,7 +61,8 @@ $(document).ready(function () {
         }
 
         // iniciar sesion ####################################################
-        $("#singinForm").submit(singinFunction);
+        $("#singinForm").submit(singInUp);
+        $("#signupForm").submit(singInUp);
 
         // generate password random
         // console.log($('[data-input_pass^="generatePass"]'));
@@ -72,16 +73,20 @@ $(document).ready(function () {
 
         // Editar usuario
         // generar nueva contraseña aleatoria ##################################
-        $('button[data-editpass="edit_newpass"]').on('click', function() {
-            $(this).addClass('active');
+        $('button[data-editpass="edit_newpass"]').on("click", function () {
+            $(this).addClass("active");
             var newRandomPass = generarPassAleatoria(8);
-            var editInputId = $(this).data('editinput');
+            var editInputId = $(this).data("editinput");
             setTimeout(() => {
-                $(this).removeClass('active');
+                $(this).removeClass("active");
             }, 1000);
-            $('#' + editInputId).val(newRandomPass).focus();
+            $("#" + editInputId)
+                .val(newRandomPass)
+                .focus();
         });
-    
+
+        // Registrar un nuevo articulo con TinyMCE ##################################
+        $("#formularioArticulo").submit(articleForm);
 
         // Convertir scroll vertical en horizontal ############################
         var $tableContainer = $("#table-container");
@@ -159,19 +164,20 @@ function chatSubmit(e) {
         }
     }
 }
-// function signin######################################################################
-function singinFunction(e) {
-    e.preventDefault();
-    const signinForm = e.target;
-    const formData = new FormData(signinForm);
-    const timerOut = 8000;
 
-    fetch(signinForm.action, {
+// Funcion de iniciar secion y Registrar nuevo Usuario ######################################################################
+function singInUp(e) {
+    e.preventDefault();
+    const thisForm = e.target;
+    const formData = new FormData(thisForm);
+    const timerOut = 6000;
+
+    fetch(thisForm.action, {
         method: "POST",
         body: formData,
         headers: {
             "X-Requested-With": "XMLHttpRequest",
-            "X-CSRFToken": signinForm.querySelector("[name=csrfmiddlewaretoken]").value,
+            "X-CSRFToken": thisForm.querySelector("[name=csrfmiddlewaretoken]").value,
         },
     })
         .then((response) => {
@@ -183,10 +189,19 @@ function singinFunction(e) {
             return response.json();
         })
         .then((data) => {
+            dataMessage = data.message;
             if (data.success) {
-                window.location.href = data.redirect_url;
+                if (data.functionForm == "singin") {
+                    window.location.href = data.redirect_url;
+                } else {
+                    thisForm.reset();
+                    alertSToast("center", timerOut + 4000, "success", dataMessage, function () {
+                        location.reload();
+                    });
+                }
             } else {
-                alertSToast("top", timerOut + 2000, "warning", data.message);
+                console.error(dataMessage);
+                alertSToast("top", timerOut + 2000, "warning", dataMessage);
             }
         })
         .catch((error) => {
@@ -195,6 +210,98 @@ function singinFunction(e) {
             alertSToast("center", timerOut + 3000, "error", errorMessage);
         });
 }
+
+// Functionamiento de TinyMCE #################################################################
+tinymce.init({
+    selector: "#mainTiny",
+    language: "es_MX",
+    branding: false,
+    plugins:
+        "advlist autolink lists link image charmap preview anchor searchreplace visualblocks code fullscreen insertdatetime media table code help wordcount quickbars image pagebreak",
+    menubar: "file edit view format table",
+    menu: {
+        file: { title: "File", items: "newdocument restoredraft | preview | print" },
+        edit: { title: "Edit", items: "undo redo | cut copy paste | selectall | searchreplace" },
+        view: { title: "View", items: "visualaid visualchars visualblocks | spellchecker | preview fullscreen" },
+        format: {
+            title: "Format",
+            items: "bold italic underline strikethrough superscript subscript | styles blockformats align | removeformat",
+        },
+        table: { title: "Table", items: "inserttable tableprops deletetable | cell row column" },
+    },
+    toolbar:
+        "undo redo | styles formatting forecolor backcolor | alignleft aligncenter alignright alignjustify | bullist numlist | table tabledelete | outdent indent | removeformat | help | image media | insertfile | preview ",
+    quickbars_selection_toolbar: "bold italic | blocks | quicklink blockquote",
+    quickbars_insert_toolbar: "image quicktable | hr pagebreak",
+    quickbars_image_toolbar: "image|alignleft aligncenter alignright | rotateleft rotateright | imageoptions",
+    toolbar_groups: {
+        formatting: {
+            icon: "bold",
+            tooltip: "Formatting",
+            items: "bold italic underline | superscript subscript",
+        },
+    },
+    image_title: true,
+    automatic_uploads: true,
+    file_picker_types: "image",
+    file_picker_callback: (cb, value, meta) => {
+        const input = document.createElement("input");
+        input.setAttribute("type", "file");
+        input.setAttribute("accept", "image/*");
+
+        input.addEventListener("change", (e) => {
+            const file = e.target.files[0];
+            const reader = new FileReader();
+            reader.addEventListener("load", () => {
+                const id = "blobid" + new Date().getTime();
+                const blobCache = tinymce.activeEditor.editorUpload.blobCache;
+                const base64 = reader.result.split(",")[1];
+                const blobInfo = blobCache.create(id, file, base64);
+                blobCache.add(blobInfo);
+
+                cb(blobInfo.blobUri(), { title: file.name });
+            });
+            reader.readAsDataURL(file);
+        });
+
+        input.click();
+    },
+    promotion: false,
+});
+
+// Registrar Articulo ###############################################
+function articleForm(e) {
+    e.preventDefault();
+    const contenidoTiny = tinymce.activeEditor.getContent();
+    const thisForm = e.target;
+    const timerOut = 8000;
+    var formData = new FormData(thisForm);
+    formData.set("contenido", contenidoTiny);
+
+    fetch(thisForm.action, {
+        method: "POST",
+        headers: {
+            "X-CSRFToken": formData.get("csrfmiddlewaretoken"),
+        },
+        body: formData,
+    })
+        .then((response) => response.json())
+        .then((data) => {
+            dataMessage = data.message;
+            if (data.success) {
+                thisForm.reset();
+                alertSToast("center", timerOut + 4000, "success", dataMessage);
+            } else {
+                console.error(dataMessage);
+                alertSToast("top", timerOut + 2000, "warning", dataMessage);
+            }
+        })
+        .catch((error) => {
+            console.error("😥 Error:", error);
+            errorMessage = error.message || "Ocurrió un error. Intente nuevamente. 😥";
+            alertSToast("center", timerOut + 3000, "error", errorMessage);
+        });
+};
 
 // context menu disabled ####################################
 document.oncontextmenu = function () {

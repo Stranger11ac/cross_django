@@ -35,7 +35,7 @@ class Articulos(models.Model):
     actualizacion = models.DateField(auto_now=True, blank=True, null=True)
     titulo = models.CharField(max_length=200, blank=False)
     contenido = models.TextField(blank=False)
-    encabezado =  models.ImageField(upload_to='cross_asistent/static/files/imagenes/', blank=True, null=True)
+    encabezado =  models.ImageField(upload_to='cross_asistent/static/files/imagenes/blogs/', blank=True, null=True)
     autor = models.CharField(max_length=150, blank=False)
     
     def __str__(self):
@@ -58,14 +58,6 @@ class Banners(models.Model):
             if os.path.isfile(image_path):
                 os.remove(image_path)
         super(Banners, self).delete(*args, **kwargs)
-
-class Mapa(models.Model):
-    lugar = models.ForeignKey(Database, on_delete=models.CASCADE)
-    informacion = models.TextField()
-
-class MapaImagenes(models.Model):
-    mapa = models.ForeignKey(Mapa, related_name='imagenes', on_delete=models.CASCADE)
-    imagen = models.ImageField(upload_to='cross_asistent/static/files/imagenes/mapa/')
 
 class Tareas(models.Model):
     tarea = models.CharField(max_length=255)
