@@ -23,7 +23,7 @@
                     aria-labelledby="tab-login">
                     <h3 class="text-center">Iniciar Sesión</h3>
                     <hr class="hr_divisor mb-5">
-                    <form id="singinForm" method="POST" action="{% url 'singin' %}" autocomplete="off">
+                    <form id="singinForm" method="POST" action="{% url 'singin' %}" data-submit-form autocomplete="off">
                         {% csrf_token %}
                         <div data-mdb-input-init class="form-outline mb-4">
                             <i class="fa-solid fa-circle-user trailing"></i>
@@ -45,7 +45,7 @@
                     aria-labelledby="tab-register">
                     <h3 class="text-center">Registrate!</h3>
                     <hr class="hr_divisor mb-5">
-                    <form id="signupForm" method="POST" action="{% url 'singup' %}" autocomplete="off">
+                    <form id="signupForm" method="POST" action="{% url 'singup' %}" data-submit-form autocomplete="off">
                         {% csrf_token %}
                         <div class="row">
                             <div class="col-12 col-md-6 mb-4">
