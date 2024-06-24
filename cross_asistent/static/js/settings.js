@@ -38,11 +38,10 @@ $(document).ready(function () {
 
         // Vista de Programador
         // Agrega la clase active al banner con la id mas baja #######################################
-        var elements = $('[id^="bannerid_"]');
         var minIdNumber = Infinity;
         let minIdElement = null;
 
-        elements.each(function () {
+        $('[id^="bannerid_"]').each(function () {
             var id = $(this).attr("id");
             var number = parseInt(id.split("_")[1]);
             if (number < minIdNumber) {
@@ -301,12 +300,6 @@ function alertSToast(posittionS, timerS, iconS, titleS, didDestroyS) {
         showCloseButton: true,
         timer: timerS,
         timerProgressBar: true,
-        // customClass: {
-        //     icon: "icon_alert",
-        //     title: "title_alert",
-        //     timerProgressBar: "progressbar_alert",
-        //     closeButton: "close_button_alert",
-        // },
         didOpen: (toast) => {
             toast.addEventListener("mouseenter", Swal.stopTimer);
             toast.addEventListener("mouseleave", Swal.resumeTimer);
@@ -346,7 +339,7 @@ function obtenerDatosEdificio(articuloId) {
     }
 }
 
-$("#selectArticulo").change(function () {
+$("#seletcArticulo").change(function () {
     var articuloId = $(this).val();
     sessionStorage.setItem("ultimoArticuloId", articuloId);
     obtenerDatosEdificio(articuloId);
