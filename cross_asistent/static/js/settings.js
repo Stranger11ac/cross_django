@@ -67,12 +67,10 @@ $(document).ready(function () {
         $("#chatForm").submit(chatSubmit);
 
         // iniciar sesion ####################################################
-        $("#singinForm").submit(jsonSubmit);
-        $("#signupForm").submit(jsonSubmit);
         // Crea usuario nuevo desde programador ####################################
-        $("#createuserprog").submit(jsonSubmit);
         // Registrar un nuevo articulo con TinyMCE ##################################
-        $("#formularioArticulo").submit(jsonSubmit);
+        $("[data-submit-form]").submit(jsonSubmit);
+        
 
         // Editar/Crear usuario
         // generar nueva contraseña aleatoria ##################################

@@ -584,6 +584,7 @@ def editar_usuario(request, user_id):
             user.username = username
         if password:
             user.set_password(password)
+        user.is_active = True
         user.is_staff = is_staff
         user.save()
         return redirect('vista_programador')
