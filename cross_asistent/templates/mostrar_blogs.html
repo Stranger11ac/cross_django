@@ -1,0 +1,24 @@
+{% extends 'base/widget.html' %}
+{% load static %}
+{% block title %}Preguntas 💬{% endblock %}
+{% block content %}
+<main class="container container-fluid mb-100">
+    
+<div class="p-5 text-center mt-5">
+    
+        {% for articulo in Articulos %}
+        
+            <h2>{{ articulo.titulo }}</h2>
+            <hr class="hr_divisor mb-5">
+            <p class="px-5 mx-5">{% autoescape off %}{{ articulo.contenido }}{% endautoescape %}</p>
+
+            <p>{{ articulo.autor }}</p>
+        {% endfor %}
+    
+</div>
+    
+
+</main>
+
+{% include 'base/widget_footer.html' %}
+{% endblock %}
