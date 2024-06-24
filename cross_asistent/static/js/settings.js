@@ -85,7 +85,8 @@ $(document).ready(function () {
             }, 1000);
             $("#" + editInputId)
                 .addClass('focus')
-                .val(newRandomPass);
+                .val(newRandomPass)
+                .focus();
         });
 
         // $("#edificio").change(function() {
