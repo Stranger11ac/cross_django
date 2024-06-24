@@ -92,7 +92,7 @@
             <form method="POST" id="hacerPregunta" action="{% url 'preguntas' %}" class="text-center">
                 {% csrf_token %}
                 <div class="form-outline mb-4" data-mdb-input-init>
-                    <input type="text" id="preguntaPOST" name="pregunta" class="form-control mx-auto" style="max-width: 300px;" />
+                    <input type="text" id="preguntaPOST" name="pregunta" class="form-control mx-auto"/>
                     <label class="form-label" for="preguntaPOST">Hacer Pregunta</label>
                 </div>
                 <button type="submit" class="btn btn-primary mx-auto" style="max-width: 150px;">Enviar Pregunta</button>
