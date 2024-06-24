@@ -596,11 +596,13 @@ def forms_admin(request):
 def mapa2(request):
     return render(request, 'mapa2.html')
 
+# te manda a la vista para crear el blog siendo staff
 @login_required
 @never_cache
 def admin_blogs(request):
     return render(request, 'admin/blogs.html')
 
+# crea el archivo del blog
 @login_required
 @never_cache
 def crear_articulo(request):
@@ -624,6 +626,7 @@ def crear_articulo(request):
             return JsonResponse({'success': False, 'message': f'Ocurrio un error😯😥 <br>{str(e)}'}, status=400)
     return JsonResponse({'success': False, 'message': 'Método no permitido'}, status=405)
 
+# sube la imagen que viene dentro del contenido del blog
 @login_required
 @never_cache
 def upload_image(request):
@@ -639,6 +642,10 @@ def upload_image(request):
             return JsonResponse({'error': str(e)}, status=400)
     return JsonResponse({'error': 'Error al subir la imagen'}, status=400)
 
+# muestra los blogs subidos
+def mostrar_blog(request, Articulos_id):
+    Articulos = models.Articulos.objects.filter(pk=Articulos_id)
+    return render(request, 'mostrar_blogs.html', {'Articulos': Articulos})
 
 
 #Consulta para informacion del Mapa##################

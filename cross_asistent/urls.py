@@ -6,6 +6,7 @@ urlpatterns = [
     path('', views.index, name='home'),
     path('chat/', views.chat_view, name='chatbot'),
     path('blog-eventos/', views.blog, name='blog'),
+    path('mostrar_blog/<int:Articulos_id>/', views.mostrar_blog, name='mostrar_blog'),
     path('mapa/', views.map, name='map'),
     path('acercade/', views.about, name='about'),
     path('preguntas-frecuentes/', views.faq, name='faq'),
