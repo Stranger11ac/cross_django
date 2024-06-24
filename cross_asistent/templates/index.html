@@ -6,13 +6,8 @@
 <link rel="stylesheet" href="{% static 'css/swiper-bundle.min.css' %}" />
 <script type="module" src="{% static 'js/model-viewer.min.js' %}"></script>
 {% endblock %} {% block link_end-extra %}
-<button
-    type="button"
-    class="btn btn_detail btn-floating m-1 my-lg-0 d-none d-lg-block"
-    data-mdb-ripple-init
-    data-mdb-modal-init
-    data-mdb-target="#modalqr"
->
+<button type="button" class="btn btn_detail btn-floating m-1 my-lg-0 d-none d-lg-block"
+    data-mdb-ripple-init data-mdb-modal-init data-mdb-target="#modalqr">
     <i class="fa-solid fa-mobile-screen-button"></i>
 </button>
 {% endblock %}
@@ -30,13 +25,16 @@
                         <div class="row">
                             <div class="col-lg-8">
                                 <div class="header-text">
-                                    <h2>{% autoescape off %} {{ banner.titulo }} {% endautoescape %}</h2>
+                                    <h2>{% autoescape off %} {{ banner.titulo }} {% endautoescape %}
+                                    </h2>
                                     <!-- <div class="div-dec"></div> -->
                                     <p>{% autoescape off %} {{ banner.descripcion }} {% endautoescape %}</p>
                                     <div class="buttons">
                                         {% if banner.articulo %}
-                                        <a href="{{banner.articulo}}" class="btn_slide btn btn_detail btn-lg">
-                                            Ver más <i class="fa-solid fa-up-right-from-square ms-1"></i>
+                                        <a href="{{banner.articulo}}"
+                                            class="btn_slide btn btn_detail btn-lg">
+                                            Ver más <i
+                                                class="fa-solid fa-up-right-from-square ms-1"></i>
                                         </a>
                                         {% endif %}
                                     </div>
@@ -56,23 +54,20 @@
     <!-- Asistente -->
     <section href="#asistente" class="asistent_group">
         <div class="box_asistent">
-            <model-viewer
-                id="asistent_model"
-                src="{% static 'models/RobotExpressive.glb' %}"
-                tone-mapping="neutral"
-                camera-orbit="15deg 70deg 60m"
-                poster="{% static 'img/poster.webp' %}"
-                shadow-intensity="1"
-                >
+            <model-viewer id="asistent_model" src="{% static 'models/RobotExpressive.glb' %}"
+                tone-mapping="neutral" camera-orbit="15deg 70deg 60m"
+                poster="{% static 'img/poster.webp' %}" shadow-intensity="1">
                 <!-- autoplay
                 animation-name="Wave" -->
             </model-viewer>
             <div class="box_asistent_controls">
                 <div class="controls_buttons">
-                    <button type="button" class="btn btn_controls btn_secondary controls_btn_keyboard toggle_controls">
+                    <button type="button"
+                        class="btn btn_controls btn_secondary controls_btn_keyboard toggle_controls">
                         <i class="fa-regular fa-keyboard"></i>
                     </button>
-                    <button type="button" class="btn btn_controls btn_secondary controls_btn_microphone">
+                    <button type="button"
+                        class="btn btn_controls btn_secondary controls_btn_microphone">
                         <i class="fa-solid fa-comment" id="btn_controls_icon"></i>
                     </button>
                     <button type="button" class="btn btn_controls btn_secondary controls_btn_close">
@@ -84,17 +79,22 @@
                 {% csrf_token %}
                 <div class="position-relative bottom-0 end-0">
                     <div class="form-outline" data-mdb-input-init>
-                        <textarea class="form-control bg-body-tertiary" id="txtQuestion" name="question" required maxlength="200"></textarea>
-                        <label class="form-label bg-body-tertiary" for="txtQuestion">Haz una pregunta:</label>
+                        <textarea class="form-control bg-body-tertiary" id="txtQuestion"
+                            name="question" required maxlength="200"></textarea>
+                        <label class="form-label bg-body-tertiary" for="txtQuestion">Haz una
+                            pregunta:</label>
                     </div>
                     <div class="controls_input-buttons position-absolute top-0 end-0">
-                        <button type="button" id="closeChat" class="btn btn_secondary btn-floating btn-sm controls_btn_close">
+                        <button type="button" id="closeChat"
+                            class="btn btn_secondary btn-floating btn-sm controls_btn_close">
                             <i class="fa-solid fa-xmark"></i>
                         </button>
-                        <button type="button" id="closeInput" class="btn btn_secondary btn-floating btn-sm toggle_controls">
+                        <button type="button" id="closeInput"
+                            class="btn btn_secondary btn-floating btn-sm toggle_controls">
                             <i class="fa-solid fa-microphone"></i>
                         </button>
-                        <button type="submit" id="chatForm_submit" class="btn btn_detail btn-floating">
+                        <button type="submit" id="chatForm_submit"
+                            class="btn btn_detail btn-floating">
                             <i class="fa-solid fa-paper-plane"></i>
                         </button>
                     </div>
@@ -106,18 +106,14 @@
 </main>
 
 <!-- Modal -->
-<div class="modal fade" id="modalqr" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade" id="modalqr" tabindex="-1" aria-labelledby="exampleModalLabel"
+    aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content text-center">
             <div class="modal-header">
                 <h2 class="modal-title" id="exampleModalLabel">Escanea el código QR</h2>
-                <button
-                    type="button"
-                    class="btn-close"
-                    data-mdb-ripple-init
-                    data-mdb-dismiss="modal"
-                    aria-label="Close"
-                ></button>
+                <button type="button" class="btn-close" data-mdb-ripple-init
+                    data-mdb-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <img src="{% static 'img/qr_2.png' %}" alt="qr" class="img-fluid" />
@@ -129,87 +125,7 @@
 {% endblock %}
 
 {% block scripts_end %}
-    <script src="{% static 'js/owl-carousel.min.js' %}"></script>
-    <script src="{% static 'js/swiper.min.js' %}"></script>
-    <script src="{% static 'js/custom.js' %}"></script>
-
-    <script>
-        chatForm.addEventListener('submit', function(e) {
-            e.preventDefault();
-            const pregunta = txtQuestion.value;
-            const chatForm = e.target;
-            this.reset();
-
-            fetch(chatForm.action, {
-                method: 'POST',
-                body: JSON.stringify({ question: pregunta }),
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-Requested-With': 'XMLHttpRequest',
-                    'X-CSRFToken': chatForm.querySelector('[name=csrfmiddlewaretoken]').value
-                }
-            })
-            .then(response => {
-                if (!response.ok) {
-                    return response.json().then(data => {
-                        throw new Error(data.message || 'Error desconocido');
-                    });
-                }
-                return response.json();
-            })
-            .then(data => {
-                if (data.success) {
-                    var tokendid = cadenaRandom(5, alfabetico);
-                    const valID = `uuid${tokendid}`;
-
-                    const htmlBlock = `
-                        <div class="output_block">
-                            <div class="btn_secondary chat_msg user_submit" data-tokeid="${valID}">
-                                ${pregunta}
-                            </div>
-                        </div>
-                        <div class="btn_detail chat_msg asistent_response" data-tokeid="${valID}">
-                            <span>${data.answer}</span>
-                        </div>
-                    `;
-
-                    output.insertAdjacentHTML('beforeend', htmlBlock);
-
-                    const user_submit = document.querySelector(`.user_submit[data-tokeid="${valID}"]`);
-                    const asistent_response = document.querySelector(`.asistent_response[data-tokeid="${valID}"]`);
-
-                    setTimeout(function() {
-                        user_submit.classList.add('visible');
-                        setTimeout(scrollToBottom, 500);
-                        setTimeout(function() {
-                            asistent_response.classList.add('visible');
-                            setTimeout(scrollToBottom, 350);
-                        }, 950);
-                    }, 50);
-
-                    
-                } else {
-                    alertSToast('top', 8000, 'error', `Error: ${data.message}`);
-                }
-            })
-            .catch(error => {
-                console.error('😥 Error:', error);
-                alertSToast('top', 8000, 'warning', 'Ocurrió un error. Intente nuevamente. 😥');
-            });
-        });
-
-        function scrollToBottom() {
-            output.scrollTop = output.scrollHeight;
-        }
-
-        document.addEventListener("DOMContentLoaded", function() {
-            scrollToBottom();
-        });
-
-        var observer = new MutationObserver(function() {
-            scrollToBottom();
-        });
-
-        observer.observe(output, { childList: true, subtree: true });
-    </script>
+<script src="{% static 'js/owl-carousel.min.js' %}"></script>
+<script src="{% static 'js/swiper.min.js' %}"></script>
+<script src="{% static 'js/custom.js' %}"></script>
 {% endblock %}

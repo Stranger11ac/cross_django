@@ -1,63 +1,49 @@
-<!-- se modifico para que no tuvieran problemas el ir al inicio los staff -->
+{% load static %}
 <li class="nav-item">
-{% if user.is_authenticated %}
+    {% if user.is_authenticated %}
     {% if user.is_staff %}
-        <a class="btn btn_secondary m-1 my-lg-0 d-block" href="{% url 'vista_programador' %}">Inicio <i class="fa-solid fa-house-chimney ms-1"></i></a>
+    <a class="btn btn_secondary m-1 my-lg-0 d-block" href="{% url 'vista_programador' %}">Inicio <i class="fa-solid fa-house-chimney ms-1"></i></a>
     {% else %}
-        <a class="btn btn_secondary m-1 my-lg-0 d-block" href="{% url 'vista_admin' %}">Inicio <i class="fa-solid fa-house-chimney ms-1"></i></a>
+    <a class="btn btn_secondary m-1 my-lg-0 d-block" href="{% url 'vista_admin' %}">Inicio <i class="fa-solid fa-house-chimney ms-1"></i></a>
     {% endif %}
-{% endif %}
+    {% endif %}
 </li>
 <li class="nav-item">
-    <a
-        class="btn {% if active_page == 'blog' %}btn_secondary{% else %}btn_detail{% endif %} m-1 my-lg-0 d-block"
-        href="{% url 'admin_blogs' %}"
-        >Blogs<i class="fa-solid fa-newspaper ms-1"></i>
+    <a class="btn {% if active_page == 'blog' %}btn_secondary{% else %}btn_detail{% endif %} m-1 my-lg-0 d-block" href="{% url 'admin_blogs' %}">Blogs<i
+            class="fa-solid fa-newspaper ms-1"></i>
     </a>
 </li>
 <li class="nav-item">
-    <a
-        class="btn {% if active_page == 'forms' %}btn_secondary{% else %}btn_detail{% endif %} m-1 my-lg-0 d-block"
-        href="{% url 'admin_forms' %}"
-        >Formularios<i class="fa-solid fa-paragraph ms-1"></i>
+    <a class="btn {% if active_page == 'forms' %}btn_secondary{% else %}btn_detail{% endif %} m-1 my-lg-0 d-block" href="{% url 'admin_forms' %}">Formularios<i
+            class="fa-solid fa-paragraph ms-1"></i>
     </a>
 </li>
 <li class="nav-item">
     <div class="dropdown">
-        <a
-            role="button"
-            class="btn btn_detail btn_lg-circle d-block m-1 my-lg-0 dropdown-toggle"
-            data-mdb-dropdown-init
-            data-mdb-ripple-init
-            aria-expanded="false"
-            id="dropdownMenuUser"
-        >
-            <span class="d-inline d-lg-none">Usuario</span> <i class="fa-solid fa-user ms-1"></i>
+        <a role="button" class="btn btn_detail btn_lg-circle d-block m-1 my-lg-0 dropdown-toggle" data-mdb-dropdown-init data-mdb-ripple-init
+            aria-expanded="false" id="dropdownMenuUser">
+            <span class="d-inline d-lg-none">{{ user.username }} </span> <i class="fa-solid fa-user ms-1"></i>
         </a>
 
         <ul class="dropdown-menu mx-100" aria-labelledby="dropdownMenuUser">
-            <li>
-                <a
-                    class="dropdown-item {% if active_page|default:'' == 'perfil' %}active{% endif %}"
-                    aria-current="true"
-                    href="#"
-                >
-                    <i class="fa-regular fa-circle-user"></i> Perfil</a
-                >
+            <li class="dropdown-item text-center d-none d-md-block">
+                {{ user.username }}
             </li>
             <li>
-                <a
-                    class="dropdown-item {% if active_page|default:'' == 'editperfil' %}active{% endif %}"
-                    aria-current="true"
-                    href="#"
-                    ><i class="fa-solid fa-paintbrush"></i> Editar Perfil</a
-                >
+                <a class="dropdown-item {% if active_page|default:'' == 'perfil' %}active{% endif %}" aria-current="true" href="#">
+                    <i class="fa-regular fa-circle-user"></i> Perfil</a>
             </li>
-            <li><hr class="dropdown-divider" /></li>
             <li>
-                <a class="dropdown-item" href="{% url 'singout' %}"
-                    ><i class="fa-solid fa-door-open"></i> Cerrar Sesion</a
-                >
+                <a class="dropdown-item" aria-current="true" href="#"><i class="fa-solid fa-bell"></i> Notificaciones</a>
+            </li>
+            <li>
+                <a class="dropdown-item" aria-current="true" href="#"><i class="fa-solid fa-gear"></i> Configuracion</a>
+            </li>
+            <li>
+                <hr class="dropdown-divider" />
+            </li>
+            <li>
+                <a class="dropdown-item" href="{% url 'singout' %}"><i class="fa-solid fa-door-open"></i> Cerrar Sesion</a>
             </li>
         </ul>
     </div>

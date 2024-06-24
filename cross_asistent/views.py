@@ -25,9 +25,9 @@ from nltk.stem import WordNetLemmatizer
 
 
 import nltk
-# nltk.download('punkt')
-# nltk.download('stopwords')
-# nltk.download('wordnet')
+nltk.download('punkt')
+nltk.download('stopwords')
+nltk.download('wordnet')
 
 def index(request):
     if not request.user.is_staff:
@@ -56,19 +56,11 @@ def obtener_respuesta_openai(question, instructions):
     return response.choices[0].message.content
 
 def preprocesar_texto(texto):
-    # Tokenización
-    #hola
     tokens = word_tokenize(texto.lower())
-
-    # Eliminación de stopwords
     stop_words = set(stopwords.words('spanish'))
     tokens = [word for word in tokens if word not in stop_words]
-
-    # Lematización
     lemmatizer = WordNetLemmatizer()
     tokens = [lemmatizer.lemmatize(word) for word in tokens]
-
-    # Reconstruir el texto preprocesado
     texto_preprocesado = ' '.join(tokens)
     print(f"procesado:{texto_preprocesado}")
     print()
@@ -81,16 +73,11 @@ def buscar_informacion_relevante(question, queryset):
 
     # Preprocesar la pregunta del usuario
     question_preprocesada = preprocesar_texto(question)
-    # Inicializar el vectorizador TF-IDF
     vectorizer = TfidfVectorizer()
     tfidf_matrix = vectorizer.fit_transform(documents)
-    # Transformar la pregunta del usuario
     question_tfidf = vectorizer.transform([question_preprocesada])
-    # Calcular la similitud del coseno entre la pregunta y los documentos
     similarity = cosine_similarity(question_tfidf, tfidf_matrix).flatten()
-    # Ajustar el umbral de similitud
     threshold = 0.2
-    # Encuentra el documento más similar
     max_similarity_index = similarity.argmax()
     if similarity[max_similarity_index] > threshold:
         return documents[max_similarity_index]
@@ -606,14 +593,6 @@ def editar_usuario(request, user_id):
 def forms_admin(request):
     return render(request, 'admin/vista_formularios.html')
 
-from django.shortcuts import render
-
-def mapa2(request):
-    return render(request, 'mapa2.html')
-
-
-from django.shortcuts import render
-
 def mapa2(request):
     return render(request, 'mapa2.html')
 
@@ -664,8 +643,7 @@ def upload_image(request):
 
 #Consulta para informacion del Mapa##################
 def consultaMap(request):
-        categoria_mapa =models. Categorias.objects.get(categoria="Mapa")
-        
+        categoria_mapa = models. Categorias.objects.get(categoria="Mapa")
         articulos_mapa = models.Database.objects.filter(categoria=categoria_mapa)
         
         return render(request, 'admin/mapa_form.html', {'articulos_mapa': articulos_mapa})

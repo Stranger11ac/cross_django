@@ -673,6 +673,10 @@ path.leaflet-interactive {
     max-height: 80px !important;
 }
 
+.table_odd .table_odd_items td .btn i:where(.fa-solid, .fa-regular) {
+    transform: scale(1.4) translateX(1px);
+}
+
 .table_odd .table_odd_items:nth-child(even) {
     --mdb-table-bg: var(--var-secondary);
 }
@@ -681,6 +685,10 @@ path.leaflet-interactive {
     --mdb-table-bg: var(--var-detail);
     --mdb-table-color: #fff;
     color: var(--mdb-table-color);
+}
+
+.btn_purple {
+    background: #ac2bac;
 }
 
 .bg_teal {
@@ -696,13 +704,6 @@ body.modal-open {
 .leaflet-top.leaflet-right {
     display: none !important;
 }
-
-/* .custom-toolbar .tox-toolbar__group {
-    display: flex;
-    flex-direction: column;
-    background-color: #02913c !important;
-} */
-
 
 /*#################### Template Buttons ####################*/
 @media (min-width: 992px) {

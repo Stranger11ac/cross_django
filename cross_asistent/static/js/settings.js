@@ -55,6 +55,17 @@ $(document).ready(function () {
             minIdElement.addClass("active");
         }
 
+        // Enviar chat con enter chatGPT ##########################################
+        $("#txtQuestion").keydown((evento) => {
+            if (evento.keyCode === 13 && !evento.shiftKey) {
+                evento.preventDefault();
+                $("#chatForm_submit").click();
+            }
+        });
+
+        // ChatGPT Submit
+        $("#chatForm").submit(chatSubmit);
+
         // iniciar sesion ####################################################
         $("#singinForm").submit(jsonSubmit);
         $("#signupForm").submit(jsonSubmit);
@@ -65,7 +76,7 @@ $(document).ready(function () {
 
         // Editar/Crear usuario
         // generar nueva contraseña aleatoria ##################################
-        $('button[data-editpass="edit_newpass"]').on("click", function () {
+        $('button[data-editpass]').click(function () {
             $(this).addClass("active");
             var newRandomPass = cadenaRandom(8, caracteres);
             var editInputId = $(this).data("editinput");
@@ -73,15 +84,15 @@ $(document).ready(function () {
                 $(this).removeClass("active");
             }, 1000);
             $("#" + editInputId)
-                .val(newRandomPass)
-                .focus();
+                .addClass('focus')
+                .val(newRandomPass);
         });
 
         // $("#edificio").change(function() {
         //     $("#filtroEdificio").submit();
         // });
     } catch (error) {
-        console.log("Error Inesperado: ", error);
+        console.error("Error Inesperado: ", error);
         alertSToast("center", 8000, "error", `😥 Ah ocurrido un error JQ.`);
     }
 });
@@ -166,6 +177,117 @@ function getCSRFToken() {
     return csrfCookie;
 }
 
+// Funcion de preguntar a chatGPT ################################################################
+var contOutput = document.querySelector("#output");
+function chatSubmit(e) {
+    e.preventDefault();
+    const pregunta = txtQuestion.value;
+    const chatForm = e.target;
+    this.reset();
+
+    var tokendid = cadenaRandom(5, alfabetico);
+    const valID = `uuid${tokendid}`;
+
+    const htmlBlock = `
+        <div class="output_block">
+            <div class="btn_secondary chat_msg user_submit" data-tokeid="${valID}">
+                ${pregunta}
+            </div>
+        </div>`;
+
+    contOutput.insertAdjacentHTML("beforeend", htmlBlock);
+    const user_submit = document.querySelector(`.user_submit[data-tokeid="${valID}"]`);
+    setTimeout(function () {
+        user_submit.classList.add("visible");
+        setTimeout(scrollToBottom, 500);
+    }, 20);
+
+    fetch(chatForm.action, {
+        method: "POST",
+        body: JSON.stringify({ question: pregunta }),
+        headers: {
+            "Content-Type": "application/json",
+            "X-Requested-With": "XMLHttpRequest",
+            "X-CSRFToken": chatForm.querySelector("[name=csrfmiddlewaretoken]").value,
+        },
+    })
+        .then((response) => {
+            if (!response.ok) {
+                return response.json().then((data) => {
+                    throw new Error(data.message || "Error desconocido");
+                });
+            }
+            return response.json();
+        })
+        .then((data) => {
+            if (data.success) {
+                const htmlBlock = `
+                <div class="btn_detail chat_msg asistent_response" data-tokeid="${valID}">
+                    <span>${data.answer}</span>
+                </div>
+            `;
+
+                contOutput.insertAdjacentHTML("beforeend", htmlBlock);
+                const asistent_response = document.querySelector(`.asistent_response[data-tokeid="${valID}"]`);
+
+                setTimeout(function () {
+                    setTimeout(function () {
+                        asistent_response.classList.add("visible");
+                        setTimeout(scrollToBottom, 350);
+                    }, 970);
+                }, 20);
+            } else {
+                alertSToast("top", 8000, "error", `Error: ${data.message}`);
+            }
+        })
+        .catch((error) => {
+            console.error("😥 Error:", error);
+            alertSToast("top", 8000, "warning", "Ocurrió un error. Intente nuevamente. 😥");
+        });
+}
+
+// Hacer scroll con un nuevo mensaje en el chat ###############################################
+if (contOutput) {
+    function scrollToBottom() {
+        contOutput.scrollTop = contOutput.scrollHeight;
+    }
+    var observer = new MutationObserver(() => {
+        scrollToBottom();
+    });
+    scrollToBottom();
+    observer.observe(contOutput, { childList: true, subtree: true });
+}
+
+// Copiar al portapapeles #########################################################
+function copiarValinput() {
+    const inputs = document.querySelectorAll('input[data-copy]');
+    inputs.forEach((input) => {
+        input.addEventListener("click", () => {
+            if (!navigator.clipboard) {
+                alert("Tu navegador no admite copiar al portapapeles");
+                alertSToast("top", 8000, "info", "Tu navegador no admite copiar al portapapeles 😯😥🤔");
+                return;
+            }
+            const textCopy = input.value;
+            if (textCopy != "") {
+                navigator.clipboard
+                    .writeText(textCopy)
+                    .then(() => {
+                        console.log("Texto copiado al portapapeles:", textCopy);
+                        alertSToast("top", 5000, "success", "Texto Copiado! 🥳");
+                    })
+                    .catch((error) => {
+                        message = "Error al copiar al portapapeles";
+                        console.error(message, ":", error);
+                        alertSToast("top", 8000, "error", `${message} 🤔😥`);
+                    });
+            }
+        });
+    });
+}
+
+copiarValinput();
+
 // context menu disabled ####################################
 document.oncontextmenu = function () {
     return false;
@@ -180,12 +302,12 @@ function alertSToast(posittionS, timerS, iconS, titleS, didDestroyS) {
         showCloseButton: true,
         timer: timerS,
         timerProgressBar: true,
-        customClass: {
-            icon: "icon_alert",
-            title: "title_alert",
-            timerProgressBar: "progressbar_alert",
-            closeButton: "close_button_alert",
-        },
+        // customClass: {
+        //     icon: "icon_alert",
+        //     title: "title_alert",
+        //     timerProgressBar: "progressbar_alert",
+        //     closeButton: "close_button_alert",
+        // },
         didOpen: (toast) => {
             toast.addEventListener("mouseenter", Swal.stopTimer);
             toast.addEventListener("mouseleave", Swal.resumeTimer);
@@ -204,9 +326,9 @@ function obtenerDatosEdificio(articuloId) {
     if (articuloId) {
         $.ajax({
             url: "/obtenerEdificio/",
-            type: 'GET',
-            data: { 'id': articuloId },
-            success: function(data) {
+            type: "GET",
+            data: { id: articuloId },
+            success: function (data) {
                 $("#edificio_id").val(data.id);
                 $("#titulo").val(data.titulo);
                 $("#informacion").val(data.informacion);
@@ -215,36 +337,36 @@ function obtenerDatosEdificio(articuloId) {
                 } else {
                     $("#imagen_actual").hide();
                 }
-            }
+            },
         });
     } else {
-        $("#edificio_id").val('');
-        $("#titulo").val('');
-        $("#informacion").val('');
+        $("#edificio_id").val("");
+        $("#titulo").val("");
+        $("#informacion").val("");
         $("#imagen_actual").hide();
     }
 }
 
-$("#selectArticulo").change(function() {
+$("#selectArticulo").change(function () {
     var articuloId = $(this).val();
-    sessionStorage.setItem('ultimoArticuloId', articuloId);
+    sessionStorage.setItem("ultimoArticuloId", articuloId);
     obtenerDatosEdificio(articuloId);
 });
 
-var ultimoArticuloId = sessionStorage.getItem('ultimoArticuloId');
+var ultimoArticuloId = sessionStorage.getItem("ultimoArticuloId");
 if (ultimoArticuloId) {
     $("#selectArticulo").val(ultimoArticuloId);
     obtenerDatosEdificio(ultimoArticuloId);
 }
 
-$("#edificioForm").on('submit', function(event) {
+$("#edificioForm").on("submit", function (event) {
     event.preventDefault();
-    
-    var formData = new FormData(this); 
+
+    var formData = new FormData(this);
 
     $.ajax({
-        url: $(this).attr('action'),
-        type: $(this).attr('method'),
+        url: $(this).attr("action"),
+        type: $(this).attr("method"),
         data: formData,
         contentType: false,
         processData: false,
