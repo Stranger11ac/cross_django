@@ -22,7 +22,9 @@ $(document).ready(function () {
 
         $(".toggle_controls").click(() => {
             $(".asistent_group.open").toggleClass("close_controls open_keyboard open_controls");
+            // Detectar si es un dispositivo móvil
             const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+            // Solo ejecutar el setTimeout si no es un dispositivo móvil
             if (!isMobile) {
                 setTimeout(function () {
                     $(".controls_input #question").focus();
@@ -36,12 +38,16 @@ $(document).ready(function () {
             $("#btn_controls_icon").addClass("fa-comment").removeClass("fa-microphone");
         });
 
+        // Envia el formulario al chat con un enter ###############################
+        $("#question").keydown(submitChat);
+
         // Vista de Programador
         // Agrega la clase active al banner con la id mas baja #######################################
+        var elements = $('[id^="bannerid_"]');
         var minIdNumber = Infinity;
         let minIdElement = null;
 
-        $('[id^="bannerid_"]').each(function () {
+        elements.each(function () {
             var id = $(this).attr("id");
             var number = parseInt(id.split("_")[1]);
             if (number < minIdNumber) {
@@ -54,26 +60,17 @@ $(document).ready(function () {
             minIdElement.addClass("active");
         }
 
-        // Enviar chat con enter chatGPT ##########################################
-        $("#txtQuestion").keydown((evento) => {
-            if (evento.keyCode === 13 && !evento.shiftKey) {
-                evento.preventDefault();
-                $("#chatForm_submit").click();
-            }
-        });
-
-        // ChatGPT Submit
-        $("#chatForm").submit(chatSubmit);
-
         // iniciar sesion ####################################################
+        $("#singinForm").submit(jsonSubmit);
+        $("#signupForm").submit(jsonSubmit);
         // Crea usuario nuevo desde programador ####################################
+        $("#createuserprog").submit(jsonSubmit);
         // Registrar un nuevo articulo con TinyMCE ##################################
-        $("[data-submit-form]").submit(jsonSubmit);
-        
+        $("#formularioArticulo").submit(jsonSubmit);
 
         // Editar/Crear usuario
         // generar nueva contraseña aleatoria ##################################
-        $('button[data-editpass]').click(function () {
+        $('button[data-editpass="edit_newpass"]').on("click", function () {
             $(this).addClass("active");
             var newRandomPass = cadenaRandom(8, caracteres);
             var editInputId = $(this).data("editinput");
@@ -81,7 +78,6 @@ $(document).ready(function () {
                 $(this).removeClass("active");
             }, 1000);
             $("#" + editInputId)
-                .addClass('focus')
                 .val(newRandomPass)
                 .focus();
         });
@@ -90,14 +86,14 @@ $(document).ready(function () {
         //     $("#filtroEdificio").submit();
         // });
     } catch (error) {
-        console.error("Error Inesperado: ", error);
+        console.log("Error Inesperado: ", error);
         alertSToast("center", 8000, "error", `😥 Ah ocurrido un error JQ.`);
     }
 });
 
-// ################################################################################
-// ############################# Funciones JAVASCRIPT #############################
-// ################################################################################
+// ############################################################################
+// ########################### Funciones JAVASCRIPT ###########################
+// ############################################################################
 
 // Cerrar la sesion ##########################################################
 if (document.querySelector("main").classList.contains("main_container")) {
@@ -116,6 +112,22 @@ function cadenaRandom(longitud, caracteres) {
         cadenaAleatoria += caracteres.charAt(indice);
     }
     return cadenaAleatoria;
+}
+
+function submitChat(event) {
+    event.preventDefault();
+    if (event.key === "Enter") {
+        if (event.shiftKey) {
+            const cursorPos = this.selectionStart;
+            const textBefore = this.value.substring(0, cursorPos);
+            const textAfter = this.value.substring(cursorPos);
+            this.value = textBefore + "\n" + textAfter;
+            this.selectionStart = cursorPos + 1;
+            this.selectionEnd = cursorPos + 1;
+        } else {
+            chatForm_submit.click();
+        }
+    }
 }
 
 // Funcion de iniciar secion y Registrar nuevo Usuario ######################################################################
@@ -173,118 +185,14 @@ function jsonSubmit(e) {
 function getCSRFToken() {
     const csrfCookie = document.querySelector("[name=csrfmiddlewaretoken]").value;
     return csrfCookie;
+    // const csrfCookie = document.cookie.split(";").find((cookie) => cookie.trim().startsWith("csrftoken="));
+    // if (csrfCookie) {
+    //     return csrfCookie.split("=")[1];
+    // } else {
+    //     console.error("CSRF token not found in cookies.");
+    //     return "";
+    // }
 }
-
-// Funcion de preguntar a chatGPT ################################################################
-var contOutput = document.querySelector("#output");
-function chatSubmit(e) {
-    e.preventDefault();
-    const pregunta = txtQuestion.value;
-    const chatForm = e.target;
-    this.reset();
-
-    var tokendid = cadenaRandom(5, alfabetico);
-    const valID = `uuid${tokendid}`;
-
-    const htmlBlock = `
-        <div class="output_block">
-            <div class="btn_secondary chat_msg user_submit" data-tokeid="${valID}">
-                ${pregunta}
-            </div>
-        </div>`;
-
-    contOutput.insertAdjacentHTML("beforeend", htmlBlock);
-    const user_submit = document.querySelector(`.user_submit[data-tokeid="${valID}"]`);
-    setTimeout(function () {
-        user_submit.classList.add("visible");
-        setTimeout(scrollToBottom, 500);
-    }, 20);
-
-    fetch(chatForm.action, {
-        method: "POST",
-        body: JSON.stringify({ question: pregunta }),
-        headers: {
-            "Content-Type": "application/json",
-            "X-Requested-With": "XMLHttpRequest",
-            "X-CSRFToken": chatForm.querySelector("[name=csrfmiddlewaretoken]").value,
-        },
-    })
-        .then((response) => {
-            if (!response.ok) {
-                return response.json().then((data) => {
-                    throw new Error(data.message || "Error desconocido");
-                });
-            }
-            return response.json();
-        })
-        .then((data) => {
-            if (data.success) {
-                const htmlBlock = `
-                <div class="btn_detail chat_msg asistent_response" data-tokeid="${valID}">
-                    <span>${data.answer}</span>
-                </div>
-            `;
-
-                contOutput.insertAdjacentHTML("beforeend", htmlBlock);
-                const asistent_response = document.querySelector(`.asistent_response[data-tokeid="${valID}"]`);
-
-                setTimeout(function () {
-                    setTimeout(function () {
-                        asistent_response.classList.add("visible");
-                        setTimeout(scrollToBottom, 350);
-                    }, 970);
-                }, 20);
-            } else {
-                alertSToast("top", 8000, "error", `Error: ${data.message}`);
-            }
-        })
-        .catch((error) => {
-            console.error("😥 Error:", error);
-            alertSToast("top", 8000, "warning", "Ocurrió un error. Intente nuevamente. 😥");
-        });
-}
-
-// Hacer scroll con un nuevo mensaje en el chat ###############################################
-if (contOutput) {
-    function scrollToBottom() {
-        contOutput.scrollTop = contOutput.scrollHeight;
-    }
-    var observer = new MutationObserver(() => {
-        scrollToBottom();
-    });
-    scrollToBottom();
-    observer.observe(contOutput, { childList: true, subtree: true });
-}
-
-// Copiar al portapapeles #########################################################
-function copiarValinput() {
-    const inputs = document.querySelectorAll('input[data-copy]');
-    inputs.forEach((input) => {
-        input.addEventListener("click", () => {
-            if (!navigator.clipboard) {
-                alert("Tu navegador no admite copiar al portapapeles");
-                alertSToast("top", 8000, "info", "Tu navegador no admite copiar al portapapeles 😯😥🤔");
-                return;
-            }
-            const textCopy = input.value;
-            if (textCopy != "") {
-                navigator.clipboard
-                    .writeText(textCopy)
-                    .then(() => {
-                        console.log("Texto copiado al portapapeles:", textCopy);
-                        alertSToast("top", 5000, "success", "Texto Copiado! 🥳");
-                    })
-                    .catch((error) => {
-                        message = "Error al copiar al portapapeles";
-                        console.error(message, ":", error);
-                        alertSToast("top", 8000, "error", `${message} 🤔😥`);
-                    });
-            }
-        });
-    });
-}
-
-copiarValinput();
 
 // context menu disabled ####################################
 document.oncontextmenu = function () {
@@ -300,6 +208,12 @@ function alertSToast(posittionS, timerS, iconS, titleS, didDestroyS) {
         showCloseButton: true,
         timer: timerS,
         timerProgressBar: true,
+        customClass: {
+            icon: "icon_alert",
+            title: "title_alert",
+            timerProgressBar: "progressbar_alert",
+            closeButton: "close_button_alert",
+        },
         didOpen: (toast) => {
             toast.addEventListener("mouseenter", Swal.stopTimer);
             toast.addEventListener("mouseleave", Swal.resumeTimer);
@@ -318,47 +232,71 @@ function obtenerDatosEdificio(articuloId) {
     if (articuloId) {
         $.ajax({
             url: "/obtenerEdificio/",
-            type: "GET",
-            data: { id: articuloId },
-            success: function (data) {
+            type: 'GET',
+            data: { 'id': articuloId },
+            success: function(data) {
                 $("#edificio_id").val(data.id);
                 $("#titulo").val(data.titulo);
                 $("#informacion").val(data.informacion);
+                $("#color").val(data.color);
+                $("#color_picker").val(data.color);
+                $("#p1_polygons").val(data.p1_polygons);
+                $("#p2_polygons").val(data.p2_polygons);
+                $("#p3_polygons").val(data.p3_polygons);
+                $("#p4_polygons").val(data.p4_polygons);
                 if (data.imagen_url) {
-                    $("#imagen_actual").attr("src", data.imagen_url).show();
+                    const oldImgUrl = data.imagen_url;
+                    const newImgUrl = oldImgUrl.replace("/cross_asistent", "");
+                    $("#imagen_actual").attr("src", newImgUrl).show();
                 } else {
                     $("#imagen_actual").hide();
                 }
-            },
+            }
         });
     } else {
-        $("#edificio_id").val("");
-        $("#titulo").val("");
-        $("#informacion").val("");
+        $("#edificio_id").val('');
+        $("#titulo").val('');
+        $("#informacion").val('');
+        $("#color").val('');
+        $("#color_picker").val('#000000');
+        $("#p1_polygons").val('');
+        $("#p2_polygons").val('');
+        $("#p3_polygons").val('');
+        $("#p4_polygons").val('');
         $("#imagen_actual").hide();
     }
 }
 
-$("#seletcArticulo").change(function () {
+$("#selectArticulo").change(function() {
     var articuloId = $(this).val();
-    sessionStorage.setItem("ultimoArticuloId", articuloId);
+    sessionStorage.setItem('ultimoArticuloId', articuloId);
     obtenerDatosEdificio(articuloId);
 });
 
-var ultimoArticuloId = sessionStorage.getItem("ultimoArticuloId");
+var ultimoArticuloId = sessionStorage.getItem('ultimoArticuloId');
 if (ultimoArticuloId) {
     $("#selectArticulo").val(ultimoArticuloId);
     obtenerDatosEdificio(ultimoArticuloId);
 }
 
-$("#edificioForm").on("submit", function (event) {
-    event.preventDefault();
+$("#color_picker").on('input', function() {
+    var color = $(this).val();
+    $("#color").val(color);
+});
 
-    var formData = new FormData(this);
+$("#color").on('input', function() {
+    var color = $(this).val();
+    $("#color_picker").val(color);
+});
+
+$("#edificioForm").on('submit', function(event) {
+    event.preventDefault();
+    
+    var formData = new FormData(this); 
 
     $.ajax({
-        url: $(this).attr("action"),
-        type: $(this).attr("method"),
+        url: $(this).attr('action'),
+        type: $(this).attr('method'),
         data: formData,
         contentType: false,
         processData: false,

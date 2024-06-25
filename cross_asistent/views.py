@@ -652,19 +652,25 @@ def mostrar_blog(request, Articulos_id):
 #Consulta para informacion del Mapa##################
 def consultaMap(request):
         categoria_mapa = models. Categorias.objects.get(categoria="Mapa")
-        articulos_mapa = models.Database.objects.filter(categoria=categoria_mapa)
+        articulos_mapa = models.Mapa.objects.filter(categoria=categoria_mapa)
         
         return render(request, 'admin/mapa_form.html', {'articulos_mapa': articulos_mapa})
 
+###############################################################
 def obtenerEdificio(request):
     if request.method == 'GET':
         edificio_id = request.GET.get('id')
         if (edificio_id):
-            edificio = get_object_or_404(models.Database, id=edificio_id)
+            edificio = get_object_or_404(models.Mapa, id=edificio_id)
             data = {
                 'id': edificio.id,
                 'titulo': edificio.titulo,
                 'informacion': edificio.informacion,
+                'color': edificio.color,
+                'p1_polygons': edificio.p1_polygons,
+                'p2_polygons': edificio.p2_polygons,
+                'p3_polygons': edificio.p3_polygons,
+                'p4_polygons': edificio.p4_polygons,
                 'imagen_url': edificio.imagenes.url if edificio.imagenes else None,
             }
             return JsonResponse(data)
@@ -675,28 +681,38 @@ def crearEditar(request):
         edificio_id = request.POST.get('edificio_id')
         titulo = request.POST.get('titulo')
         informacion = request.POST.get('informacion')
+        color = request.POST.get('color')
+        p1_polygons = request.POST.get('p1_polygons')
+        p2_polygons = request.POST.get('p2_polygons')
+        p3_polygons = request.POST.get('p3_polygons')
+        p4_polygons = request.POST.get('p4_polygons')
         categoria = models.Categorias.objects.get(categoria="Mapa")
         imagen = request.FILES.get('imagenes')
 
         if edificio_id:
             # Editar edificio existente
-            edificio = get_object_or_404(models.Database, id=edificio_id)
+            edificio = get_object_or_404(models.Mapa, id=edificio_id)
             edificio.titulo = titulo
             edificio.informacion = informacion
+            edificio.color = color
+            edificio.p1_polygons = p1_polygons
+            edificio.p2_polygons = p2_polygons
+            edificio.p3_polygons = p3_polygons
+            edificio.p4_polygons = p4_polygons
             if imagen:
                 edificio.imagenes = imagen
             edificio.save()
         else:
             # Crear nuevo edificio
-            models.Database.objects.create(
+            models.Mapa.objects.create(
                 categoria=categoria,
                 titulo=titulo,
                 informacion=informacion,
+                color=color,
+                p1_polygons=p1_polygons,
+                p2_polygons=p2_polygons,
+                p3_polygons=p3_polygons,
+                p4_polygons=p4_polygons,
                 imagenes=imagen
             )
     return redirect('consultaMap')
-
-@login_required
-@never_cache
-def mapa_form(request):
-    return render(request, 'admin/mapa_form.html')

@@ -58,6 +58,23 @@ class Tareas(models.Model):
     
     def __str__(self):
         return f"{self.tarea} - de:{self.propietario.username}"
+    
+from django.db import models
+
+class Mapa(models.Model):
+    categoria = models.ForeignKey('Categorias', on_delete=models.SET_NULL, null=True)
+    titulo = models.CharField(max_length=200, blank=False)
+    informacion = models.TextField(blank=True, null=True)
+    imagenes =  models.ImageField(upload_to='cross_asistent/static/files/imagenes/', blank=True, null=True)
+    color = models.CharField(max_length=7, blank=True, null=True)
+    p1_polygons = models.CharField(max_length=255, blank=True, null=True)
+    p2_polygons = models.CharField(max_length=255, blank=True, null=True)
+    p3_polygons = models.CharField(max_length=255, blank=True, null=True)
+    p4_polygons = models.CharField(max_length=255, blank=True, null=True)
+
+    def __str__(self):
+        return self.titulo
+
 
 class Articulos(models.Model):
     creacion = models.DateField(auto_now_add=True, blank=False)

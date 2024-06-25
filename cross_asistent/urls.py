@@ -33,7 +33,7 @@ urlpatterns = [
     path('administracion/blogs/', views.admin_blogs, name='admin_blogs'),
     path('administracion/sendblog/', views.crear_articulo, name='send_blog'),
     path('administracion/sendimgsblog/', views.upload_image, name='send_imgsblog'),
-    path('administracion/mapa/', views.mapa_form, name='admin_forms'),
+    path('administracion/mapa/', views.consultaMap, name='admin_forms'),
     path('administracion/tarea/<int:tarea_id>/', views.tareaView, name='tareaView'),
 
     # Nueva ruta para mapa2
