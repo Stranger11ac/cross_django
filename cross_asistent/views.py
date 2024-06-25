@@ -11,7 +11,6 @@ from django.conf import settings
 from .forms import crearTarea
 from django.http import HttpResponse
 from django.utils import timezone
-from .models import Database, Categorias
 from . import models
 
 import openai
@@ -25,9 +24,9 @@ from nltk.stem import WordNetLemmatizer
 
 
 import nltk
-nltk.download('punkt')
-nltk.download('stopwords')
-nltk.download('wordnet')
+# nltk.download('punkt')
+# nltk.download('stopwords')
+# nltk.download('wordnet')
 
 def index(request):
     if not request.user.is_staff:
@@ -56,11 +55,19 @@ def obtener_respuesta_openai(question, instructions):
     return response.choices[0].message.content
 
 def preprocesar_texto(texto):
+    # Tokenización
+    #hola
     tokens = word_tokenize(texto.lower())
+
+    # Eliminación de stopwords
     stop_words = set(stopwords.words('spanish'))
     tokens = [word for word in tokens if word not in stop_words]
+
+    # Lematización
     lemmatizer = WordNetLemmatizer()
     tokens = [lemmatizer.lemmatize(word) for word in tokens]
+
+    # Reconstruir el texto preprocesado
     texto_preprocesado = ' '.join(tokens)
     print(f"procesado:{texto_preprocesado}")
     print()
@@ -73,11 +80,16 @@ def buscar_informacion_relevante(question, queryset):
 
     # Preprocesar la pregunta del usuario
     question_preprocesada = preprocesar_texto(question)
+    # Inicializar el vectorizador TF-IDF
     vectorizer = TfidfVectorizer()
     tfidf_matrix = vectorizer.fit_transform(documents)
+    # Transformar la pregunta del usuario
     question_tfidf = vectorizer.transform([question_preprocesada])
+    # Calcular la similitud del coseno entre la pregunta y los documentos
     similarity = cosine_similarity(question_tfidf, tfidf_matrix).flatten()
+    # Ajustar el umbral de similitud
     threshold = 0.2
+    # Encuentra el documento más similar
     max_similarity_index = similarity.argmax()
     if similarity[max_similarity_index] > threshold:
         return documents[max_similarity_index]
@@ -102,7 +114,7 @@ def chat_view(request):
 
                 if informacion_relevante:
                     # Si hay información relevante, pasarla a OpenAI para generar una respuesta
-                    SYSTEM_PROMPT = f"Utiliza emojis sutilmente. Eres un asistente de la Universidad Tecnologica de Coahuila. Aquí está la información encontrada: {informacion_relevante}"
+                    SYSTEM_PROMPT = f"Utiliza emojis sutilmente. Eres un asistente entusiasta de la Universidad Tecnologica de Coahuila. Aquí está la información encontrada: {informacion_relevante}"
                     answer = obtener_respuesta_openai(question, SYSTEM_PROMPT)
                 else:
                     # Si no hay información relevante, usar GPT-3.5 Turbo para disculparse
