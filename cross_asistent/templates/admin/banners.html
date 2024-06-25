@@ -1,0 +1,40 @@
+{% extends 'base/widget.html' %}
+{% load static filtros %}
+{% block title %}Subir Banner{% endblock %}
+{% block link_home %}{% url 'vista_programador' %}{% endblock %}
+{% block link_default %}
+{% include 'base/widget_links-admin.html' %}
+{% endblock %}
+{% block content %}
+    <div class="d-flex justify-content-center align-items-center min-vh-100">
+        <section class="card mb-4 col-lg-6 col-md-8 text-center">
+            <h3 class="text-center my-4">Subir Banner</h3>
+            <div class="card-body">
+                <form method="POST" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="titulo" class="form-label">Título</label>
+                        <input type="text" class="form-control" id="titulo" name="titulo" required autocomplete="off" autocapitalize="off">
+                    </div>
+                    <div class="mb-3">
+                        <label for="descripcion" class="form-label">Descripción</label>
+                        <input type="text" class="form-control" id="descripcion" name="descripcion" required autocomplete="off" autocapitalize="off">
+                    </div>
+                    <div class="mb-3">
+                        <label for="articulo" class="form-label">Artículo</label>
+                        <input type="text" class="form-control" id="articulo" name="articulo">
+                    </div>
+                    <div class="mb-3">
+                        <label for="imagen" class="form-label">Imagen</label>
+                        <input type="file" class="form-control" id="imagen" name="imagen" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="expiracion" class="form-label">Expiración</label>
+                        <input type="datetime-local" class="form-control" id="expiracion" name="expiracion">
+                    </div>
+                    <button type="submit" class="btn btn_detail w-100 d-block">Subir</button>
+                </form>
+            </div>
+        </section>
+    </div>
+{% endblock %}

@@ -1,6 +1,7 @@
 from django import forms
 from django.forms import ModelForm
 from .models import Tareas
+from .models import Banners
 from .models import Database, Categorias
 
 class crearTarea(ModelForm):
@@ -19,3 +20,8 @@ class PreguntaForm(forms.ModelForm):
         if commit:
             pregunta.save()
         return pregunta
+
+class BannersForm(forms.ModelForm):
+    class Meta:
+        model = Banners
+        fields = ['titulo', 'descripcion', 'articulo', 'imagen', 'expiracion']
