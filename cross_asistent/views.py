@@ -13,6 +13,8 @@ from django.http import HttpResponse
 from django.utils import timezone
 from .models import Database, Categorias
 from . import models
+from .forms import BannersForm
+from .models import Banners
 
 import openai
 import json
@@ -700,3 +702,16 @@ def crearEditar(request):
 @never_cache
 def mapa_form(request):
     return render(request, 'admin/mapa_form.html')
+
+# subir banners###########################
+@login_required
+def upload_banner(request):
+  if request.method == 'POST':
+    form = BannersForm(request.POST, request.FILES)
+    if form.is_valid():
+      form.save()
+      return redirect('admin/vista_programador.html')  
+  else:
+    form = BannersForm()
+  context = {'form': form}
+  return render(request, 'admin/banners.html', context)
