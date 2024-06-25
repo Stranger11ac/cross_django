@@ -57,7 +57,7 @@
             <div class="row">
                 <div class="col-6 mb-4">
                     <!-- Card 1: Banners -->
-                    <a href="#" class="card">
+                    <a href="{% url 'banners' %}" class="card">
                         <div class="card-body p-4">
                             <h6 class="card-title d-flex justify-content-between m-0">
                                 <!-- titulo y total -->
@@ -97,13 +97,6 @@
                                 </div>
                                 <div class="text_detail ms-auto d-flex align-items-center">
                                     {{ num_preguntas }}
-                                    <!-- <form action="{% url 'export_database_to_csv' %}" method="get">
-                                        {% csrf_token %}
-                                        <button type="submit"
-                                            class="btn btn_detail btn-sm btn-floating p-0 ms-2">
-                                            <i class="fa-solid fa-file-arrow-down"></i>
-                                        </button>
-                                    </form> -->
                                 </div>
                             </h6>
                         </div>
@@ -129,32 +122,49 @@
             </div>
         </div>
     </section>
-
-    <!-- Formulario para responder preguntas -->
-    <section class="card mb-4 col-lg-6 col-md-12">
-        <h3 class="text-center my-4">Responder pregunta</h3>
-        <div class="card-body">
-            <div>
-                <form method="post" action="{% url 'responder_preguntas' %}">
-                    {% csrf_token %}
-                    <div class="mb-3">
-                        <label for="pregunta" class="form-label">Selecciona una pregunta</label>
-                        <input list="preguntas" name="pregunta_id" id="pregunta" class="form-control" autocomplete="off" autocapitalize="off" />
-                        <datalist id="preguntas">
-                            {% for pregunta in preguntas_sin_responder %}
-                            <option value="{{ pregunta.titulo }}"></option>
-                            {% endfor %}
-                        </datalist>
+    <div class="row">
+        <!-- Formulario para responder preguntas -->
+        <div class="col-lg-8 col-md-12">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h3 class="text-center mb-4">Responder pregunta</h3>
+                    <div>
+                        <form method="post" action="{% url 'responder_preguntas' %}">
+                            {% csrf_token %}
+                            <div class="mb-3">
+                                <label for="pregunta" class="form-label">Selecciona una pregunta</label>
+                                <input list="preguntas" name="pregunta_id" id="pregunta" class="form-control" autocomplete="off" autocapitalize="off" />
+                                <datalist id="preguntas">
+                                    {% for pregunta in preguntas_sin_responder %}
+                                    <option value="{{ pregunta.titulo }}"></option>
+                                    {% endfor %}
+                                </datalist>
+                            </div>
+                            <div class="mb-3">
+                                <label for="respuesta" class="form-label">Respuesta</label>
+                                <textarea class="form-control" id="respuesta" name="respuesta" rows="3"></textarea>
+                            </div>
+                            <button type="submit" class="btn btn_detail w-100 d-block">Responder</button>
+                        </form>
                     </div>
-                    <div class="mb-3">
-                        <label for="respuesta" class="form-label">Respuesta</label>
-                        <textarea class="form-control" id="respuesta" name="respuesta" rows="3"></textarea>
-                    </div>
-                    <button type="submit" class="btn btn_detail w-100 d-block">Responder</button>
-                </form>
+                </div>
             </div>
         </div>
-    </section>
+
+        <div class="col-lg-4 col-md-12">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h3 class="text-center mb-4">Base de datos</h3>
+                    <form action="{% url 'export_database_to_csv' %}" method="get">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn_detail btn-block">
+                            Descargar <i class="fa-solid fa-file-arrow-down ms-1"></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- Todos los usuarios registrados -->
     <div class="card text-center mt-2 pt-5">

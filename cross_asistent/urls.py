@@ -23,6 +23,7 @@ urlpatterns = [
     path('administracion/', views.vista_admin, name='vista_admin'),
     path('administracion/old/', views.dashbAdmin, name='dashb_admin'),
     path('administracion/programador/', views.vista_programador, name='vista_programador'),
+    path('administracion/banners/', views.upload_banner, name='banners'),
     path('administracion/responderpreguntas/', views.responder_preguntas, name='responder_preguntas'),
     path('administracion/editaruser/<int:user_id>/', views.editar_usuario, name='editar_usuario'),
     path('administracion/activaruser/<int:user_id>/', views.activar_usuario, name='activar_usuario'),
