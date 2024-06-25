@@ -710,7 +710,7 @@ def upload_banner(request):
     form = BannersForm(request.POST, request.FILES)
     if form.is_valid():
       form.save()
-      return redirect('admin/vista_programador.html')  
+      return render(request, 'admin/banners.html', context={'form': form})
   else:
     form = BannersForm()
   context = {'form': form}
