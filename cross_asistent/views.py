@@ -731,11 +731,6 @@ def crearEditar(request):
             )
     return redirect('consultaMap')
 
-@login_required
-@never_cache
-def mapa_form(request):
-    return render(request, 'admin/mapa_form.html')
-
 # subir banners###########################
 @login_required
 def upload_banner(request):
