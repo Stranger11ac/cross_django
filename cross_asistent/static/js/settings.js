@@ -312,10 +312,11 @@ function alertSToast(posittionS, timerS, iconS, titleS, didDestroyS) {
 
 // alertSToast('top', 8000, 'success', '<br>lo normal');
 
-function obtenerDatosEdificio(articuloId) {
+function obtenerDatosEdificio(articuloId, urlConsulta) {
+    console.log(`AJAX: ${urlConsulta}`);
     if (articuloId) {
         $.ajax({
-            url: "/obtenerEdificio/",
+            url: urlConsulta,
             type: "GET",
             data: { id: articuloId },
             success: function (data) {
@@ -353,15 +354,10 @@ function obtenerDatosEdificio(articuloId) {
 
 $("#selectArticulo").change(function () {
     var articuloId = $(this).val();
-    sessionStorage.setItem("ultimoArticuloId", articuloId);
-    obtenerDatosEdificio(articuloId);
+    const urlConsulta = $(this).data("second-action");
+    obtenerDatosEdificio(articuloId, urlConsulta);
 });
 
-var ultimoArticuloId = sessionStorage.getItem("ultimoArticuloId");
-if (ultimoArticuloId) {
-    $("#selectArticulo").val(ultimoArticuloId);
-    obtenerDatosEdificio(ultimoArticuloId);
-}
 
 $("#color_picker").on("input", function () {
     var color = $(this).val();

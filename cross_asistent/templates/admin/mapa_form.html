@@ -18,10 +18,10 @@
  <!-- consulta_mapa.html -->
  <div class="container">
     <h2>Información del Mapa</h2>
-    <form method="post" id="filtroEdificio" action="{% url 'consultaMap' %}" >
+    <form method="post" id="filtroEdificio" action="{% url 'consultaMap' %}">
         {% csrf_token %}
         <label for="selectArticulo">Selecciona un Artículo:</label>
-        <select id="selectArticulo" name="selectArticulo" class="form-select">
+        <select id="selectArticulo" name="selectArticulo" class="form-select" data-second-action="{% url 'obtenerEdificio' %}">
             <option disabled selected hidden> Selecciona un edificio...</option>
             <option value=""> Crear Nuevo Edificio</option>
             {% for articulo in articulos_mapa %}

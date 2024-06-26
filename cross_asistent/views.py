@@ -33,7 +33,7 @@ def index(request):
 
 client = openai.OpenAI(api_key=settings.OPENAI_API_KEY)
 
-def obtener_respuesta_openai(question, instructions):
+def chatgpt(question, instructions):
     response = client.chat.completions.create(
         model="gpt-3.5-turbo",
         messages=[
@@ -69,9 +69,14 @@ def chatbot(request):
             pregunta_procesada = process_question(question)
             coincidencia = models.Database.objects.filter(titulo__icontains=pregunta_procesada).order_by('-frecuencia').first()
             if coincidencia:
+                print(coincidencia)
+                system_prompt = f"Utiliza emojis sutilmente. Eres un asistente de la Universidad Tecnologica de Coahuila. Aquí está la información encontrada: {coincidencia.informacion}"
+                # answer = chatgpt(question, system_prompt)
+                
                 respuesta = {
                     "titulo": coincidencia.titulo,
                     "informacion": coincidencia.informacion,
+                    # "informacion": answer,
                     "redirigir": coincidencia.redirigir,
                     "documentos": coincidencia.documentos.url if coincidencia.documentos else None,
                     "imagenes": coincidencia.imagenes.url if coincidencia.imagenes else None
@@ -577,7 +582,7 @@ def upload_image(request):
 
 #Consulta para informacion del Mapa##################
 def obtenerinfoEdif(request):
-        categoria_mapa = models. Categorias.objects.get(categoria="Mapa")
+        categoria_mapa = models.Categorias.objects.get(categoria="Mapa")
         articulos_mapa = models.Mapa.objects.filter(categoria=categoria_mapa)
         
         return render(request, 'admin/mapa_form.html', {'articulos_mapa': articulos_mapa})
