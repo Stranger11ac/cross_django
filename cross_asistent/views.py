@@ -411,39 +411,29 @@ def singoutpage(request):
 
 @login_required
 @never_cache
-# # def export_table_to_csv(request):
-#     table_name = request.GET.get('selecTable')
-#     now = timezone.localtime(timezone.now()).strftime('%d-%m-%Y_%H%M%S')
-    
-#     if not table_name:
-#         return HttpResponse('No table selected', status=400)
-    
-#     response = HttpResponse(content_type='text/csv')
-#     response['Content-Disposition'] = f'attachment; filename="{table_name}_{now}.csv"'
-    
-#     writer = csv.writer(response)
-    
-#     # Dynamic model retrieval
-#     try:
-#         model = apps.get_model('cross_assistent', table_name)
-#     except LookupError:
-#         return HttpResponse('Invalid table name', status=400)
-    
-#     # Writing the header
-#     fields = [field.name for field in model._meta.fields]
-#     writer.writerow(fields)
-    
-#     # Writing the data
-#     for obj in model.objects.all():
-#         writer.writerow([getattr(obj, field) for field in fields])
-    
-#     return response
 
-# def obtenerinfoEdif(request):
-#         categoria_mapa = models.Categorias.objects.get(categoria="Mapa")
-#         articulos_mapa = models.Mapa.objects.filter(categoria=categoria_mapa)
-        
-#         return render(request, 'admin/mapa_form.html', {'articulos_mapa': articulos_mapa})
+def export_database(request):
+    now = timezone.localtime(timezone.now()).strftime('%d-%m-%Y_%H%M%S')
+    if request.user.is_staff:
+        response = HttpResponse(content_type='text/csv')
+        response['Content-Disposition'] = f'attachment; filename="UTC_database_{now}.csv"'
+        writer = csv.writer(response)
+        writer.writerow(['Categoria', 'Titulo', 'Informacion', 'Redirigir', 'Frecuencia', 'Documentos', 'Imagenes', 'Fecha Modificacion'])
+        # Obtener todos los objetos del modelo Database
+        databaseall = models.Database.objects.all()
+        for info in databaseall:
+            writer.writerow([
+                info.categoria if info.categoria else '',
+                info.titulo,
+                info.informacion,
+                info.redirigir,
+                info.frecuencia,
+                info.documentos.url if info.documentos else '',
+                info.imagenes.url if info.imagenes else '',
+                info.fecha_modificacion
+            ])
+        return response
+
 
 @login_required
 @never_cache
