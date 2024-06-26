@@ -411,7 +411,6 @@ def singoutpage(request):
 
 @login_required
 @never_cache
-
 def export_database(request):
     now = timezone.localtime(timezone.now()).strftime('%d-%m-%Y_%H%M%S')
     if request.user.is_staff:
