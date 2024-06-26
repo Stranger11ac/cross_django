@@ -359,12 +359,12 @@ $("#selectArticulo").change(function () {
 });
 
 
-$("#color_picker").on("input", function () {
+$("#color_picker").input(function () {
     var color = $(this).val();
     $("#color").val(color);
 });
 
-$("#color").on("input", function () {
+$("#color").input(function () {
     var color = $(this).val();
     $("#color_picker").val(color);
 });
