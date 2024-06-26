@@ -9,12 +9,13 @@
     {% endif %}
 </li>
 <li class="nav-item">
-    <a class="btn {% if active_page == 'blog' %}btn_secondary{% else %}btn_detail{% endif %} m-1 my-lg-0 d-block" href="{% url 'admin_blogs' %}">Blogs<i
+    <a class="btn {% if active_page == 'blog' %}btn_secondary{% else %}btn_detail{% endif %} m-1 my-lg-0 d-block" href="{% url 'admin_blogs' %}">Blogs <i
             class="fa-solid fa-newspaper ms-1"></i>
     </a>
 </li>
 <li class="nav-item">
-    <a class="btn {% if active_page == 'forms' %}btn_secondary{% else %}btn_detail{% endif %} m-1 my-lg-0 d-block" href="{% url 'admin_forms' %}">Formularios<i class="fa-solid fa-database ms-1"></i>
+    <a class="btn {% if active_page == 'forms' %}btn_secondary{% else %}btn_detail{% endif %} m-1 my-lg-0 d-block" href="{% url 'consultaMap' %}">Mapa <i
+            class="fa-solid fa-database ms-1"></i>
     </a>
 </li>
 <li class="nav-item">

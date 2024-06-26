@@ -1,13 +1,6 @@
 from django import forms
 from django.forms import ModelForm
-from .models import Tareas
-from .models import Banners
-from .models import Database, Categorias
-
-class crearTarea(ModelForm):
-    class Meta:
-        model = Tareas
-        fields = ['tarea', 'importante']
+from .models import Database, Categorias, Banners
 
 class PreguntaForm(forms.ModelForm):
     class Meta:

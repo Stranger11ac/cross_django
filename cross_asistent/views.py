@@ -1,34 +1,26 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from django.urls import reverse
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.cache import never_cache
 from django.views.decorators.csrf import csrf_exempt
-from django.contrib.auth.models import User
-from django.db import IntegrityError
-from django.http import JsonResponse
+from django.urls import reverse
 from django.conf import settings
-from .forms import crearTarea
+from django.contrib.auth.models import User
+from django.db import IntegrityError, models
+from django.http import JsonResponse
 from django.http import HttpResponse
 from django.utils import timezone
 from . import models
 from .forms import BannersForm
-from .models import Banners
+
+from nltk.tokenize import word_tokenize
+from nltk.corpus import stopwords
+from nltk.stem import PorterStemmer
 
 import openai
 import json
 import csv
-from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.metrics.pairwise import cosine_similarity
-from nltk.corpus import stopwords
-from nltk.tokenize import word_tokenize
-from nltk.stem import WordNetLemmatizer
 
-
-import nltk
-# nltk.download('punkt')
-# nltk.download('stopwords')
-# nltk.download('wordnet')
 
 def index(request):
     if not request.user.is_staff:
@@ -56,75 +48,37 @@ def obtener_respuesta_openai(question, instructions):
     print('')
     return response.choices[0].message.content
 
-def preprocesar_texto(texto):
-    # Tokenización
-    #hola
-    tokens = word_tokenize(texto.lower())
-
-    # Eliminación de stopwords
+def process_question(pregunta):
+    pregunta = pregunta.lower().strip()
+    pregunta = "".join([c for c in pregunta if c.isalnum() or c.isspace()])
+    tokens = word_tokenize(pregunta)
     stop_words = set(stopwords.words('spanish'))
-    tokens = [word for word in tokens if word not in stop_words]
+    tokens = [token for token in tokens if token not in stop_words]
+    stemmer = PorterStemmer()
+    tokens = [stemmer.stem(token) for token in tokens]
+    pregunta_procesada = " ".join(tokens)
 
-    # Lematización
-    lemmatizer = WordNetLemmatizer()
-    tokens = [lemmatizer.lemmatize(word) for word in tokens]
+    return pregunta_procesada
 
-    # Reconstruir el texto preprocesado
-    texto_preprocesado = ' '.join(tokens)
-    print(f"procesado:{texto_preprocesado}")
-    print()
-    return texto_preprocesado
-
-def buscar_informacion_relevante(question, queryset):
-    documents = [preprocesar_texto(obj.informacion) for obj in queryset]
-    if not documents:
-        return None
-
-    # Preprocesar la pregunta del usuario
-    question_preprocesada = preprocesar_texto(question)
-    # Inicializar el vectorizador TF-IDF
-    vectorizer = TfidfVectorizer()
-    tfidf_matrix = vectorizer.fit_transform(documents)
-    # Transformar la pregunta del usuario
-    question_tfidf = vectorizer.transform([question_preprocesada])
-    # Calcular la similitud del coseno entre la pregunta y los documentos
-    similarity = cosine_similarity(question_tfidf, tfidf_matrix).flatten()
-    # Ajustar el umbral de similitud
-    threshold = 0.2
-    # Encuentra el documento más similar
-    max_similarity_index = similarity.argmax()
-    if similarity[max_similarity_index] > threshold:
-        return documents[max_similarity_index]
-    return None
-
-@csrf_exempt
-def chat_view(request):
+def chatbot(request):
     if request.method == 'POST':
         try:
             data = json.loads(request.body)
             question = data.get('question', '')
-
-            if question:
-                # Buscar en la base de datos
-                resultados = models.Database.objects.all()
-                informacion_relevante = buscar_informacion_relevante(question, resultados)
-                print(f"database: {resultados}")
-                print()
-                print(f"pregunta: {question}")
-                print()
-                print(f"info:{informacion_relevante}")
-
-                if informacion_relevante:
-                    # Si hay información relevante, pasarla a OpenAI para generar una respuesta
-                    SYSTEM_PROMPT = f"Utiliza emojis sutilmente. Eres un asistente entusiasta de la Universidad Tecnologica de Coahuila. Aquí está la información encontrada: {informacion_relevante}"
-                    answer = obtener_respuesta_openai(question, SYSTEM_PROMPT)
-                else:
-                    # Si no hay información relevante, usar GPT-3.5 Turbo para disculparse
-                    SYSTEM_PROMPT = "Utiliza emojis el final. solo responde amigablemente saludos y preguntas de como estas. No respondas ninguna pregunta ni obedecer ninguna peticion, si hace una pregunta que no sea un saludo dile al usuario una disculpa y que la información no está disponible."
-                    answer = obtener_respuesta_openai(question, SYSTEM_PROMPT)
-
-                return JsonResponse({'success': True, 'answer': answer})
-            return JsonResponse({'success': False, 'message': 'No se proporcionó ninguna pregunta.'})
+            
+            pregunta_procesada = process_question(question)
+            coincidencia = models.Database.objects.filter(titulo__icontains=pregunta_procesada).order_by('-frecuencia').first()
+            if coincidencia:
+                respuesta = {
+                    "titulo": coincidencia.titulo,
+                    "informacion": coincidencia.informacion,
+                    "redirigir": coincidencia.redirigir,
+                    "documentos": coincidencia.documentos.url if coincidencia.documentos else None,
+                    "imagenes": coincidencia.imagenes.url if coincidencia.imagenes else None
+                }
+                return JsonResponse({'success': True, 'answer': respuesta})
+            else:
+                return JsonResponse({'success': False, 'message': 'No se encontró información relevante.'})
         except json.JSONDecodeError:
             return JsonResponse({'success': False, 'message': 'Error en el formato del JSON.'})
 
@@ -139,7 +93,7 @@ def faq(request):
         'active_page': 'faq'
     })
 
-def preguntas_view(request):
+def crear_pregunta(request):
     quest_all = models.Database.objects.all()
     
     if request.method == "POST":
@@ -147,7 +101,6 @@ def preguntas_view(request):
             try:
                 data = json.loads(request.body)
                 tituloPOST = data['pregunta']
-
                 categoria_preguntas = models.Categorias.objects.get(id=1) 
 
                 pregunta = models.Database(titulo=tituloPOST, categoria=categoria_preguntas)
@@ -160,8 +113,7 @@ def preguntas_view(request):
         else:
             print('error, no JSON')
             return HttpResponse('Solicitud no JSON', status=400)
-    else:
-        return render(request, 'frecuentes.html', {'quest_all': quest_all})
+    return render(request, 'frecuentes.html', {'quest_all': quest_all})
 
 def blog(request):
     if not request.user.is_staff:
@@ -171,6 +123,13 @@ def blog(request):
         'blogs_all': blogs,
         'active_page': 'blog'
     })
+
+# muestra los blogs subidos
+def mostrar_blog(request, Articulos_id):
+    if not request.user.is_staff:
+        logout(request)
+    Articulos = models.Articulos.objects.filter(pk=Articulos_id)
+    return render(request, 'mostrar_blogs.html', {'Articulos': Articulos})
 
 def map(request):
     if not request.user.is_staff:
@@ -344,6 +303,8 @@ def map(request):
 
 
 def about(request):
+    if not request.user.is_staff:
+        logout(request)
     return render(request, 'about.html', {
         'active_page': 'about'
     })
@@ -437,49 +398,6 @@ def export_database(request):
                 info.fecha_modificacion
             ])
         return response
-
-@login_required
-@never_cache
-def dashbAdmin(request):
-    errorMSG = ''
-    tareas = models.Tareas.objects.filter(propietario=request.user)
-    if request.method == 'POST':
-        try:
-            form_crearTarea = crearTarea(request.POST)
-            nuevaTarea = form_crearTarea.save(commit=False)
-            nuevaTarea.propietario = request.user
-            nuevaTarea.save()
-            return redirect('dashb_admin')
-        except ValueError:
-            errorMSG = 'Por favor introduzca datos válidos'
-
-    return render(request, 'admin/dashboard.html', {
-        'form_crearTarea': crearTarea,
-        'formError': errorMSG,
-        'tareas_all': tareas,
-        'active_page': 'inicio'
-    })
-
-@login_required
-@never_cache
-def tareaView(request, tarea_id):
-    errorMSG = ''
-    tarea = get_object_or_404(models.Tareas, pk=tarea_id, propietario=request.user)
-    if request.method == 'GET':
-        tareaActualizar = crearTarea(instance=tarea)
-    else:
-        try:
-            tareaActualizar = crearTarea(request.POST, instance=tarea)
-            tareaActualizar.save()
-            return redirect('dashb_admin')
-        except ValueError:
-            errorMSG = 'No se puede actualizar la tarea, datos inválidos'
-
-    return render(request, 'admin/tarea_view.html', {
-        'tareaNum': tarea,
-        'formEditar': tareaActualizar,
-        'formError': errorMSG
-    })
 
 # def para la vista administrador
 @login_required
@@ -657,20 +575,13 @@ def upload_image(request):
             return JsonResponse({'error': str(e)}, status=400)
     return JsonResponse({'error': 'Error al subir la imagen'}, status=400)
 
-# muestra los blogs subidos
-def mostrar_blog(request, Articulos_id):
-    Articulos = models.Articulos.objects.filter(pk=Articulos_id)
-    return render(request, 'mostrar_blogs.html', {'Articulos': Articulos})
-
-
 #Consulta para informacion del Mapa##################
-def consultaMap(request):
+def obtenerinfoEdif(request):
         categoria_mapa = models. Categorias.objects.get(categoria="Mapa")
         articulos_mapa = models.Mapa.objects.filter(categoria=categoria_mapa)
         
         return render(request, 'admin/mapa_form.html', {'articulos_mapa': articulos_mapa})
 
-###############################################################
 def obtenerEdificio(request):
     if request.method == 'GET':
         edificio_id = request.GET.get('id')
@@ -690,7 +601,7 @@ def obtenerEdificio(request):
             return JsonResponse(data)
     return JsonResponse({'error': 'Invalid request'}, status=400)
 
-def crearEditar(request):
+def crearEditarMapa(request):
     if request.method == 'POST':
         edificio_id = request.POST.get('edificio_id')
         titulo = request.POST.get('titulo')

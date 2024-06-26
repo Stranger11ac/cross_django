@@ -629,6 +629,10 @@ main.main_anchor {
     max-height: 200px !important;
 }
 
+.carousel .carousel-item img {
+    object-fit: cover !important;
+}
+
 .carousel .carousel-item .carousel-caption {
     border: none;
     border-radius: var(--border-radius);
