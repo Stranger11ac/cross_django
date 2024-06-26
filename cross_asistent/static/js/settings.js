@@ -152,13 +152,16 @@ function jsonSubmit(e) {
             dataMessage = data.message;
             if (data.success) {
                 thisForm.reset();
-                if (data.functionForm == "singin") {
+                if (data.functions == "singin") {
                     window.location.href = data.redirect_url;
+                } else if (data.functions == "others") {
+                    alertSToast("center", timerOut + 4000, "success", dataMessage);
                 } else {
                     alertSToast("center", timerOut + 4000, "success", dataMessage, function () {
                         location.reload();
                     });
                 }
+
             } else {
                 console.error(dataMessage);
                 alertSToast("top", timerOut + 2000, "warning", dataMessage);
@@ -284,6 +287,11 @@ if (contOutput) {
     });
 };
 
+function getCSRFToken() {
+    const csrfCookie = document.querySelector("[name=csrfmiddlewaretoken]").value;
+    return csrfCookie;
+}
+
 // context menu disabled ####################################
 document.oncontextmenu = function () {
     return false;
@@ -359,15 +367,11 @@ $("#selectArticulo").change(function () {
 });
 
 
-$("#color_picker").input(function () {
+$("#color_picker").on("input", function () {
     var color = $(this).val();
     $("#color").val(color);
 });
 
-$("#color").input(function () {
-    var color = $(this).val();
-    $("#color_picker").val(color);
-});
 
 $("#edificioForm").submit(function (event) {
     event.preventDefault();
