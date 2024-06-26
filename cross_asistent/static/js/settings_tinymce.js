@@ -5,7 +5,7 @@ const uploadImageTiny = async (blobInfo, progress) => {
         formData.append("file", blobInfo.blob(), blobInfo.filename());
         formData.append("csrfmiddlewaretoken", getCSRFToken());
 
-        const response = await fetch("../../administracion/sendimgsblog/", {
+        const response = await fetch("../../administracion/registrar_img_blog/", {
             method: "POST",
             body: formData,
             credentials: "include",
@@ -74,7 +74,7 @@ tinymce.init({
     image_title: true,
     automatic_uploads: true,
     file_picker_types: "image",
-    images_upload_url: "../../administracion/sendimgsblog/",
+    images_upload_url: "../../administracion/registrar_img_blog/",
     images_upload_handler: uploadImageTiny,
     min_height: 800,
     autoresize_min_height: 800,

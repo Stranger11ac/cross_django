@@ -287,6 +287,11 @@ if (contOutput) {
     });
 };
 
+function getCSRFToken() {
+    const csrfCookie = document.querySelector("[name=csrfmiddlewaretoken]").value;
+    return csrfCookie;
+}
+
 // context menu disabled ####################################
 document.oncontextmenu = function () {
     return false;
