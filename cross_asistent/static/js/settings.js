@@ -359,15 +359,11 @@ $("#selectArticulo").change(function () {
 });
 
 
-$("#color_picker").input(function () {
+$("#color_picker").on("input", function () {
     var color = $(this).val();
     $("#color").val(color);
 });
 
-$("#color").input(function () {
-    var color = $(this).val();
-    $("#color_picker").val(color);
-});
 
 $("#edificioForm").submit(function (event) {
     event.preventDefault();
