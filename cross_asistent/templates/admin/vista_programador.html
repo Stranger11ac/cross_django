@@ -124,7 +124,7 @@
     </section>
     <div class="row">
         <!-- Formulario para responder preguntas -->
-        <div class="col-lg-8 col-md-12">
+        <div class="col-lg-6 col-md-12">
             <div class="card mb-4">
                 <div class="card-body">
                     <h3 class="text-center mb-4">Responder pregunta</h3>
@@ -151,7 +151,7 @@
             </div>
         </div>
 
-        <div class="col-lg-4 col-md-12">
+        <div class="col-lg-6 col-md-12">
             <div class="card mb-4">
                 <div class="card-body">
                     <h3 class="text-center mb-4">Base de datos</h3>
@@ -163,7 +163,21 @@
                     </form>
                 </div>
             </div>
-        </div>
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h3 class="text-center mb-4">Importar Base de Datos</h3>
+                    <form method="POST" enctype="multipart/form-data" action="{}">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <input type="file" name="file" accept=".csv" class="form-control">
+                        </div>
+                        <button type="submit" class="btn btn_detail btn-block">
+                            Importar <i class="fa-solid fa-file-arrow-up ms-1"></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+         </div> 
     </div>
 
     <!-- Todos los usuarios registrados -->
