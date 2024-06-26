@@ -3,13 +3,15 @@ from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.cache import never_cache
 from django.views.decorators.csrf import csrf_exempt
-from django.urls import reverse
-from django.conf import settings
+from django.http import HttpResponseForbidden
 from django.contrib.auth.models import User
 from django.db import IntegrityError, models
 from django.http import JsonResponse
 from django.http import HttpResponse
 from django.utils import timezone
+from django.conf import settings
+from django.urls import reverse
+from django.apps import apps
 from . import models
 from .forms import BannersForm
 
@@ -380,29 +382,56 @@ def singoutpage(request):
     logout(request)
     return redirect('singin')
 
+# def consulTabla(request):
+#     if request.user.is_staff:
+#         # Obtener nombres de todas las tablas del modelo
+#         all_models = apps.get_models()
+#         cross_assistent_models = [model for model in all_models if model._meta.app_label == 'cross_assistent']
+        
+#         # Imprimir todos los modelos y los modelos de la app cross_assistent para depuración
+#         print(f"Todos los modelos: {[model._meta.object_name for model in all_models]}")
+#         print(f"Modelos de cross_assistent: {[model._meta.object_name for model in cross_assistent_models]}")
+        
+#         data_table = [model._meta.object_name for model in cross_assistent_models]
+#         return render(request, 'admin/vista_programador.html', {'data_table': data_table})
+#     else:
+#         return HttpResponseForbidden()
+
 @login_required
 @never_cache
-def export_database(request):
-    now = timezone.localtime(timezone.now()).strftime('%d-%m-%Y_%H%M%S')
-    if request.user.is_staff:
-        response = HttpResponse(content_type='text/csv')
-        response['Content-Disposition'] = f'attachment; filename="UTC_database_{now}.csv"'
-        writer = csv.writer(response)
-        writer.writerow(['Categoria', 'Titulo', 'Informacion', 'Redirigir', 'Frecuencia', 'Documentos', 'Imagenes', 'Fecha Modificacion'])
-        # Obtener todos los objetos del modelo Database
-        databaseall = models.Database.objects.all()
-        for info in databaseall:
-            writer.writerow([
-                info.categoria if info.categoria else '',
-                info.titulo,
-                info.informacion,
-                info.redirigir,
-                info.frecuencia,
-                info.documentos.url if info.documentos else '',
-                info.imagenes.url if info.imagenes else '',
-                info.fecha_modificacion
-            ])
-        return response
+# # def export_table_to_csv(request):
+#     table_name = request.GET.get('selecTable')
+#     now = timezone.localtime(timezone.now()).strftime('%d-%m-%Y_%H%M%S')
+    
+#     if not table_name:
+#         return HttpResponse('No table selected', status=400)
+    
+#     response = HttpResponse(content_type='text/csv')
+#     response['Content-Disposition'] = f'attachment; filename="{table_name}_{now}.csv"'
+    
+#     writer = csv.writer(response)
+    
+#     # Dynamic model retrieval
+#     try:
+#         model = apps.get_model('cross_assistent', table_name)
+#     except LookupError:
+#         return HttpResponse('Invalid table name', status=400)
+    
+#     # Writing the header
+#     fields = [field.name for field in model._meta.fields]
+#     writer.writerow(fields)
+    
+#     # Writing the data
+#     for obj in model.objects.all():
+#         writer.writerow([getattr(obj, field) for field in fields])
+    
+#     return response
+
+# def obtenerinfoEdif(request):
+#         categoria_mapa = models.Categorias.objects.get(categoria="Mapa")
+#         articulos_mapa = models.Mapa.objects.filter(categoria=categoria_mapa)
+        
+#         return render(request, 'admin/mapa_form.html', {'articulos_mapa': articulos_mapa})
 
 # def para la vista administrador
 @login_required
