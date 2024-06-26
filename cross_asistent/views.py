@@ -12,6 +12,8 @@ from django.http import HttpResponse
 from django.utils import timezone
 from . import models
 from .forms import BannersForm
+from .forms import CSVUploadForm
+from .models import Database, Categorias
 
 from nltk.tokenize import word_tokenize
 from nltk.corpus import stopwords
@@ -20,6 +22,9 @@ from nltk.stem import PorterStemmer
 import openai
 import json
 import csv
+import os
+from django.core.files import File
+
 
 
 def index(request):
@@ -335,19 +340,19 @@ def singuppage(request):
         if password1 and password2 and username and email:
             if password1 == password2:
                 if User.objects.filter(username=username).exists():
-                    return JsonResponse({'success': False, 'functionForm': 'singup','message': f'El usuario <u>{username}</u> ya existe 😯'}, status=400)
+                    return JsonResponse({'success': False, 'functions': 'singup','message': f'El usuario <u>{username}</u> ya existe 😯'}, status=400)
                 if User.objects.filter(email=email).exists():
-                    return JsonResponse({'success': False, 'functionForm': 'singup','message': f'El correo electrónico <u>{email}</u> ya está registrado 😯'}, status=400)
+                    return JsonResponse({'success': False, 'functions': 'singup','message': f'El correo electrónico <u>{email}</u> ya está registrado 😯'}, status=400)
                 try:
                     newUser = User.objects.create_user(first_name=first_name,last_name=last_name,username=username,password=password1,email=email,is_active=0)
                     newUser.save()
-                    return JsonResponse({'success': True, 'functionForm': 'singup','message': '🥳🥳🥳 <br>Usuario creado<br> Tu cuenta está <u>INACTIVA</u>'}, status=200)
+                    return JsonResponse({'success': True, 'functions': 'singup','message': '🥳🥳🥳 <br>Usuario creado<br> Tu cuenta está <u>INACTIVA</u>'}, status=200)
                 except IntegrityError:
-                    return JsonResponse({'success': False, 'functionForm': 'singup','message': 'Ocurrió un error durante el registro. Intente nuevamente.'}, status=400)
+                    return JsonResponse({'success': False, 'functions': 'singup','message': 'Ocurrió un error durante el registro. Intente nuevamente.'}, status=400)
             else:
-                return JsonResponse({'success': False, 'functionForm': 'singup','message': 'Las contraseñas no coinciden 😬'}, status=400)
+                return JsonResponse({'success': False, 'functions': 'singup','message': 'Las contraseñas no coinciden 😬'}, status=400)
         else:
-            return JsonResponse({'success': False, 'functionForm': 'singup','message': 'Datos incompletos 😅'}, status=400)
+            return JsonResponse({'success': False, 'functions': 'singup','message': 'Datos incompletos 😅'}, status=400)
     else:
         logout(request)
         return render('singin')
@@ -362,19 +367,19 @@ def singinpage(request):
         except User.DoesNotExist: user = None
         if user is not None:
             if not user.is_active:
-                return JsonResponse({'success': False, 'functionForm': 'singin', 'message': '🧐😥😯 UPS! <br> Al parecer tu cuenta esta <u>Inactiva</u>. Tu cuenta será activada si estas autorizado'}, status=400)
+                return JsonResponse({'success': False, 'functions': 'singin', 'message': '🧐😥😯 UPS! <br> Al parecer tu cuenta esta <u>Inactiva</u>. Tu cuenta será activada si estas autorizado'}, status=400)
             
             user = authenticate(request, username=usernamePOST, password=passwordPOST)
             if user is None:
-                return JsonResponse({'success': False, 'functionForm': 'singin', 'message': 'Revisa el usuario o contraseña 😅.'}, status=400)
+                return JsonResponse({'success': False, 'functions': 'singin', 'message': 'Revisa el usuario o contraseña 😅.'}, status=400)
             else:
                 login(request, user)
                 pageRedirect = reverse('vista_admin')
                 if user.is_staff:
                     pageRedirect = reverse('vista_programador')
-                return JsonResponse({'success': True, 'functionForm': 'singin', 'redirect_url': pageRedirect}, status=200)
+                return JsonResponse({'success': True, 'functions': 'singin', 'redirect_url': pageRedirect}, status=200)
         else:
-            return JsonResponse({'success': False, 'functionForm': 'singin', 'message': 'Usuario no registrado 😅. Vrifica tu nombre de usuario'}, status=400)
+            return JsonResponse({'success': False, 'functions': 'singin', 'message': 'Usuario no registrado 😅. Vrifica tu nombre de usuario'}, status=400)
     else:
         logout(request)
         return render(request, 'admin/singin.html', {
@@ -411,6 +416,34 @@ def export_database(request):
             ])
         return response
 
+@login_required
+@never_cache
+def import_database(request):
+    if request.method == 'POST':
+        form = CSVUploadForm(request.POST, request.FILES)
+        if form.is_valid():
+            file = request.FILES['file']
+            csv_file = file.read().decode('utf-8').splitlines()
+            reader = csv.reader(csv_file)
+            next(reader)  # Omitir la fila de encabezado
+            for row in reader:
+                categoria, _ = Categorias.objects.get_or_create(categoria=row[0])
+                # Crear la instancia del modelo
+                Database.objects.create(
+                    categoria=categoria,
+                    titulo=row[1],
+                    informacion=row[2],
+                    redirigir=row[3],
+                    frecuencia=int(row[4]),
+                    documentos=row[5],
+                    imagenes=row[6],
+                    fecha_modificacion=row[7]
+                )
+            # Redirigir a la vista programador después de procesar el formulario
+        return JsonResponse({'success': True, 'functions': 'others', 'message': 'Base de datos importada correctamente ✔'}, status=200)
+    else:
+        form = CSVUploadForm()
+    
 # def para la vista administrador
 @login_required
 @never_cache

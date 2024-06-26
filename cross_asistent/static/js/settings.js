@@ -152,13 +152,16 @@ function jsonSubmit(e) {
             dataMessage = data.message;
             if (data.success) {
                 thisForm.reset();
-                if (data.functionForm == "singin") {
+                if (data.functions == "singin") {
                     window.location.href = data.redirect_url;
+                } else if (data.functions == "others") {
+                    alertSToast("center", timerOut + 4000, "success", dataMessage);
                 } else {
                     alertSToast("center", timerOut + 4000, "success", dataMessage, function () {
                         location.reload();
                     });
                 }
+
             } else {
                 console.error(dataMessage);
                 alertSToast("top", timerOut + 2000, "warning", dataMessage);

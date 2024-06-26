@@ -18,3 +18,6 @@ class BannersForm(forms.ModelForm):
     class Meta:
         model = Banners
         fields = ['titulo', 'descripcion', 'articulo', 'imagen', 'expiracion']
+
+class CSVUploadForm(forms.Form):
+    file = forms.FileField()

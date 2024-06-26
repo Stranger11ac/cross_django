@@ -22,6 +22,7 @@ urlpatterns = [
     path('administracion/programador/', views.vista_programador, name='vista_programador'),
     path('administracion/responderpreguntas/', views.responder_preguntas, name='responder_preguntas'),
     path('administracion/export/csv/', views.export_database, name='export_database_to_csv'),
+    path('importar/', views.import_database, name='import_database'),
     path('administracion/banners/', views.upload_banner, name='banners'),
     
     # usuarios
