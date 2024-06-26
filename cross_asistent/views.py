@@ -57,6 +57,7 @@ def process_question(pregunta):
     stemmer = PorterStemmer()
     tokens = [stemmer.stem(token) for token in tokens]
     pregunta_procesada = " ".join(tokens)
+    print(pregunta_procesada)
 
     return pregunta_procesada
 
@@ -69,21 +70,27 @@ def chatbot(request):
             pregunta_procesada = process_question(question)
             coincidencia = models.Database.objects.filter(titulo__icontains=pregunta_procesada).order_by('-frecuencia').first()
             if coincidencia:
+                if not coincidencia.informacion:
+                    system_prompt = f"Utiliza emojis sutilmente. Eres un asistente de la Universidad Tecnologica de Coahuila."
+                
                 print(coincidencia)
                 system_prompt = f"Utiliza emojis sutilmente. Eres un asistente de la Universidad Tecnologica de Coahuila. Aquí está la información encontrada: {coincidencia.informacion}"
-                # answer = chatgpt(question, system_prompt)
+                answer = chatgpt(question, system_prompt)
                 
                 respuesta = {
                     "titulo": coincidencia.titulo,
                     "informacion": coincidencia.informacion,
-                    # "informacion": answer,
+                    "informacion": answer,
                     "redirigir": coincidencia.redirigir,
                     "documentos": coincidencia.documentos.url if coincidencia.documentos else None,
                     "imagenes": coincidencia.imagenes.url if coincidencia.imagenes else None
                 }
-                return JsonResponse({'success': True, 'answer': respuesta})
             else:
-                return JsonResponse({'success': False, 'message': 'No se encontró información relevante.'})
+                respuesta = {
+                    "informacion": 'Ups! 😥😯😬 <br>Al parecer no encontre informacion de lo que me pides.',
+                }
+                
+            return JsonResponse({'success': True, 'answer': respuesta})
         except json.JSONDecodeError:
             return JsonResponse({'success': False, 'message': 'Error en el formato del JSON.'})
 
