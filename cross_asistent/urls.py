@@ -20,6 +20,7 @@ urlpatterns = [
     # Administracion y programacion
     path('administracion/', views.vista_admin, name='vista_admin'),
     path('administracion/programador/', views.vista_programador, name='vista_programador'),
+    path('administracion/perfil/', views.ver_perfil, name='perfil'),
     path('administracion/responderpreguntas/', views.responder_preguntas, name='responder_preguntas'),
     path('administracion/export/csv/', views.export_database, name='export_database_to_csv'),
     path('importar/', views.import_database, name='import_database'),

@@ -717,3 +717,8 @@ def upload_banner(request):
     form = BannersForm()
   context = {'form': form}
   return render(request, 'admin/banners.html', context)
+
+@login_required
+@never_cache
+def ver_perfil(request):
+    return render(request, 'admin/perfil.html')
