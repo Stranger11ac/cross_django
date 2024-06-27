@@ -16,9 +16,7 @@ import warnings
 
 env = environ.Env()
 environ.Env.read_env()
-OPENAI_API_KEY = env('OPENAI_API_KEY', default=None)
-if OPENAI_API_KEY is None:
-    pass
+OPENAI_API_KEY = env('OPENAI_API_KEY')
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.

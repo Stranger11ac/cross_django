@@ -85,7 +85,6 @@ def chatbot(request):
                 
                 respuesta = {
                     "titulo": coincidencia.titulo,
-                    "informacion": coincidencia.informacion,
                     "informacion": answer,
                     "redirigir": coincidencia.redirigir,
                     "documentos": coincidencia.documentos.url if coincidencia.documentos else None,
