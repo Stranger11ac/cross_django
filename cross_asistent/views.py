@@ -3,19 +3,16 @@ from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.cache import never_cache
 from django.views.decorators.csrf import csrf_exempt
+from django.http import JsonResponse, HttpResponse
 from django.http import HttpResponseForbidden
-from django.contrib.auth.models import User
 from django.db import IntegrityError, models
-from django.http import JsonResponse
-from django.http import HttpResponse
+from django.contrib.auth.models import User
 from django.utils import timezone
 from django.conf import settings
 from django.urls import reverse
 from django.apps import apps
+from .forms import BannersForm, CSVUploadForm
 from . import models
-from .forms import BannersForm
-from .forms import CSVUploadForm
-from .models import Database, Categorias
 
 from nltk.tokenize import word_tokenize
 from nltk.corpus import stopwords
@@ -25,7 +22,6 @@ import openai
 import json
 import csv
 import os
-from django.core.files import File
 
 
 def index(request):
@@ -126,10 +122,10 @@ def crear_pregunta(request):
                 return JsonResponse({'success': True, 'message': 'Gracias por tu pregunta ❤️💕😁👍 '}, status=200)
             except Exception as e:
                 print(f'Hay un error en: {e}')
-                return JsonResponse({'success': False, 'message': 'La pregunta no se registró :( '}, status=400)
+                return JsonResponse({'success': False, 'message': 'Ups! 😥😯 hubo un error y tu pregunta no se pudo registrar. por favor intente de nuevo mas tarde.'}, status=400)
         else:
             print('error, no JSON')
-            return HttpResponse('Solicitud no JSON', status=400)
+            return JsonResponse({'success': False, 'message': 'Error: no se permite este tipo de archivo '}, status=400)
     return render(request, 'frecuentes.html', {'quest_all': quest_all})
 
 def blog(request):
@@ -325,35 +321,51 @@ def about(request):
     })
 
 # Administracion ----------------------------------------------------------
+def create_user(first_name, last_name, username, email, password1, password2=None, is_staff=False, is_active=False):
+    if not (password1 and username and email):
+        return {'success': False, 'message': 'Datos incompletos 😅'}
+    if password2 is not None and password1 != password2:
+        return {'success': False, 'message': 'Las contraseñas no coinciden 😬'}
+    if User.objects.filter(username=username).exists():
+        return {'success': False, 'message': f'El usuario <u>{username}</u> ya existe 😯'}
+    if User.objects.filter(email=email).exists():
+        return {'success': False, 'message': f'El correo electrónico <u>{email}</u> ya está registrado 😯'}
+
+    try:
+        new_user = User.objects.create_user(
+            first_name=first_name,
+            last_name=last_name,
+            username=username,
+            email=email,
+            password=password1,
+            is_staff=is_staff,
+            is_active=is_active,
+        )
+        new_user.save()
+        aviso=''
+        if password2 is not None:
+            aviso = '<br>Tu cuenta está <u>INACTIVA</u>'
+        return {'success': True, 'message': f'Usuario creado exitosamente 🥳😬🎈 {aviso}'}
+    except IntegrityError:
+        return {'success': False, 'message': 'Ocurrió un error durante el registro. Intente nuevamente.'}
+
 @never_cache
 def singuppage(request):
     if request.method == 'POST' and request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-        password1 = request.POST.get('password1')
-        password2 = request.POST.get('password2')
-        username = request.POST.get('username')
-        first_name = request.POST.get('first_name')
-        last_name = request.POST.get('last_name')
-        email = request.POST.get('email')
-
-        if password1 and password2 and username and email:
-            if password1 == password2:
-                if User.objects.filter(username=username).exists():
-                    return JsonResponse({'success': False, 'functions': 'singup','message': f'El usuario <u>{username}</u> ya existe 😯'}, status=400)
-                if User.objects.filter(email=email).exists():
-                    return JsonResponse({'success': False, 'functions': 'singup','message': f'El correo electrónico <u>{email}</u> ya está registrado 😯'}, status=400)
-                try:
-                    newUser = User.objects.create_user(first_name=first_name,last_name=last_name,username=username,password=password1,email=email,is_active=0)
-                    newUser.save()
-                    return JsonResponse({'success': True, 'functions': 'singup','message': '🥳🥳🥳 <br>Usuario creado<br> Tu cuenta está <u>INACTIVA</u>'}, status=200)
-                except IntegrityError:
-                    return JsonResponse({'success': False, 'functions': 'singup','message': 'Ocurrió un error durante el registro. Intente nuevamente.'}, status=400)
-            else:
-                return JsonResponse({'success': False, 'functions': 'singup','message': 'Las contraseñas no coinciden 😬'}, status=400)
-        else:
-            return JsonResponse({'success': False, 'functions': 'singup','message': 'Datos incompletos 😅'}, status=400)
+        response = create_user(
+            first_name=request.POST.get('first_name'),
+            last_name=request.POST.get('last_name'),
+            username=request.POST.get('username'),
+            email=request.POST.get('email'),
+            password1=request.POST.get('password1'),
+            password2=request.POST.get('password2'),
+        )
+        response['functions'] = 'singup'
+        status = 200 if response['success'] else 400
+        return JsonResponse(response, status=status)
     else:
         logout(request)
-        return render('singin')
+        return render(request, 'singin')
 
 @never_cache
 def singinpage(request):
@@ -429,7 +441,6 @@ def export_database(request):
             ])
         return response
 
-
 @login_required
 @never_cache
 def import_database(request):
@@ -441,9 +452,9 @@ def import_database(request):
             reader = csv.reader(csv_file)
             next(reader)  # Omitir la fila de encabezado
             for row in reader:
-                categoria, _ = Categorias.objects.get_or_create(categoria=row[0])
+                categoria, _ = models.Categorias.objects.get_or_create(categoria=row[0])
                 # Crear la instancia del modelo
-                Database.objects.create(
+                models.Database.objects.create(
                     categoria=categoria,
                     titulo=row[1],
                     informacion=row[2],
@@ -488,31 +499,19 @@ def vista_programador(request):
         'num_preguntas': models.Database.objects.filter().count(),
         'preguntas_sin_responder': models.Database.objects.all(),
     }
-    # Crear Nuevo usuario
+    
     if request.method == 'POST':
-        username = request.POST.get('username')
-        is_staff = request.POST.get('is_staff', False)
-        is_active = request.POST.get('is_active', False)
-        first_name = request.POST.get('first_name')
-        last_name = request.POST.get('last_name')
-        email = request.POST.get('email')
-        password = request.POST.get('password')
-
-        if username and email:
-            if User.objects.filter(username=username).exists():
-                return JsonResponse({'success': False, 'message': f'El usuario <u>{username}</u> ya existe 😯🤔'}, status=400)
-            if User.objects.filter(email=email).exists():
-                return JsonResponse({'success': False, 'message': f'El correo electrónico <u>{email}</u> ya está registrado 😯'}, status=400)
-            try:
-                new_user = User.objects.create_user(username=username, is_staff=is_staff, is_active=is_active,
-                first_name=first_name, last_name=last_name, email=email)
-                new_user.set_password(password)
-                new_user.save()
-                return JsonResponse({'success': True, 'message': 'Usuario creado exitosamente 🥳😬🎈'}, status=200)
-            except IntegrityError:
-                return JsonResponse({'success': False, 'message': 'Ocurrió un error durante el registro. Intente nuevamente.'}, status=400)
-        else:
-            return JsonResponse({'success': False, 'message': 'Datos incompletos 😅😯😥'}, status=400)
+        response = create_user(
+            first_name=request.POST.get('first_name'),
+            last_name=request.POST.get('last_name'),
+            username=request.POST.get('username'),
+            email=request.POST.get('email'),
+            password1=request.POST.get('password'),
+            is_staff=request.POST.get('is_staff', False),
+            is_active=request.POST.get('is_active', False),
+        )
+        status = 200 if response['success'] else 400
+        return JsonResponse(response, status=status)
 
     return render(request, 'admin/vista_programador.html', contexto)
 

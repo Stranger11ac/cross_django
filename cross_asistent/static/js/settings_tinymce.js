@@ -4,17 +4,14 @@ const uploadImageTiny = async (blobInfo, progress) => {
         const formData = new FormData();
         formData.append("file", blobInfo.blob(), blobInfo.filename());
         formData.append("csrfmiddlewaretoken", getCSRFToken());
-
         const response = await fetch("../../administracion/registrar_img_blog/", {
             method: "POST",
             body: formData,
             credentials: "include",
         });
-
         if (!response.ok) {
             throw new Error(`Error HTTP: ${response.status}`);
         }
-
         const json = await response.json();
         if (!json || typeof json.location !== "string") {
             throw new Error("Al parecer esta peticion no esta Permitida");
@@ -87,33 +84,12 @@ tinymce.init({
             height: auto;
             border: none;
             border-radius: 10px;
+            margin: 2px;
         }
     `,
     paste_data_images: true,
 
     setup: (editor) => {
-        // editor.on('drop', (event) => {
-        //     const items = event.dataTransfer.items;
-        //     for (const item of items) {
-        //         if (item.kind === 'file' && item.type.startsWith('image/')) {
-        //             event.preventDefault();
-        //             const file = item.getAsFile();
-        //             const reader = new FileReader();
-        //             reader.readAsDataURL(file);
-        //             reader.onload = () => {
-        //                 const blobInfo = editor.editorUpload.blobCache.create(file.name, file, reader.result);
-        //                 editor.editorUpload.blobCache.add(blobInfo);
-
-        //                 uploadImageTiny(blobInfo).then(url => {
-        //                     if (url) {
-        //                         editor.insertContent(`<img src="${url}" class="img-tiny"/><p>&nbsp;</p>`);
-        //                     }
-        //                 });
-        //             };
-        //         } 
-        //     }
-        // });
-
         editor.on('paste', (event) => {
             const clipboardData = event.clipboardData || window.clipboardData;
             const items = clipboardData.items;

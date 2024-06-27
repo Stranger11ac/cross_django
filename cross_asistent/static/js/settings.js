@@ -261,7 +261,7 @@ if (contOutput) {
 }
 
 // Copiar al portapapeles #########################################################
-() => {
+function copyValInput() {
     const inputs = document.querySelectorAll("input[data-copy]");
     inputs.forEach((input) => {
         input.addEventListener("click", () => {
@@ -274,7 +274,6 @@ if (contOutput) {
                 navigator.clipboard
                     .writeText(textCopy)
                     .then(() => {
-                        console.log("Texto copiado al portapapeles:", textCopy);
                         alertSToast("top", 5000, "success", "Texto Copiado! 🥳");
                     })
                     .catch((error) => {
@@ -286,6 +285,7 @@ if (contOutput) {
         });
     });
 };
+copyValInput()
 
 function getCSRFToken() {
     const csrfCookie = document.querySelector("[name=csrfmiddlewaretoken]").value;
