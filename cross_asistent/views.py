@@ -14,10 +14,19 @@ from django.apps import apps
 from .forms import BannersForm, CSVUploadForm
 from . import models
 
+from nltk.corpus import stopwords
+from nltk.tokenize import word_tokenize
+from nltk.stem import WordNetLemmatizer
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.metrics.pairwise import cosine_similarity
+import numpy as np
+from django.http import JsonResponse
+
 from nltk.tokenize import word_tokenize
 from nltk.corpus import stopwords
 from nltk.stem import PorterStemmer
 
+import nltk
 import openai
 import json
 import csv
@@ -102,29 +111,43 @@ def chatbot(request):
         try:
             data = json.loads(request.body)
             question = data.get('question', '')
-            
+
+            # Preprocesar la pregunta
             pregunta_procesada = process_question(question)
-            coincidencia = models.Database.objects.filter(titulo__icontains=pregunta_procesada).order_by('-frecuencia').first()
-            if coincidencia:
-                if not coincidencia.informacion:
-                    system_prompt = f"Utiliza emojis sutilmente. Eres un asistente de la Universidad Tecnologica de Coahuila."
-                
-                print(coincidencia)
-                system_prompt = f"Utiliza emojis sutilmente. Eres un asistente de la Universidad Tecnologica de Coahuila. Aquí está la información encontrada: {coincidencia.informacion}"
+
+            # Obtener todas las entradas de la base de datos
+            todas_entradas = models.Database.objects.all()
+
+            # Crear una lista de textos de la base de datos
+            textos_db = [entrada.informacion for entrada in todas_entradas]
+
+            # Vectorizar las preguntas y las entradas de la base de datos
+            vectorizer = TfidfVectorizer()
+            tfidf_matrix = vectorizer.fit_transform(textos_db + [pregunta_procesada])
+
+            # Calcular la similitud de coseno entre la pregunta y las entradas de la base de datos
+            cosine_similarities = cosine_similarity(tfidf_matrix[-1], tfidf_matrix[:-1])
+
+            # Encontrar la entrada con la mayor similitud
+            mejor_coincidencia_idx = int(np.argmax(cosine_similarities))
+            mejor_coincidencia = todas_entradas[mejor_coincidencia_idx]
+
+            if mejor_coincidencia:
+                system_prompt = f"Utiliza emojis sutilmente. Eres un asistente de la Universidad Tecnologica de Coahuila. Aquí está la información encontrada: {mejor_coincidencia.informacion}"
                 answer = chatgpt(question, system_prompt)
-                
+
                 respuesta = {
-                    "titulo": coincidencia.titulo,
+                    "titulo": mejor_coincidencia.titulo,
                     "informacion": answer,
-                    "redirigir": coincidencia.redirigir,
-                    "documentos": coincidencia.documentos.url if coincidencia.documentos else None,
-                    "imagenes": coincidencia.imagenes.url if coincidencia.imagenes else None
+                    "redirigir": mejor_coincidencia.redirigir,
+                    "documentos": mejor_coincidencia.documentos.url if mejor_coincidencia.documentos else None,
+                    "imagenes": mejor_coincidencia.imagenes.url if mejor_coincidencia.imagenes else None
                 }
             else:
                 respuesta = {
                     "informacion": 'Ups! 😥😯😬 <br>Al parecer no encontre informacion de lo que me pides.',
                 }
-                
+
             return JsonResponse({'success': True, 'answer': respuesta})
         except json.JSONDecodeError:
             return JsonResponse({'success': False, 'message': 'Error en el formato del JSON.'})
