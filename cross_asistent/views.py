@@ -28,7 +28,6 @@ import os
 from django.core.files import File
 
 
-
 def index(request):
     if not request.user.is_staff:
         logout(request)
