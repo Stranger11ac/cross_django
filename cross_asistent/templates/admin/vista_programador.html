@@ -155,15 +155,15 @@
             <div class="card mb-4">
                 <div class="card-body">
                     <h3 class="text-center mb-4">Base de datos</h3>
-                    <form action="" method="get">
-                        {% csrf_token %}
+                    <form action="{% url 'export_database_to_csv' %}" method="get">
+                        {% comment %} {% csrf_token %}
                         <label for="selecTable">Selecciona la Tabla que desea Descargar</label>
                         <select id="selecTable" name="selecTable" class="form-select">
                             <option value="" disabled selected>Selecciona la Tabla</option>
                             {% for tabla in data_table %}
                                 <option value="{{ tabla }}">{{ tabla }}</option>
                             {% endfor %}
-                        </select><br>
+                        </select><br> {% endcomment %}
                         <button type="submit" class="btn btn_detail btn-block">
                             Descargar <i class="fa-solid fa-file-arrow-down ms-1"></i>
                         </button>

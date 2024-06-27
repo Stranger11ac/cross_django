@@ -28,7 +28,6 @@ import os
 from django.core.files import File
 
 
-
 def index(request):
     if not request.user.is_staff:
         logout(request)
@@ -86,7 +85,6 @@ def chatbot(request):
                 
                 respuesta = {
                     "titulo": coincidencia.titulo,
-                    "informacion": coincidencia.informacion,
                     "informacion": answer,
                     "redirigir": coincidencia.redirigir,
                     "documentos": coincidencia.documentos.url if coincidencia.documentos else None,
@@ -143,7 +141,6 @@ def blog(request):
         'active_page': 'blog'
     })
 
-# muestra los blogs subidos
 def mostrar_blog(request, Articulos_id):
     if not request.user.is_staff:
         logout(request)
@@ -319,7 +316,6 @@ def map(request):
         'edificios': edificios,
         'active_page': 'map'
     })
-
 
 def about(request):
     if not request.user.is_staff:
@@ -585,10 +581,6 @@ def editar_usuario(request, user_id):
         return redirect('vista_programador')
     return redirect('vista_programador')
 
-
-def forms_admin(request):
-    return render(request, 'admin/vista_formularios.html')
-
 def mapa2(request):
     return render(request, 'mapa2.html')
 
@@ -631,7 +623,7 @@ def upload_image(request):
             image_file = request.FILES['file']
             imagen_articulo = models.ImagenArticulo(imagen=image_file)
             imagen_articulo.save()
-            image_url = imagen_articulo.imagen.url.replace("/cross_asistent/", "/")
+            image_url = imagen_articulo.imagen.url.replace("/cross_asistent", "")
 
             return JsonResponse({'location': image_url})
         except Exception as e:
