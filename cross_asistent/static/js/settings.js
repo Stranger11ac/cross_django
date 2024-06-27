@@ -248,6 +248,37 @@ function chatSubmit(e) {
         });
 }
 
+document.addEventListener('DOMContentLoaded', function() {
+    const btnCloseChat = document.getElementById('closeChat');
+    const contOutput = document.querySelector("#output");
+
+    if (btnCloseChat && contOutput) {
+        btnCloseChat.addEventListener('click', function() {
+            // Crear y mostrar el mensaje de saludo
+            const valID = `uuid${cadenaRandom(5, alfabetico)}`;
+            const saludo = "Hola 👋 ¡Bienvenido! Soy tu asistente virtual ¿En qué puedo ayudarte hoy?";
+            const htmlBlock = `
+                <div class="output_block">
+                    <div class="btn_detail chat_msg asistent_response" data-tokeid="${valID}">
+                        <span>${saludo}</span>
+                    </div>
+                </div>`;
+
+            contOutput.insertAdjacentHTML("beforeend", htmlBlock);
+
+            const asistent_response = document.querySelector(`.asistent_response[data-tokeid="${valID}"]`);
+            setTimeout(function() {
+                asistent_response.classList.add("visible");
+                scrollToBottom();
+            }, 20);
+        });
+    }
+
+    // Función para hacer scroll hacia abajo
+    function scrollToBottom() {
+        contOutput.scrollTop = contOutput.scrollHeight;
+    }
+});
 // Hacer scroll con un nuevo mensaje en el chat ###############################################
 if (contOutput) {
     function scrollToBottom() {

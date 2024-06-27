@@ -1,0 +1,39 @@
+{% extends 'base/widget.html' %}
+{% block title %}Inicio | Administración{% endblock %}
+{% block link_home %}{% url 'vista_admin' %}{% endblock %}
+{% block link_default %}
+{% include 'base/widget_links-admin.html' %}
+{% endblock %}
+{% block content %}
+
+<div class="container my-5">
+    <div class="card_perfil">
+        <div class="card__img_perfil">
+            <div class="card__img_bg" style="--color-bg1:#d6d6d6; --color-bg2:#ff0000;">
+            </div>
+            <div class="card__avatar_perfil">
+                <img src="/static/img/default_image.webp" class="h-100 d-block w-100" alt="Sunset" />
+            </div>
+        </div>
+
+        <div class="card__content_perfil">
+            <div class="card__title_perfil">{{ user.username }}</div>
+            <div class="card__subtitle_perfil">Perfil de Usuario</div>
+            <div class="card__info_perfil">
+                <div class="info-row">
+                    <p><strong>Usuario:</strong> {{ user.username }}</p>
+                    <p><strong>Email:</strong> {{ user.email }}</p>
+                </div>
+                <div class="info-row">
+                    <p><strong>Nombre:</strong> {{ user.first_name }}</p>
+                    <p><strong>Apellido:</strong> {{ user.last_name }}</p>
+                </div>
+            </div>
+            <div class="card__wrapper_perfil">
+                <button class="card__btn_perfil">Editar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
