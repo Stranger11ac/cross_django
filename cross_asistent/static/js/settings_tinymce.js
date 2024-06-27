@@ -86,6 +86,7 @@ tinymce.init({
 
     setup: (editor) => {
         editor.on('drop', (event) => {
+            event.preventDefault();
             const items = event.dataTransfer.items;
             for (const item of items) {
                 if (item.kind === 'file' && item.type.startsWith('image/')) {
@@ -94,7 +95,7 @@ tinymce.init({
                     reader.readAsDataURL(file);
                     reader.onload = () => {
                         const base64 = reader.result.split(',')[1];
-                        const blobInfo = editor.editorUpload.blobCache.createBlobInfo(file.name, file.type, base64, file.size);
+                        const blobInfo = editor.editorUpload.blobCache.create(file.name, file, reader.result);
                         editor.editorUpload.blobCache.add(blobInfo);
 
                         uploadImageTiny(blobInfo).then(url => {
@@ -103,9 +104,15 @@ tinymce.init({
                             }
                         });
                     };
+                } else if (item.kind === 'string' && (item.type === 'text/html' || item.type === 'text/plain')) {
+                    item.getAsString((content) => {
+                        editor.insertContent(content);
+                    });
+                } else {
+                    const itemType = item.type;
+                    alertSToast('center', 10000, 'error', `😥😯🧐 UPS!!! Solo se permite arrastrar <u>imagenes</u> <br> No se puede subir un archivo de tipo "${itemType}"`);
                 }
             }
-            event.preventDefault();
         });
 
         editor.on('paste', (event) => {
@@ -118,7 +125,7 @@ tinymce.init({
                     reader.readAsDataURL(file);
                     reader.onload = () => {
                         const base64 = reader.result.split(',')[1];
-                        const blobInfo = editor.editorUpload.blobCache.createBlobInfo(file.name, file.type, base64, file.size);
+                        const blobInfo = editor.editorUpload.blobCache.create(file.name, file, reader.result);
                         editor.editorUpload.blobCache.add(blobInfo);
 
                         uploadImageTiny(blobInfo).then(url => {
