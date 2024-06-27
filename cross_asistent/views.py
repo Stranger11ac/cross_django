@@ -572,28 +572,31 @@ def responder_preguntas(request):
 @login_required
 @never_cache
 def activar_usuario(request, user_id):
-    if request.user.is_staff:
-        user = User.objects.get(id=user_id)
+    if request.method == 'POST' and request.user.is_staff:
+        user = get_object_or_404(User, id=user_id)
         user.is_active = True
         user.save()
-    return redirect('vista_programador')
+        return JsonResponse({'success': True, 'message': 'Usuario activado exitosamente.'}, status=200)
+    return JsonResponse({'success': False, 'message': 'Acción no permitida.'}, status=403)
 
-#desactivar usuarios
 @login_required
 @never_cache
 def desactivar_usuario(request, user_id):
-    user = get_object_or_404(User, id=user_id)
-    user.is_active = False
-    user.save()
-    return redirect('vista_programador')
+    if request.method == 'POST':
+        user = get_object_or_404(User, id=user_id)
+        user.is_active = False
+        user.save()
+        return JsonResponse({'success': True, 'message': 'Usuario desactivado exitosamente.'}, status=200)
+    return JsonResponse({'success': False, 'message': 'Acción no permitida.'}, status=403)
 
-# eliminar usuarios
 @login_required
 @never_cache
 def eliminar_usuario(request, user_id):
-    user = get_object_or_404(User, id=user_id)
-    user.delete()
-    return redirect('vista_programador')
+    if request.method == 'POST':
+        user = get_object_or_404(User, id=user_id)
+        user.delete()
+        return JsonResponse({'success': True, 'message': 'Usuario eliminado exitosamente.'}, status=200)
+    return JsonResponse({'success': False, 'message': 'Acción no permitida.'}, status=403)
 
 @login_required
 @never_cache
