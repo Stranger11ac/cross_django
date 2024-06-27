@@ -81,60 +81,66 @@ tinymce.init({
     autosave_interval: "20m",
     promotion: false,
     insertdatetime_formats: ["%d-%m-%Y", "%Y-%m-%d", "%H:%M:%S", "%I:%M:%S %p"],
-
+    content_style: `
+        img.img-tiny {
+            max-width: 100%;
+            height: auto;
+            border: none;
+            border-radius: 10px;
+        }
+    `,
     paste_data_images: true,
 
     setup: (editor) => {
-        editor.on('drop', (event) => {
-            event.preventDefault();
-            const items = event.dataTransfer.items;
-            for (const item of items) {
-                if (item.kind === 'file' && item.type.startsWith('image/')) {
-                    const file = item.getAsFile();
-                    const reader = new FileReader();
-                    reader.readAsDataURL(file);
-                    reader.onload = () => {
-                        const base64 = reader.result.split(',')[1];
-                        const blobInfo = editor.editorUpload.blobCache.create(file.name, file, reader.result);
-                        editor.editorUpload.blobCache.add(blobInfo);
+        // editor.on('drop', (event) => {
+        //     const items = event.dataTransfer.items;
+        //     for (const item of items) {
+        //         if (item.kind === 'file' && item.type.startsWith('image/')) {
+        //             event.preventDefault();
+        //             const file = item.getAsFile();
+        //             const reader = new FileReader();
+        //             reader.readAsDataURL(file);
+        //             reader.onload = () => {
+        //                 const blobInfo = editor.editorUpload.blobCache.create(file.name, file, reader.result);
+        //                 editor.editorUpload.blobCache.add(blobInfo);
 
-                        uploadImageTiny(blobInfo).then(url => {
-                            if (url) {
-                                editor.insertContent(`<img src="${url}" />`);
-                            }
-                        });
-                    };
-                } else if (item.kind === 'string' && (item.type === 'text/html' || item.type === 'text/plain')) {
-                    item.getAsString((content) => {
-                        editor.insertContent(content);
-                    });
-                } else {
-                    const itemType = item.type;
-                    alertSToast('center', 10000, 'error', `😥😯🧐 UPS!!! Solo se permite arrastrar <u>imagenes</u> <br> No se puede subir un archivo de tipo "${itemType}"`);
-                }
-            }
-        });
+        //                 uploadImageTiny(blobInfo).then(url => {
+        //                     if (url) {
+        //                         editor.insertContent(`<img src="${url}" class="img-tiny"/><p>&nbsp;</p>`);
+        //                     }
+        //                 });
+        //             };
+        //         } 
+        //     }
+        // });
 
         editor.on('paste', (event) => {
             const clipboardData = event.clipboardData || window.clipboardData;
             const items = clipboardData.items;
             for (const item of items) {
                 if (item.kind === 'file' && item.type.startsWith('image/')) {
+                    event.preventDefault();
                     const file = item.getAsFile();
                     const reader = new FileReader();
                     reader.readAsDataURL(file);
                     reader.onload = () => {
-                        const base64 = reader.result.split(',')[1];
                         const blobInfo = editor.editorUpload.blobCache.create(file.name, file, reader.result);
                         editor.editorUpload.blobCache.add(blobInfo);
 
                         uploadImageTiny(blobInfo).then(url => {
                             if (url) {
-                                editor.insertContent(`<img src="${url}" />`);
+                                editor.insertContent(`<img src="${url}" class="img-tiny"/><p>&nbsp;</p>`);
                             }
                         });
                     };
                 }
+            }
+        });
+
+        editor.on('NodeChange', (event) => {
+            const nodes = event.element.getElementsByTagName('img');
+            for (const img of nodes) {
+                img.classList.add('img-tiny');
             }
         });
     },
