@@ -11,9 +11,16 @@ from django.utils import timezone
 from django.conf import settings
 from django.urls import reverse
 from django.apps import apps
+from django.contrib.auth.tokens import default_token_generator
+from django.template.loader import render_to_string
+from django.utils.encoding import force_bytes, force_str
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.core.mail import send_mail
+
 from .forms import BannersForm, CSVUploadForm
 from .buildings import edificios
 from . import models
+
 
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
@@ -266,16 +273,22 @@ def singuppage(request):
 @never_cache
 def singinpage(request):
     if request.method == 'POST' and request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-        usernamePOST = request.POST.get('username')
-        passwordPOST = request.POST.get('password')
+        login_identifier = request.POST.get('username')  # Puede ser username o email
+        password = request.POST.get('password')
         
-        try: user = User.objects.get(username=usernamePOST)
-        except User.DoesNotExist: user = None
+        try:
+            user = User.objects.get(username=login_identifier)
+        except User.DoesNotExist:
+            try:
+                user = User.objects.get(email=login_identifier)
+            except User.DoesNotExist:
+                user = None
+        
         if user is not None:
             if not user.is_active:
                 return JsonResponse({'success': False, 'functions': 'singin', 'message': '🧐😥😯 UPS! <br> Al parecer tu cuenta esta <u>Inactiva</u>. Tu cuenta será activada si estas autorizado'}, status=400)
             
-            user = authenticate(request, username=usernamePOST, password=passwordPOST)
+            user = authenticate(request, username=user.username, password=password)
             if user is None:
                 return JsonResponse({'success': False, 'functions': 'singin', 'message': 'Revisa el usuario o contraseña 😅.'}, status=400)
             else:
@@ -285,7 +298,7 @@ def singinpage(request):
                     pageRedirect = reverse('vista_programador')
                 return JsonResponse({'success': True, 'functions': 'singin', 'redirect_url': pageRedirect}, status=200)
         else:
-            return JsonResponse({'success': False, 'functions': 'singin', 'message': 'Usuario no registrado 😅. Vrifica tu nombre de usuario'}, status=400)
+            return JsonResponse({'success': False, 'functions': 'singin', 'message': 'Usuario no registrado 😅. Verifica tu nombre de usuario o correo electrónico'}, status=400)
     else:
         logout(request)
         return render(request, 'admin/singin.html', {
@@ -612,3 +625,29 @@ def upload_banner(request):
 @never_cache
 def ver_perfil(request):
     return render(request, 'admin/perfil.html')
+
+def password_reset_request(request):
+    if request.method == 'POST' and request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        email = request.POST.get('email')
+
+        if email:
+            try:
+                user = User.objects.get(email=email)
+                token = default_token_generator.make_token(user)
+                uid = urlsafe_base64_encode(force_bytes(user.pk))
+                reset_link = request.build_absolute_uri(f'/reset-password/{uid}/{token}/')
+                
+                subject = "Reestablecer la contraseña"
+                message = render_to_string('password_reset_email.html', {
+                    'user': user,
+                    'reset_link': reset_link,
+                })
+                send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [user.email])
+                
+                return JsonResponse({'success': True, 'functions': 'signin', 'message': 'Se ha enviado un enlace de restablecimiento de contraseña a tu correo electrónico.'}, status=200)
+            except User.DoesNotExist:
+                return JsonResponse({'success': False, 'message': 'El correo electrónico no está registrado.'}, status=400)
+        else:
+            return JsonResponse({'success': False, 'message': 'Por favor, ingresa tu correo electrónico.'}, status=400)
+    else:
+        return render(request, 'reset_pass.html')

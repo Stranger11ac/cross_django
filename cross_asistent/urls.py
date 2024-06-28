@@ -14,6 +14,7 @@ urlpatterns = [
     
     # Sesion y registro
     path('logout/', views.singoutpage, name='singout'),
+    path('password-reset/', views.password_reset_request, name='password_reset_email'),
     path('acceder/', views.singinpage, name='singin'),
     path('registro/', views.singuppage, name='singup'),
     
@@ -26,18 +27,18 @@ urlpatterns = [
     path('importar/', views.import_database, name='import_database'),
     path('administracion/banners/', views.upload_banner, name='banners'),
     
-    # usuarios
+    # Usuarios
     path('administracion/editaruser/<int:user_id>/', views.editar_usuario, name='editar_usuario'),
     path('administracion/activaruser/<int:user_id>/', views.activar_usuario, name='activar_usuario'),
     path('administracion/eliminaruser/<int:user_id>/', views.eliminar_usuario, name='eliminar_usuario'),
     path('administracion/desactivaruser/<int:user_id>/', views.desactivar_usuario, name='desactivar_usuario'),
     
-    # blog
+    # Blog
     path('administracion/blogs/', views.admin_blogs, name='admin_blogs'),
     path('administracion/crear_blog/', views.crear_articulo, name='send_blog'),
     path('administracion/registrar_img_blog/', views.upload_image, name='send_imgsblog'),
     
-    # mapa
+    # Mapa
     path('administracion/obtener_edificio/', views.obtenerEdificio, name='obtenerEdificio'),
     path('administracion/editar_mapa/', views.obtenerinfoEdif, name='consultaMap'),
     path('administracion/crearEditar_mapa/', views.crearEditarMapa, name='crearEditar'),
