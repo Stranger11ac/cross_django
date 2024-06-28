@@ -14,6 +14,7 @@ urlpatterns = [
     
     # Sesion y registro
     path('logout/', views.singoutpage, name='singout'),
+    path('password-reset/', views.password_reset_request, name='password_reset_email'),
     path('acceder/', views.singinpage, name='singin'),
     path('registro/', views.singuppage, name='singup'),
     
@@ -31,12 +32,12 @@ urlpatterns = [
     path('administracion/editar_usuario/<int:user_id>/', views.editar_usuario, name='editar_usuario'),
     path('administracion/eliminar_usuario/<int:user_id>/', views.eliminar_usuario, name='eliminar_usuario'),
     
-    # blog
+    # Blog
     path('administracion/blogs/', views.admin_blogs, name='admin_blogs'),
     path('administracion/crear_blog/', views.crear_articulo, name='send_blog'),
     path('administracion/registrar_img_blog/', views.upload_image, name='send_imgsblog'),
     
-    # mapa
+    # Mapa
     path('administracion/obtener_edificio/', views.obtenerEdificio, name='obtenerEdificio'),
     path('administracion/editar_mapa/', views.obtenerinfoEdif, name='consultaMap'),
     path('administracion/crearEditar_mapa/', views.crearEditarMapa, name='crearEditar'),
