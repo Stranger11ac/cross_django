@@ -161,7 +161,7 @@
                         <select id="selecTable" name="selecTable" class="form-select">
                             <option value="" disabled selected>Selecciona la Tabla</option>
                             {% for tabla in data_table %}
-                                <option value="{{ tabla }}">{{ tabla }}</option>
+                            <option value="{{ tabla }}">{{ tabla }}</option>
                             {% endfor %}
                         </select><br> {% endcomment %}
                         <button type="submit" class="btn btn_detail btn-block">
@@ -184,7 +184,7 @@
                     </form>
                 </div>
             </div>
-         </div> 
+        </div>
     </div>
 
     <!-- Todos los usuarios registrados -->
@@ -237,35 +237,41 @@
                             <td>{{ oneuser.email }}</td>
                             <!-- Botones de acciones -->
                             <td>
-                                {% if not oneuser.is_staff %}
                                 <div class="d-flex align-items-center justify-content-center h-100 gap_10 fs-5">
-                                    {% if oneuser.is_active %}
+                                    {% if not oneuser.username == user.username %}
                                     <div>
-                                        <a title="Desactivar Usuario" href="{% url 'desactivar_usuario' oneuser.id %}" class="btn btn-floating btn-warning">
-                                            <i class="fa-solid fa-user-minus"></i>
-                                        </a>
+                                        <form method="post" action="{% url 'in_active' %}" data-submit-form>
+                                            {% csrf_token %}
+                                            <input type="text" name="user_id" value="{{oneuser.id}}" class="d-none">
+                                            {% if oneuser.is_active %}
+                                                <input type="text" name="actionform" value="deactivate" class="d-none">
+                                                <button type="submit" title="Desactivar Usuario" class="btn btn-floating btn-warning">
+                                                    <i class="fa-solid fa-user-minus"></i>
+                                                </button>
+                                            {% else %}
+                                                <input type="text" name="actionform" value="activate" class="d-none">
+                                                <button type="submit" title="Activar Usuario" class="btn btn-floating text-white btn_purple">
+                                                    <i class="fa-solid fa-user-check"></i>
+                                                </button>
+                                            {% endif %}
+                                        </form>
                                     </div>
-                                    {% else %}
-                                    <div>
-                                        <a title="Activar Usuario" href="{% url 'activar_usuario' oneuser.id %}" class="btn btn-floating text-white btn_purple">
-                                            <i class="fa-solid fa-user-check"></i>
-                                        </a>
-                                    </div>
-                                    {% endif %}
                                     <div>
                                         <button title="Editar Usuario" type="button" class="btn btn-floating btn-danger" data-mdb-ripple-init
                                             data-mdb-modal-init data-mdb-target="#eliminar_modal_{{ oneuser.id }}">
                                             <i class="fa-solid fa-user-xmark"></i>
                                         </button>
                                     </div>
+                                    {% endif %}
+                                    {% if not oneuser.is_staff %}
                                     <div>
                                         <button title="Editar Usuario" type="button" class="btn btn-floating btn-info" data-mdb-ripple-init data-mdb-modal-init
                                             data-mdb-target="#editar_modal_{{ oneuser.id }}">
                                             <i class="fa-solid fa-user-pen"></i>
                                         </button>
                                     </div>
+                                    {% endif %}
                                 </div>
-                                {% endif %}
                             </td>
                         </tr>
                         <!-- modal: editar usuario -->
@@ -279,21 +285,23 @@
                                         <button type="button" class="btn-close" data-mdb-ripple-init data-mdb-dismiss="modal" aria-label="Close"></button>
                                     </div>
                                     <div class="modal-body">
-                                        <form method="post" action="{% url 'editar_usuario' oneuser.id %}">
+                                        <form method="post" action="{% url 'editar_usuario' oneuser.id %}" data-submit-form>
                                             {% csrf_token %}
                                             <!-- Nombre de usuario -->
                                             <div data-mdb-input-init class="form-outline mb-4">
                                                 <i class="fa-solid fa-circle-user trailing"></i>
-                                                <input type="text" id="createusername_{{oneuser.id}}" name="username" class="form-control form-icon-trailing" autocomplete="off"
-                                                    placeholder=" " value="{{oneuser.username}}" aria-label="disabled input example" disabled />
+                                                <input type="text" id="createusername_{{oneuser.id}}" name="username" class="form-control form-icon-trailing"
+                                                    autocomplete="off" placeholder=" " value="{{oneuser.username}}" aria-label="disabled input example"
+                                                    readonly />
                                                 <label class="form-label" for="createusername_{{oneuser.id}}">Usuario</label>
                                             </div>
                                             <div class="row mb-4">
                                                 <div class="col">
                                                     <div data-mdb-input-init class="form-outline">
                                                         <i class="fa-solid fa-address-card trailing"></i>
-                                                        <input type="text" id="firstName_{{oneuser.id}}" class="form-control form-icon-trailing" autocomplete="off" placeholder=" "
-                                                            value="{{oneuser.first_name}}" aria-label="disabled input example" disabled />
+                                                        <input type="text" id="firstName_{{oneuser.id}}" class="form-control form-icon-trailing"
+                                                            autocomplete="off" placeholder=" " value="{{oneuser.first_name}}"
+                                                            aria-label="disabled input example" disabled />
                                                         <label class="form-label" for="firstName_{{oneuser.id}}">First
                                                             name</label>
                                                     </div>
@@ -301,8 +309,9 @@
                                                 <div class="col">
                                                     <div data-mdb-input-init class="form-outline">
                                                         <i class="fa-regular fa-address-card trailing"></i>
-                                                        <input type="text" id="lastName_{{oneuser.id}}" class="form-control form-icon-trailing" autocomplete="off" placeholder=" "
-                                                            value="{{oneuser.last_name}}" aria-label="disabled input example" disabled />
+                                                        <input type="text" id="lastName_{{oneuser.id}}" class="form-control form-icon-trailing"
+                                                            autocomplete="off" placeholder=" " value="{{oneuser.last_name}}" aria-label="disabled input example"
+                                                            disabled />
                                                         <label class="form-label" for="lastName_{{oneuser.id}}">Last
                                                             name</label>
                                                     </div>
@@ -311,8 +320,8 @@
                                             <!-- Email input -->
                                             <div data-mdb-input-init class="form-outline mb-4">
                                                 <i class="fa-regular fa-envelope trailing"></i>
-                                                <input type="email" id="email_{{oneuser.id}}" class="form-control form-icon-trailing" autocomplete="off" placeholder=" "
-                                                    value="{{oneuser.email}}" aria-label="disabled input example" disabled />
+                                                <input type="email" id="email_{{oneuser.id}}" class="form-control form-icon-trailing" autocomplete="off"
+                                                    placeholder=" " value="{{oneuser.email}}" aria-label="disabled input example" disabled />
                                                 <label class="form-label" for="email_{{oneuser.id}}">Email address</label>
                                             </div>
                                             <!-- Password input -->
@@ -358,15 +367,12 @@
                                         <button type="button" class="btn-close" data-mdb-ripple-init data-mdb-dismiss="modal" aria-label="Close"></button>
                                     </div>
                                     <div class="modal-body">
-                                        <form method="post" action="{% url 'eliminar_usuario' oneuser.id %}">
+                                        <h3 class="text-center mb-2">Quieres eliminar al usuario <u>{{ oneuser.username }}</u>?</h3>
+                                        <h6>"{{ oneuser.first_name }} {{ oneuser.last_name }}"</h6>
+                                        <p class="text-center">Se eliminara toda la informacion relacionada <br> Esta acción es permanente</p>
+                                        <hr class="my-4">
+                                        <form id="eliminarUsuarioForm-{{ oneuser.id }}" action="{% url 'eliminar_usuario' oneuser.id %}" method="post" data-submit-form>
                                             {% csrf_token %}
-                                            <h3 class="text-center mb-2">Quieres eliminar al usuario
-                                                <u>{{oneuser.username}}</u>?
-                                            </h3>
-                                            <h6>"{{oneuser.first_name}} {{oneuser.last_name}}"</h6>
-                                            <p class="text-center">Se eliminara toda la informacion
-                                                relacionada <br> Esta acción es permanente</p>
-                                            <hr class="my-4">
                                             <div class="d-flex justify-content-between">
                                                 <button type="button" class="btn btn_detail" data-mdb-ripple-init data-mdb-dismiss="modal">Cancelar</button>
                                                 <button type="submit" class="btn btn-danger">Eliminar</button>

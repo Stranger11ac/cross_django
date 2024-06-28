@@ -17,15 +17,11 @@ from . import models
 
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
+from nltk.stem import PorterStemmer
 from nltk.stem import WordNetLemmatizer
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 import numpy as np
-from django.http import JsonResponse
-
-from nltk.tokenize import word_tokenize
-from nltk.corpus import stopwords
-from nltk.stem import PorterStemmer
 
 import nltk
 import openai
@@ -256,7 +252,7 @@ def singuppage(request):
             password1=request.POST.get('password1'),
             password2=request.POST.get('password2'),
         )
-        response['functions'] = 'singup'
+        response['functions'] = 'reload'
         status = 200 if response['success'] else 400
         return JsonResponse(response, status=status)
     else:
@@ -361,7 +357,7 @@ def import_database(request):
                     fecha_modificacion=row[7]
                 )
             # Redirigir a la vista programador después de procesar el formulario
-        return JsonResponse({'success': True, 'functions': 'others', 'message': 'Base de datos importada correctamente ✔'}, status=200)
+        return JsonResponse({'success': True, 'message': 'Base de datos importada correctamente ✔'}, status=200)
     else:
         form = CSVUploadForm()
     
@@ -406,6 +402,7 @@ def vista_programador(request):
             is_staff=request.POST.get('is_staff', False),
             is_active=request.POST.get('is_active', False),
         )
+        response['functions'] = 'reload'
         status = 200 if response['success'] else 400
         return JsonResponse(response, status=status)
 
@@ -433,31 +430,36 @@ def responder_preguntas(request):
 
 @login_required
 @never_cache
-def activar_usuario(request, user_id):
+def in_active(request):
     if request.method == 'POST' and request.user.is_staff:
-        user = get_object_or_404(User, id=user_id)
-        user.is_active = True
-        user.save()
-        return JsonResponse({'success': True, 'message': 'Usuario activado exitosamente.'}, status=200)
-    return JsonResponse({'success': False, 'message': 'Acción no permitida.'}, status=403)
+        user_id = request.POST.get('user_id')
+        action = request.POST.get('actionform')
+        userChange = get_object_or_404(User, id=user_id)
 
-@login_required
-@never_cache
-def desactivar_usuario(request, user_id):
-    if request.method == 'POST':
-        user = get_object_or_404(User, id=user_id)
-        user.is_active = False
-        user.save()
-        return JsonResponse({'success': True, 'message': 'Usuario desactivado exitosamente.'}, status=200)
-    return JsonResponse({'success': False, 'message': 'Acción no permitida.'}, status=403)
+        if action == 'activate':
+            userChange.is_active = True
+            message = f'Usuario "{userChange.username}" activado exitosamente. 😊🎈'
+            icon = 'info'
+        elif action == 'deactivate':
+            userChange.is_active = False
+            message = f'Usuario "{userChange.username}" <strong><u>desactivado</u></strong> exitosamente. 😯🧐😬'
+            icon = 'warning'
+        else:
+            return JsonResponse({'success': False, 'message': 'Acción no válida.'}, status=400)
+
+        userChange.save()
+        return JsonResponse({'success': True, 'functions': 'reload', 'message': message, 'icon':icon}, status=200)
+    
+    return JsonResponse({'success': False, 'message': 'Método no permitido.'}, status=405)
 
 @login_required
 @never_cache
 def eliminar_usuario(request, user_id):
     if request.method == 'POST':
+        icon = 'warning'
         user = get_object_or_404(User, id=user_id)
         user.delete()
-        return JsonResponse({'success': True, 'message': 'Usuario eliminado exitosamente.'}, status=200)
+        return JsonResponse({'success': True, 'functions': 'reload', 'message': 'Usuario eliminado exitosamente.', 'icon': icon}, status=200)
     return JsonResponse({'success': False, 'message': 'Acción no permitida.'}, status=403)
 
 @login_required
@@ -476,8 +478,8 @@ def editar_usuario(request, user_id):
         user.is_active = True
         user.is_staff = is_staff
         user.save()
-        return redirect('vista_programador')
-    return redirect('vista_programador')
+        return JsonResponse({'success': True, 'message': f'El usuario <u>{username}</u> fue modificado exitosamente 🥳🎉🎈.'}, status=200)
+    return JsonResponse({'success': False, 'message': 'Acción no permitida.'}, status=403)
 
 def mapa2(request):
     return render(request, 'mapa2.html')
@@ -507,7 +509,7 @@ def crear_articulo(request):
             )
             articulo.save()
 
-            return JsonResponse({'success': True, 'message': 'Excelente 🥳🎈🎉. Tu articulo ya fue publicado. Puedes editarlo cuando gustes. 🧐😊'}, status=200)
+            return JsonResponse({'success': True, 'functions': 'reload', 'message': 'Excelente 🥳🎈🎉. Tu articulo ya fue publicado. Puedes editarlo cuando gustes. 🧐😊'}, status=200)
         except Exception as e:
             return JsonResponse({'success': False, 'message': f'Ocurrio un error😯😥 <br>{str(e)}'}, status=400)
     return JsonResponse({'success': False, 'message': 'Método no permitido'}, status=405)

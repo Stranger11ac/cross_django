@@ -23,14 +23,13 @@ urlpatterns = [
     path('administracion/perfil/', views.ver_perfil, name='perfil'),
     path('administracion/responderpreguntas/', views.responder_preguntas, name='responder_preguntas'),
     path('administracion/export/csv/', views.export_database, name='export_database_to_csv'),
-    path('importar/', views.import_database, name='import_database'),
+    path('administracion/importar/csv/', views.import_database, name='import_database'),
     path('administracion/banners/', views.upload_banner, name='banners'),
     
     # usuarios
-    path('administracion/editaruser/<int:user_id>/', views.editar_usuario, name='editar_usuario'),
-    path('administracion/activaruser/<int:user_id>/', views.activar_usuario, name='activar_usuario'),
-    path('administracion/eliminaruser/<int:user_id>/', views.eliminar_usuario, name='eliminar_usuario'),
-    path('administracion/desactivaruser/<int:user_id>/', views.desactivar_usuario, name='desactivar_usuario'),
+    path('administracion/modificar_usuario/', views.in_active, name='in_active'),
+    path('administracion/editar_usuario/<int:user_id>/', views.editar_usuario, name='editar_usuario'),
+    path('administracion/eliminar_usuario/<int:user_id>/', views.eliminar_usuario, name='eliminar_usuario'),
     
     # blog
     path('administracion/blogs/', views.admin_blogs, name='admin_blogs'),
