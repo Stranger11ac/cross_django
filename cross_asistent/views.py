@@ -29,14 +29,6 @@ from nltk.stem import WordNetLemmatizer
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 import numpy as np
-<<<<<<< HEAD
-from django.http import JsonResponse
-
-from nltk.tokenize import word_tokenize
-from nltk.corpus import stopwords
-from django.db.models import Q
-=======
->>>>>>> e3de6f61cfae3302c97557268ed18bac39796b9b
 
 import nltk
 import openai
