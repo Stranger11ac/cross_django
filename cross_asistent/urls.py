@@ -26,7 +26,9 @@ urlpatterns = [
     path('administracion/responderpreguntas/', views.responder_preguntas, name='responder_preguntas'),
     path('administracion/export/csv/', views.export_database, name='export_database_to_csv'),
     path('administracion/importar/csv/', views.import_database, name='import_database'),
-    path('administracion/banners/', views.upload_banner, name='banners'),
+    path('banners/', views.upload_banner, name='upload_banner'),
+    path('banners/edit/<int:banner_id>/', views.edit_banner, name='edit_banner'),
+    path('banners/delete/<int:banner_id>/', views.delete_banner, name='delete_banner'),
     
     # usuarios
     path('administracion/modificar_usuario/', views.in_active, name='in_active'),
