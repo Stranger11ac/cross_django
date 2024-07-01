@@ -75,10 +75,23 @@ def index(request):
     if not request.user.is_staff:
         logout(request)
     banners_all = models.Banners.objects.all()
+    banners_modificados = []
+
+    for banner in banners_all:
+        imagen_url = banner.imagen.url.replace("/cross_asistent", "")
+        banners_modificados.append({
+            'id': banner.id,
+            'titulo': banner.titulo,
+            'descripcion': banner.descripcion,
+            'articulo': banner.articulo,
+            'imagen': imagen_url,
+        })
+
     return render(request, 'index.html', {
-        'banners': banners_all,
+        'banners': banners_modificados,
         'active_page': 'inicio'
     })
+
 
 client = openai.OpenAI(api_key=settings.OPENAI_API_KEY)
 
@@ -542,6 +555,22 @@ def upload_image(request):
         except Exception as e:
             return JsonResponse({'error': str(e)}, status=400)
     return JsonResponse({'error': 'Error al subir la imagen'}, status=400)
+
+@login_required
+@never_cache
+def lista_imagenes(request):
+    imagenes = models.ImagenArticulo.objects.all()
+    imagenes_modificadas = []
+
+    for imagen in imagenes:
+        imagen_url = imagen.imagen.url.replace("/cross_asistent", "")
+        imagenes_modificadas.append({
+            'id': imagen.id,
+            'url': imagen_url
+        })
+
+    return render(request, 'admin/blogs_imgs.html', {'imagenes': imagenes_modificadas})
+
 
 #Consulta para informacion del Mapa##################
 def obtenerinfoEdif(request):

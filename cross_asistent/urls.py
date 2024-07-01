@@ -36,6 +36,7 @@ urlpatterns = [
     path('administracion/blogs/', views.admin_blogs, name='admin_blogs'),
     path('administracion/crear_blog/', views.crear_articulo, name='send_blog'),
     path('administracion/registrar_img_blog/', views.upload_image, name='send_imgsblog'),
+    path('administracion/lista_imagenes/', views.lista_imagenes, name='lista_imagenes'),
     
     # Mapa
     path('administracion/obtener_edificio/', views.obtenerEdificio, name='obtenerEdificio'),

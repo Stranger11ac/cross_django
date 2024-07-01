@@ -1,4 +1,5 @@
 // Functionamiento de TinyMCE #################################################################
+const useDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
 const uploadImageTiny = async (blobInfo, progress) => {
     try {
         const formData = new FormData();
@@ -31,6 +32,10 @@ tinymce.init({
     resize: false,
     plugins:
         "advlist autolink lists link image charmap preview anchor searchreplace visualblocks code fullscreen insertdatetime media table wordcount quickbars image pagebreak autoresize autosave",
+    mobile: {
+        menubar: true,
+        toolbar_mode: "sliding",
+        },
     menubar: "file edit view format table",
     menu: {
         file: { title: "File", items: "restoredraft | preview | print" },
@@ -40,37 +45,18 @@ tinymce.init({
     contextmenu_never_use_native: true,
     toolbar_mode: "wrap", // wrap floating sliding
     toolbar:
-        "undo redo restoredraft | forecolor backcolor | fontfamily styles | bold italic underline removeformat | alignleft aligncenter alignright | alignjustify outdent indent bullist numlist | table tabledelete | image insertdatetime link unlink openlink | cut paste wordcount",
+        "undo redo restoredraft | forecolor backcolor | fontfamily styles | bold italic underline removeformat | alignleft aligncenter alignright | alignjustify outdent indent | bullist numlist | table tabledelete | image gallerycustom | insertdatetime link unlink openlink | cut paste wordcount",
     quickbars_insert_toolbar: false,
     quickbars_selection_toolbar: "bold italic underline | blocks forecolor backcolor | quicklink blockquote",
     quickbars_image_toolbar: "image|alignleft aligncenter alignright | rotateleft rotateright | imageoptions",
     color_map: [
-        "#ECCAFA","Light Purple",
-        "#C2E0F4","Light Blue",
-        "#BFEDD2","Light Green",
-        "#FBEEB8","Light Yellow",
-        "#F8CAC6","Light Red",
-        "#B96AD9","Purple",
-        "#3598DB","Blue",
-        "#2DC26B","Green",
-        "#F1C40F","Yellow",
-        "#E03E2D","Red",
-        "#843FA1","Dark Purple",
-        "#3B71CA","Dark Blue",
-        "#169179","Dark Turquoise",
-        "#E67E23","Orange",
-        "#BA372A","Dark Red",
-        "#ECF0F1","Light Gray",
-        "#CED4D9","Medium Gray",
-        "#95A5A6","Gray",
-        "#7E8C8D","Dark Gray",
-        "#34495E","Navy Blue",
-        "#000000","Black",
-        "#ffffff","White",
+        "#ECCAFA","Light Purple","#C2E0F4","Light Blue","#BFEDD2","Light Green","#FBEEB8","Light Yellow","#F8CAC6","Light Red","#B96AD9","Purple","#3598DB","Blue","#2DC26B","Green","#F1C40F","Yellow","#E03E2D","Red","#843FA1","Dark Purple","#3B71CA","Dark Blue","#169179","Dark Turquoise","#E67E23","Orange","#BA372A","Dark Red","#ECF0F1","Light Gray","#CED4D9","Medium Gray","#95A5A6","Gray","#7E8C8D","Dark Gray","#34495E","Navy Blue","#000000","Black","#ffffff","White",
     ],
+    // skin: useDarkMode ? 'oxide-dark' : 'oxide',
+    // content_css: useDarkMode ? 'dark' : 'default',
     image_title: true,
     automatic_uploads: true,
-    file_picker_types: "image",
+    // file_picker_types: "image",
     images_upload_url: "../../administracion/registrar_img_blog/",
     images_upload_handler: uploadImageTiny,
     min_height: 800,
@@ -90,6 +76,14 @@ tinymce.init({
     paste_data_images: true,
 
     setup: (editor) => {
+        editor.ui.registry.addButton('gallerycustom', {
+            icon: 'gallery',
+            onAction: function() {
+                var cmsURL = '../../administracion/lista_imagenes/';
+                window.open(cmsURL, 'Seleccionar Imagen', 'width=350,max-height=900');
+            }
+        });
+
         editor.on('paste', (event) => {
             const clipboardData = event.clipboardData || window.clipboardData;
             const items = clipboardData.items;
@@ -105,7 +99,7 @@ tinymce.init({
 
                         uploadImageTiny(blobInfo).then(url => {
                             if (url) {
-                                editor.insertContent(`<img src="${url}" class="img-tiny"/><p>&nbsp;</p>`);
+                                editor.insertContent(`<img src="${url}" class="img-tiny my-1"/><p>&nbsp;</p>`);
                             }
                         });
                     };
@@ -116,7 +110,7 @@ tinymce.init({
         editor.on('NodeChange', (event) => {
             const nodes = event.element.getElementsByTagName('img');
             for (const img of nodes) {
-                img.classList.add('img-tiny');
+                img.classList.add('img-tiny my-1');
             }
         });
     },
