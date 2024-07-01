@@ -10,13 +10,11 @@
     <link rel="icon" href="{% static 'img/UTC_icono.ico' %}" />
     <title>{% block title %}TITULO{% endblock %} | Asistente UTC</title>
 
-    <link rel="preload" href="{% static 'css/mdb.min.css' %}" as="style" />
-    <link rel="preload" href="{% static 'css/fontawesome-6.5.2.min.css' %}" as="style" />
+    <link rel="preload" href="{% static 'css/mdb_fontawesome.min.css' %}" as="style" />
 
     {% block extra_head %}{% endblock %}
 
-    <link rel="stylesheet" href="{% static 'css/mdb.min.css' %}" />
-    <link rel="stylesheet" href="{% static 'css/fontawesome-6.5.2.min.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/mdb_fontawesome.min.css' %}" />
     <link rel="stylesheet" href="{% static 'css/styles.css' %}" />
 </head>
 
@@ -101,9 +99,7 @@
 
     {% block content %}{% endblock %}
 
-    <script src="{% static 'js/jquery.min.js' %}"></script>
-    <script src="{% static 'js/mdb.umd.min.js' %}"></script>
-    <script src="{% static 'js/sweetalert11.min.js' %}"></script>
+    <script src="{% static 'js/libraries.min.js' %}"></script>
     <script defer src="{% static 'js/settings.js' %}"></script>
 
     {% block scripts_end %} {% endblock %}

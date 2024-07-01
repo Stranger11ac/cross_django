@@ -99,7 +99,7 @@ tinymce.init({
 
                         uploadImageTiny(blobInfo).then(url => {
                             if (url) {
-                                editor.insertContent(`<img src="${url}" class="img-tiny my-1"/><p>&nbsp;</p>`);
+                                editor.insertContent(`<img src="${url}" class="img-tiny"/><p>&nbsp;</p>`);
                             }
                         });
                     };
@@ -110,7 +110,7 @@ tinymce.init({
         editor.on('NodeChange', (event) => {
             const nodes = event.element.getElementsByTagName('img');
             for (const img of nodes) {
-                img.classList.add('img-tiny my-1');
+                img.classList.add('img-tiny');
             }
         });
     },

@@ -17,6 +17,7 @@
     --var-dark_second: #2f333a;
     --var-extra: #02913c;
     --var-detail: #3b71ca;
+    --var-detail-2: #0f2755e6;
     --blue_img-filter: hue-rotate(60deg) saturate(120%);
     --original_img-filter: saturate(90%);
 
@@ -712,6 +713,7 @@ body.modal-open {
 img.img-tiny {
     max-width: 100%;
     border-radius: var(--border-radius);
+    margin-block: 0.25rem;
 }
 
 /*#################### Template Buttons ####################*/
@@ -1040,115 +1042,100 @@ img.img-tiny {
     font-size: 6rem !important;
 }
 
+.fadeInLeft {
+    -webkit-animation-name: fadeInLeft;
+    animation-name: fadeInLeft
+}
+
+@-webkit-keyframes fadeInLeft {
+    0% {
+        -webkit-transform: translate3d(-100%, 0, 0);
+        opacity: 0;
+        transform: translate3d(-100%, 0, 0)
+    }
+
+    to {
+        -webkit-transform: translateZ(0);
+        opacity: 1;
+        transform: translateZ(0)
+    }
+}
+
+@keyframes fadeInLeft {
+    0% {
+        -webkit-transform: translate3d(-100%, 0, 0);
+        opacity: 0;
+        transform: translate3d(-100%, 0, 0)
+    }
+
+    to {
+        -webkit-transform: translateZ(0);
+        opacity: 1;
+        transform: translateZ(0)
+    }
+}
+
+
+
 /* style de cards de perfil */
 .card_perfil {
-    --main-color: #000000;
-    --submain-color: #78858F;
-    --bg-color: #fff;
-    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    --size_box: 150px;
     position: relative;
     width: 100%;
     max-width: 540px;
     margin: auto;
     border-radius: 20px;
     background: var(--bg-color);
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    box-shadow: 0 0px 8px var(--darkA5);
     overflow: hidden;
-  }
-  
-  .card__img_perfil {
-    height: 200px;
+}
+
+.card__img_perfil {
+    height: 120px;
     width: 100%;
     position: relative;
-  }
-  
-  .card__img_perfil .card__img_bg {
-    height: 200px; 
-    width: 100%; 
-    border-radius: 20px 20px 0 0;
     background: linear-gradient(45deg, var(--color-bg1), var(--color-bg2));
 }
-  
-  .card__avatar_perfil {
+
+.card__avatar_perfil {
     position: absolute;
-    width: 150px;
-    height: 150px;
-    background: var(--bg-color);
-    border-radius: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    bottom: -75px;
+    width: var(--size_box);
+    height: var(--size_box);
+    background-color: white;
+    background: white;
+    display: grid;
+    place-content: center;
+    bottom: calc(var(--size_box)/-2);
     left: 50%;
+    border-radius: 100%;
+    border: 8px solid #ffffff;
     transform: translateX(-50%);
-    border: 6px solid var(--bg-color);
-  }
-  
-  .card__avatar_perfil img {
+    overflow: hidden;
+}
+
+.card__avatar_perfil::before {
+    content: '';
+    height: auto;
+    min-height: 100%;
     width: 100%;
-    height: 100%;
-    border-radius: 50%;
-  }
-  
-  .card__content_perfil {
+    background-color: var(--var-detail);
+    background: var(--var-img-perfil) center no-repeat;
+    background-size: auto 100%;
+    filter: blur(2px);
+    position: absolute;
+}
+
+.card__avatar_perfil img {
+    width: inherit;
+    height: auto;
+    padding: 0 6px;
+    box-shadow: 0 0 5px var(--darkA4);
+    position: relative;
+    user-select: none;
+}
+
+.card__content_perfil {
     padding: 20px;
+    margin-top: calc(var(--size_box)/2);
     text-align: center;
-  }
-  
-  .card__title_perfil {
-    margin-top: 60px;
-    font-weight: 500;
-    font-size: 18px;
-    color: var(--main-color);
-  }
-  
-  .card__subtitle_perfil {
-    margin-top: 10px;
-    font-weight: 400;
-    font-size: 15px;
-    color: var(--submain-color);
-  }
-  
-  .card__info_perfil {
-    margin: 20px 0;
-}
-
-.card__info_perfil .info-row {
-    display: flex;
-    justify-content: space-evenly;
-    margin: 5px;
-}
-
-.card__info_perfil p {
-    color: var(--main-color);
-    margin: 10;
-}
-
-.card__info_perfil strong {
-    color: var(--main-color);
-}
-
-.card__wrapper_perfil {
-    display: flex;
-    justify-content: center;
-    gap: 10px;
-    margin-top: 15px; /* Ajusta el margen superior según sea necesario */
-}
-
-.card__btn_perfil {
-    flex: 1;
-    padding: 10px;
-    font-size: 14px;
-    font-weight: 600;
-    color: var(--main-color);
-    background-color: var(--bg-color);
-    border: 2px solid var(--main-color);
-    border-radius: 10px;
-    cursor: pointer;
-    transition: all 0.3s;
-}
-
-.card__btn_perfil:hover {
-    background-color: var(--main-color);
-    color: var(--bg-color);
 }

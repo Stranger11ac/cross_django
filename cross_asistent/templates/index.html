@@ -2,7 +2,6 @@
 {% load static filtros %}
 {% block title %}Inicio | Bienvenidos 🦅{% endblock %}
 {% block extra_head %}
-<link href="{% static 'css/animate.css' %}" rel="stylesheet" />
 <link rel="stylesheet" href="{% static 'css/swiper-bundle.min.css' %}" />
 <script type="module" src="{% static 'js/model-viewer.min.js' %}"></script>
 {% endblock %} {% block link_end-extra %}
@@ -18,7 +17,6 @@
         <div class="swiper-wrapper">
             {% for banner in banners %}
             <div class="swiper-slide">
-                
                 <div class="slide-inner" style="background-image: url({{banner.imagen}});">
                 
                     <div class="container">
@@ -56,9 +54,9 @@
         <div class="box_asistent">
             <model-viewer id="asistent_model" src="{% static 'models/RobotExpressive.glb' %}"
                 tone-mapping="neutral" camera-orbit="15deg 70deg 60m"
+                autoplay
+                animation-name="Wave"
                 poster="{% static 'img/poster.webp' %}" shadow-intensity="1">
-                <!-- autoplay
-                animation-name="Wave" -->
             </model-viewer>
             <div class="box_asistent_controls">
                 <div class="controls_buttons">
@@ -126,6 +124,5 @@
 
 {% block scripts_end %}
 <script src="{% static 'js/owl-carousel.min.js' %}"></script>
-<script src="{% static 'js/swiper.min.js' %}"></script>
-<script src="{% static 'js/custom.js' %}"></script>
+<script src="{% static 'js/custom.min.js' %}"></script>
 {% endblock %}

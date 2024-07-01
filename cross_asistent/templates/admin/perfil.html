@@ -1,39 +1,36 @@
 {% extends 'base/widget.html' %}
-{% block title %}Inicio | Administración{% endblock %}
+{% block title %}{{user.username}} | Tu perfil | Administración{% endblock %}
 {% block link_home %}{% url 'vista_admin' %}{% endblock %}
 {% block link_default %}
 {% include 'base/widget_links-admin.html' %}
 {% endblock %}
 {% block content %}
 
-<div class="container my-5">
+<main class="container my-5">
+    <h2 class="text-center">Tu perfil <i class="fa-solid fa-circle-user ms-1"></i></h2>
+    <hr class="hr_divisor mb-5">
     <div class="card_perfil">
-        <div class="card__img_perfil">
-            <div class="card__img_bg" style="--color-bg1:#d6d6d6; --color-bg2:#ff0000;">
-            </div>
+        <div class="card__img_perfil" style="--color-bg1:#efefef; --color-bg2:#3591d7; --var-img-perfil:url(/static/img/Biblioteca.webp);">
             <div class="card__avatar_perfil">
-                <img src="/static/img/default_image.webp" class="h-100 d-block w-100" alt="Sunset" />
+                <img src="/static/img/Biblioteca.webp" alt="Sunset" />
             </div>
         </div>
 
         <div class="card__content_perfil">
-            <div class="card__title_perfil">{{ user.username }}</div>
-            <div class="card__subtitle_perfil">Perfil de Usuario</div>
-            <div class="card__info_perfil">
-                <div class="info-row">
-                    <p><strong>Usuario:</strong> {{ user.username }}</p>
-                    <p><strong>Email:</strong> {{ user.email }}</p>
+            <h3>{{ user.username }}</h3>
+            <div class="mt-4">
+                <p class="mb-5"><strong>Nombre:</strong> <br> {{ user.first_name }} {{ user.last_name }}</p>
+                <div class="d-flex mb-3 justify-content-between">
+                    <strong>Email:</strong>
+                    <div>{{ user.email }}</div>
                 </div>
-                <div class="info-row">
-                    <p><strong>Nombre:</strong> {{ user.first_name }}</p>
-                    <p><strong>Apellido:</strong> {{ user.last_name }}</p>
+                <div class="d-flex justify-content-between">
+                    <strong>Usuario desde:</strong>
+                    <div>{{ user.date_joined.date }}</div>
                 </div>
-            </div>
-            <div class="card__wrapper_perfil">
-                <button class="card__btn_perfil">Editar</button>
             </div>
         </div>
     </div>
-</div>
+</main>
 
 {% endblock %}
