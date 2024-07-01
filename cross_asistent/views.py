@@ -642,15 +642,38 @@ def crearEditarMapa(request):
 # subir banners###########################
 @login_required
 def upload_banner(request):
-  if request.method == 'POST':
-    form = BannersForm(request.POST, request.FILES)
-    if form.is_valid():
-      form.save()
-      return render(request, 'admin/banners.html', context={'form': form})
-  else:
-    form = BannersForm()
-  context = {'form': form}
-  return render(request, 'admin/banners.html', context)
+    if request.method == 'POST':
+        form = BannersForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return redirect('upload_banner')
+    else:
+        form = BannersForm()
+    
+    banners = models.Banners.objects.all()
+    context = {'form': form, 'banners': banners}
+    return render(request, 'admin/banners.html', context)
+
+@login_required
+def edit_banner(request, banner_id):
+    banner = get_object_or_404(models.Banners, id=banner_id)
+    if request.method == 'POST':
+        form = BannersForm(request.POST, request.FILES, instance=banner)
+        if form.is_valid():
+            form.save()
+            return redirect('upload_banner')
+    else:
+        form = BannersForm(instance=banner)
+    
+    context = {'form': form, 'banner': banner}
+    return render(request, 'admin/edit_banner.html', context)
+
+@login_required
+def delete_banner(request, banner_id):
+    banner = get_object_or_404(models.Banners, id=banner_id)
+    banner.delete()
+    
+    return redirect('upload_banner')
 
 @login_required
 @never_cache
