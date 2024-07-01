@@ -1,18 +1,25 @@
 {% extends 'base/widget.html' %}
 {% load static %}
-{% block title %}Preguntas 💬{% endblock %}
+{% block title %}         
+
+{% for articulo in Articulos %}
+{{ articulo.titulo|truncatechars:25 }}
+{% endfor %}
+
+{% endblock %}
 {% block content %}
 <main class="container container-fluid mb-100">
     
-<div class="p-5 text-center mt-5">
+<div class="p-5 mt-5">
     
         {% for articulo in Articulos %}
         
-            <h2>{{ articulo.titulo }}</h2>
+            <h2 class="text-center">{{ articulo.titulo }}</h2>
             <hr class="hr_divisor mb-5">
             <p class="px-5 mx-5">{% autoescape off %}{{ articulo.contenido }}{% endautoescape %}</p>
 
             <p>{{ articulo.autor }}</p>
+            <p>{{ articulo.creacion }}</p>
         {% endfor %}
     
 </div>
