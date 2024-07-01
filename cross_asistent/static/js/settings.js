@@ -126,6 +126,8 @@ function jsonSubmit(e) {
     const timerOut = 6000;
     const thisForm = e.target;
     const formData = new FormData(thisForm);
+    const formToken = getCSRFToken();
+    console.log(formToken);
 
     if (formData.has("contenidoWord")) {
         const contenidoTiny = tinymce.activeEditor.getContent();
@@ -137,7 +139,7 @@ function jsonSubmit(e) {
         body: formData,
         headers: {
             "X-Requested-With": "XMLHttpRequest",
-            "X-CSRFToken": thisForm.querySelector("[name=csrfmiddlewaretoken]").value,
+            "X-CSRFToken": formToken,
         },
     })
         .then((response) => {
@@ -152,15 +154,24 @@ function jsonSubmit(e) {
             dataMessage = data.message;
             if (data.success) {
                 thisForm.reset();
-                if (data.functions == "singin") {
-                    window.location.href = data.redirect_url;
-                } else if (data.functions == "others") {
-                    alertSToast("center", timerOut + 4000, "success", dataMessage);
-                } else {
-                    alertSToast("center", timerOut + 4000, "success", dataMessage, function () {
-                        location.reload();
-                    });
+                dataIcon = 'success'
+                if (data.icon) {
+                    dataIcon = data.icon
                 }
+
+                function dataRedirect(params) {
+                    window.location.href = data.redirect_url;
+                }
+
+                if (data.functions == "singin") {
+                    dataRedirect();
+                    return
+                } else if (data.functions == 'reload') {
+                    var alertfunction = function () {location.reload();}
+                } else if (data.functions == 'redirect') {
+                    var alertfunction = function () {dataRedirect();}
+                }
+                alertSToast("center", timerOut + 4000, dataIcon, dataMessage, alertfunction);
 
             } else {
                 console.error(dataMessage);

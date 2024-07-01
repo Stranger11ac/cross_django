@@ -28,7 +28,7 @@
                         <div data-mdb-input-init class="form-outline mb-4">
                             <i class="fa-solid fa-circle-user trailing"></i>
                             <input type="text" id="username" name="username" required class="form-control form-icon-trailing" />
-                            <label class="form-label" for="username">Nombre de Usuario</label>
+                            <label class="form-label" for="username">Usuario o Email</label>
                         </div>
                         <div data-mdb-input-init class="form-outline mb-4">
                             <i class="fa-solid fa-key trailing"></i>
@@ -38,6 +38,9 @@
                         <button type="submit" class="btn btn-primary btn-block">
                             Entrar
                         </button>
+                        <div class="text-center mt-3">
+                            <a href="{% url 'password_reset_email' %}">Olvidé mi contraseña</a>
+                        </div>
                     </form>
                 </div>
                 <!-- Registrar -->

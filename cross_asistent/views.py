@@ -11,20 +11,32 @@ from django.utils import timezone
 from django.conf import settings
 from django.urls import reverse
 from django.apps import apps
+from django.contrib.auth.tokens import default_token_generator
+from django.template.loader import render_to_string
+from django.utils.encoding import force_bytes, force_str
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.core.mail import send_mail
+
 from .forms import BannersForm, CSVUploadForm
+from .buildings import edificios
 from . import models
+
 
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
+from nltk.stem import PorterStemmer
 from nltk.stem import WordNetLemmatizer
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 import numpy as np
+<<<<<<< HEAD
 from django.http import JsonResponse
 
 from nltk.tokenize import word_tokenize
 from nltk.corpus import stopwords
 from django.db.models import Q
+=======
+>>>>>>> e3de6f61cfae3302c97557268ed18bac39796b9b
 
 import nltk
 import openai
@@ -71,11 +83,29 @@ def index(request):
     if not request.user.is_staff:
         logout(request)
     banners_all = models.Banners.objects.all()
+    banners_modificados = []
+
+    for banner in banners_all:
+        imagen_url = banner.imagen.url.replace("/cross_asistent", "")
+        banners_modificados.append({
+            'id': banner.id,
+            'titulo': banner.titulo,
+            'descripcion': banner.descripcion,
+            'articulo': banner.articulo,
+            'imagen': imagen_url,
+        })
+
     return render(request, 'index.html', {
-        'banners': banners_all,
+        'banners': banners_modificados,
         'active_page': 'inicio'
     })
 
+<<<<<<< HEAD
+=======
+
+client = openai.OpenAI(api_key=settings.OPENAI_API_KEY)
+
+>>>>>>> e3de6f61cfae3302c97557268ed18bac39796b9b
 def chatgpt(question, instructions):
     client = openai.OpenAI(api_key=settings.OPENAI_API_KEY)
     response = client.chat.completions.create(
@@ -226,168 +256,6 @@ def mostrar_blog(request, Articulos_id):
 def map(request):
     if not request.user.is_staff:
         logout(request)
-    edificios = [
-        {
-            'edifcolor': 'red','edifill': 'red',
-            'nombre': 'Edificio 4',
-            'descripcion': 'Descripción del Edificio 4',
-            'imagen_url': 'img/Edificio_4.webp',
-            'coordenadas': [[25.55661, -100.93688], [25.55633, -100.93647], [25.55613, -100.93662], [25.55642, -100.93703]],
-            'centro': [25.55637, -100.93675]
-        },
-        {
-            'edifcolor': 'orange','edifill': 'orange',
-            'nombre': 'Centro de Idiomas',
-            'descripcion': 'Descripción del Centro de Idiomas',
-            'imagen_url': 'img/Centro_Idiomas.webp',
-            'coordenadas': [[25.55715, -100.93684], [25.55742, -100.93724], [25.55757, -100.93711], [25.55731, -100.93670]],
-            'centro': [25.55735, -100.93697]
-        },
-        {
-            'edifcolor': '#00FFFF','edifill': '#00FFFF',
-            'nombre': 'Laboratorio 7B',
-            'descripcion': 'Descripción del Laboratorio 7B',
-            'imagen_url': 'img/Laboratorio_7B.webp',
-            'coordenadas': [[25.55704, -100.93644], [25.55718, -100.93631], [25.55694, -100.93593], [25.55679, -100.93606]],
-            'centro': [25.55700, -100.93620]
-        },
-        {
-            'edifcolor': 'yellow','edifill': 'yellow',
-            'nombre': 'Vinculación',
-            'descripcion': 'Descripción de Vinculación',
-            'imagen_url': 'img/Vinculacion.webp',
-            'coordenadas': [[25.55813, -100.93653], [25.55794, -100.93623], [25.55765, -100.93646], [25.55785, -100.93676]],
-            'centro': [25.55790, -100.93650]
-        },
-        {
-            'edifcolor': 'yellow','edifill': 'yellow',
-            'nombre': 'Rectoria',
-            'descripcion': 'Descripcion de Rectoria',
-            'imagen_url': 'img/Rectoria.webp',
-            'coordenadas': [[25.55767, -100.93590], [25.55748, -100.93559], [25.55719, -100.93581], [25.55741, -100.93612]],
-            'centro': [25.55742, -100.93587]
-        },
-        {
-            'edifcolor': 'blue','edifill': 'blue',
-            'nombre': 'Biblioteca',
-            'descripcion': 'Descripción de Biblioteca',
-            'imagen_url': 'img/Biblioteca.webp',
-            'coordenadas': [[25.55651, -100.93613], [25.55639, -100.93594], [25.55615, -100.93616], [25.55628, -100.93633]],
-            'centro': [25.55632, -100.93615]       
-        },
-        {
-            'edifcolor': 'green','edifill': 'green',
-            'nombre': 'Cafeteria UTC',
-            'descripcion': 'Descripción de Cafeteria UTC',
-            'imagen_url': 'img/Cafeteria_UTC.webp',
-            'coordenadas': [[25.55616, -100.93610], [25.55607, -100.93618], [25.55599, -100.93608], [25.55607, -100.93601]],
-            'centro': [25.55608, -100.93611]
-        },
-        {
-            'edifcolor': 'red','edifill': 'red',
-            'nombre': 'Edificio 3',
-            'descripcion': 'Descripción de Edificio 3',
-            'imagen_url': 'img/Edificio_3.webp',
-            'coordenadas': [[25.55611, -100.93582], [25.55583, -100.93547], [25.55566, -100.93564], [25.55594, -100.93600]],
-            'centro': [25.55589, -100.93575]
-        },
-        {
-            'edifcolor': 'white','edifill': 'white',
-            'nombre': 'Domo',
-            'descripcion': 'Descripción de Domo',
-            'imagen_url': 'img/Domo.webp',
-            'coordenadas': [[25.55552, -100.93498], [25.55533, -100.93471], [25.55515, -100.93486], [25.55534, -100.93514]],
-            'centro': [25.55533, -100.93493]
-        },
-        {
-            'edifcolor': 'red','edifill': 'red',
-            'nombre': 'Edificio Docente 2',
-            'titulo': 'Tecnologias de la Informacion y Comunicacion',
-            'imagen_url': 'img/Edificio_2.webp',
-            'coordenadas': [[25.55495, -100.93495], [25.55471, -100.93458], [25.55455, -100.93471], [25.55479, -100.93508]],
-            'centro': [25.55474, -100.93482]
-        },
-        {
-            'edifcolor': '#00FFFF','edifill': '#00FFFF',
-            'nombre': 'Laboratorio 4-E',
-            'descripcion': 'Descripción del Laboratorio 4-E',
-            'imagen_url': 'img/Laboratorio_4-E.webp',
-            'coordenadas': [[25.55527, -100.93468], [25.55515, -100.93479], [25.55503, -100.93462], [25.55515, -100.93451]],
-            'centro': [25.55515, -100.93466]
-        },
-        {
-            'edifcolor': 'green','edifill': 'green',
-            'nombre': 'Cafeteria UTC 1',
-            'descripcion': 'Descripción de Cafeteria UTC 1',
-            'imagen_url': 'img/cafeteria1.webp',
-            'coordenadas': [[25.55501, -100.93408], [25.55482, -100.93430], [25.55473, -100.93421], [25.55491, -100.93399]],
-            'centro': [25.55485, -100.93415]
-        },
-        {
-            'edifcolor': 'red','edifill': 'red',
-            'nombre': 'Edificio 1',
-            'descripcion': 'Descripción del Edificio 1',
-            'imagen_url': 'img/Edificio_1.webp',
-            'coordenadas': [[25.55527, -100.93369], [25.55545, -100.93352], [25.55575, -100.93393], [25.55556, -100.93409]],
-            'centro': [25.55550, -100.93380]
-        },
-        {
-            'edifcolor': '#00FFFF','edifill': '#00FFFF',
-            'nombre': 'Laboratorio de 7A',
-            'descripcion': 'Descripción del Laboratorio de PLC',
-            'imagen_url': 'img/Laboratorio_7A.webp',
-            'coordenadas': [[25.55573, -100.93424], [25.55586, -100.93411], [25.55615, -100.93447], [25.55602, -100.93461]],
-            'centro': [25.55593, -100.93435]
-        },
-        {
-            'edifcolor': 'gray','edifill': 'gray',
-            'nombre': 'Caceta 1',
-            'descripcion': 'Descripción de Caceta 1',
-            'imagen_url': 'img/Caseta_1.webp',
-            'coordenadas': [[25.55821, -100.93682], [25.55815, -100.93672], [25.55805, -100.93682], [25.55812, -100.93691]],
-            'centro': [25.55815, -100.93682]
-        },
-        {
-            'edifcolor': 'gray','edifill': 'gray',
-            'nombre': 'Caceta 2',
-            'descripcion': 'Descripción de Caceta 2',
-            'imagen_url': 'img/Caseta_2.webp',
-            'coordenadas': [[25.55606, -100.93464], [25.55613, -100.93457], [25.55624, -100.93470], [25.55616, -100.93477]],
-            'centro': [25.55616, -100.93469]
-        },
-        {
-            'edifcolor': 'red','edifill': 'white',
-            'nombre': 'Oxxo',
-            'descripcion': 'Descripción de Oxxo',
-            'imagen_url': 'img/Oxxo.webp',
-            'coordenadas': [[25.55777, -100.93619], [25.55785, -100.93613], [25.55776, -100.93602], [25.55769, -100.93610]],
-            'centro': [25.55777, -100.93612]
-        },
-        {
-            'edifcolor': 'blue','edifill': 'blue',
-            'nombre': 'Papeleria',
-            'descripcion': 'Descripción de Papeleria',
-            'imagen_url': 'img/papeleriautc.webp',
-            'coordenadas': [[25.55700, -100.93713], [25.55708, -100.93709], [25.55704, -100.93701], [25.55697, -100.93706]],
-            'centro': [25.55702, -100.93708]
-        },
-        {
-            'edifcolor': 'green','edifill': 'green',
-            'nombre': 'Campo De Fútbol',
-            'descripcion': 'Descripción de Campo De Fútbol',
-            'imagen_url': 'img/futbol.webp',
-            'coordenadas': [[25.55871, -100.93793], [25.55835, -100.93763], [25.55819, -100.93786], [25.55855, -100.93816]],
-            'centro': [25.55843, -100.93790]
-        },
-        {
-            'edifcolor': 'green','edifill': 'green',
-            'nombre': 'Campo de Softbol',
-            'descripcion': 'Descripción de Campo de Softbol',
-            'imagen_url': 'img/softbol.webp',
-            'coordenadas': [[25.55886, -100.93881], [25.55844, -100.93925], [25.55796, -100.93869], [25.55848, -100.93837]],
-            'centro': [25.55842, -100.93879]
-        },
-    ]
     return render(request, 'mapa.html', {
         'edificios': edificios,
         'active_page': 'map'
@@ -440,7 +308,7 @@ def singuppage(request):
             password1=request.POST.get('password1'),
             password2=request.POST.get('password2'),
         )
-        response['functions'] = 'singup'
+        response['functions'] = 'reload'
         status = 200 if response['success'] else 400
         return JsonResponse(response, status=status)
     else:
@@ -450,16 +318,22 @@ def singuppage(request):
 @never_cache
 def singinpage(request):
     if request.method == 'POST' and request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-        usernamePOST = request.POST.get('username')
-        passwordPOST = request.POST.get('password')
+        login_identifier = request.POST.get('username')  # Puede ser username o email
+        password = request.POST.get('password')
         
-        try: user = User.objects.get(username=usernamePOST)
-        except User.DoesNotExist: user = None
+        try:
+            user = User.objects.get(username=login_identifier)
+        except User.DoesNotExist:
+            try:
+                user = User.objects.get(email=login_identifier)
+            except User.DoesNotExist:
+                user = None
+        
         if user is not None:
             if not user.is_active:
                 return JsonResponse({'success': False, 'functions': 'singin', 'message': '🧐😥😯 UPS! <br> Al parecer tu cuenta esta <u>Inactiva</u>. Tu cuenta será activada si estas autorizado'}, status=400)
             
-            user = authenticate(request, username=usernamePOST, password=passwordPOST)
+            user = authenticate(request, username=user.username, password=password)
             if user is None:
                 return JsonResponse({'success': False, 'functions': 'singin', 'message': 'Revisa el usuario o contraseña 😅.'}, status=400)
             else:
@@ -469,7 +343,7 @@ def singinpage(request):
                     pageRedirect = reverse('vista_programador')
                 return JsonResponse({'success': True, 'functions': 'singin', 'redirect_url': pageRedirect}, status=200)
         else:
-            return JsonResponse({'success': False, 'functions': 'singin', 'message': 'Usuario no registrado 😅. Vrifica tu nombre de usuario'}, status=400)
+            return JsonResponse({'success': False, 'functions': 'singin', 'message': 'Usuario no registrado 😅. Verifica tu nombre de usuario o correo electrónico'}, status=400)
     else:
         logout(request)
         return render(request, 'admin/singin.html', {
@@ -545,7 +419,7 @@ def import_database(request):
                     fecha_modificacion=row[7]
                 )
             # Redirigir a la vista programador después de procesar el formulario
-        return JsonResponse({'success': True, 'functions': 'others', 'message': 'Base de datos importada correctamente ✔'}, status=200)
+        return JsonResponse({'success': True, 'message': 'Base de datos importada correctamente ✔'}, status=200)
     else:
         form = CSVUploadForm()
     
@@ -590,6 +464,7 @@ def vista_programador(request):
             is_staff=request.POST.get('is_staff', False),
             is_active=request.POST.get('is_active', False),
         )
+        response['functions'] = 'reload'
         status = 200 if response['success'] else 400
         return JsonResponse(response, status=status)
 
@@ -617,29 +492,37 @@ def responder_preguntas(request):
 
 @login_required
 @never_cache
-def activar_usuario(request, user_id):
-    if request.user.is_staff:
-        user = User.objects.get(id=user_id)
-        user.is_active = True
-        user.save()
-    return redirect('vista_programador')
+def in_active(request):
+    if request.method == 'POST' and request.user.is_staff:
+        user_id = request.POST.get('user_id')
+        action = request.POST.get('actionform')
+        userChange = get_object_or_404(User, id=user_id)
 
-#desactivar usuarios
-@login_required
-@never_cache
-def desactivar_usuario(request, user_id):
-    user = get_object_or_404(User, id=user_id)
-    user.is_active = False
-    user.save()
-    return redirect('vista_programador')
+        if action == 'activate':
+            userChange.is_active = True
+            message = f'Usuario "{userChange.username}" activado exitosamente. 😊🎈'
+            icon = 'info'
+        elif action == 'deactivate':
+            userChange.is_active = False
+            message = f'Usuario "{userChange.username}" <strong><u>desactivado</u></strong> exitosamente. 😯🧐😬'
+            icon = 'warning'
+        else:
+            return JsonResponse({'success': False, 'message': 'Acción no válida.'}, status=400)
 
-# eliminar usuarios
+        userChange.save()
+        return JsonResponse({'success': True, 'functions': 'reload', 'message': message, 'icon':icon}, status=200)
+    
+    return JsonResponse({'success': False, 'message': 'Método no permitido.'}, status=405)
+
 @login_required
 @never_cache
 def eliminar_usuario(request, user_id):
-    user = get_object_or_404(User, id=user_id)
-    user.delete()
-    return redirect('vista_programador')
+    if request.method == 'POST':
+        icon = 'warning'
+        user = get_object_or_404(User, id=user_id)
+        user.delete()
+        return JsonResponse({'success': True, 'functions': 'reload', 'message': 'Usuario eliminado exitosamente.', 'icon': icon}, status=200)
+    return JsonResponse({'success': False, 'message': 'Acción no permitida.'}, status=403)
 
 @login_required
 @never_cache
@@ -657,8 +540,8 @@ def editar_usuario(request, user_id):
         user.is_active = True
         user.is_staff = is_staff
         user.save()
-        return redirect('vista_programador')
-    return redirect('vista_programador')
+        return JsonResponse({'success': True, 'message': f'El usuario <u>{username}</u> fue modificado exitosamente 🥳🎉🎈.'}, status=200)
+    return JsonResponse({'success': False, 'message': 'Acción no permitida.'}, status=403)
 
 def mapa2(request):
     return render(request, 'mapa2.html')
@@ -688,7 +571,7 @@ def crear_articulo(request):
             )
             articulo.save()
 
-            return JsonResponse({'success': True, 'message': 'Excelente 🥳🎈🎉. Tu articulo ya fue publicado. Puedes editarlo cuando gustes. 🧐😊'}, status=200)
+            return JsonResponse({'success': True, 'functions': 'reload', 'message': 'Excelente 🥳🎈🎉. Tu articulo ya fue publicado. Puedes editarlo cuando gustes. 🧐😊'}, status=200)
         except Exception as e:
             return JsonResponse({'success': False, 'message': f'Ocurrio un error😯😥 <br>{str(e)}'}, status=400)
     return JsonResponse({'success': False, 'message': 'Método no permitido'}, status=405)
@@ -708,6 +591,22 @@ def upload_image(request):
         except Exception as e:
             return JsonResponse({'error': str(e)}, status=400)
     return JsonResponse({'error': 'Error al subir la imagen'}, status=400)
+
+@login_required
+@never_cache
+def lista_imagenes(request):
+    imagenes = models.ImagenArticulo.objects.all()
+    imagenes_modificadas = []
+
+    for imagen in imagenes:
+        imagen_url = imagen.imagen.url.replace("/cross_asistent", "")
+        imagenes_modificadas.append({
+            'id': imagen.id,
+            'url': imagen_url
+        })
+
+    return render(request, 'admin/blogs_imgs.html', {'imagenes': imagenes_modificadas})
+
 
 #Consulta para informacion del Mapa##################
 def obtenerinfoEdif(request):
@@ -793,3 +692,60 @@ def upload_banner(request):
 @never_cache
 def ver_perfil(request):
     return render(request, 'admin/perfil.html')
+
+def password_reset_request(request):
+    if request.method == 'POST' and request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        email = request.POST.get('email')
+        print(f"Email recibido: {email}")
+
+        if email:
+            try:
+                user = User.objects.get(email=email)
+                print(f"Usuario encontrado: {user}")
+
+                token = default_token_generator.make_token(user)
+                uid = urlsafe_base64_encode(force_bytes(user.pk))
+                reset_link = request.build_absolute_uri(f'/reset-password/{uid}/{token}/')
+
+                subject = "Reestablecer la contraseña"
+                message = render_to_string('password_reset_email.html', {
+                    'user': user,
+                    'reset_link': reset_link,
+                })
+                print(f"Enlace de restablecimiento: {reset_link}")
+
+                send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [user.email])
+                print("Correo enviado exitosamente")
+
+                return JsonResponse({'success': True, 'message': 'Se ha enviado un enlace de restablecimiento de contraseña a tu correo electrónico.'}, status=200)
+            except User.DoesNotExist:
+                print("Usuario no encontrado")
+                return JsonResponse({'success': False, 'message': 'El correo electrónico no está registrado.'}, status=400)
+        else:
+            print("No se proporcionó correo electrónico")
+            return JsonResponse({'success': False, 'message': 'Por favor, ingresa tu correo electrónico.'}, status=400)
+    else:
+        return render(request, 'reset_pass.html')
+
+def password_reset_confirm(request, uidb64, token):
+    try:
+        uid = force_str(urlsafe_base64_decode(uidb64))
+        user = User.objects.get(pk=uid)
+    except (TypeError, ValueError, OverflowError, User.DoesNotExist):
+        user = None
+
+    if user is not None and default_token_generator.check_token(user, token):
+        if request.method == 'POST':
+            new_password = request.POST.get('new_password')
+            confirm_password = request.POST.get('confirm_password')
+            if new_password and new_password == confirm_password:
+                user.set_password(new_password)
+                user.save()
+                login(request, user)
+                return redirect('password_reset_complete')
+            else:
+                return render(request, 'password_reset_confirm.html', {'validlink': True, 'error': 'Las contraseñas no coinciden.'})
+        else:
+            return render(request, 'password_reset_confirm.html', {'validlink': True})
+    else:
+        return render(request, 'password_reset_confirm.html', {'validlink': False})

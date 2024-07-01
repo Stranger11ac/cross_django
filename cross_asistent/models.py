@@ -52,12 +52,12 @@ class Mapa(models.Model):
     categoria = models.ForeignKey('Categorias', on_delete=models.SET_NULL, null=True)
     titulo = models.CharField(max_length=200, blank=False)
     informacion = models.TextField(blank=True, null=True)
-    imagenes =  models.ImageField(upload_to='cross_asistent/static/files/imagenes/', blank=True, null=True)
+    imagenes =  models.ImageField(upload_to='cross_asistent/static/files/imagenes/mapa/', blank=True, null=True)
     color = models.CharField(max_length=50, blank=True, null=True)
-    p1_polygons = models.CharField(max_length=255, blank=True, null=True)
-    p2_polygons = models.CharField(max_length=255, blank=True, null=True)
-    p3_polygons = models.CharField(max_length=255, blank=True, null=True)
-    p4_polygons = models.CharField(max_length=255, blank=True, null=True)
+    p1_polygons = models.CharField(max_length=100, blank=True, null=True)
+    p2_polygons = models.CharField(max_length=100, blank=True, null=True)
+    p3_polygons = models.CharField(max_length=100, blank=True, null=True)
+    p4_polygons = models.CharField(max_length=100, blank=True, null=True)
 
     def __str__(self):
         return self.titulo
@@ -75,3 +75,11 @@ class Articulos(models.Model):
 
 class ImagenArticulo(models.Model):
     imagen = models.ImageField(upload_to='cross_asistent/static/files/imagenes/blogs/imgs_blogs/', blank=True, null=True)
+    
+    def delete(self, *args, **kwargs):
+        # Eliminar la imagen del sistema de archivos al eliminar un registro
+        if self.imagen:
+            image_path = os.path.join(settings.MEDIA_ROOT, self.imagen.path)
+            if os.path.isfile(image_path):
+                os.remove(image_path)
+        super(Banners, self).delete(*args, **kwargs)

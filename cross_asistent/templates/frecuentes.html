@@ -20,54 +20,61 @@
     <!-- Tabs navs -->
 
     <!-- Tabs content -->
-    <div class="tab-content" id="ex2-content">
+    <div class="tab-content mt-5" id="ex2-content">
         <!-- Preguntas Frecuentes -->
-        <div class="tab-pane fade show active" id="ex2-tabs-1" role="tabpanel" aria-labelledby="ex2-tab-1">
-            <!-- Contenido de la primera categoría -->
-            <div class="form-outline my-4" data-mdb-input-init>
-                <input type="text" id="searchInput" class="form-control form-control-lg" />
-                <label class="form-label" for="searchInput">Buscar pregunta</label>
-            </div>
-            {% if quest_all %}
-                <div class="accordion" id="accordionExampleY">
-                    {% for quest in quest_all %}
-                        {% if quest.categoria.categoria == "Preguntas" %}
-                            <div class="accordion-item results_item">
-                                <h2 class="accordion-header" id="heading{{ quest.id }}">
-                                    <button data-mdb-collapse-init class="accordion-button" type="button" data-mdb-toggle="collapse" data-mdb-target="#quest-{{ quest.id }}" aria-expanded="true" aria-controls="quest-{{ quest.id }}">
-                                        <i class="fas fa-question-circle fa-sm me-2 opacity-70"></i>{{ quest.titulo }}
-                                    </button>
-                                </h2>
-                                <div id="quest-{{ quest.id }}" class="accordion-collapse collapse {% if quest.id == 1 %}show{% endif %}" aria-labelledby="heading{{ quest.id }}" data-mdb-parent="#accordionExampleY">
-                                    <div class="accordion-body">
-                                        {{ quest.informacion|truncatechars:150 }}
-                                        <div>
-                                            <a href class="btn btn_detail">Saber más <i class="fa-solid fa-up-right-from-square ms-1"></i></a>
+        <section class="tab-pane fade show active" id="ex2-tabs-1" role="tabpanel" aria-labelledby="ex2-tab-1">
+            <div class="card">
+                <div class="card-body">
+                <div class="form-outline mb-5" data-mdb-input-init>
+                    <input type="text" id="searchInput" class="form-control form-control-lg" />
+                    <label class="form-label" for="searchInput">Buscar:</label>
+                </div>
+                {% if quest_all %}
+                    <div class="accordion" id="accordionExampleY">
+                        {% for quest in quest_all %}
+                            {% if quest.categoria.categoria == "Preguntas" %}
+                                <div class="accordion-item results_item">
+                                    <h2 class="accordion-header" id="heading{{ quest.id }}">
+                                        <button data-mdb-collapse-init class="accordion-button" type="button" data-mdb-toggle="collapse" data-mdb-target="#quest-{{ quest.id }}" aria-expanded="true" aria-controls="quest-{{ quest.id }}">
+                                            <i class="fas fa-question-circle fa-sm me-2 opacity-70"></i>{{ quest.titulo }}
+                                        </button>
+                                    </h2>
+                                    <div id="quest-{{ quest.id }}" class="accordion-collapse collapse {% if quest.id == 1 %}show{% endif %}" aria-labelledby="heading{{ quest.id }}" data-mdb-parent="#accordionExampleY">
+                                        <div class="accordion-body">
+                                            {{ quest.informacion|truncatechars:150 }}
+                                            <div>
+                                                <a href class="btn btn_detail">Saber más <i class="fa-solid fa-up-right-from-square ms-1"></i></a>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                        {% endif %}
-                    {% endfor %}
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="text-center">
+                        <p class="lead">No hay preguntas frecuentes disponibles en este momento. ¡Vuelve pronto para más actualizaciones!</p>
+                    </div>
+                {% endif %}
                 </div>
-            {% else %}
-                <div class="text-center">
-                    <p class="lead">No hay preguntas frecuentes disponibles en este momento. ¡Vuelve pronto para más actualizaciones!</p>
-                </div>
-            {% endif %}
-        </div>
+            </div>
+        </section>
 
         <!-- Hacer una Pregunta -->
-        <div class="tab-pane fade" id="ex2-tabs-2" role="tabpanel" aria-labelledby="ex2-tab-2">
-            <form method="POST" id="hacerPregunta" action="{% url 'preguntas' %}" class="text-center">
-                {% csrf_token %}
-                <div class="form-outline mb-4" data-mdb-input-init>
-                    <input type="text" id="preguntaPOST" name="pregunta" class="form-control mx-auto"/>
-                    <label class="form-label" for="preguntaPOST">Hacer Pregunta</label>
+        <section class="tab-pane fade mt-5" id="ex2-tabs-2" role="tabpanel" aria-labelledby="ex2-tab-2">
+            <div class="card col-md-6 mx-auto">
+                <div class="card-body">
+                    <form method="POST" id="hacerPregunta" action="{% url 'preguntas' %}" class="text-center">
+                        {% csrf_token %}
+                        <div class="form-outline mb-4" data-mdb-input-init>
+                            <input type="text" id="preguntaPOST" name="pregunta" class="form-control mx-auto"/>
+                            <label class="form-label" for="preguntaPOST">Escribe tu Pregunta:</label>
+                        </div>
+                        <button type="submit" class="btn btn_detail btn-block">Enviar <i class="fa-solid fa-paper-plane ms-1"></i></button>
+                    </form>
                 </div>
-                <button type="submit" class="btn btn-primary mx-auto" style="max-width: 150px;">Enviar Pregunta</button>
-            </form>
-        </div>
+            </div>
+        </section>
     </div>
 
 </main>
