@@ -100,12 +100,6 @@ def index(request):
         'active_page': 'inicio'
     })
 
-<<<<<<< HEAD
-=======
-
-client = openai.OpenAI(api_key=settings.OPENAI_API_KEY)
-
->>>>>>> e3de6f61cfae3302c97557268ed18bac39796b9b
 def chatgpt(question, instructions):
     client = openai.OpenAI(api_key=settings.OPENAI_API_KEY)
     response = client.chat.completions.create(
