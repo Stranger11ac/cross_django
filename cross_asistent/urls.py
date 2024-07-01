@@ -17,6 +17,7 @@ urlpatterns = [
     path('password-reset/', views.password_reset_request, name='password_reset_email'),
     path('acceder/', views.singinpage, name='singin'),
     path('registro/', views.singuppage, name='singup'),
+    path('reset-password/<uidb64>/<token>/', views.password_reset_confirm, name='password_reset_confirm'),
     
     # Administracion y programacion
     path('administracion/', views.vista_admin, name='vista_admin'),

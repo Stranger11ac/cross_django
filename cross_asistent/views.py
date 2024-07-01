@@ -660,25 +660,56 @@ def ver_perfil(request):
 def password_reset_request(request):
     if request.method == 'POST' and request.headers.get('X-Requested-With') == 'XMLHttpRequest':
         email = request.POST.get('email')
+        print(f"Email recibido: {email}")
 
         if email:
             try:
                 user = User.objects.get(email=email)
+                print(f"Usuario encontrado: {user}")
+
                 token = default_token_generator.make_token(user)
                 uid = urlsafe_base64_encode(force_bytes(user.pk))
                 reset_link = request.build_absolute_uri(f'/reset-password/{uid}/{token}/')
-                
+
                 subject = "Reestablecer la contraseña"
                 message = render_to_string('password_reset_email.html', {
                     'user': user,
                     'reset_link': reset_link,
                 })
+                print(f"Enlace de restablecimiento: {reset_link}")
+
                 send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [user.email])
-                
-                return JsonResponse({'success': True, 'functions': 'signin', 'message': 'Se ha enviado un enlace de restablecimiento de contraseña a tu correo electrónico.'}, status=200)
+                print("Correo enviado exitosamente")
+
+                return JsonResponse({'success': True, 'message': 'Se ha enviado un enlace de restablecimiento de contraseña a tu correo electrónico.'}, status=200)
             except User.DoesNotExist:
+                print("Usuario no encontrado")
                 return JsonResponse({'success': False, 'message': 'El correo electrónico no está registrado.'}, status=400)
         else:
+            print("No se proporcionó correo electrónico")
             return JsonResponse({'success': False, 'message': 'Por favor, ingresa tu correo electrónico.'}, status=400)
     else:
         return render(request, 'reset_pass.html')
+
+def password_reset_confirm(request, uidb64, token):
+    try:
+        uid = force_str(urlsafe_base64_decode(uidb64))
+        user = User.objects.get(pk=uid)
+    except (TypeError, ValueError, OverflowError, User.DoesNotExist):
+        user = None
+
+    if user is not None and default_token_generator.check_token(user, token):
+        if request.method == 'POST':
+            new_password = request.POST.get('new_password')
+            confirm_password = request.POST.get('confirm_password')
+            if new_password and new_password == confirm_password:
+                user.set_password(new_password)
+                user.save()
+                login(request, user)
+                return redirect('password_reset_complete')
+            else:
+                return render(request, 'password_reset_confirm.html', {'validlink': True, 'error': 'Las contraseñas no coinciden.'})
+        else:
+            return render(request, 'password_reset_confirm.html', {'validlink': True})
+    else:
+        return render(request, 'password_reset_confirm.html', {'validlink': False})
