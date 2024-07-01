@@ -1,562 +1,366 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta charset="utf-8" />
-    <title>Mapa con Polígonos y Modal</title>
-    <link href="https://api.mapbox.com/mapbox-gl-js/v2.6.1/mapbox-gl.css" rel="stylesheet" />
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet" />
-    <style>
-        body { margin: 0; padding: 0; }
-        #map { position: absolute; top: 0; bottom: 0; width: 100%; }
-        #modal { position: absolute; top: 0; right: 0; bottom: 0; width: 300px; display: none; background: white; z-index: 1; }
-    </style>
+  <meta charset="utf-8" />
+  <title>Mapa con Polígonos y Sidebar</title>
+  <link href="https://api.mapbox.com/mapbox-gl-js/v2.6.1/mapbox-gl.css" rel="stylesheet" />
+  <link href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-directions/v4.1.1/mapbox-gl-directions.css" rel="stylesheet" />
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet" />
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      display: flex;
+    }
+    #map {
+      flex: 1;
+      height: 100vh;
+    }
+    #sidebar {
+      width: 300px;
+      background-color: #f8f9fa;
+      border-right: 1px solid #ccc;
+      overflow-y: auto;
+      display: none; /* Ocultar inicialmente */
+      padding: 20px;
+      position: fixed;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      z-index: 1000;
+    }
+    .feature-info {
+      margin-bottom: 20px;
+    }
+    .feature-info h5 {
+      margin-bottom: 10px;
+    }
+    .close-btn {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      cursor: pointer;
+    }
+  </style>
 </head>
 <body>
-    <div id="map"></div>
-    <script src="https://api.mapbox.com/mapbox-gl-js/v2.6.1/mapbox-gl.js"></script>
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-    <script>
-        mapboxgl.accessToken = 'pk.eyJ1Ijoic2FsdmFoZHotMTEiLCJhIjoiY2x3czBoYTJiMDI1OTJqb2VmZzVueG1ocCJ9.dDJweS7MAR5N2U3SF64_Xw';
-        var map = new mapboxgl.Map({
-            container: 'map', // ID del contenedor
-            style: 'mapbox://styles/mapbox/streets-v11', // Estilo del mapa
-            center: [-100.93655, 25.55701], // Coordenadas iniciales [longitud, latitud]
-            zoom: 16, // Nivel de zoom inicial
-            maxZoom: 18, // Zoom máximo permitido
-            minZoom: 12, // Zoom mínimo permitido
-            maxBounds: [
-                [-100.9736, 25.5142], // Suroeste de Ramos Arizpe
-                [-100.9117, 25.5735]  // Noreste de Ramos Arizpe
-            ]
-        });
+  <div id="sidebar">
+    <!-- Contenido del sidebar se inserta dinámicamente -->
+  </div>
+  <div id="map"></div>
 
-        // Datos GeoJSON para los polígonos
-        var geojson = {
-    'type': 'FeatureCollection',
-    'features': [
-        {
-            'type': 'Feature',
-            'properties': {
-                'nombre': 'Edificio 4',
-                'descripcion': 'Descripción del Edificio 4',
-                'imagen_url': 'img/Edificio_4.webp',
-                'edifcolor': 'red',
-                'edifill': 'red'
-            },
-            'geometry': {
-                'type': 'Polygon',
-                'coordinates': [
-                    [
-                        [-100.93688, 25.55661],
-                        [-100.93647, 25.55633],
-                        [-100.93662, 25.55613],
-                        [-100.93703, 25.55642],
-                        [-100.93688, 25.55661]
-                    ]
-                ]
-            }
-        },
-        {
-            'type': 'Feature',
-            'properties': {
-                'nombre': 'Centro de Idiomas',
-                'descripcion': 'Descripción del Centro de Idiomas',
-                'imagen_url': 'img/Centro_Idiomas.webp',
-                'edifcolor': 'orange',
-                'edifill': 'orange'
-            },
-            'geometry': {
-                'type': 'Polygon',
-                'coordinates': [
-                    [
-                        [-100.93684, 25.55715],
-                        [-100.93724, 25.55742],
-                        [-100.93711, 25.55757],
-                        [-100.93670, 25.55731],
-                        [-100.93684, 25.55715]
-                    ]
-                ]
-            }
-        },
-        {
-            'type': 'Feature',
-            'properties': {
-                'nombre': 'Laboratorio 7B',
-                'descripcion': 'Descripción del Laboratorio 7B',
-                'imagen_url': 'img/Laboratorio_7B.webp',
-                'edifcolor': '#00FFFF',
-                'edifill': '#00FFFF'
-            },
-            'geometry': {
-                'type': 'Polygon',
-                'coordinates': [
-                    [
-                        [-100.93644, 25.55704],
-                        [-100.93631, 25.55718],
-                        [-100.93593, 25.55694],
-                        [-100.93606, 25.55679],
-                        [-100.93644, 25.55704]
-                    ]
-                ]
-            }
-        },
-        {
-            'type': 'Feature',
-            'properties': {
-                'nombre': 'Vinculación',
-                'descripcion': 'Descripción de Vinculación',
-                'imagen_url': 'img/Vinculacion.webp',
-                'edifcolor': 'yellow',
-                'edifill': 'yellow'
-            },
-            'geometry': {
-                'type': 'Polygon',
-                'coordinates': [
-                    [
-                        [-100.93653, 25.55813],
-                        [-100.93623, 25.55794],
-                        [-100.93646, 25.55765],
-                        [-100.93676, 25.55785],
-                        [-100.93653, 25.55813]
-                    ]
-                ]
-            }
-        },
-        {
-            'type': 'Feature',
-            'properties': {
-                'nombre': 'Rectoria',
-                'descripcion': 'Descripcion de Rectoria',
-                'imagen_url': 'img/Rectoria.webp',
-                'edifcolor': 'yellow',
-                'edifill': 'yellow'
-            },
-            'geometry': {
-                'type': 'Polygon',
-                'coordinates': [
-                    [
-                        [-100.93590, 25.55767],
-                        [-100.93559, 25.55748],
-                        [-100.93581, 25.55719],
-                        [-100.93612, 25.55741],
-                        [-100.93590, 25.55767]
-                    ]
-                ]
-            }
-        },
-        {
-            'type': 'Feature',
-            'properties': {
-                'nombre': 'Biblioteca',
-                'descripcion': 'Descripción de Biblioteca',
-                'imagen_url': 'img/Biblioteca.webp',
-                'edifcolor': 'blue',
-                'edifill': 'blue'
-            },
-            'geometry': {
-                'type': 'Polygon',
-                'coordinates': [
-                    [
-                        [-100.93613, 25.55651],
-                        [-100.93594, 25.55639],
-                        [-100.93616, 25.55615],
-                        [-100.93633, 25.55628],
-                        [-100.93613, 25.55651]
-                    ]
-                ]
-            }
-        },
-        {
-            'type': 'Feature',
-            'properties': {
-                'nombre': 'Cafeteria UTC',
-                'descripcion': 'Descripción de Cafeteria UTC',
-                'imagen_url': 'img/Cafeteria_UTC.webp',
-                'edifcolor': 'green',
-                'edifill': 'green'
-            },
-            'geometry': {
-                'type': 'Polygon',
-                'coordinates': [
-                    [
-                        [-100.93610, 25.55616],
-                        [-100.93618, 25.55607],
-                        [-100.93608, 25.55599],
-                        [-100.93601, 25.55607],
-                        [-100.93610, 25.55616]
-                    ]
-                ]
-            }
-        },
-        {
-            'type': 'Feature',
-            'properties': {
-                'nombre': 'Edificio 3',
-                'descripcion': 'Descripción de Edificio 3',
-                'imagen_url': 'img/Edificio_3.webp',
-                'edifcolor': 'red',
-                'edifill': 'red'
-            },
-            'geometry': {
-                'type': 'Polygon',
-                'coordinates': [
-                    [
-                        [-100.93582, 25.55611],
-                        [-100.93547, 25.55583],
-                        [-100.93564, 25.55566],
-                        [-100.93600, 25.55594],
-                        [-100.93582, 25.55611]
-                    ]
-                ]
-            }
-        },
-        {
-            'type': 'Feature',
-            'properties': {
-                'nombre': 'Domo',
-                'descripcion': 'Descripción de Domo',
-                'imagen_url': 'img/Domo.webp',
-                'edifcolor': 'white',
-                'edifill': 'white'
-            },
-            'geometry': {
-                'type': 'Polygon',
-                'coordinates': [
-                    [
-                        [-100.93498, 25.55552],
-                        [-100.93471, 25.55533],
-                        [-100.93486, 25.55515],
-                        [-100.93514, 25.55534],
-                        [-100.93498, 25.55552]
-                    ]
-                ]
-            }
-        },
-        {
-            'type': 'Feature',
-            'properties': {
-                'nombre': 'Edificio Docente 2',
-                'descripcion': '<h5>Carreras:</h5> <ul>Desarrollo y Gestion de Software Multiplataforma<br>Entornos Virtuales y Negocios Digitales<br>Diseño y Gestion de Redes Logisticas</ul>',
-                'imagen_url': 'img/Edificio_2.webp',
-                'edifcolor': 'red',
-                'edifill': 'red'
-            },
-            'geometry': {
-                'type': 'Polygon',
-                'coordinates': [
-                    [
-                        [-100.93495, 25.55495],
-                        [-100.93458, 25.55471],
-                        [-100.93471, 25.55455],
-                        [-100.93508, 25.55479],
-                        [-100.93495, 25.55495]
-                    ]
-                ]
-            }
-        },
-        {
-            'type': 'Feature',
-            'properties': {
-                'nombre': 'Laboratorio 4-E',
-                'descripcion': 'Descripción del Laboratorio 4-E',
-                'imagen_url': 'img/Laboratorio_4-E.webp',
-                'edifcolor': '#00FFFF',
-                'edifill': '#00FFFF'
-            },
-            'geometry': {
-                'type': 'Polygon',
-                'coordinates': [
-                    [
-                        [-100.93468, 25.55527],
-                        [-100.93479, 25.55515],
-                        [-100.93462, 25.55503],
-                        [-100.93451, 25.55515],
-                        [-100.93468, 25.55527]
-                    ]
-                ]
-            }
-        },
-        {
-            'type': 'Feature',
-            'properties': {
-                'nombre': 'Cafeteria UTC 1',
-                'descripcion': 'Descripción de Cafeteria UTC 1',
-                'imagen_url': 'img/cafeteria1.webp',
-                'edifcolor': 'green',
-                'edifill': 'green'
-            },
-            'geometry': {
-                'type': 'Polygon',
-                'coordinates': [
-                    [
-                        [-100.93408, 25.55501],
-                        [-100.93430, 25.55482],
-                        [-100.93421, 25.55473],
-                        [-100.93399, 25.55491],
-                        [-100.93408, 25.55501]
-                    ]
-                ]
-            }
-        },
-        {
-            'type': 'Feature',
-            'properties': {
-                'nombre': 'Edificio 1',
-                'descripcion': 'Descripción del Edificio 1',
-                'imagen_url': 'img/Edificio_1.webp',
-                'edifcolor': 'red',
-                'edifill': 'red'
-            },
-            'geometry': {
-                'type': 'Polygon',
-                'coordinates': [
-                    [
-                        [-100.93369, 25.55527],
-                        [-100.93352, 25.55545],
-                        [-100.93393, 25.55575],
-                        [-100.93409, 25.55556],
-                        [-100.93369, 25.55527]
-                    ]
-                ]
-            }
-        },
-        {
-            'type': 'Feature',
-            'properties': {
-                'nombre': 'Laboratorio de 7A',
-                'descripcion': 'Descripción del Laboratorio de PLC',
-                'imagen_url': 'img/Laboratorio_7A.webp',
-                'edifcolor': '#00FFFF',
-                'edifill': '#00FFFF'
-            },
-            'geometry': {
-                'type': 'Polygon',
-                'coordinates': [
-                    [
-                        [-100.93424, 25.55573],
-                        [-100.93411, 25.55586],
-                        [-100.93447, 25.55615],
-                        [-100.93461, 25.55602],
-                        [-100.93424, 25.55573]
-                    ]
-                ]
-            }
-        },
-        {
-            'type': 'Feature',
-            'properties': {
-                'nombre': 'Caceta 1',
-                'descripcion': 'Descripción de Caceta 1',
-                'imagen_url': 'img/Caseta_1.webp',
-                'edifcolor': 'gray',
-                'edifill': 'gray'
-            },
-            'geometry': {
-                'type': 'Polygon',
-                'coordinates': [
-                    [
-                        [-100.93682, 25.55821],
-                        [-100.93672, 25.55815],
-                        [-100.93682, 25.55805],
-                        [-100.93691, 25.55812],
-                        [-100.93682, 25.55821]
-                    ]
-                ]
-            }
-        },
-        {
-            'type': 'Feature',
-            'properties': {
-                'nombre': 'Caceta 2',
-                'descripcion': 'Descripción de Caceta 2',
-                'imagen_url': 'img/Caseta_2.webp',
-                'edifcolor': 'gray',
-                'edifill': 'gray'
-            },
-            'geometry': {
-                'type': 'Polygon',
-                'coordinates': [
-                    [
-                        [-100.93464, 25.55606],
-                        [-100.93457, 25.55613],
-                        [-100.93470, 25.55624],
-                        [-100.93477, 25.55616],
-                        [-100.93464, 25.55606]
-                    ]
-                ]
-            }
-        },
-        {
-            'type': 'Feature',
-            'properties': {
-                'nombre': 'Oxxo',
-                'descripcion': 'Descripción de Oxxo',
-                'imagen_url': 'img/Oxxo.webp',
-                'edifcolor': 'red',
-                'edifill': 'white'
-            },
-            'geometry': {
-                'type': 'Polygon',
-                'coordinates': [
-                    [
-                        [-100.93619, 25.55777],
-                        [-100.93613, 25.55785],
-                        [-100.93602, 25.55776],
-                        [-100.93610, 25.55769],
-                        [-100.93619, 25.55777]
-                    ]
-                ]
-            }
-        },
-        {
-            'type': 'Feature',
-            'properties': {
-                'nombre': 'Papeleria',
-                'descripcion': 'Descripción de Papeleria',
-                'imagen_url': 'img/papeleriautc.webp',
-                'edifcolor': 'blue',
-                'edifill': 'blue'
-            },
-            'geometry': {
-                'type': 'Polygon',
-                'coordinates': [
-                    [
-                        [-100.93713, 25.55700],
-                        [-100.93709, 25.55708],
-                        [-100.93701, 25.55704],
-                        [-100.93706, 25.55697],
-                        [-100.93713, 25.55700]
-                    ]
-                ]
-            }
-        },
-        {
-            'type': 'Feature',
-            'properties': {
-                'nombre': 'Campo De Fútbol',
-                'descripcion': 'Descripción de Campo De Fútbol',
-                'imagen_url': 'img/futbol.webp',
-                'edifcolor': 'green',
-                'edifill': 'green'
-            },
-            'geometry': {
-                'type': 'Polygon',
-                'coordinates': [
-                    [
-                        [-100.93793, 25.55871],
-                        [-100.93763, 25.55835],
-                        [-100.93786, 25.55819],
-                        [-100.93816, 25.55855],
-                        [-100.93793, 25.55871]
-                    ]
-                ]
-            }
-        },
-        {
-            'type': 'Feature',
-            'properties': {
-                'nombre': 'Campo de Softbol',
-                'descripcion': 'Descripción de Campo de Softbol',
-                'imagen_url': 'img/softbol.webp',
-                'edifcolor': 'green',
-                'edifill': 'green'
-            },
-            'geometry': {
-                'type': 'Polygon',
-                'coordinates': [
-                    [
-                        [-100.93881, 25.55886],
-                        [-100.93925, 25.55844],
-                        [-100.93869, 25.55796],
-                        [-100.93837, 25.55848],
-                        [-100.93881, 25.55886]
-                    ]
-                ]
-            }
-        }
-    ]
+ <!-- Controles para seleccionar origen y destino -->
+  <div class="mapboxgl-ctrl mapboxgl-ctrl-top-right" style="z-index: 1;">
+    <div id="controls">
+      <select id="origen" class="form-control mb-2">
+        <option value="">Selecciona origen</option>
+      </select>
+      <select id="destino" class="form-control mb-2">
+        <option value="">Selecciona destino</option>
+      </select>
+      <button id="calcularRuta" class="btn btn-primary btn-block">
+        Calcular Ruta
+      </button>
+    </div>
+  </div>
+
+  <script src="https://api.mapbox.com/mapbox-gl-js/v2.6.1/mapbox-gl.js"></script>
+  <script src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-directions/v4.1.1/mapbox-gl-directions.js"></script>
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+  <script>
+    mapboxgl.accessToken = 'pk.eyJ1Ijoic2FsdmFoZHotMTEiLCJhIjoiY2x3czBoYTJiMDI1OTJqb2VmZzVueG1ocCJ9.dDJweS7MAR5N2U3SF64_Xw';
+
+const map = new mapboxgl.Map({
+  container: 'map',
+  style: 'mapbox://styles/mapbox/streets-v11',
+  center: [-100.93655, 25.55701],
+  zoom: 16,
+  maxZoom: 18,
+  minZoom: 12,
+  maxBounds: [
+    [-100.9736, 25.5142],
+    [-100.9117, 25.5735]
+  ]
+});
+
+const universityBoundary = {
+  type: 'FeatureCollection',
+  features: [
+    {
+      type: 'Feature',
+      properties: {},
+      geometry: {
+        type: 'Polygon',
+        coordinates: [
+          [
+            [-100.9736, 25.5142],
+            [-100.9736, 25.5735],
+            [-100.9117, 25.5735],
+            [-100.9117, 25.5142],
+            [-100.9736, 25.5142]
+          ]
+        ]
+      }
+    }
+  ]
 };
 
+const geojson = {
+  type: 'FeatureCollection',
+  features: [
+    {
+      type: 'Feature',
+      properties: {
+        nombre: 'Edificio 4',
+        descripcion: 'Descripción 4, enfoque del servicio',
+        imagen_url: '/static/img/Edificio_4.webp',
+        fill: 'red',
+        color: 'red'
+      },
+      geometry: {
+        type: 'Polygon',
+        coordinates: [
+          [
+            [-100.93688, 25.55661],
+            [-100.93647, 25.55633],
+            [-100.93662, 25.55613],
+            [-100.93703, 25.55642],
+            [-100.93688, 25.55661]
+          ]
+        ]
+      }
+    },
+    {
+      type: 'Feature',
+      properties: {
+        nombre: 'Centro de Idiomas',
+        descripcion: 'Descripción del Centro de Idiomas',
+        imagen_url: 'img/Centro_Idiomas.webp',
+        fill: 'orange',
+        color: 'orange'
+      },
+      geometry: {
+        type: 'Polygon',
+        coordinates: [
+          [
+            [-100.93684, 25.55715],
+            [-100.93724, 25.55742],
+            [-100.93711, 25.55757],
+            [-100.9367, 25.55731],
+            [-100.93684, 25.55715]
+          ]
+        ]
+      }
+    },
+    {
+      type: 'Feature',
+      properties: {
+        nombre: 'Laboratorio 7B',
+        descripcion: 'Descripción del Laboratorio 7B',
+        imagen_url: 'img/Laboratorio_7B.webp',
+        fill: '#00FFFF',
+        color: '#00FFFF'
+      },
+      geometry: {
+        type: 'Polygon',
+        coordinates: [
+          [
+            [-100.93644, 25.55704],
+            [-100.93631, 25.55718],
+            [-100.93593, 25.55694],
+            [-100.93606, 25.55679],
+            [-100.93644, 25.55704]
+          ]
+        ]
+      }
+    },
+    {
+      type: 'Feature',
+      properties: {
+        nombre: 'Vinculación',
+        descripcion: 'Descripción de Vinculación',
+        imagen_url: 'img/Vinculacion.webp',
+        fill: 'yellow',
+        color: 'yellow'
+      },
+      geometry: {
+        type: 'Polygon',
+        coordinates: [
+          [
+            [-100.93653, 25.55815],
+            [-100.93623, 25.55790],
+            [-100.93646, 25.55760],
+            [-100.93676, 25.55780],
+            [-100.93653, 25.55810]
+          ]
+        ]
+      }
+    },
+    {
+      type: 'Feature',
+      properties: {
+        nombre: 'Rectoria',
+        descripcion: 'Descripcion de Rectoria',
+        imagen_url: 'img/Rectoria.webp',
+        fill: 'yellow',
+        color: 'yellow'
+      },
+      geometry: {
+        type: 'Polygon',
+        coordinates: [
+          [
+            [-100.9359, 25.55767],
+            [-100.93559, 25.55748],
+            [-100.93581, 25.55719],
+            [-100.93612, 25.55741],
+            [-100.9359, 25.55767]
+          ]
+        ]
+      }
+    },
+  ]
+};
 
-        // Añadir fuente de datos y capa para los polígonos
-        map.on('load', function () {
-            map.addSource('polygons', {
-                'type': 'geojson',
-                'data': geojson
-            });
+// Agregar la fuente de datos y la capa al mapa
+map.on('load', () => {
+  map.addSource('places', {
+    type: 'geojson',
+    data: geojson
+  });
 
-            map.addLayer({
-                'id': 'polygons',
-                'type': 'fill',
-                'source': 'polygons',
-                'layout': {},
-                'paint': {
-                    'fill-color': '#088',
-                    'fill-opacity': 0.5 // Opcional: Ajustar la opacidad si se desea
-                }
-            });
+  map.addLayer({
+    id: 'places-layer',
+    type: 'fill',
+    source: 'places',
+    paint: {
+      'fill-color': ['get', 'fill'],
+      'fill-opacity': 0.5,
+    }
+  });
 
-            map.addLayer({
-                'id': 'polygons-outline',
-                'type': 'line',
-                'source': 'polygons',
-                'layout': {},
-                'paint': {
-                    'line-color': '#000',
-                    'line-width': 4 // Ajustar el grosor de las líneas
-                }
-            });
+  map.addLayer({
+    id: 'places-outline',
+    type: 'line',
+    source: 'places',
+    paint: {
+      'line-color': ['get', 'color'],
+      'line-width': 2,
+    }
+  });
 
-            // Añadir evento de clic para los polígonos
-            map.on('click', 'polygons', function (e) {
-                var description = e.features[0].properties.description;
-                document.getElementById('modal-content').textContent = description;
-                $('#modal').modal('show');
-            });
+  // Agregar el límite de la universidad como una fuente de datos
+  map.addSource('university-boundary', {
+    type: 'geojson',
+    data: universityBoundary
+  });
 
-            // Cambiar el cursor al pasar sobre los polígonos
-            map.on('mouseenter', 'polygons', function () {
-                map.getCanvas().style.cursor = 'pointer';
-            });
+  // Añadir una capa para el límite de la universidad
+  map.addLayer({
+    id: 'university-boundary',
+    type: 'line',
+    source: 'university-boundary',
+    paint: {
+      'line-color': 'blue',
+      'line-width': 2
+    }
+  });
 
-            map.on('mouseleave', 'polygons', function () {
-                map.getCanvas().style.cursor = '';
-            });
+  // Llenar los selectores con los nombres de los polígonos
+  geojson.features.forEach((feature, index) => {
+    const option = new Option(feature.properties.nombre, index);
+    document.getElementById('origen').add(option);
+    document.getElementById('destino').add(option.cloneNode(true));
+  });
+});
 
-            // Calcular ruta entre Edificio Docente 2 y Edificio Docente 4
-            var coordinatesDocente2 = [-100.93378, 25.55548]; // Coordenadas del Edificio Docente 2
-            var coordinatesDocente4 = [-100.93489, 25.55473]; // Coordenadas del Edificio Docente 4
+// Mostrar información del edificio al hacer clic en el polígono
+map.on('click', 'places-layer', (e) => {
+  const feature = e.features[0];
+  const { nombre, descripcion, imagen_url } = feature.properties;
+  const sidebar = document.getElementById('sidebar');
+  sidebar.innerHTML = `
+    <div class="feature-info">
+      <h5>${nombre}</h5>
+      <p>${descripcion}</p>
+      <img src="${imagen_url}" alt="${nombre}" style="max-width: 100%;">
+    </div>
+    <div class="close-btn" onclick="closeSidebar()">X</div>
+  `;
+  sidebar.style.display = 'block'; // Mostrar el sidebar
+});
 
-            var url = 'https://api.mapbox.com/directions/v5/mapbox/walking/' + coordinatesDocente2[0] + ',' + coordinatesDocente2[1] + ';' + coordinatesDocente4[0] + ',' + coordinatesDocente4[1] + '?steps=true&geometries=geojson&access_token=' + mapboxgl.accessToken;
+// Función para cerrar el sidebar
+function closeSidebar() {
+  const sidebar = document.getElementById('sidebar');
+  sidebar.style.display = 'none';
+}
 
-            fetch(url)
-                .then(response => response.json())
-                .then(data => {
-                    var route = data.routes[0].geometry;
-                    map.addLayer({
-                        'id': 'route',
-                        'type': 'line',
-                        'source': {
-                            'type': 'geojson',
-                            'data': {
-                                'type': 'Feature',
-                                'geometry': route
-                            }
-                        },
-                        'layout': {
-                            'line-join': 'round',
-                            'line-cap': 'round'
-                        },
-                        'paint': {
-                            'line-color': '#3887be',
-                            'line-width': 8,
-                            'line-opacity': 0.75
-                        }
-                    });
-                });
+// Inicializar la herramienta de direcciones
+const directions = new MapboxDirections({
+  accessToken: mapboxgl.accessToken,
+  unit: 'metric',
+  profile: 'mapbox/walking',
+  controls: {
+    inputs: false,
+    instructions: true,
+    profileSwitcher: false
+  },
+  interactive: false,
+  boundingBox: [
+    [-100.9736, 25.5142],
+    [-100.9117, 25.5735]
+  ],
+  // Restringir la ruta dentro del límite de la universidad
+  onRoute: function (route) {
+    // Filtrar los pasos de la ruta para mantenerse dentro del límite
+    const filteredRoute = {
+      ...route,
+      legs: route.legs.map(leg => ({
+        ...leg,
+        steps: leg.steps.filter(step => {
+          const coordinates = step.geometry.coordinates;
+          return coordinates.every(coord => {
+            return mapboxgl.MercatorCoordinate.fromLngLat(coord).within([
+              [-100.9736, 25.5142],
+              [-100.9117, 25.5735]
+            ]);
+          });
+        })
+      }))
+    };
 
-        });
-    </script>
+    return filteredRoute;
+  }
+});
+
+// Calcular y mostrar la ruta más corta
+document.getElementById('calcularRuta').addEventListener('click', () => {
+  const origenIndex = document.getElementById('origen').value;
+  const destinoIndex = document.getElementById('destino').value;
+
+  if (origenIndex && destinoIndex && origenIndex !== destinoIndex) {
+    const origenCoords = getPolygonCenter(geojson.features[origenIndex].geometry.coordinates[0]);
+    const destinoCoords = getPolygonCenter(geojson.features[destinoIndex].geometry.coordinates[0]);
+
+    directions.setOrigin(origenCoords);
+    directions.setDestination(destinoCoords);
+
+    map.addControl(directions, 'top-left');
+  } else {
+    alert('Por favor selecciona un origen y un destino válidos.');
+  }
+});
+
+// Función para obtener el centroide de un polígono
+function getPolygonCenter(coordinates) {
+  const centroid = coordinates.reduce((acc, curr) => {
+    return [acc[0] + curr[0] / coordinates.length, acc[1] + curr[1] / coordinates.length];
+  }, [0, 0]);
+  return centroid;
+}
+
+  </script>
 </body>
 </html>
