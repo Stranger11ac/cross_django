@@ -28,6 +28,7 @@ from nltk.stem import PorterStemmer
 from nltk.stem import WordNetLemmatizer
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
+from django.db.models import Q
 import numpy as np
 
 import nltk
