@@ -24,7 +24,7 @@ from django.http import JsonResponse
 
 from nltk.tokenize import word_tokenize
 from nltk.corpus import stopwords
-from nltk.stem import PorterStemmer
+from django.db.models import Q
 
 import nltk
 import openai
@@ -76,9 +76,8 @@ def index(request):
         'active_page': 'inicio'
     })
 
-client = openai.OpenAI(api_key=settings.OPENAI_API_KEY)
-
 def chatgpt(question, instructions):
+    client = openai.OpenAI(api_key=settings.OPENAI_API_KEY)
     response = client.chat.completions.create(
         model="gpt-3.5-turbo",
         messages=[
@@ -92,18 +91,26 @@ def chatgpt(question, instructions):
     print(f"Total:{response.usage.total_tokens}")
     print('')
     return response.choices[0].message.content
+#borra el process_question y tambien el chatbot y con ayuda de chatgtp me de ejemplos de poder crear un chatbot nuevo mas preciso agarrando tambien el aswer de answer = chatgpt(question, system_prompt) y el return JsonResponse({'success': True, 'answer': answer})
+
 
 def process_question(pregunta):
+    lemmatizer = WordNetLemmatizer()
+    stop_words = set(stopwords.words('spanish'))
+    
+    # Convertir a minúsculas y eliminar caracteres no alfanuméricos
     pregunta = pregunta.lower().strip()
     pregunta = "".join([c for c in pregunta if c.isalnum() or c.isspace()])
+    
+    # Tokenizar y eliminar stop words
     tokens = word_tokenize(pregunta)
-    stop_words = set(stopwords.words('spanish'))
     tokens = [token for token in tokens if token not in stop_words]
-    stemmer = PorterStemmer()
-    tokens = [stemmer.stem(token) for token in tokens]
+    
+    # Lematizar los tokens
+    tokens = [lemmatizer.lemmatize(token) for token in tokens]
     pregunta_procesada = " ".join(tokens)
-    print(pregunta_procesada)
-
+    
+    print(f"pregunta procesada :{pregunta_procesada}")
     return pregunta_procesada
 
 def chatbot(request):
@@ -111,44 +118,60 @@ def chatbot(request):
         try:
             data = json.loads(request.body)
             question = data.get('question', '')
-
+            print(f"Question: {question}")
+            print("")
             # Preprocesar la pregunta
             pregunta_procesada = process_question(question)
+            
+            # Filtrar las entradas de la base de datos usando las palabras clave de la pregunta procesada
+            palabras_clave = pregunta_procesada.split()
 
-            # Obtener todas las entradas de la base de datos
-            todas_entradas = models.Database.objects.all()
+            query = Q()
+            print(f"Palabra clave: {palabras_clave}")
+            for palabra in palabras_clave:
+                query |= Q(titulo__icontains=palabra) | Q(informacion__icontains=palabra)
+                print(f"Este es el Query: {query}")
+                print("")
 
-            # Crear una lista de textos de la base de datos
-            textos_db = [entrada.informacion for entrada in todas_entradas]
+            # Buscar las coincidencias más relevantes en la base de datos
+            coincidencia = models.Database.objects.filter(query).order_by('-frecuencia').first()
+            print(f"Pregunta Procesada: {pregunta_procesada}")
+            print("")
+            print(f"Concidencia: {coincidencia}")
+            print("")
 
-            # Vectorizar las preguntas y las entradas de la base de datos
-            vectorizer = TfidfVectorizer()
-            tfidf_matrix = vectorizer.fit_transform(textos_db + [pregunta_procesada])
-
-            # Calcular la similitud de coseno entre la pregunta y las entradas de la base de datos
-            cosine_similarities = cosine_similarity(tfidf_matrix[-1], tfidf_matrix[:-1])
-
-            # Encontrar la entrada con la mayor similitud
-            mejor_coincidencia_idx = int(np.argmax(cosine_similarities))
-            mejor_coincidencia = todas_entradas[mejor_coincidencia_idx]
-
-            if mejor_coincidencia:
-                system_prompt = f"Utiliza emojis sutilmente. Eres un asistente de la Universidad Tecnologica de Coahuila. Aquí está la información encontrada: {mejor_coincidencia.informacion}"
+            if coincidencia:
+                # Usar la información de las coincidencias encontradas
+                respuestas = []
+                # if all(palabra in coincidencia.informacion.lower() for palabra in palabras_clave):
+                informacion = coincidencia.informacion
+                system_prompt = f"Utiliza emojis sutilmente. Eres un asistente de la Universidad Tecnologica de Coahuila. Responde la pregunta con esta información encontrada: {informacion}"
                 answer = chatgpt(question, system_prompt)
 
+                print(f"informacion: {informacion}")
+                print(f"")
                 respuesta = {
-                    "titulo": mejor_coincidencia.titulo,
+                    "titulo": coincidencia.titulo,
                     "informacion": answer,
-                    "redirigir": mejor_coincidencia.redirigir,
-                    "documentos": mejor_coincidencia.documentos.url if mejor_coincidencia.documentos else None,
-                    "imagenes": mejor_coincidencia.imagenes.url if mejor_coincidencia.imagenes else None
+                    "redirigir": coincidencia.redirigir,
+                    "documentos": coincidencia.documentos.url if coincidencia.documentos else None,
+                    "imagenes": coincidencia.imagenes.url if coincidencia.imagenes else None
                 }
+                respuestas.append(respuesta)
+                print(f"Coincidencia encontrada: {respuesta}")
+                print(f"")
+                
+                return JsonResponse({'success': True, 'answer': answer})
             else:
+                # Si no se encuentran coincidencias en la base de datos, utilizar solo el modelo para generar una respuesta
+                # system_prompt = "Utiliza emojis sutilmente. Eres un asistente de la Universidad Tecnologica de Coahuila."
+                # answer = chatgpt(question, system_prompt)
+                
                 respuesta = {
-                    "informacion": 'Ups! 😥😯😬 <br>Al parecer no encontre informacion de lo que me pides.',
+                    "informacion": "nada",
                 }
-
-            return JsonResponse({'success': True, 'answer': respuesta})
+                return JsonResponse({'success': True, 'answer': respuesta})
+        
         except json.JSONDecodeError:
             return JsonResponse({'success': False, 'message': 'Error en el formato del JSON.'})
 
