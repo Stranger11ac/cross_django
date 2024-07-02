@@ -13,6 +13,15 @@ from django.contrib.auth.models import User
 from django.core.mail import send_mail
 from django.utils import timezone
 from django.conf import settings
+from django.urls import reverse
+from django.apps import apps
+from django.contrib.auth.tokens import default_token_generator
+from django.template.loader import render_to_string
+from django.utils.encoding import force_bytes, force_str
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.core.mail import send_mail
+
+from .forms import BannersForm, CSVUploadForm
 from .buildings import edificios
 from django.urls import reverse
 from django.db.models import Q
@@ -670,29 +679,53 @@ def upload_banner(request):
             'descripcion': banner.descripcion,
             'articulo': banner.articulo,
             'imagen': imagen_url,
+            'expiracion':banner.expiracion,
         })
-    context = {'form': form, 'banners': banners_modificados}
+    context = { 'banners': banners_modificados}
     return render(request, 'admin/banners.html', context)
 
 @login_required
 def edit_banner(request, banner_id):
     banner = get_object_or_404(models.Banners, id=banner_id)
     if request.method == 'POST':
-        form = BannersForm(request.POST, request.FILES, instance=banner)
-        if form.is_valid():
-            form.save()
-            return redirect('upload_banner')
-    else:
-        form = BannersForm(instance=banner)
+        # Obtener la nueva imagen del formulario si se proporciona
+        new_image = request.FILES.get('imagen')
+        
+        # Guardar la nueva imagen si se proporciona
+        if new_image:
+            # Eliminar la imagen anterior si existe
+            if banner.imagen:
+                if default_storage.exists(banner.imagen.name):
+                    default_storage.delete(banner.imagen.name)
+            
+            # Guardar la nueva imagen en el modelo
+            banner.imagen = new_image
+        
+        # Actualizar otros campos del banner si es necesario
+        banner.titulo = request.POST.get('titulo')
+        banner.descripcion = request.POST.get('descripcion')
+        banner.articulo = request.POST.get('articulo')
+        banner.expiracion = request.POST.get('expiracion')
+        
+        # Guardar el banner actualizado
+        banner.save()
+        
+        return JsonResponse({
+            'success': True,
+            'functions': 'reload',
+            'message': f'El banner <u>{banner.titulo}</u> fue modificado exitosamente 🥳🎉🎈.'
+        }, status=200)
     
-    return redirect('upload_banner')
+    return JsonResponse({'success': False, 'message': 'Acción no permitida.'}, status=403)
 
 @login_required
 def delete_banner(request, banner_id):
-    banner = get_object_or_404(models.Banners, id=banner_id)
-    banner.delete()
-    
-    return redirect('upload_banner')
+    if request.method == 'POST':
+        icon = 'warning'
+        banner = get_object_or_404(models.Banners, id=banner_id)
+        banner.delete()
+        return JsonResponse({'success': True, 'functions': 'reload', 'message': 'Banner eliminado exitosamente.', 'icon': icon}, status=200)
+    return JsonResponse({'success': False, 'message': 'Acción no permitida.'}, status=403)
 
 @login_required
 @never_cache
