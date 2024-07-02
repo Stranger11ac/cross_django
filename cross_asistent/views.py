@@ -673,8 +673,19 @@ def upload_banner(request):
     else:
         form = BannersForm()
     
-    banners = models.Banners.objects.all()
-    context = {'form': form, 'banners': banners}
+    banners_all = models.Banners.objects.all()
+    banners_modificados = []
+
+    for banner in banners_all:
+        imagen_url = banner.imagen.url.replace("/cross_asistent", "")
+        banners_modificados.append({
+            'id': banner.id,
+            'titulo': banner.titulo,
+            'descripcion': banner.descripcion,
+            'articulo': banner.articulo,
+            'imagen': imagen_url,
+        })
+    context = {'form': form, 'banners': banners_modificados}
     return render(request, 'admin/banners.html', context)
 
 @login_required
@@ -688,8 +699,7 @@ def edit_banner(request, banner_id):
     else:
         form = BannersForm(instance=banner)
     
-    context = {'form': form, 'banner': banner}
-    return render(request, 'admin/edit_banner.html', context)
+    return redirect('upload_banner')
 
 @login_required
 def delete_banner(request, banner_id):

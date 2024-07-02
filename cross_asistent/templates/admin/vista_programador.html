@@ -55,7 +55,7 @@
         <!-- targetas de totales -->
         <div class="mt-md-3 col-12 col-md-6 col-xl-8">
             <div class="row">
-                <div class="col-6 mb-4">
+                <div class="col-12 col-sm-6 col-xl-4 mb-4">
                     <!-- Card 1: Banners -->
                     <a href="{% url 'upload_banner' %}" class="card">
                         <div class="card-body p-4">
@@ -70,7 +70,7 @@
                         </div>
                     </a>
                 </div>
-                <div class="col-6 mb-4">
+                <div class="col-12 col-sm-6 col-xl-8 mb-4">
                     <!-- Card 2: Blogs / Articulos -->
                     <a href="#" class="card">
                         <div class="card-body p-4">
@@ -85,7 +85,7 @@
                         </div>
                     </a>
                 </div>
-                <div class="col-6 col-xl-8 mb-4">
+                <div class="col-12 col-sm-6 mb-4">
                     <!-- Card 3: Preguntas / database -->
                     <a href="#" class="card">
                         <div class="card-body p-4">
@@ -102,7 +102,7 @@
                         </div>
                     </a>
                 </div>
-                <div class="col-6 col-xl-4 mb-4">
+                <div class="col-12 col-sm-6 mb-4">
                     <!-- Card 4: usuarios -->
                     <a href="#" class="card">
                         <div class="card-body p-4">
@@ -295,8 +295,8 @@
                                                     readonly />
                                                 <label class="form-label" for="createusername_{{oneuser.id}}">Usuario</label>
                                             </div>
-                                            <div class="row mb-4">
-                                                <div class="col">
+                                            <div class="row">
+                                                <div class="col-md-6 mb-4">
                                                     <div data-mdb-input-init class="form-outline">
                                                         <i class="fa-solid fa-address-card trailing"></i>
                                                         <input type="text" id="firstName_{{oneuser.id}}" class="form-control form-icon-trailing"
@@ -306,7 +306,7 @@
                                                             name</label>
                                                     </div>
                                                 </div>
-                                                <div class="col">
+                                                <div class="col-md-6 mb-4">
                                                     <div data-mdb-input-init class="form-outline">
                                                         <i class="fa-regular fa-address-card trailing"></i>
                                                         <input type="text" id="lastName_{{oneuser.id}}" class="form-control form-icon-trailing"
@@ -325,15 +325,14 @@
                                                 <label class="form-label" for="email_{{oneuser.id}}">Email address</label>
                                             </div>
                                             <!-- Password input -->
-                                            <div class="position-relative">
-                                                <div data-mdb-input-init class="form-outline mb-4">
-                                                    <input type="text" id="pass_{{oneuser.id}}" name="password" class="form-control pe-5" autocomplete="off"
-                                                        data-copy data-input_pass="generatePass" aria-label="readonly input example" readonly required />
-                                                    <label class="form-label" for="pass_{{oneuser.id}}">Contraseña</label>
-                                                </div>
-                                                <div class="position-absolute bottom-0 end-0">
-                                                    <button type="button" id="editPass_{{oneuser.id}}" data-editpass data-editpass-init
-                                                        data-editinput="pass_{{oneuser.id}}" class="btn btn_detail btn-floating btn_genpass fs-15">
+                                            <div data-mdb-input-init class="form-outline form_group-btn mb-4">
+                                                <input type="text" id="pass_{{oneuser.id}}" name="password" class="form-control pe-5" data-editpass
+                                                    data-copy data-input_pass="generatePass" aria-label="readonly input example" readonly required />
+                                                <label class="form-label" for="pass_{{oneuser.id}}">Contraseña</label>
+                                                <!-- botton generar Contraseña -->
+                                                <div class="btn_genpass-block">
+                                                    <button type="button" id="editPass_{{oneuser.id}}"
+                                                        data-editinput="pass_{{oneuser.id}}" class="btn btn_detail btn-floating btn-sm btn_genpass fs-10">
                                                         <i class="fa-solid fa-dice-five"></i>
                                                     </button>
                                                 </div>
@@ -347,9 +346,9 @@
                                                 </label>
                                             </div>
                                             <hr class="my-4">
-                                            <div class="d-flex justify-content-between">
+                                            <div class="d-flex justify-content-between gap_10">
                                                 <button type="button" class="btn btn_detail" data-mdb-ripple-init data-mdb-dismiss="modal">Cancelar</button>
-                                                <button type="submit" class="btn btn-warning">Guardar Cambios</button>
+                                                <button type="submit" class="btn btn-warning">Modificar</button>
                                             </div>
                                         </form>
                                     </div>
@@ -399,27 +398,27 @@
                 <button type="button" class="btn-close" data-mdb-ripple-init data-mdb-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form method="POST" id="createuserprog" data-submit-form>
+                <form method="POST" id="createuserprog" data-submit-form autocomplete="off">
                     {% csrf_token %}
                     <!-- Nombre de usuario -->
                     <div data-mdb-input-init class="form-outline mb-4">
                         <i class="fa-solid fa-circle-user trailing"></i>
-                        <input type="text" id="createusername" name="username" class="form-control form-icon-trailing" autocomplete="off" required />
+                        <input type="text" id="createusername" name="username" class="form-control form-icon-trailing" required />
                         <label class="form-label" for="createusername">Nombre de usuario</label>
                     </div>
                     <!-- Primer Nombre y Apellidos -->
-                    <div class="row mb-4">
-                        <div class="col">
+                    <div class="row">
+                        <div class="col-md-6 mb-4">
                             <div data-mdb-input-init class="form-outline">
                                 <i class="fa-solid fa-address-card trailing"></i>
-                                <input type="text" id="form3Example1" name="first_name" class="form-control form-icon-trailing" autocomplete="off" required />
+                                <input type="text" id="form3Example1" name="first_name" class="form-control form-icon-trailing" required />
                                 <label class="form-label" for="form3Example1">Primer Nombre</label>
                             </div>
                         </div>
-                        <div class="col">
+                        <div class="col-md-6 mb-4">
                             <div data-mdb-input-init class="form-outline">
                                 <i class="fa-regular fa-address-card trailing"></i>
-                                <input type="text" id="form3Example2" name="last_name" class="form-control form-icon-trailing" autocomplete="off" required />
+                                <input type="text" id="form3Example2" name="last_name" class="form-control form-icon-trailing" required />
                                 <label class="form-label" for="form3Example2">Apellidos</label>
                             </div>
                         </div>
@@ -428,28 +427,27 @@
                     <!-- Email input -->
                     <div data-mdb-input-init class="form-outline mb-4">
                         <i class="fa-regular fa-envelope trailing"></i>
-                        <input type="email" id="form3Example3" name="email" class="form-control form-icon-trailing" autocomplete="off" required />
+                        <input type="email" id="form3Example3" name="email" class="form-control form-icon-trailing" required />
                         <label class="form-label" for="form3Example3">Dirección Email</label>
                     </div>
 
                     <!-- Password input -->
-                    <div class="position-relative">
-                        <div data-mdb-input-init class="form-outline mb-4">
-                            <input type="text" id="pass_newuser" name="password" class="form-control pe-5" autocomplete="off" data-copy
-                                data-input_pass="generatePass" aria-label="readonly input example" readonly required />
-                            <label class="form-label" for="pass_newuser">Contraseña</label>
-                        </div>
-                        <div class="position-absolute bottom-0 end-0">
-                            <button type="button" id="editpass_newuser" data-editpass="edit_newpass" data-editinput="pass_newuser"
-                                class="btn btn_detail btn-floating btn_genpass fs-15">
+                    <div data-mdb-input-init class="form-outline form_group-btn mb-4">
+                        <input type="text" id="pass_newuser" name="password" class="form-control" data-editpass data-copy
+                            data-input_pass="generatePass" aria-label="readonly input example" readonly required />
+                        <label class="form-label" for="pass_newuser">Contraseña</label>
+                        <!-- botton generar Contraseña -->
+                        <div class="btn_genpass-block">
+                            <button type="button" id="editpass_newuser" data-editinput="pass_newuser"
+                                class="btn btn_detail btn-floating btn-sm btn_genpass fs-10">
                                 <i class="fa-solid fa-dice-five"></i>
                             </button>
                         </div>
                     </div>
 
                     <!-- Activar usuario y Usuario Programador checkboxes -->
-                    <div class="row mb-4 px-1">
-                        <div class="col">
+                    <div class="row px-1">
+                        <div class="col-md-6 mb-4">
                             <div class="form-check">
                                 <input class="form-check-input me-2" type="checkbox" name="is_active" value="1" id="userIsactive" checked />
                                 <label class="form-check-label" for="userIsactive">
@@ -457,11 +455,11 @@
                                 </label>
                             </div>
                         </div>
-                        <div class="col">
+                        <div class="col-md-6 mb-4">
                             <div class="form-check">
                                 <input class="form-check-input me-2" type="checkbox" name="is_staff" value="1" id="userIsStaff" />
                                 <label class="form-check-label" for="userIsStaff">
-                                    Programador
+                                    Usuario Programador
                                 </label>
                             </div>
                         </div>

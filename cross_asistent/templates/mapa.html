@@ -54,10 +54,6 @@
         attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
     }).addTo(map);
 
-    var edificiosNEW = document.querySelectorAll('[data-edificio="edificios_map"]');
-    var edificiosNEWAll = [...edificiosNEW];
-    console.log(edificiosNEWAll);
-
     var edificios = {{ edificios| safe }};
     var selectedEdificioCoords;
 

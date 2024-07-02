@@ -10,7 +10,6 @@ $(document).ready(function () {
                 return $(this).is(":visible");
             }).length;
         }
-
         input.on("input", filtertable);
 
         // abrir menu del asistente ##############################################################
@@ -40,7 +39,6 @@ $(document).ready(function () {
 
         // Vista de Programador
         // Agrega la clase active al banner con la id mas baja #######################################
-        var elements = $('[id^="bannerid_"]');
         var minIdNumber = Infinity;
         let minIdElement = null;
 
@@ -75,7 +73,9 @@ $(document).ready(function () {
 
         // Editar/Crear usuario
         // generar nueva contraseña aleatoria #################################
-        $("button[data-editpass]").click(function () {
+        $("button[data-editinput]").click(genpass);
+
+        function genpass() {
             $(this).addClass("active");
             var newRandomPass = cadenaRandom(8, caracteres);
             var editInputId = $(this).data("editinput");
@@ -83,11 +83,9 @@ $(document).ready(function () {
                 $(this).removeClass("active");
             }, 1000);
             $("#" + editInputId)
-                .addClass("focus")
                 .val(newRandomPass)
                 .focus();
-        });
-
+        }
         //
         //
     } catch (error) {
@@ -154,9 +152,9 @@ function jsonSubmit(e) {
             dataMessage = data.message;
             if (data.success) {
                 thisForm.reset();
-                dataIcon = 'success'
+                dataIcon = "success";
                 if (data.icon) {
-                    dataIcon = data.icon
+                    dataIcon = data.icon;
                 }
 
                 function dataRedirect(params) {
@@ -165,14 +163,17 @@ function jsonSubmit(e) {
 
                 if (data.functions == "singin") {
                     dataRedirect();
-                    return
-                } else if (data.functions == 'reload') {
-                    var alertfunction = function () {location.reload();}
-                } else if (data.functions == 'redirect') {
-                    var alertfunction = function () {dataRedirect();}
+                    return;
+                } else if (data.functions == "reload") {
+                    var alertfunction = function () {
+                        location.reload();
+                    };
+                } else if (data.functions == "redirect") {
+                    var alertfunction = function () {
+                        dataRedirect();
+                    };
                 }
                 alertSToast("center", timerOut + 4000, dataIcon, dataMessage, alertfunction);
-
             } else {
                 console.error(dataMessage);
                 alertSToast("top", timerOut + 2000, "warning", dataMessage);
@@ -194,7 +195,7 @@ function chatSubmit(e) {
     this.reset();
 
     if (!texto3.test(pregunta)) {
-        return alertSToast("center", 6000, "warning", 'Por favor, escribe una pregunta 🧐😬');
+        return alertSToast("center", 6000, "warning", "Por favor, escribe una pregunta 🧐😬");
     }
 
     var tokendid = cadenaRandom(5, alfabetico);
@@ -259,12 +260,12 @@ function chatSubmit(e) {
         });
 }
 
-document.addEventListener('DOMContentLoaded', function() {
-    const btnCloseChat = document.getElementById('closeChat');
+document.addEventListener("DOMContentLoaded", function () {
+    const btnCloseChat = document.getElementById("closeChat");
     const contOutput = document.querySelector("#output");
 
     if (btnCloseChat && contOutput) {
-        btnCloseChat.addEventListener('click', function() {
+        btnCloseChat.addEventListener("click", function () {
             // Crear y mostrar el mensaje de saludo
             const valID = `uuid${cadenaRandom(5, alfabetico)}`;
             const saludo = "Hola 👋 ¡Bienvenido! Soy tu asistente virtual ¿En qué puedo ayudarte hoy?";
@@ -278,7 +279,7 @@ document.addEventListener('DOMContentLoaded', function() {
             contOutput.insertAdjacentHTML("beforeend", htmlBlock);
 
             const asistent_response = document.querySelector(`.asistent_response[data-tokeid="${valID}"]`);
-            setTimeout(function() {
+            setTimeout(function () {
                 asistent_response.classList.add("visible");
                 scrollToBottom();
             }, 20);
@@ -306,7 +307,7 @@ if (contOutput) {
 function copyValInput() {
     const inputs = document.querySelectorAll("input[data-copy]");
     inputs.forEach((input) => {
-        input.addEventListener("click", () => {
+        const copyText = () => {
             if (!navigator.clipboard) {
                 alertSToast("center", 8000, "info", "Tu navegador no admite copiar al portapapeles 😯😥🤔");
                 return;
@@ -319,15 +320,19 @@ function copyValInput() {
                         alertSToast("top", 5000, "success", "Texto Copiado! 🥳");
                     })
                     .catch((error) => {
-                        message = "Error al copiar al portapapeles";
+                        const message = "Error al copiar al portapapeles";
                         console.error(message, ":", error);
                         alertSToast("top", 8000, "error", `${message} 🤔😥`);
                     });
             }
-        });
+        };
+
+        input.addEventListener("click", copyText);
+        input.addEventListener("focus", copyText);
     });
-};
-copyValInput()
+}
+
+copyValInput();
 
 function getCSRFToken() {
     const csrfCookie = document.querySelector("[name=csrfmiddlewaretoken]").value;
@@ -408,12 +413,10 @@ $("#selectArticulo").change(function () {
     obtenerDatosEdificio(articuloId, urlConsulta);
 });
 
-
 $("#color_picker").on("input", function () {
     var color = $(this).val();
     $("#color").val(color);
 });
-
 
 $("#edificioForm").submit(function (event) {
     event.preventDefault();
