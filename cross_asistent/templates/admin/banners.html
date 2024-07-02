@@ -24,8 +24,8 @@
                             autocomplete="off" autocapitalize="off">
                     </div>
                     <div class="mb-3">
-                        <label for="articulo" class="form-label">Artículo</label>
-                        <input type="text" class="form-control" id="articulo" name="articulo" required autocomplete="off" autocapitalize="off">
+                        <label for="articulo" class="form-label">Redirigir a : </label>
+                        <input type="text" class="form-control" id="articulo" name="articulo" autocomplete="off" autocapitalize="off">
                     </div>
                     <div class="mb-3">
                         <label for="imagen" class="form-label">Imagen</label>
@@ -105,7 +105,7 @@
                                             name="descripcion" value="{{ banner.descripcion }}" required autocomplete="off" autocapitalize="off">
                                     </div>
                                     <div class="mb-3">
-                                        <label for="editArticulo{{ banner.id }}" class="form-label">Artículo</label>
+                                        <label for="editArticulo{{ banner.id }}" class="form-label">Redirigir a :</label>
                                         <input type="text" class="form-control" id="editArticulo{{ banner.id }}"
                                             name="articulo" value="{{ banner.articulo }}"" autocomplete="off" autocapitalize="off"">
                                     </div>
