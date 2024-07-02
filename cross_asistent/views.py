@@ -539,7 +539,7 @@ def mapa2(request):
 def admin_blogs(request):
     return render(request, 'admin/blogs.html')
 
-# crea el archivo del blog
+# crear  blog ##############################
 @login_required
 @never_cache
 def crear_articulo(request):
@@ -563,7 +563,6 @@ def crear_articulo(request):
             return JsonResponse({'success': False, 'message': f'Ocurrio un error😯😥 <br>{str(e)}'}, status=400)
     return JsonResponse({'success': False, 'message': 'Método no permitido'}, status=405)
 
-# sube la imagen que viene dentro del contenido del blog
 @login_required
 @never_cache
 def upload_image(request):
@@ -598,24 +597,17 @@ def lista_imagenes(request):
 #Consulta para informacion del Mapa##################
 def obtenerinfoEdif(request):
         categoria_mapa = models.Categorias.objects.get(categoria="Mapa")
-        articulos_mapa = models.Mapa.objects.filter(categoria=categoria_mapa)
-        
-        return render(request, 'admin/mapa_form.html', {'articulos_mapa': articulos_mapa})
+        articulos_mapa = models.Database.objects.filter(categoria=categoria_mapa)
+        return render(request, 'admin/mapa.html', {'articulos_mapa': articulos_mapa})
 
 def obtenerEdificio(request):
     if request.method == 'GET':
         edificio_id = request.GET.get('id')
         if (edificio_id):
-            edificio = get_object_or_404(models.Mapa, id=edificio_id)
+            edificio = get_object_or_404(models.Database, id=edificio_id)
             data = {
-                'id': edificio.id,
                 'titulo': edificio.titulo,
                 'informacion': edificio.informacion,
-                'color': edificio.color,
-                'p1_polygons': edificio.p1_polygons,
-                'p2_polygons': edificio.p2_polygons,
-                'p3_polygons': edificio.p3_polygons,
-                'p4_polygons': edificio.p4_polygons,
                 'imagen_url': edificio.imagenes.url if edificio.imagenes else None,
             }
             return JsonResponse(data)
