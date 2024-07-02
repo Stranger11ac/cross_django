@@ -11,7 +11,7 @@
         <section class="card mb-4 col-lg-6 col-md-8 text-center">
             <h3 class="text-center my-4">Subir Banner</h3>
             <div class="card-body">
-                <form method="POST" enctype="multipart/form-data">
+                <form method="POST" enctype="multipart/form-data" action="{% url 'upload_banner' %}">
                     {% csrf_token %}
                     <div class="mb-3">
                         <label for="titulo" class="form-label">Título</label>
@@ -63,11 +63,10 @@
                     <td><img src="{{ banner.imagen }}" alt="{{ banner.titulo }}" class="img-thumbnail" style="max-width: 100px;"></td>
                     <td>{{ banner.expiracion }}</td>
                     <td>
-                        <form action="{% url 'edit_banner' banner.id %}" method="get" style="display:inline;">
-                            <button type="submit" class="btn btn-floating btn-info">
-                                <i class="fa-solid fa-edit"></i>
-                            </button>
-                        </form>
+                        <button type="button" class="btn btn-floating btn-info" data-mdb-ripple-init data-mdb-modal-init
+                        data-mdb-target="#editBannerModal{{ banner.id }}">
+                            <i class="fa-solid fa-edit"></i>
+                        </button>
                         <form action="{% url 'delete_banner' banner.id %}" method="post" style="display:inline;">
                             {% csrf_token %}
                             <button type="submit" class="btn btn-floating btn-danger">
@@ -76,6 +75,44 @@
                         </form>
                     </td>
                 </tr>
+
+                <!-- Edit Banner Modal -->
+                <div class="modal fade" id="editBannerModal{{ banner.id }}" tabindex="-1" aria-labelledby="editBannerModalLabel{{ banner.id }}" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="editBannerModalLabel{{ banner.id }}">Editar Banner</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <form method="POST" enctype="multipart/form-data"  action="{% url 'edit_banner' banner.id %}" data-submit-form >
+                                    {% csrf_token %}
+                                    <div class="mb-3">
+                                        <label for="editTitulo{{ banner.id }}" class="form-label">Título</label>
+                                        <input type="text" class="form-control" id="editTitulo{{ banner.id }}" name="titulo" value="{{ banner.titulo }}" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="editDescripcion{{ banner.id }}" class="form-label">Descripción</label>
+                                        <input type="text" class="form-control" id="editDescripcion{{ banner.id }}" name="descripcion" value="{{ banner.descripcion }}" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="editArticulo{{ banner.id }}" class="form-label">Artículo</label>
+                                        <input type="text" class="form-control" id="editArticulo{{ banner.id }}" name="articulo" value="{{ banner.articulo }}">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="editImagen{{ banner.id }}" class="form-label">Imagen</label>
+                                        <input type="file" class="form-control" id="editImagen{{ banner.id }}" name="imagen">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="editExpiracion{{ banner.id }}" class="form-label">Expiración</label>
+                                        <input type="datetime-local" class="form-control" id="editExpiracion{{ banner.id }}" name="expiracion" value="{{ banner.expiracion|date:'Y-m-d\\TH:i' }}">
+                                    </div>
+                                    <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 {% endfor %}
             </tbody>
         </table>

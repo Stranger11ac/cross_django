@@ -684,8 +684,9 @@ def upload_banner(request):
             'descripcion': banner.descripcion,
             'articulo': banner.articulo,
             'imagen': imagen_url,
+            'expiracion':banner.expiracion,
         })
-    context = {'form': form, 'banners': banners_modificados}
+    context = { 'banners': banners_modificados}
     return render(request, 'admin/banners.html', context)
 
 @login_required
@@ -695,11 +696,8 @@ def edit_banner(request, banner_id):
         form = BannersForm(request.POST, request.FILES, instance=banner)
         if form.is_valid():
             form.save()
-            return redirect('upload_banner')
-    else:
-        form = BannersForm(instance=banner)
-    
-    return redirect('upload_banner')
+            return JsonResponse({'success': True, "functions":'reload', 'message': f'El banner <u>{banner.titulo}</u> fue modificado exitosamente 🥳🎉🎈.'}, status=200)
+    return JsonResponse({'success': False, 'message': 'Acción no permitida.'}, status=403)
 
 @login_required
 def delete_banner(request, banner_id):
