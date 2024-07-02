@@ -701,10 +701,12 @@ def edit_banner(request, banner_id):
 
 @login_required
 def delete_banner(request, banner_id):
-    banner = get_object_or_404(models.Banners, id=banner_id)
-    banner.delete()
-    
-    return redirect('upload_banner')
+    if request.method == 'POST':
+        icon = 'warning'
+        banner = get_object_or_404(models.Banners, id=banner_id)
+        banner.delete()
+        return JsonResponse({'success': True, 'functions': 'reload', 'message': 'Banner eliminado exitosamente.', 'icon': icon}, status=200)
+    return JsonResponse({'success': False, 'message': 'Acción no permitida.'}, status=403)
 
 @login_required
 @never_cache
