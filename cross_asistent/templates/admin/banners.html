@@ -25,7 +25,7 @@
                     </div>
                     <div class="mb-3">
                         <label for="articulo" class="form-label">Artículo</label>
-                        <input type="text" class="form-control" id="articulo" name="articulo">
+                        <input type="text" class="form-control" id="articulo" name="articulo" required autocomplete="off" autocapitalize="off">
                     </div>
                     <div class="mb-3">
                         <label for="imagen" class="form-label">Imagen</label>
@@ -96,18 +96,18 @@
                                     <div class="mb-3">
                                         <label for="editTitulo{{ banner.id }}" class="form-label">Título</label>
                                         <input type="text" class="form-control" id="editTitulo{{ banner.id }}"
-                                            name="titulo" value="{{ banner.titulo }}" required>
+                                            name="titulo" value="{{ banner.titulo }}" required autocomplete="off" autocapitalize="off">
                                     </div>
                                     <div class="mb-3">
                                         <label for="editDescripcion{{ banner.id }}"
                                             class="form-label">Descripción</label>
                                         <input type="text" class="form-control" id="editDescripcion{{ banner.id }}"
-                                            name="descripcion" value="{{ banner.descripcion }}" required>
+                                            name="descripcion" value="{{ banner.descripcion }}" required autocomplete="off" autocapitalize="off">
                                     </div>
                                     <div class="mb-3">
                                         <label for="editArticulo{{ banner.id }}" class="form-label">Artículo</label>
                                         <input type="text" class="form-control" id="editArticulo{{ banner.id }}"
-                                            name="articulo" value="{{ banner.articulo }}">
+                                            name="articulo" value="{{ banner.articulo }}"" autocomplete="off" autocapitalize="off"">
                                     </div>
                                     <div class="mb-3">
                                         <label for="editImagen{{ banner.id }}" class="form-label">Imagen</label>

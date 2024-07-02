@@ -16,6 +16,7 @@ from django.template.loader import render_to_string
 from django.utils.encoding import force_bytes, force_str
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.core.mail import send_mail
+from django.core.files.storage import default_storage
 
 from .forms import BannersForm, CSVUploadForm
 from .buildings import edificios
@@ -693,10 +694,34 @@ def upload_banner(request):
 def edit_banner(request, banner_id):
     banner = get_object_or_404(models.Banners, id=banner_id)
     if request.method == 'POST':
-        form = BannersForm(request.POST, request.FILES, instance=banner)
-        if form.is_valid():
-            form.save()
-            return JsonResponse({'success': True, "functions":'reload', 'message': f'El banner <u>{banner.titulo}</u> fue modificado exitosamente 🥳🎉🎈.'}, status=200)
+        # Obtener la nueva imagen del formulario si se proporciona
+        new_image = request.FILES.get('imagen')
+        
+        # Guardar la nueva imagen si se proporciona
+        if new_image:
+            # Eliminar la imagen anterior si existe
+            if banner.imagen:
+                if default_storage.exists(banner.imagen.name):
+                    default_storage.delete(banner.imagen.name)
+            
+            # Guardar la nueva imagen en el modelo
+            banner.imagen = new_image
+        
+        # Actualizar otros campos del banner si es necesario
+        banner.titulo = request.POST.get('titulo')
+        banner.descripcion = request.POST.get('descripcion')
+        banner.articulo = request.POST.get('articulo')
+        banner.expiracion = request.POST.get('expiracion')
+        
+        # Guardar el banner actualizado
+        banner.save()
+        
+        return JsonResponse({
+            'success': True,
+            'functions': 'reload',
+            'message': f'El banner <u>{banner.titulo}</u> fue modificado exitosamente 🥳🎉🎈.'
+        }, status=200)
+    
     return JsonResponse({'success': False, 'message': 'Acción no permitida.'}, status=403)
 
 @login_required
