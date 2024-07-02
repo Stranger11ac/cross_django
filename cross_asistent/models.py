@@ -55,11 +55,11 @@ class Banners(models.Model):
         super(Banners, self).save(*args, **kwargs)
 
 class Mapa(models.Model):
-    categoria = models.ForeignKey('Categorias', on_delete=models.SET_NULL, null=True)
     titulo = models.CharField(max_length=200, blank=False)
-    informacion = models.TextField(blank=True, null=True)
+    informacion = models.TextField()
     imagenes =  models.ImageField(upload_to='cross_asistent/static/files/imagenes/mapa/', blank=True, null=True)
-    color = models.CharField(max_length=50, blank=True, null=True)
+    color = models.CharField(max_length=50)
+    cords_centro = models.CharField(max_length=10)
     p1_polygons = models.CharField(max_length=100, blank=True, null=True)
     p2_polygons = models.CharField(max_length=100, blank=True, null=True)
     p3_polygons = models.CharField(max_length=100, blank=True, null=True)

@@ -367,23 +367,16 @@ function alertSToast(posittionS, timerS, iconS, titleS, didDestroyS) {
 
 // alertSToast('top', 8000, 'success', '<br>lo normal');
 
-function obtenerDatosEdificio(articuloId, urlConsulta) {
+function obtenerDatosEdificio(infoid, urlConsulta) {
     console.log(`AJAX: ${urlConsulta}`);
-    if (articuloId) {
+    if (infoid) {
         $.ajax({
             url: urlConsulta,
             type: "GET",
-            data: { id: articuloId },
+            data: { id: infoid },
             success: function (data) {
-                $("#edificio_id").val(data.id);
                 $("#titulo").val(data.titulo);
                 $("#informacion").val(data.informacion);
-                $("#color").val(data.color);
-                $("#color_picker").val(data.color);
-                $("#p1_polygons").val(data.p1_polygons);
-                $("#p2_polygons").val(data.p2_polygons);
-                $("#p3_polygons").val(data.p3_polygons);
-                $("#p4_polygons").val(data.p4_polygons);
                 if (data.imagen_url) {
                     const oldImgUrl = data.imagen_url;
                     const newImgUrl = oldImgUrl.replace("/cross_asistent", "");
@@ -393,24 +386,13 @@ function obtenerDatosEdificio(articuloId, urlConsulta) {
                 }
             },
         });
-    } else {
-        $("#edificio_id").val("");
-        $("#titulo").val("");
-        $("#informacion").val("");
-        $("#color").val("");
-        $("#color_picker").val("#000000");
-        $("#p1_polygons").val("");
-        $("#p2_polygons").val("");
-        $("#p3_polygons").val("");
-        $("#p4_polygons").val("");
-        $("#imagen_actual").hide();
     }
 }
 
 $("#selectArticulo").change(function () {
-    var articuloId = $(this).val();
+    var infoid = $(this).val();
     const urlConsulta = $(this).data("second-action");
-    obtenerDatosEdificio(articuloId, urlConsulta);
+    obtenerDatosEdificio(infoid, urlConsulta);
 });
 
 $("#color_picker").on("input", function () {

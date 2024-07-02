@@ -1,12 +1,16 @@
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth.tokens import default_token_generator
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.decorators import login_required
+from django.utils.encoding import force_bytes, force_str
 from django.views.decorators.cache import never_cache
-from django.views.decorators.csrf import csrf_exempt
+from django.template.loader import render_to_string
 from django.http import JsonResponse, HttpResponse
-from django.http import HttpResponseForbidden
+from .forms import BannersForm, CSVUploadForm
 from django.db import IntegrityError, models
 from django.contrib.auth.models import User
+from django.core.mail import send_mail
 from django.utils import timezone
 from django.conf import settings
 from django.urls import reverse
@@ -16,61 +20,17 @@ from django.template.loader import render_to_string
 from django.utils.encoding import force_bytes, force_str
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.core.mail import send_mail
-from django.core.files.storage import default_storage
 
 from .forms import BannersForm, CSVUploadForm
 from .buildings import edificios
+from django.urls import reverse
+from django.db.models import Q
 from . import models
 
-
-from nltk.corpus import stopwords
-from nltk.tokenize import word_tokenize
-from nltk.stem import PorterStemmer
-from nltk.stem import WordNetLemmatizer
-from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.metrics.pairwise import cosine_similarity
-from django.db.models import Q
-import numpy as np
-
-import nltk
+import spacy
 import openai
 import json
 import csv
-import os
-
-# openai.api_key = ""
-
-# chat_history = []
-
-# while True:
-#     prompt = input("Enter a prompt: ")
-#     if prompt == "exit":
-#         break
-#     else:
-#         chat_history.append({"role": "user", "content": prompt})
-
-#         response_iterator = openai.ChatCompletion.create(
-#             model="gpt-3.5-turbo",
-#             messages = chat_history,
-#             stream=True,
-#             max_tokens=150,
-#         )
-
-#         collected_messages = []
-
-#         for chunk in response_iterator:
-#             chunk_message = chunk['choices'][0]['delta']  # extract the message
-#             collected_messages.append(chunk_message)  # save the message
-#             full_reply_content = ''.join([m.get('content', '') for m in collected_messages])
-#             print(full_reply_content)
-
-#             # clear the terminal
-#             print("\033[H\033[J", end="")
-
-#         chat_history.append({"role": "assistant", "content": full_reply_content})
-#         # print the time delay and text received
-#         full_reply_content = ''.join([m.get('content', '') for m in collected_messages])
-#         print(f"GPT: {full_reply_content}")
 
 
 def index(request):
@@ -109,86 +69,120 @@ def chatgpt(question, instructions):
     print(f"Total:{response.usage.total_tokens}")
     print('')
     return response.choices[0].message.content
-#borra el process_question y tambien el chatbot y con ayuda de chatgtp me de ejemplos de poder crear un chatbot nuevo mas preciso agarrando tambien el aswer de answer = chatgpt(question, system_prompt) y el return JsonResponse({'success': True, 'answer': answer})
 
+
+# Cargar el modelo de lenguaje español, analizar texto en aplicaciones de procesamiento de lenguaje natural.
+nlp = spacy.load("es_core_news_sm")
+
+# Diccionario de respuestas simples predefinidas
+respuestas_simples = {
+    "ubicacion": "Nos encontramos en la Av.Industria Metalúrgica #2001 Parque Industrial Ramos Arizpe Coahuila C.P.25900.",
+    "contacto": "Puedes contactarnos al teléfono (844)288-38-00 ☎️",
+}
 
 def process_question(pregunta):
-    lemmatizer = WordNetLemmatizer()
-    stop_words = set(stopwords.words('spanish'))
+    # Procesar la pregunta usando spaCy
+    doc = nlp(pregunta.lower().strip())
     
-    # Convertir a minúsculas y eliminar caracteres no alfanuméricos
-    pregunta = pregunta.lower().strip()
-    pregunta = "".join([c for c in pregunta if c.isalnum() or c.isspace()])
-    
-    # Tokenizar y eliminar stop words
-    tokens = word_tokenize(pregunta)
-    tokens = [token for token in tokens if token not in stop_words]
-    
-    # Lematizar los tokens
-    tokens = [lemmatizer.lemmatize(token) for token in tokens]
+    # Filtrar stopwords y lematizar los tokens
+    tokens = [token.lemma_ for token in doc if not token.is_stop and token.is_alpha]
     pregunta_procesada = " ".join(tokens)
     
-    print(f"pregunta procesada :{pregunta_procesada}")
+    print(f"Pregunta procesada: {pregunta_procesada}")
     return pregunta_procesada
+
+def extract_entities(pregunta):
+    # Extraer entidades nombradas
+    doc = nlp(pregunta)
+    entities = [ent.text for ent in doc.ents]
+    print(f"Entidades nombradas: {entities}")
+    return entities
+
+def create_query(palabras_clave, entities):
+    # Crear una consulta más precisa utilizando palabras clave y entidades
+    query = Q()
+    for palabra in palabras_clave:
+        query |= Q(titulo__icontains=palabra) | Q(informacion__icontains=palabra)
+    for entidad in entities:
+        query |= Q(titulo__icontains=entidad) | Q(informacion__icontains=entidad)
+    return query
+
+def score_result(result, palabras_clave, entities):
+    score = 0
+    for palabra in palabras_clave:
+        if palabra in result.titulo.lower():
+            score += 3  # Peso mayor a coincidencias en el título
+        if palabra in result.informacion.lower():
+            score += 2
+    for entidad in entities:
+        if entidad in result.titulo.lower():
+            score += 4  # Peso mayor a coincidencias de entidades en el título
+        if entidad in result.informacion.lower():
+            score += 3
+    return score
 
 def chatbot(request):
     if request.method == 'POST':
         try:
             data = json.loads(request.body)
-            question = data.get('question', '')
-            print(f"Question: {question}")
-            print("")
-            # Preprocesar la pregunta
-            pregunta_procesada = process_question(question)
+            question = data.get('question', '').lower().strip()
             
-            # Filtrar las entradas de la base de datos usando las palabras clave de la pregunta procesada
+            # Verificar respuestas simples predefinidas
+            for clave, respuesta in respuestas_simples.items():
+                if clave in question:
+                    return JsonResponse({'success': True, 'answer': {'informacion': respuesta}})
+
+            # Procesar pregunta y extraer entidades
+            pregunta_procesada = process_question(question)
+            entidades = extract_entities(question)
+            
+            # Crear consulta con palabras clave y entidades
             palabras_clave = pregunta_procesada.split()
+            query = create_query(palabras_clave, entidades)
+            
+            # Buscar coincidencias en la base de datos
+            coincidencias = models.Database.objects.filter(query)
+            
+            # Evaluar y seleccionar la mejor coincidencia
+            mejor_coincidencia = None
+            mejor_puntuacion = 0
+            
+            for coincidencia in coincidencias:
+                puntuacion = score_result(coincidencia, palabras_clave, entidades)
+                if puntuacion > mejor_puntuacion:
+                    mejor_puntuacion = puntuacion
+                    mejor_coincidencia = coincidencia
 
-            query = Q()
-            print(f"Palabra clave: {palabras_clave}")
-            for palabra in palabras_clave:
-                query |= Q(titulo__icontains=palabra) | Q(informacion__icontains=palabra)
-                print(f"Este es el Query: {query}")
-                print("")
-
-            # Buscar las coincidencias más relevantes en la base de datos
-            coincidencia = models.Database.objects.filter(query).order_by('-frecuencia').first()
-            print(f"Pregunta Procesada: {pregunta_procesada}")
-            print("")
-            print(f"Concidencia: {coincidencia}")
-            print("")
-
-            if coincidencia:
-                # Usar la información de las coincidencias encontradas
-                respuestas = []
-                # if all(palabra in coincidencia.informacion.lower() for palabra in palabras_clave):
-                informacion = coincidencia.informacion
+            print(f"Mejor coincidencia: {mejor_coincidencia}")
+            print(f"Mejor puntuación: {mejor_puntuacion}")
+            if mejor_coincidencia:
+                # Utilizar la información de la mejor coincidencia encontrada
+                informacion = mejor_coincidencia.informacion
                 system_prompt = f"Utiliza emojis sutilmente. Eres un asistente de la Universidad Tecnologica de Coahuila. Responde la pregunta con esta información encontrada: {informacion}"
                 answer = chatgpt(question, system_prompt)
+                print(f"Informacion: {informacion}")
 
-                print(f"informacion: {informacion}")
-                print(f"")
                 respuesta = {
-                    "titulo": coincidencia.titulo,
+                    "titulo": mejor_coincidencia.titulo,
                     "informacion": answer,
-                    "redirigir": coincidencia.redirigir,
-                    "documentos": coincidencia.documentos.url if coincidencia.documentos else None,
-                    "imagenes": coincidencia.imagenes.url if coincidencia.imagenes else None
+                    "redirigir": mejor_coincidencia.redirigir,
+                    "documentos": mejor_coincidencia.documentos.url if mejor_coincidencia.documentos else None,
+                    "imagenes": mejor_coincidencia.imagenes.url if mejor_coincidencia.imagenes else None
                 }
-                respuestas.append(respuesta)
-                print(f"Coincidencia encontrada: {respuesta}")
-                print(f"")
                 
-                return JsonResponse({'success': True, 'answer': answer})
-            else:
-                # Si no se encuentran coincidencias en la base de datos, utilizar solo el modelo para generar una respuesta
-                # system_prompt = "Utiliza emojis sutilmente. Eres un asistente de la Universidad Tecnologica de Coahuila."
-                # answer = chatgpt(question, system_prompt)
-                
-                respuesta = {
-                    "informacion": "nada",
-                }
                 return JsonResponse({'success': True, 'answer': respuesta})
+            else:
+                # Si no se encuentran coincidencias en la base de datos
+                if len(palabras_clave) == 0 and len(entidades) == 0:
+                    respuesta = {
+                        "informacion": "¿Podrías ser más específico en tu pregunta? No logré entender completamente lo que necesitas."
+                    }
+                    return JsonResponse({'success': True, 'answer': respuesta})
+                else:
+                    respuesta = {
+                        "informacion": "Lo siento, no encontré información relevante."
+                    }
+                    return JsonResponse({'success': True, 'answer': respuesta})
         
         except json.JSONDecodeError:
             return JsonResponse({'success': False, 'message': 'Error en el formato del JSON.'})
@@ -540,7 +534,7 @@ def mapa2(request):
 def admin_blogs(request):
     return render(request, 'admin/blogs.html')
 
-# crea el archivo del blog
+# crear  blog ##############################
 @login_required
 @never_cache
 def crear_articulo(request):
@@ -564,7 +558,6 @@ def crear_articulo(request):
             return JsonResponse({'success': False, 'message': f'Ocurrio un error😯😥 <br>{str(e)}'}, status=400)
     return JsonResponse({'success': False, 'message': 'Método no permitido'}, status=405)
 
-# sube la imagen que viene dentro del contenido del blog
 @login_required
 @never_cache
 def upload_image(request):
@@ -599,24 +592,17 @@ def lista_imagenes(request):
 #Consulta para informacion del Mapa##################
 def obtenerinfoEdif(request):
         categoria_mapa = models.Categorias.objects.get(categoria="Mapa")
-        articulos_mapa = models.Mapa.objects.filter(categoria=categoria_mapa)
-        
-        return render(request, 'admin/mapa_form.html', {'articulos_mapa': articulos_mapa})
+        articulos_mapa = models.Database.objects.filter(categoria=categoria_mapa)
+        return render(request, 'admin/mapa.html', {'articulos_mapa': articulos_mapa})
 
 def obtenerEdificio(request):
     if request.method == 'GET':
         edificio_id = request.GET.get('id')
         if (edificio_id):
-            edificio = get_object_or_404(models.Mapa, id=edificio_id)
+            edificio = get_object_or_404(models.Database, id=edificio_id)
             data = {
-                'id': edificio.id,
                 'titulo': edificio.titulo,
                 'informacion': edificio.informacion,
-                'color': edificio.color,
-                'p1_polygons': edificio.p1_polygons,
-                'p2_polygons': edificio.p2_polygons,
-                'p3_polygons': edificio.p3_polygons,
-                'p4_polygons': edificio.p4_polygons,
                 'imagen_url': edificio.imagenes.url if edificio.imagenes else None,
             }
             return JsonResponse(data)
