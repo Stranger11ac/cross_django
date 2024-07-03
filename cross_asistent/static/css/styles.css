@@ -321,11 +321,11 @@ nav .navbar-collapse {
 /*##################### Contenido #####################*/
 main {
     width: 100%;
-    min-height: 80vh;
+    min-height: 50vh;
 }
 
 main.full_page {
-    height: var(--full_page);
+    min-height: var(--full_page);
     z-index: 0;
 }
 
@@ -714,6 +714,17 @@ img.img-tiny {
     max-width: 100%;
     border-radius: var(--border-radius);
     margin-block: 0.25rem;
+}
+
+.form_group-btn {
+    position: relative;
+}
+
+.form_group-btn .btn_genpass-block {
+    position: absolute;
+    right: 4px;
+    top: 50%;
+    transform: translateY(-50%);
 }
 
 /*#################### Template Buttons ####################*/
@@ -1138,4 +1149,10 @@ img.img-tiny {
     padding: 20px;
     margin-top: calc(var(--size_box)/2);
     text-align: center;
+}
+
+.flex-between-wrap {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
 }

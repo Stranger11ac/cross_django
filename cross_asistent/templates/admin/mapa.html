@@ -1,0 +1,73 @@
+{% extends 'base/widget.html' %}
+{% load static %}
+{% block title %}Mapa | Administracion{% endblock %}
+{% block link_home %}{% url 'vista_programador' %}{% endblock %}
+{% block link_default %}
+{% include 'base/widget_links-admin.html' %}
+{% endblock %}
+{% block content %}
+
+<main class="container container-fluid pb-5 {% if not user.is_authenticated %}main_container{% endif %}">
+
+    <div class="p-5 text-center">
+        <h1 class="mb-3">Modificar Mapa <i class="fa-solid fa-map-location-dot ms-1"></i></h1>
+        <hr class="hr_divisor" />
+    </div>
+
+
+    <!-- consulta_mapa.html -->
+    <div class="card mb-5">
+        <div class="card-body">
+            <h2>Información del Mapa</h2>
+            <form method="post" id="filtroEdificio" action="{% url 'consultaMap' %}">
+                {% csrf_token %}
+                <label for="selectArticulo">Selecciona un Artículo:</label>
+                <select id="selectArticulo" name="selectArticulo" class="form-select" data-second-action="{% url 'obtenerEdificio' %}">
+                    <option disabled selected hidden> Selecciona un edificio...</option>
+                    {% for articulo in articulos_mapa %}
+                    <option value="{{ articulo.id }}">{{ articulo.titulo }}</option>
+                    {% endfor %}
+                </select>
+            </form>
+        </div>
+    </div>
+
+    <h2>Crear o Editar Información del Edificio</h2>
+    <form method="post" id="edificioForm" action="{% url 'crearEditar' %}">
+        {% csrf_token %}
+
+        <label for="titulo">Título:</label>
+        <input type="text" id="titulo" name="titulo" class="form-control" required>
+
+        <label for="informacion">Información:</label>
+        <textarea id="informacion" name="informacion" class="form-control" rows="5" required></textarea>
+
+        <label for="color">Color:</label>
+        <input id="color" name="color" class="form-control" readonly></input>
+        <input id="color_picker" type="color" class="form-control mt-2"></input>
+
+        <label for="informacion">Cordenada 1:</label>
+        <input id="p1_polygons" name="p1_polygons" class="form-control"></input>
+
+        <label for="informacion">Cordenada 2:</label>
+        <input id="p2_polygons" name="p2_polygons" class="form-control"></input>
+
+        <label for="informacion">Cordenada 3:</label>
+        <input id="p3_polygons" name="p3_polygons" class="form-control"></input>
+
+        <label for="informacion">Cordenada 4:</label>
+        <input id="p4_polygons" name="p4_polygons" class="form-control"></input>
+
+        <label for="imagenes">Imagen:</label>
+        <input type="file" id="imagenes" name="imagenes" class="form-control">
+        <img id="imagen_actual" src="" alt="Imagen actual" style="display:none; max-width: 200px;">
+
+        <br>
+        <button type="submit" class="btn btn-primary">Guardar</button>
+    </form>
+
+</main>
+{% endblock %}
+{% block scripts_end %}
+<script src="{% static 'tinymce/tinymce.min.js' %}"></script>
+{% endblock %}
