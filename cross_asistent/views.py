@@ -15,16 +15,9 @@ from django.utils import timezone
 from django.conf import settings
 from django.urls import reverse
 from django.apps import apps
-from django.contrib.auth.tokens import default_token_generator
-from django.template.loader import render_to_string
-from django.utils.encoding import force_bytes, force_str
-from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
-from django.core.mail import send_mail
-from django.core.files.storage import default_storage
 
-from .forms import BannersForm, CSVUploadForm
+from django.core.files.storage import default_storage
 from .buildings import edificios
-from django.urls import reverse
 from django.db.models import Q
 from . import models
 
@@ -338,21 +331,6 @@ def singinpage(request):
 def singoutpage(request):
     logout(request)
     return redirect('singin')
-
-# def consulTabla(request):
-#     if request.user.is_staff:
-#         # Obtener nombres de todas las tablas del modelo
-#         all_models = apps.get_models()
-#         cross_assistent_models = [model for model in all_models if model._meta.app_label == 'cross_assistent']
-        
-#         # Imprimir todos los modelos y los modelos de la app cross_assistent para depuración
-#         print(f"Todos los modelos: {[model._meta.object_name for model in all_models]}")
-#         print(f"Modelos de cross_assistent: {[model._meta.object_name for model in cross_assistent_models]}")
-        
-#         data_table = [model._meta.object_name for model in cross_assistent_models]
-#         return render(request, 'admin/vista_programador.html', {'data_table': data_table})
-#     else:
-#         return HttpResponseForbidden()
 
 @login_required
 @never_cache
