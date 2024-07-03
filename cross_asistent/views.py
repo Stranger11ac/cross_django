@@ -20,6 +20,7 @@ from django.template.loader import render_to_string
 from django.utils.encoding import force_bytes, force_str
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.core.mail import send_mail
+from django.core.files.storage import default_storage
 
 from .forms import BannersForm, CSVUploadForm
 from .buildings import edificios
