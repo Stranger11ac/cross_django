@@ -225,6 +225,11 @@ def map(request):
         'active_page': 'map'
     })
 
+def mapa2(request):
+    return render(request, 'mapa2.html', {
+        'edificios': elements.edificios
+    })
+
 def about(request):
     if not request.user.is_staff:
         logout(request)
@@ -464,8 +469,6 @@ def editar_usuario(request, user_id):
         return JsonResponse({'success': True, 'message': f'El usuario <u>{username}</u> fue modificado exitosamente 🥳🎉🎈.'}, status=200)
     return JsonResponse({'success': False, 'message': 'Acción no permitida.'}, status=403)
 
-def mapa2(request):
-    return render(request, 'mapa2.html')
 
 # te manda a la vista para crear el blog siendo staff
 @login_required
