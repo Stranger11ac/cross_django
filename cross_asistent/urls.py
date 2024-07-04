@@ -1,10 +1,10 @@
 from django.urls import path
-from . import views
+from . import views, elements
 
 urlpatterns = [
     # Páginas de inicio
     path('', views.index, name='home'),
-    path('chatbot/', views.chatbot, name='chatbot'),
+    path('chatbot/', elements.chatbot, name='chatbot'),
     path('blog-eventos/', views.blog, name='blog'),
     path('blog/<int:Articulos_id>/', views.mostrar_blog, name='mostrar_blog'),
     path('mapa/', views.map, name='map'),

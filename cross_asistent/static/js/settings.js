@@ -235,9 +235,27 @@ function chatSubmit(e) {
         .then((data) => {
             if (data.success) {
                 console.table(data.answer);
+
+                const dataImage = data.answer.imagenes
+                const dataRedirigir = data.answer.redirigir
+
+                console.log("img:"+ typeof dataImage)
+                console.log("url:" + typeof dataRedirigir)
+
+                let viewImage = '';
+                let btnRedir = '';
+
+                if(dataImage != null){
+                    viewImage = `<br><br> <img src="${dataImage}" width="100">`
+                }
+                
+                if (dataRedirigir != null){
+                    btnRedir = `<br><br> <a class="btn btn_secondary mb-2 btn-block" target="_blank" rel="noopener noreferrer" href="${dataRedirigir}" >Ver Mas <i class="fa-solid fa-arrow-up-right-from-square ms-1"></i></a>`
+                } 
                 const htmlBlock = `
                 <div class="btn_detail chat_msg asistent_response" data-tokeid="${valID}">
-                    <span>${data.answer.informacion}</span>
+                    <span>${data.answer.informacion}  ${btnRedir} </span>
+                    <span>${viewImage} </span>
                 </div>
             `;
 

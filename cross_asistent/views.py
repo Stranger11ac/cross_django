@@ -8,7 +8,7 @@ from django.views.decorators.cache import never_cache
 from django.template.loader import render_to_string
 from django.http import JsonResponse, HttpResponse
 from .forms import BannersForm, CSVUploadForm, ProfileImageForm
-from django.db import IntegrityError, models
+from django.db import  models
 from django.contrib.auth.models import User
 from django.core.mail import send_mail
 from django.utils import timezone
@@ -17,10 +17,8 @@ from django.urls import reverse
 from django.apps import apps
 
 from django.core.files.storage import default_storage
-from django.db.models import Q
 from . import models, elements
 
-import openai
 import json
 import csv
 
@@ -46,130 +44,6 @@ def index(request):
         'active_page': 'inicio'
     })
 
-def chatgpt(question, instructions):
-    client = openai.OpenAI(api_key=settings.OPENAI_API_KEY)
-    response = client.chat.completions.create(
-        model="gpt-3.5-turbo",
-        messages=[
-            {"role": "system", "content": instructions},
-            {"role": "user", "content": question},
-        ],
-        temperature=0,
-    )
-    print(f"Prompt:{response.usage.prompt_tokens}")
-    print(f"Compl:{response.usage.completion_tokens}")
-    print(f"Total:{response.usage.total_tokens}")
-    print('')
-    return response.choices[0].message.content
-
-def process_question(pregunta):
-    # Procesar la pregunta usando spaCy
-    doc = elements.nlp(pregunta.lower().strip())
-    
-    # Filtrar stopwords y lematizar los tokens
-    tokens = [token.lemma_ for token in doc if not token.is_stop and token.is_alpha]
-    pregunta_procesada = " ".join(tokens)
-    
-    print(f"Pregunta procesada: {pregunta_procesada}")
-    return pregunta_procesada
-
-def extract_entities(pregunta):
-    # Extraer entidades nombradas
-    doc = elements.nlp(pregunta)
-    entities = [ent.text for ent in doc.ents]
-    print(f"Entidades nombradas: {entities}")
-    return entities
-
-def create_query(palabras_clave, entities):
-    # Crear una consulta más precisa utilizando palabras clave y entidades
-    query = Q()
-    for palabra in palabras_clave:
-        query |= Q(titulo__icontains=palabra) | Q(informacion__icontains=palabra)
-    for entidad in entities:
-        query |= Q(titulo__icontains=entidad) | Q(informacion__icontains=entidad)
-    return query
-
-def score_result(result, palabras_clave, entities):
-    score = 0
-    for palabra in palabras_clave:
-        if palabra in result.titulo.lower():
-            score += 3  # Peso mayor a coincidencias en el título
-        if palabra in result.informacion.lower():
-            score += 2
-    for entidad in entities:
-        if entidad in result.titulo.lower():
-            score += 4  # Peso mayor a coincidencias de entidades en el título
-        if entidad in result.informacion.lower():
-            score += 3
-    return score
-
-def chatbot(request):
-    if request.method == 'POST':
-        try:
-            data = json.loads(request.body)
-            question = data.get('question', '').lower().strip()
-            
-            # Verificar respuestas simples predefinidas
-            for clave, respuesta in elements.respuestas_simples.items():
-                if clave in question:
-                    return JsonResponse({'success': True, 'answer': {'informacion': respuesta}})
-
-            # Procesar pregunta y extraer entidades
-            pregunta_procesada = process_question(question)
-            entidades = extract_entities(question)
-            
-            # Crear consulta con palabras clave y entidades
-            palabras_clave = pregunta_procesada.split()
-            query = create_query(palabras_clave, entidades)
-            
-            # Buscar coincidencias en la base de datos
-            coincidencias = models.Database.objects.filter(query)
-            
-            # Evaluar y seleccionar la mejor coincidencia
-            mejor_coincidencia = None
-            mejor_puntuacion = 0
-            
-            for coincidencia in coincidencias:
-                puntuacion = score_result(coincidencia, palabras_clave, entidades)
-                if puntuacion > mejor_puntuacion:
-                    mejor_puntuacion = puntuacion
-                    mejor_coincidencia = coincidencia
-
-            print(f"Mejor coincidencia: {mejor_coincidencia}")
-            print(f"Mejor puntuación: {mejor_puntuacion}")
-            if mejor_coincidencia:
-                # Utilizar la información de la mejor coincidencia encontrada
-                informacion = mejor_coincidencia.informacion
-                system_prompt = f"Utiliza emojis sutilmente. Eres un asistente de la Universidad Tecnologica de Coahuila. Responde la pregunta con esta información encontrada: {informacion}"
-                answer = chatgpt(question, system_prompt)
-                print(f"Informacion: {informacion}")
-
-                respuesta = {
-                    "titulo": mejor_coincidencia.titulo,
-                    "informacion": answer,
-                    "redirigir": mejor_coincidencia.redirigir,
-                    "documentos": mejor_coincidencia.documentos.url if mejor_coincidencia.documentos else None,
-                    "imagenes": mejor_coincidencia.imagenes.url if mejor_coincidencia.imagenes else None
-                }
-                
-                return JsonResponse({'success': True, 'answer': respuesta})
-            else:
-                # Si no se encuentran coincidencias en la base de datos
-                if len(palabras_clave) == 0 and len(entidades) == 0:
-                    respuesta = {
-                        "informacion": "¿Podrías ser más específico en tu pregunta? No logré entender completamente lo que necesitas."
-                    }
-                    return JsonResponse({'success': True, 'answer': respuesta})
-                else:
-                    respuesta = {
-                        "informacion": "Lo siento, no encontré información relevante."
-                    }
-                    return JsonResponse({'success': True, 'answer': respuesta})
-        
-        except json.JSONDecodeError:
-            return JsonResponse({'success': False, 'message': 'Error en el formato del JSON.'})
-
-    return JsonResponse({'success': False, 'message': 'Método no permitido.'})
 
 def faq(request):
     if not request.user.is_staff:
