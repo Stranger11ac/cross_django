@@ -1,5 +1,5 @@
 from django.db import models
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, AbstractUser
 from django.conf import settings
 import os
 
@@ -89,3 +89,14 @@ class ImagenArticulo(models.Model):
             if os.path.isfile(image_path):
                 os.remove(image_path)
         super(Banners, self).delete(*args, **kwargs)
+
+class CustomUser(AbstractUser):
+    profile_image = models.ImageField(upload_to='profile_images', blank=True, null=True)
+    is_online = models.BooleanField(default=False)
+
+    # Add related_name to groups and user_permissions
+    groups = models.ManyToManyField('auth.Group', related_name='customuser_set')  # related_name for groups
+    user_permissions = models.ManyToManyField('auth.Permission', related_name='customuser_set')  # related_name for permissions
+
+    class Meta:
+        permissions = (("can_view_profile", "Can view profile"),)

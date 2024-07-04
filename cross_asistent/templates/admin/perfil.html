@@ -1,5 +1,5 @@
 {% extends 'base/widget.html' %}
-{% block title %}{{user.username}} | Tu perfil | Administración{% endblock %}
+{% block title %}{{ user.username }} | Tu perfil | Administración{% endblock %}
 {% block link_home %}{% url 'vista_admin' %}{% endblock %}
 {% block link_default %}
 {% include 'base/widget_links-admin.html' %}
@@ -10,27 +10,37 @@
     <h2 class="text-center">Tu perfil <i class="fa-solid fa-circle-user ms-1"></i></h2>
     <hr class="hr_divisor mb-4">
     <div class="card_perfil">
-        <div class="card__img_perfil" style="--color-bg1:#efefef; --color-bg2:#3591d7; --var-img-perfil:url(/static/img/Default_image.webp);">
+        <div class="card__img_perfil" style="--color-bg1:#efefef; --color-bg2:#3591d7;">
             <div class="card__avatar_perfil">
-                <img src="/static/img/Default_image.webp" alt="Sunset" />
+                {% if perfil_usuario.profile_image %}
+                    <img src="{{ perfil_usuario.profile_image.url }}" alt="Profile Image" />
+                {% else %}
+                    <img src="/static/img/Default_image.webp" alt="Default Image" />
+                {% endif %}
             </div>
         </div>
 
         <div class="card__content_perfil">
-            <h3>{{ user.username }}</h3>
+            <h3>{{ perfil_usuario.username }}</h3>
             <div class="mt-4">
-                <p class="mb-4"><strong>Nombre:</strong> <br> {{ user.first_name }} {{ user.last_name }}</p>
+                <p class="mb-4"><strong>Nombre:</strong> <br> {{ perfil_usuario.first_name }} {{ perfil_usuario.last_name }}</p>
                 <div class="flex-between-wrap mb-3">
                     <strong>Email:</strong>
-                    <div class="flex-fill text-end">{{ user.email }}</div>
+                    <div class="flex-fill text-end">{{ perfil_usuario.email }}</div>
                 </div>
                 <div class="flex-between-wrap">
                     <strong>Usuario desde:</strong>
-                    <div class="flex-fill text-end">{{ user.date_joined.date }}</div>
+                    <div class="flex-fill text-end">{{ perfil_usuario.date_joined.date }}</div>
                 </div>
             </div>
         </div>
     </div>
+
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-primary">Subir imagen</button>
+    </form>
 </main>
 
 {% endblock %}

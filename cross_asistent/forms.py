@@ -1,6 +1,6 @@
 from django import forms
 from django.forms import ModelForm
-from .models import Database, Categorias, Banners
+from .models import Database, Categorias, Banners, CustomUser
 
 class PreguntaForm(forms.ModelForm):
     class Meta:
@@ -21,3 +21,8 @@ class BannersForm(forms.ModelForm):
 
 class CSVUploadForm(forms.Form):
     file = forms.FileField()
+
+class ProfileImageForm(forms.ModelForm):
+    class Meta:
+        model = CustomUser
+        fields = ['profile_image']

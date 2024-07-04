@@ -7,7 +7,7 @@ from django.utils.encoding import force_bytes, force_str
 from django.views.decorators.cache import never_cache
 from django.template.loader import render_to_string
 from django.http import JsonResponse, HttpResponse
-from .forms import BannersForm, CSVUploadForm
+from .forms import BannersForm, CSVUploadForm, ProfileImageForm
 from django.db import IntegrityError, models
 from django.contrib.auth.models import User
 from django.core.mail import send_mail
@@ -701,7 +701,18 @@ def delete_banner(request, banner_id):
 @login_required
 @never_cache
 def ver_perfil(request):
-    return render(request, 'admin/perfil.html')
+    # Obtener el perfil del usuario actual
+    perfil_usuario = request.user
+
+    if request.method == 'POST':
+        form = ProfileImageForm(request.POST, request.FILES, instance=perfil_usuario)
+        if form.is_valid():
+            form.save()
+            return redirect('perfil')
+    else:
+        form = ProfileImageForm(instance=perfil_usuario)
+
+    return render(request, 'admin/perfil.html', {'perfil_usuario': perfil_usuario, 'form': form})
 
 def password_reset_request(request):
     if request.method == 'POST' and request.headers.get('X-Requested-With') == 'XMLHttpRequest':
