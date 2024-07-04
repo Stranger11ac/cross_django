@@ -1,3 +1,19 @@
+from django.contrib.auth.models import User
+from django.db import IntegrityError
+import spacy
+
+# ChatBot ---------------------------------------------------
+# Cargar el modelo de lenguaje español
+# analizar texto en aplicaciones de procesamiento de lenguaje natural.
+nlp = spacy.load("es_core_news_sm")
+# Diccionario de respuestas simples predefinidas
+respuestas_simples = {
+    "ubicacion": "Nos encontramos en la Av.Industria Metalúrgica #2001 Parque Industrial Ramos Arizpe Coahuila C.P.25900.",
+    "contacto": "Puedes contactarnos al teléfono (844)288-38-00 ☎️",
+}
+
+
+# Mapa ---------------------------------------------------
 edificios = [
         {
             'edifcolor': 'red','edifill': 'red',
@@ -160,3 +176,36 @@ edificios = [
             'centro': [25.55842, -100.93879]
         },
     ]
+
+
+
+# Crear nuevo usuario Funcion ---------------------------------------------
+def create_newuser(first_name, last_name, username, email, password1, password2=None, is_staff=False, is_active=False):
+    if not (password1 and username and email):
+        return {'success': False, 'message': 'Datos incompletos 😅'}
+    if password2 is not None and password1 != password2:
+        return {'success': False, 'message': 'Las contraseñas no coinciden 😬'}
+    if User.objects.filter(username=username).exists():
+        return {'success': False, 'message': f'El usuario <u>{username}</u> ya existe 😯'}
+    if User.objects.filter(email=email).exists():
+        return {'success': False, 'message': f'El correo electrónico <u>{email}</u> ya está registrado 😯'}
+
+    try:
+        new_user = User.objects.create_user(
+            first_name=first_name,
+            last_name=last_name,
+            username=username,
+            email=email,
+            password=password1,
+            is_staff=is_staff,
+            is_active=is_active,
+        )
+        new_user.save()
+        aviso=''
+        if password2 is not None:
+            aviso = '<br>Tu cuenta está <u>INACTIVA</u>'
+        return {'success': True, 'message': f'Usuario creado exitosamente 🥳😬🎈 {aviso}'}
+    except IntegrityError:
+        return {'success': False, 'message': 'Ocurrió un error durante el registro. Intente nuevamente.'}
+
+

@@ -17,11 +17,9 @@ from django.urls import reverse
 from django.apps import apps
 
 from django.core.files.storage import default_storage
-from .buildings import edificios
 from django.db.models import Q
-from . import models
+from . import models, elements
 
-import spacy
 import openai
 import json
 import csv
@@ -64,19 +62,9 @@ def chatgpt(question, instructions):
     print('')
     return response.choices[0].message.content
 
-
-# Cargar el modelo de lenguaje español, analizar texto en aplicaciones de procesamiento de lenguaje natural.
-nlp = spacy.load("es_core_news_sm")
-
-# Diccionario de respuestas simples predefinidas
-respuestas_simples = {
-    "ubicacion": "Nos encontramos en la Av.Industria Metalúrgica #2001 Parque Industrial Ramos Arizpe Coahuila C.P.25900.",
-    "contacto": "Puedes contactarnos al teléfono (844)288-38-00 ☎️",
-}
-
 def process_question(pregunta):
     # Procesar la pregunta usando spaCy
-    doc = nlp(pregunta.lower().strip())
+    doc = elements.nlp(pregunta.lower().strip())
     
     # Filtrar stopwords y lematizar los tokens
     tokens = [token.lemma_ for token in doc if not token.is_stop and token.is_alpha]
@@ -87,7 +75,7 @@ def process_question(pregunta):
 
 def extract_entities(pregunta):
     # Extraer entidades nombradas
-    doc = nlp(pregunta)
+    doc = elements.nlp(pregunta)
     entities = [ent.text for ent in doc.ents]
     print(f"Entidades nombradas: {entities}")
     return entities
@@ -122,7 +110,7 @@ def chatbot(request):
             question = data.get('question', '').lower().strip()
             
             # Verificar respuestas simples predefinidas
-            for clave, respuesta in respuestas_simples.items():
+            for clave, respuesta in elements.respuestas_simples.items():
                 if clave in question:
                     return JsonResponse({'success': True, 'answer': {'informacion': respuesta}})
 
@@ -233,7 +221,7 @@ def map(request):
     if not request.user.is_staff:
         logout(request)
     return render(request, 'mapa.html', {
-        'edificios': edificios,
+        'edificios': elements.edificios,
         'active_page': 'map'
     })
 
@@ -245,38 +233,10 @@ def about(request):
     })
 
 # Administracion ----------------------------------------------------------
-def create_user(first_name, last_name, username, email, password1, password2=None, is_staff=False, is_active=False):
-    if not (password1 and username and email):
-        return {'success': False, 'message': 'Datos incompletos 😅'}
-    if password2 is not None and password1 != password2:
-        return {'success': False, 'message': 'Las contraseñas no coinciden 😬'}
-    if User.objects.filter(username=username).exists():
-        return {'success': False, 'message': f'El usuario <u>{username}</u> ya existe 😯'}
-    if User.objects.filter(email=email).exists():
-        return {'success': False, 'message': f'El correo electrónico <u>{email}</u> ya está registrado 😯'}
-
-    try:
-        new_user = User.objects.create_user(
-            first_name=first_name,
-            last_name=last_name,
-            username=username,
-            email=email,
-            password=password1,
-            is_staff=is_staff,
-            is_active=is_active,
-        )
-        new_user.save()
-        aviso=''
-        if password2 is not None:
-            aviso = '<br>Tu cuenta está <u>INACTIVA</u>'
-        return {'success': True, 'message': f'Usuario creado exitosamente 🥳😬🎈 {aviso}'}
-    except IntegrityError:
-        return {'success': False, 'message': 'Ocurrió un error durante el registro. Intente nuevamente.'}
-
 @never_cache
 def singuppage(request):
     if request.method == 'POST' and request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-        response = create_user(
+        response = elements.create_newuser(
             first_name=request.POST.get('first_name'),
             last_name=request.POST.get('last_name'),
             username=request.POST.get('username'),
@@ -416,7 +376,7 @@ def vista_programador(request):
     }
     
     if request.method == 'POST':
-        response = create_user(
+        response = elements.create_newuser(
             first_name=request.POST.get('first_name'),
             last_name=request.POST.get('last_name'),
             username=request.POST.get('username'),

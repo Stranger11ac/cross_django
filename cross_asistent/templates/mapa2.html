@@ -1,16 +1,18 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <meta charset="utf-8" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Mapa con Polígonos y Sidebar</title>
-  <link href="https://api.mapbox.com/mapbox-gl-js/v2.6.1/mapbox-gl.css" rel="stylesheet" />
-  <link href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-directions/v4.1.1/mapbox-gl-directions.css" rel="stylesheet" />
-  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://api.mapbox.com/mapbox-gl-js/v2.6.1/mapbox-gl.css" rel="stylesheet">
+  <link href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-directions/v4.1.1/mapbox-gl-directions.css" rel="stylesheet">
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
   <style>
     body {
       margin: 0;
       padding: 0;
       display: flex;
+      font-family: 'Arial', sans-serif;
     }
     #map {
       flex: 1;
@@ -18,28 +20,62 @@
     }
     #sidebar {
       width: 300px;
-      background-color: #f8f9fa;
+      background-color: #ffffff;
       border-right: 1px solid #ccc;
       overflow-y: auto;
-      display: none; /* Ocultar inicialmente */
+      display: none;
       padding: 20px;
       position: fixed;
       left: 0;
       top: 0;
       bottom: 0;
       z-index: 1000;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     }
     .feature-info {
       margin-bottom: 20px;
+      background-color: #f2f2f2;
+      padding: 10px;
+      border-radius: 5px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     }
     .feature-info h5 {
       margin-bottom: 10px;
+      color: #333333;
+    }
+    .feature-info p {
+      color: #666666;
     }
     .close-btn {
       position: absolute;
       top: 10px;
       right: 10px;
       cursor: pointer;
+      color: #aaaaaa;
+      font-size: 20px;
+    }
+    .close-btn:hover {
+      color: #555555;
+    }
+    #controls {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background-color: rgba(255, 255, 255, 0.8);
+      padding: 10px;
+      border-radius: 5px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+    #controls select, #controls button {
+      margin-bottom: 10px;
+    }
+    #controls button {
+      background-color: #007bff;
+      color: #ffffff;
+      border: none;
+    }
+    #controls button:hover {
+      background-color: #0056b3;
     }
   </style>
 </head>
@@ -50,18 +86,16 @@
   <div id="map"></div>
 
  <!-- Controles para seleccionar origen y destino -->
-  <div class="mapboxgl-ctrl mapboxgl-ctrl-top-right" style="z-index: 1;">
-    <div id="controls">
-      <select id="origen" class="form-control mb-2">
-        <option value="">Selecciona origen</option>
-      </select>
-      <select id="destino" class="form-control mb-2">
-        <option value="">Selecciona destino</option>
-      </select>
-      <button id="calcularRuta" class="btn btn-primary btn-block">
-        Calcular Ruta
-      </button>
-    </div>
+  <div id="controls">
+    <select id="origen" class="form-control mb-2">
+      <option value="">Selecciona origen</option>
+    </select>
+    <select id="destino" class="form-control mb-2">
+      <option value="">Selecciona destino</option>
+    </select>
+    <button id="calcularRuta" class="btn btn-primary btn-block">
+      Calcular Ruta
+    </button>
   </div>
 
   <script src="https://api.mapbox.com/mapbox-gl-js/v2.6.1/mapbox-gl.js"></script>
@@ -193,7 +227,7 @@ const geojson = {
             [-100.93623, 25.55790],
             [-100.93646, 25.55760],
             [-100.93676, 25.55780],
-            [-100.93653, 25.55810]
+            
           ]
         ]
       }
@@ -211,11 +245,11 @@ const geojson = {
         type: 'Polygon',
         coordinates: [
           [
-            [-100.9359, 25.55767],
+            [-100.93595, 25.55767],
             [-100.93559, 25.55748],
             [-100.93581, 25.55719],
             [-100.93612, 25.55741],
-            [-100.9359, 25.55767]
+            [-100.93595, 25.55767],
           ]
         ]
       }
@@ -304,35 +338,10 @@ const directions = new MapboxDirections({
   profile: 'mapbox/walking',
   controls: {
     inputs: false,
-    instructions: true,
+    instructions: false, // Ocultar instrucciones
     profileSwitcher: false
   },
-  interactive: false,
-  boundingBox: [
-    [-100.9736, 25.5142],
-    [-100.9117, 25.5735]
-  ],
-  // Restringir la ruta dentro del límite de la universidad
-  onRoute: function (route) {
-    // Filtrar los pasos de la ruta para mantenerse dentro del límite
-    const filteredRoute = {
-      ...route,
-      legs: route.legs.map(leg => ({
-        ...leg,
-        steps: leg.steps.filter(step => {
-          const coordinates = step.geometry.coordinates;
-          return coordinates.every(coord => {
-            return mapboxgl.MercatorCoordinate.fromLngLat(coord).within([
-              [-100.9736, 25.5142],
-              [-100.9117, 25.5735]
-            ]);
-          });
-        })
-      }))
-    };
-
-    return filteredRoute;
-  }
+  interactive: false
 });
 
 // Calcular y mostrar la ruta más corta
