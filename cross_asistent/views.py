@@ -68,12 +68,6 @@ def chatgpt(question, instructions):
 # Cargar el modelo de lenguaje español, analizar texto en aplicaciones de procesamiento de lenguaje natural.
 nlp = spacy.load("es_core_news_sm")
 
-# Diccionario de respuestas simples predefinidas
-respuestas_simples = {
-    "ubicacion": "Nos encontramos en la Av.Industria Metalúrgica #2001 Parque Industrial Ramos Arizpe Coahuila C.P.25900.",
-    "contacto": "Puedes contactarnos al teléfono (844)288-38-00 ☎️",
-}
-
 def process_question(pregunta):
     # Procesar la pregunta usando spaCy
     doc = nlp(pregunta.lower().strip())
