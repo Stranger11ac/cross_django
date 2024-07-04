@@ -9,21 +9,18 @@
 
 <main class="container container-fluid pb-5 {% if not user.is_authenticated %}main_container{% endif %}">
 
-    <div class="p-5 text-center">
+    <div class="my-5 text-center">
         <h1 class="mb-3">Modificar Mapa <i class="fa-solid fa-map-location-dot ms-1"></i></h1>
         <hr class="hr_divisor" />
     </div>
 
-
-    <!-- consulta_mapa.html -->
-    <div class="card mb-5">
+    <div class="card mb-4 mx-auto col-12 col-md-8">
         <div class="card-body">
-            <h2>Información del Mapa</h2>
             <form method="post" id="filtroEdificio" action="{% url 'consultaMap' %}">
                 {% csrf_token %}
-                <label for="selectArticulo">Selecciona un Artículo:</label>
+                <label for="selectArticulo">Selecciona Edificio:</label>
                 <select id="selectArticulo" name="selectArticulo" class="form-select" data-second-action="{% url 'obtenerEdificio' %}">
-                    <option disabled selected hidden> Selecciona un edificio...</option>
+                    <option disabled selected hidden>Edificio...</option>
                     {% for articulo in articulos_mapa %}
                     <option value="{{ articulo.id }}">{{ articulo.titulo }}</option>
                     {% endfor %}
@@ -32,7 +29,45 @@
         </div>
     </div>
 
-    <h2>Crear o Editar Información del Edificio</h2>
+    <div class="card mb-4 mx-auto col-12 col-md-8">
+        <div class="card-body">
+            <button type="button" class="btn btn_detail btn-block" data-mdb-ripple-init data-mdb-modal-init data-mdb-target="#modal-crerarEdif">Crear nuevo
+                edificio</button>
+        </div>
+
+        <!-- Modal -->
+        <div class="modal fade" id="modal-crerarEdif" tabindex="-1" aria-labelledby="modal-crerarEdifLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="modal-crerarEdifLabel">Crear nuevo edificio</h5>
+                        <button type="button" class="btn-close" data-mdb-ripple-init data-mdb-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        Para registrar un nuevo edificio para el mapa primero se debe registrar en la base de datos, con ello el chatbot tendra informacion
+                        sobre dicho edificio. Realiza lo siguiente:
+                        <br>
+                        <ol class="list-group list-group-light list-group-numbered">
+                            <li class="list-group-item">Registra el Nuevo edificio en la base de datos</li>
+                            <ol class="list-group list-group-light list-group-numbered ms-4">
+                                <li class="list-group-item">En el titulo registra el nombre del edificio. (eje. 'Edificio docente 2')</li>
+                                <li class="list-group-item">Escribe una descripcion extensa y detallada del edificio, su funcionalidad y proposito</li>
+                                <li class="list-group-item">Sube una imagen de la fachada del edificio (obligatorio)</li>
+                              </ol>
+                            <li class="list-group-item">Regresa</li>
+                            <li class="list-group-item">A list item</li>
+                        </ol>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-mdb-ripple-init data-mdb-dismiss="modal">Cancelar</button>
+                        <a href="" class="btn btn-primary" data-mdb-ripple-init>Crear</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- <h2>Crear o Editar Información del Edificio</h2>
     <form method="post" id="edificioForm" action="{% url 'crearEditar' %}">
         {% csrf_token %}
 
@@ -64,7 +99,7 @@
 
         <br>
         <button type="submit" class="btn btn-primary">Guardar</button>
-    </form>
+    </form> -->
 
 </main>
 {% endblock %}

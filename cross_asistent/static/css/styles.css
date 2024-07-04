@@ -102,6 +102,9 @@ html {
     transform: rotate(180deg);
 }
 
+.btn {transition: transform 0.1s ease;}
+.btn:active {transform: scale(0.95);}
+
 /*######### Generales #########*/
 body {
     min-height: 100vh;
