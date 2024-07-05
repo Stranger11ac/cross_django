@@ -393,7 +393,7 @@ $("#cancelNewEdif").on("click", function () {
     
     $("#mapTitle").text('');
     $("#formTitle").val('');
-    $("#main_Tiny").val('');
+    $("#mainTiny").setContent('');
 });
 
 function obtenerDatosEdificio(infoid, urlConsulta) {
@@ -410,7 +410,7 @@ function obtenerDatosEdificio(infoid, urlConsulta) {
 
                 $("#mapTitle").text(data.titulo);
                 $("#formTitle").val(data.titulo);
-                $("#main_Tiny").val(data.informacion);
+                tinymce.get("mainTiny").setContent(data.informacion);
 
                 const oldImgUrl = data.imagen_url;
                 let newImgUrl;

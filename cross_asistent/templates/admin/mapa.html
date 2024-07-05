@@ -44,7 +44,7 @@
             <section id="formMap">
                 <form method="POST" id="edificioForm" action="{% url 'regEdificio' %}" data-submit-form autocomplete="off">
                     {% csrf_token %}
-                    <input type="checkbox" name="isNew" id="isNewEdif" class="dnone" checked>
+                    <input type="checkbox" name="isNew" id="isNewEdif" class="d-none" checked>
 
                     <div id="groupTitleMap">
                         <h5 class="text-center mb-4">Crear nuevo Edificio</h5>
@@ -55,7 +55,7 @@
                     </div>
 
                     <div class="mb-5">
-                        <textarea id="mainTiny" class="form-control" name="contenidoWord"
+                        <textarea id="textTiny" class="form-control" name="contenidoWord"
                             placeholder="Escribe a detalle sobre el edificio, puedes hacer listas, encabezados, parrafos y tablas"></textarea>
                     </div>
 
@@ -63,7 +63,7 @@
                     <div class="mb-4" data-mdb-input-init>
                         <label for="color_picker" class="form-label">Color:</label>
                         <div class="d-flex gap_15 align-items-center">
-                            <input type="color" class="form-control form-control-color p-0" id="color_picker" value="#563d7c" title="Choose your color">
+                            <input type="color" class="form-control form-control-color p-1" id="color_picker" value="#563d7c" title="Choose your color">
                             <p class="m-0">valor <br>del color: <span id="colorVal">#563d7c</span></p>
                         </div>
                     </div>

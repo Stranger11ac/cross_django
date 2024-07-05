@@ -8,7 +8,7 @@ from django.views.decorators.cache import never_cache
 from django.template.loader import render_to_string
 from django.http import JsonResponse, HttpResponse
 from .forms import BannersForm, CSVUploadForm, ProfileImageForm
-from django.db import  models
+from django.db import models, transaction
 from django.contrib.auth.models import User
 from django.core.mail import send_mail
 from django.utils import timezone
@@ -423,72 +423,76 @@ def obtenerEdificio(request):
 
 @login_required
 def regEdificioMapa(request):
-    if request.method == 'POST':
-        isNewPost = request.POST.get('isNew')
-        tituloPost = request.POST.get('titulo')
-        colorPost = request.POST.get('color')
-        p1Post = request.POST.get('p1_polygons')
-        p2Post = request.POST.get('p2_polygons')
-        p3Post = request.POST.get('p3_polygons')
-        p4Post = request.POST.get('p4_polygons')
-        informacionText = request.POST.get('textTiny')
-        informacionPost = request.POST.get('contenidoWord')
-        door_cordsPost = request.POST.get('door_cords')
-        imagenPost = request.FILES.get('imagenes')
-        
-        
-        
-        if isNewPost == None:
-            if imagenPost:
-                mapIndb = get_object_or_404(models.Database, titulo=tituloPost)
-                mapIndb.imagenes = imagenPost
-                mapIndb.save()
-            
+    if request.method != 'POST':
+        return JsonResponse({'error': 'Metodo no valido'}, status=400)
+
+    isNewPost = request.POST.get('isNew')
+    tituloPost = request.POST.get('titulo')
+    colorPost = request.POST.get('color')
+    p1Post = request.POST.get('p1_polygons')
+    p2Post = request.POST.get('p2_polygons')
+    p3Post = request.POST.get('p3_polygons')
+    p4Post = request.POST.get('p4_polygons')
+    informacionText = request.POST.get('textTiny')
+    informacionPost = request.POST.get('contenidoWord')
+    door_cordsPost = request.POST.get('door_cords')
+    imagenPost = request.FILES.get('imagenes')
+
+    with transaction.atomic():
+        if isNewPost is None:
+            # Update existing Mapa
             if models.Mapa.objects.filter(titulo=tituloPost).exists():
                 edificio = get_object_or_404(models.Mapa, titulo=tituloPost)
-                edificio.titulo = tituloPost
                 edificio.color = colorPost
                 edificio.p1_polygons = p1Post
                 edificio.p2_polygons = p2Post
                 edificio.p3_polygons = p3Post
                 edificio.p4_polygons = p4Post
                 edificio.door_cords = door_cordsPost
-                edificio.informacion = informacionPost                    
+                edificio.informacion = informacionPost
                 edificio.save()
-                return JsonResponse({'success': True, 'message': f'Se Actualizo el "{tituloPost}", los cambios se reflejaran en el mapa 🧐😊🎈'}, status=200)
-            
-            models.Mapa.objects.create(
-                titulo=tituloPost,
-                color=colorPost,
-                p1_polygons=p1Post,
-                p2_polygons=p2Post,
-                p3_polygons=p3Post,
-                p4_polygons=p4Post,
-                door_cords=door_cordsPost,
-                informacion=informacionPost,
-            )
-                
-            return JsonResponse({'success': True, 'message': f'El "{tituloPost}" se creo exitosamente en el Mapa 🎉🎈🥳'}, status=200)
-        else:
-            models.Mapa.objects.create(
-                titulo=tituloPost,
-                color=colorPost,
-                p1_polygons=p1Post,
-                p2_polygons=p2Post,
-                p3_polygons=p3Post,
-                p4_polygons=p4Post,
-                door_cords=door_cordsPost,
-                informacion=informacionPost,
-            )
-            
-            models.Database.objects.create(
-                categoria=models.Categorias.objects.get(categoria="Mapa"),
-                titulo=tituloPost,
-                informacion=informacionText,
-                imagenes=imagenPost
-            )
-            return JsonResponse({'success': True, 'message': 'Se creo un nuevo edificio en el mapa y en la base de datos de forma exitosa 🎉🎉🎉'}, status=200)
-    return JsonResponse({'error': 'Metodo no valido'}, status=400)
+                success_message = f'Se Actualizo el "{tituloPost}", los cambios se reflejaran en el mapa 🧐😊🎈'
+            else:
+                models.Mapa.objects.create(
+                    titulo=tituloPost,
+                    color=colorPost,
+                    p1_polygons=p1Post,
+                    p2_polygons=p2Post,
+                    p3_polygons=p3Post,
+                    p4_polygons=p4Post,
+                    door_cords=door_cordsPost,
+                    informacion=informacionPost,
+                )
+                success_message = f'El "{tituloPost}" se creo exitosamente en el Mapa 🎉🎈🥳'
+
+            if imagenPost:
+                mapIndb = get_object_or_404(models.Database, titulo=tituloPost)
+                mapIndb.imagenes = imagenPost
+                mapIndb.save()
+
+            return JsonResponse({'success': True, 'message': success_message}, status=200)
+
+        # Create new Mapa and Database
+        models.Mapa.objects.create(
+            titulo=tituloPost,
+            color=colorPost,
+            p1_polygons=p1Post,
+            p2_polygons=p2Post,
+            p3_polygons=p3Post,
+            p4_polygons=p4Post,
+            door_cords=door_cordsPost,
+            informacion=informacionPost,
+        )
+        
+        models.Database.objects.create(
+            categoria=models.Categorias.objects.get(categoria="Mapa"),
+            titulo=tituloPost,
+            informacion=informacionText,
+            imagenes=imagenPost
+        )
+
+        return JsonResponse({'success': True, 'message': 'Se creo un nuevo edificio en el mapa y en la base de datos de forma exitosa 🎉🎉🎉'}, status=200)
+
 
 # subir banners###########################
 @login_required

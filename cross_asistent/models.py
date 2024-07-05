@@ -16,8 +16,15 @@ class Database(models.Model):
     redirigir = models.URLField(blank=True, null=True)
     frecuencia = models.IntegerField(default=0)
     documentos = models.FileField(upload_to='cross_asistent/static/files/documentos/', blank=True, null=True)
-    imagenes =  models.ImageField(upload_to='cross_asistent/static/files/imagenes/', blank=True, null=True)
+    imagenes = models.ImageField(upload_to='cross_asistent/static/files/imagenes/', blank=True, null=True)
     fecha_modificacion = models.DateTimeField(auto_now=True)
+
+    def save(self, *args, **kwargs):
+        if self.categoria and self.categoria.categoria == 'Mapa':  # Ajusta esto según el campo correcto en tu modelo Categorias
+            self.imagenes.upload_to = 'cross_asistent/static/files/imagenes/mapa/'
+        else:
+            self.imagenes.upload_to = 'cross_asistent/static/files/imagenes/'
+        super(Database, self).save(*args, **kwargs)
     
     def __str__(self):
         return self.titulo
