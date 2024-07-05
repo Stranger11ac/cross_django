@@ -16,13 +16,13 @@
 
     <div class="card mb-4 mx-auto col-12 col-md-8">
         <div class="card-body">
+            <h5 class="text-center mb-3">Selecciona un Edificio para Editar su Info<span class="d-none d-md-inline">rmacion</span> :</h5>
             <form method="post" id="filtroEdificio" action="{% url 'consultaMap' %}">
                 {% csrf_token %}
-                <label for="selectArticulo">Selecciona Edificio:</label>
-                <select id="selectArticulo" name="selectArticulo" class="form-select" data-second-action="{% url 'obtenerEdificio' %}">
+                <select id="selectEdif" name="selectEdif" class="form-select" data-second-action="{% url 'obtenerEdificio' %}">
                     <option disabled selected hidden>Edificio...</option>
-                    {% for articulo in articulos_mapa %}
-                    <option value="{{ articulo.id }}">{{ articulo.titulo }}</option>
+                    {% for edificio in map_inDB %}
+                    <option value="{{ edificio.id }}">{{ edificio.titulo }}</option>
                     {% endfor %}
                 </select>
             </form>
@@ -30,79 +30,101 @@
     </div>
 
     <div class="card mb-4 mx-auto col-12 col-md-8">
-        <div class="card-body">
-            <button type="button" class="btn btn_detail btn-block" data-mdb-ripple-init data-mdb-modal-init data-mdb-target="#modal-crerarEdif">Crear nuevo
-                edificio</button>
-        </div>
-
-        <!-- Modal -->
-        <div class="modal fade" id="modal-crerarEdif" tabindex="-1" aria-labelledby="modal-crerarEdifLabel" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="modal-crerarEdifLabel">Crear nuevo edificio</h5>
-                        <button type="button" class="btn-close" data-mdb-ripple-init data-mdb-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        Para registrar un nuevo edificio para el mapa primero se debe registrar en la base de datos, con ello el chatbot tendra informacion
-                        sobre dicho edificio. Realiza lo siguiente:
-                        <br>
-                        <ol class="list-group list-group-light list-group-numbered">
-                            <li class="list-group-item">Registra el Nuevo edificio en la base de datos</li>
-                            <ol class="list-group list-group-light list-group-numbered ms-4">
-                                <li class="list-group-item">En el titulo registra el nombre del edificio. (eje. 'Edificio docente 2')</li>
-                                <li class="list-group-item">Escribe una descripcion extensa y detallada del edificio, su funcionalidad y proposito</li>
-                                <li class="list-group-item">Sube una imagen de la fachada del edificio (obligatorio)</li>
-                              </ol>
-                            <li class="list-group-item">Regresa</li>
-                            <li class="list-group-item">A list item</li>
-                        </ol>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-mdb-ripple-init data-mdb-dismiss="modal">Cancelar</button>
-                        <a href="" class="btn btn-primary" data-mdb-ripple-init>Crear</a>
-                    </div>
+        <!-- Imagen actual del edificio -->
+        <div class="bg-image none img_form_map">
+            <img src="{% static 'img/default_image.webp' %}" id="imagen_actual" class="img-fluid" alt="Sample" />
+            <div class="mask mask_white">
+                <div class="d-flex align-items-end h-100 px-4 px-md-3 px-xl-5">
+                    <h5 class="fw-bold mb-0">Modificar info<span class="none d-lg-inline">romacion</span> de "<span id="mapTitle">Edificio</span>"</h5>
                 </div>
             </div>
         </div>
+        <div class="card-body">
+            <!-- formulario -->
+            <section id="formMap">
+                <form method="POST" id="edificioForm" action="{% url 'regEdificio' %}" data-submit-form autocomplete="off">
+                    {% csrf_token %}
+                    <input type="checkbox" name="isNew" id="isNewEdif" class="dnone" checked>
+
+                    <div id="groupTitleMap">
+                        <h5 class="text-center mb-4">Crear nuevo Edificio</h5>
+                        <div class="form-outline mb-4" data-mdb-input-init>
+                            <input type="text" id="formTitle" name="titulo" class="form-control" required />
+                            <label class="form-label" for="formTitle">Nombre del Edificio:</label>
+                        </div>
+                    </div>
+
+                    <div class="mb-5">
+                        <textarea id="mainTiny" class="form-control" name="contenidoWord"
+                            placeholder="Escribe a detalle sobre el edificio, puedes hacer listas, encabezados, parrafos y tablas"></textarea>
+                    </div>
+
+                    <h5>Cuadro en el Mapa</h5>
+                    <div class="mb-4" data-mdb-input-init>
+                        <label for="color_picker" class="form-label">Color:</label>
+                        <div class="d-flex gap_15 align-items-center">
+                            <input type="color" class="form-control form-control-color p-0" id="color_picker" value="#563d7c" title="Choose your color">
+                            <p class="m-0">valor <br>del color: <span id="colorVal">#563d7c</span></p>
+                        </div>
+                    </div>
+                    <input id="color" name="color" value="#563d7c" class="form-control p-0" type="hidden">
+
+                    <h6 class="mb-3">Coordenadas:</h6>
+                    
+                    <div class="form-outline mb-4" data-mdb-input-init>
+                        <input type="text" id="door_cords" name="door_cords" class="form-control" />
+                        <label class="form-label" for="door_cords">Puerta:</label>
+                    </div>
+
+                    <div class="row">
+                        <div class="col">
+                            <div class="form-outline mb-4" data-mdb-input-init>
+                                <input type="text" id="p1_polygons" name="p1_polygons" class="form-control" />
+                                <label class="form-label" for="p1_polygons">Esquina 1</label>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="form-outline mb-4" data-mdb-input-init>
+                                <input type="text" id="p2_polygons" name="p2_polygons" class="form-control" />
+                                <label class="form-label" for="p2_polygons">Esquina 2</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col">
+                            <div class="form-outline mb-4" data-mdb-input-init>
+                                <input type="text" id="p3_polygons" name="p3_polygons" class="form-control" />
+                                <label class="form-label" for="p3_polygons">Esquina 3</label>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="form-outline mb-4" data-mdb-input-init>
+                                <input type="text" id="p4_polygons" name="p4_polygons" class="form-control" />
+                                <label class="form-label" for="p4_polygons">Esquina 4</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="imagenes">Foto del Edificio <span id="suggestImgText">(fachada)</span>:</label>
+                        <input type="file" id="imagenes" name="imagenes" class="form-control">
+                        <small id="suggestImg" class="form-helper text-danger none">El Edificio no tiene foto, te recomiendo subir una de la fachada
+                            🧐😬</small>
+                    </div>
+
+                    <div class="d-flex justify-content-between">
+                        <button type="button" class="btn btn-warning none" id="cancelNewEdif">Crear Nuevo</button>
+                        <button type="submit" class="btn btn_detail">Guardar</button>
+                    </div>
+                </form>
+            </section>
+        </div>
     </div>
-
-    <!-- <h2>Crear o Editar Información del Edificio</h2>
-    <form method="post" id="edificioForm" action="{% url 'crearEditar' %}">
-        {% csrf_token %}
-
-        <label for="titulo">Título:</label>
-        <input type="text" id="titulo" name="titulo" class="form-control" required>
-
-        <label for="informacion">Información:</label>
-        <textarea id="informacion" name="informacion" class="form-control" rows="5" required></textarea>
-
-        <label for="color">Color:</label>
-        <input id="color" name="color" class="form-control" readonly></input>
-        <input id="color_picker" type="color" class="form-control mt-2"></input>
-
-        <label for="informacion">Cordenada 1:</label>
-        <input id="p1_polygons" name="p1_polygons" class="form-control"></input>
-
-        <label for="informacion">Cordenada 2:</label>
-        <input id="p2_polygons" name="p2_polygons" class="form-control"></input>
-
-        <label for="informacion">Cordenada 3:</label>
-        <input id="p3_polygons" name="p3_polygons" class="form-control"></input>
-
-        <label for="informacion">Cordenada 4:</label>
-        <input id="p4_polygons" name="p4_polygons" class="form-control"></input>
-
-        <label for="imagenes">Imagen:</label>
-        <input type="file" id="imagenes" name="imagenes" class="form-control">
-        <img id="imagen_actual" src="" alt="Imagen actual" style="display:none; max-width: 200px;">
-
-        <br>
-        <button type="submit" class="btn btn-primary">Guardar</button>
-    </form> -->
 
 </main>
 {% endblock %}
 {% block scripts_end %}
 <script src="{% static 'tinymce/tinymce.min.js' %}"></script>
+<script src="{% static 'js/settings_tinymce.js' %}"></script>
 {% endblock %}

@@ -401,11 +401,13 @@ def lista_imagenes(request):
 
 
 #Consulta para informacion del Mapa##################
+@login_required
 def obtenerinfoEdif(request):
-        categoria_mapa = models.Categorias.objects.get(categoria="Mapa")
-        articulos_mapa = models.Database.objects.filter(categoria=categoria_mapa)
-        return render(request, 'admin/mapa.html', {'articulos_mapa': articulos_mapa})
+    categoria_mapa = models.Categorias.objects.get(categoria="Mapa")
+    map_inDB = models.Database.objects.filter(categoria=categoria_mapa)
+    return render(request, 'admin/mapa.html', {'map_inDB': map_inDB})
 
+@login_required
 def obtenerEdificio(request):
     if request.method == 'GET':
         edificio_id = request.GET.get('id')
@@ -419,46 +421,74 @@ def obtenerEdificio(request):
             return JsonResponse(data)
     return JsonResponse({'error': 'Invalid request'}, status=400)
 
-def crearEditarMapa(request):
+@login_required
+def regEdificioMapa(request):
     if request.method == 'POST':
-        edificio_id = request.POST.get('edificio_id')
-        titulo = request.POST.get('titulo')
-        informacion = request.POST.get('informacion')
-        color = request.POST.get('color')
-        p1_polygons = request.POST.get('p1_polygons')
-        p2_polygons = request.POST.get('p2_polygons')
-        p3_polygons = request.POST.get('p3_polygons')
-        p4_polygons = request.POST.get('p4_polygons')
-        categoria = models.Categorias.objects.get(categoria="Mapa")
-        imagen = request.FILES.get('imagenes')
-
-        if edificio_id:
-            # Editar edificio existente
-            edificio = get_object_or_404(models.Mapa, id=edificio_id)
-            edificio.titulo = titulo
-            edificio.informacion = informacion
-            edificio.color = color
-            edificio.p1_polygons = p1_polygons
-            edificio.p2_polygons = p2_polygons
-            edificio.p3_polygons = p3_polygons
-            edificio.p4_polygons = p4_polygons
-            if imagen:
-                edificio.imagenes = imagen
-            edificio.save()
-        else:
-            # Crear nuevo edificio
+        isNewPost = request.POST.get('isNew')
+        tituloPost = request.POST.get('titulo')
+        colorPost = request.POST.get('color')
+        p1Post = request.POST.get('p1_polygons')
+        p2Post = request.POST.get('p2_polygons')
+        p3Post = request.POST.get('p3_polygons')
+        p4Post = request.POST.get('p4_polygons')
+        informacionText = request.POST.get('textTiny')
+        informacionPost = request.POST.get('contenidoWord')
+        door_cordsPost = request.POST.get('door_cords')
+        imagenPost = request.FILES.get('imagenes')
+        
+        
+        
+        if isNewPost == None:
+            if imagenPost:
+                mapIndb = get_object_or_404(models.Database, titulo=tituloPost)
+                mapIndb.imagenes = imagenPost
+                mapIndb.save()
+            
+            if models.Mapa.objects.filter(titulo=tituloPost).exists():
+                edificio = get_object_or_404(models.Mapa, titulo=tituloPost)
+                edificio.titulo = tituloPost
+                edificio.color = colorPost
+                edificio.p1_polygons = p1Post
+                edificio.p2_polygons = p2Post
+                edificio.p3_polygons = p3Post
+                edificio.p4_polygons = p4Post
+                edificio.door_cords = door_cordsPost
+                edificio.informacion = informacionPost                    
+                edificio.save()
+                return JsonResponse({'success': True, 'message': f'Se Actualizo el "{tituloPost}", los cambios se reflejaran en el mapa 🧐😊🎈'}, status=200)
+            
             models.Mapa.objects.create(
-                categoria=categoria,
-                titulo=titulo,
-                informacion=informacion,
-                color=color,
-                p1_polygons=p1_polygons,
-                p2_polygons=p2_polygons,
-                p3_polygons=p3_polygons,
-                p4_polygons=p4_polygons,
-                imagenes=imagen
+                titulo=tituloPost,
+                color=colorPost,
+                p1_polygons=p1Post,
+                p2_polygons=p2Post,
+                p3_polygons=p3Post,
+                p4_polygons=p4Post,
+                door_cords=door_cordsPost,
+                informacion=informacionPost,
             )
-    return redirect('consultaMap')
+                
+            return JsonResponse({'success': True, 'message': f'El "{tituloPost}" se creo exitosamente en el Mapa 🎉🎈🥳'}, status=200)
+        else:
+            models.Mapa.objects.create(
+                titulo=tituloPost,
+                color=colorPost,
+                p1_polygons=p1Post,
+                p2_polygons=p2Post,
+                p3_polygons=p3Post,
+                p4_polygons=p4Post,
+                door_cords=door_cordsPost,
+                informacion=informacionPost,
+            )
+            
+            models.Database.objects.create(
+                categoria=models.Categorias.objects.get(categoria="Mapa"),
+                titulo=tituloPost,
+                informacion=informacionText,
+                imagenes=imagenPost
+            )
+            return JsonResponse({'success': True, 'message': 'Se creo un nuevo edificio en el mapa y en la base de datos de forma exitosa 🎉🎉🎉'}, status=200)
+    return JsonResponse({'error': 'Metodo no valido'}, status=400)
 
 # subir banners###########################
 @login_required

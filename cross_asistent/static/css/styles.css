@@ -620,7 +620,11 @@ main.main_anchor {
 
 /*###################### Mask ######################*/
 .mask_dark {
-    background: linear-gradient(to bottom, hsla(0, 0%, 0%, 0), hsla(0, 0%, 0%, 0.5) 70%);
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.5) 70%);
+}
+
+.mask_white {
+    background: linear-gradient(to top, rgb(255, 255, 255) 30px, rgba(0, 0, 0, 0.326) 30%);
 }
 
 .carousel_container {
@@ -731,7 +735,21 @@ img.img-tiny {
     transform: translateY(-50%);
 }
 
-/* Controles de rutas en mapa */
+/* Mapbox */
+.mapboxgl-ctrl-group button {
+    display: grid;
+    place-items: center;
+    width: 42px !important;
+    height: 42px !important;
+    color: #292f38 !important;
+}
+
+
+.mapboxgl-ctrl-group button i.fa-solid,
+.mapboxgl-ctrl-group button i.fa-regular {
+    font-size: 1.2rem !important;
+}
+
 .controls_route{
     position: absolute;
     z-index: 1;
@@ -814,6 +832,10 @@ img.img-tiny {
     font-size: 3rem !important;
     width: 100%;
     transition: all 0.3s ease !important;
+}
+
+.none {
+    display: none;
 }
 
 /*################# Margenes #################*/
@@ -994,6 +1016,19 @@ img.img-tiny {
 }
 
 /* tamaño */
+.fs-5 {
+    font-size: 0.5rem !important;
+}
+.fs-6 {
+    font-size: 0.6rem !important;
+}
+.fs-8 {
+    font-size: 0.8rem !important;
+}
+.fs-9 {
+    font-size: 0.9rem !important;
+}
+
 .fs-10 {
     font-size: 1rem !important;
 }

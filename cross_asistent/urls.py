@@ -44,5 +44,5 @@ urlpatterns = [
     # Mapa
     path('administracion/obtener_edificio/', views.obtenerEdificio, name='obtenerEdificio'),
     path('administracion/editar_mapa/', views.obtenerinfoEdif, name='consultaMap'),
-    path('administracion/crearEditar_mapa/', views.crearEditarMapa, name='crearEditar'),
+    path('administracion/regEdificio_mapa/', views.regEdificioMapa, name='regEdificio'),
 ]

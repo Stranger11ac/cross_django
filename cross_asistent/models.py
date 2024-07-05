@@ -58,9 +58,8 @@ class Banners(models.Model):
 class Mapa(models.Model):
     titulo = models.CharField(max_length=200, blank=False)
     informacion = models.TextField(null=False)
-    imagenes =  models.ImageField(upload_to='cross_asistent/static/files/imagenes/mapa/', blank=True, null=True)
-    color = models.CharField(max_length=50, null=False, default='#3b71ca')
-    cords_centro = models.CharField(max_length=10, null=True)
+    color = models.CharField(max_length=50, null=False)
+    door_cords = models.CharField(max_length=100, null=True)
     p1_polygons = models.CharField(max_length=100, blank=True, null=True)
     p2_polygons = models.CharField(max_length=100, blank=True, null=True)
     p3_polygons = models.CharField(max_length=100, blank=True, null=True)

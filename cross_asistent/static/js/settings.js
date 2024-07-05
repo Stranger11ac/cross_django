@@ -108,6 +108,8 @@ var alfabetico = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
 var alfanumerico = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 var caracteres = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_-%$#@!*&^.";
 var texto3 = /[a-zA-Z0-9]{3}/;
+var formToken = getCSRFToken();
+var timerOut = 6000;
 
 function cadenaRandom(longitud, caracteres) {
     var cadenaAleatoria = "";
@@ -121,15 +123,14 @@ function cadenaRandom(longitud, caracteres) {
 // Funcion de iniciar secion y Registrar nuevo Usuario ######################################################################
 function jsonSubmit(e) {
     e.preventDefault();
-    const timerOut = 6000;
     const thisForm = e.target;
     const formData = new FormData(thisForm);
-    const formToken = getCSRFToken();
-    console.log(formToken);
 
     if (formData.has("contenidoWord")) {
         const contenidoTiny = tinymce.activeEditor.getContent();
         formData.set("contenidoWord", contenidoTiny);
+        const contenidoTextTiny = tinymce.activeEditor.getContent({ format: "text" });
+        formData.set("textTiny", contenidoTextTiny);
     }
 
     fetch(thisForm.action, {
@@ -236,22 +237,22 @@ function chatSubmit(e) {
             if (data.success) {
                 console.table(data.answer);
 
-                const dataImage = data.answer.imagenes
-                const dataRedirigir = data.answer.redirigir
+                const dataImage = data.answer.imagenes;
+                const dataRedirigir = data.answer.redirigir;
 
-                console.log("img:"+ typeof dataImage)
-                console.log("url:" + typeof dataRedirigir)
+                console.log("img:" + typeof dataImage);
+                console.log("url:" + typeof dataRedirigir);
 
-                let viewImage = '';
-                let btnRedir = '';
+                let viewImage = "";
+                let btnRedir = "";
 
-                if(dataImage != null){
-                    viewImage = `<br><br> <img src="${dataImage}" width="100">`
+                if (dataImage != null) {
+                    viewImage = `<br><br> <img src="${dataImage}" width="100">`;
                 }
-                
-                if (dataRedirigir != null){
-                    btnRedir = `<br><br> <a class="btn btn_secondary mb-2 btn-block" target="_blank" rel="noopener noreferrer" href="${dataRedirigir}" >Ver Mas <i class="fa-solid fa-arrow-up-right-from-square ms-1"></i></a>`
-                } 
+
+                if (dataRedirigir != null) {
+                    btnRedir = `<br><br> <a class="btn btn_secondary mb-2 btn-block" target="_blank" rel="noopener noreferrer" href="${dataRedirigir}" >Ver Mas <i class="fa-solid fa-arrow-up-right-from-square ms-1"></i></a>`;
+                }
                 const htmlBlock = `
                 <div class="btn_detail chat_msg asistent_response" data-tokeid="${valID}">
                     <span>${data.answer.informacion}  ${btnRedir} </span>
@@ -384,30 +385,54 @@ function alertSToast(posittionS, timerS, iconS, titleS, didDestroyS) {
 }
 
 // alertSToast('top', 8000, 'success', '<br>lo normal');
+$("#cancelNewEdif").on("click", function () {
+    $("#groupTitleMap").slideToggle("fast");
+    $("#cancelNewEdif").slideToggle("fast");
+    $(".img_form_map").slideToggle();
+    $("#isNewEdif").prop("checked", true);
+    
+    $("#mapTitle").text('');
+    $("#formTitle").val('');
+    $("#main_Tiny").val('');
+});
 
 function obtenerDatosEdificio(infoid, urlConsulta) {
-    console.log(`AJAX: ${urlConsulta}`);
     if (infoid) {
         $.ajax({
             url: urlConsulta,
             type: "GET",
             data: { id: infoid },
             success: function (data) {
-                $("#titulo").val(data.titulo);
-                $("#informacion").val(data.informacion);
+                $("#isNewEdif").prop("checked", false);
+                $("#groupTitleMap").hide();
+                $(".img_form_map").slideDown();
+                $("#cancelNewEdif").show();
+
+                $("#mapTitle").text(data.titulo);
+                $("#formTitle").val(data.titulo);
+                $("#main_Tiny").val(data.informacion);
+
+                const oldImgUrl = data.imagen_url;
+                let newImgUrl;
+                let suggestImgText;
+
                 if (data.imagen_url) {
-                    const oldImgUrl = data.imagen_url;
-                    const newImgUrl = oldImgUrl.replace("/cross_asistent", "");
-                    $("#imagen_actual").attr("src", newImgUrl).show();
+                    $("#suggestImg").hide();
+                    newImgUrl = oldImgUrl.replace("/cross_asistent", "");
+                    suggestImgText = "(Opcional)";
                 } else {
-                    $("#imagen_actual").hide();
+                    $("#suggestImg").show();
+                    newImgUrl = "/static/img/default_image.webp";
+                    suggestImgText = "(fachada)";
                 }
+                $("#suggestImgText").text(suggestImgText);
+                $("#imagen_actual").attr("src", newImgUrl);
             },
         });
     }
 }
 
-$("#selectArticulo").change(function () {
+$("#selectEdif").change(function () {
     var infoid = $(this).val();
     const urlConsulta = $(this).data("second-action");
     obtenerDatosEdificio(infoid, urlConsulta);
@@ -416,17 +441,5 @@ $("#selectArticulo").change(function () {
 $("#color_picker").on("input", function () {
     var color = $(this).val();
     $("#color").val(color);
-});
-
-$("#edificioForm").submit(function (event) {
-    event.preventDefault();
-    var formData = new FormData(this);
-
-    $.ajax({
-        url: $(this).attr("action"),
-        type: $(this).attr("method"),
-        data: formData,
-        contentType: false,
-        processData: false,
-    });
+    $("#colorVal").text(color);
 });
