@@ -247,11 +247,11 @@ function chatSubmit(e) {
                 let btnRedir = "";
 
                 if (dataImage != null) {
-                    viewImage = `<br><br> <img src="${dataImage}" width="100">`;
+                    viewImage = `<br><br> <img src="${dataImage}" width="350">`;
                 }
 
                 if (dataRedirigir != null) {
-                    btnRedir = `<br><br> <a class="btn btn_secondary mb-2 btn-block" target="_blank" rel="noopener noreferrer" href="${dataRedirigir}" >Ver Mas <i class="fa-solid fa-arrow-up-right-from-square ms-1"></i></a>`;
+                    btnRedir = `<br><br> <a class="btn btn_secondary mb-2" style="min-width:300px;" target="_blank" rel="noopener noreferrer" href="${dataRedirigir}" >Ver Mas <i class="fa-solid fa-arrow-up-right-from-square ms-1"></i></a>`;
                 }
                 const htmlBlock = `
                 <div class="btn_detail chat_msg asistent_response" data-tokeid="${valID}">
@@ -289,11 +289,9 @@ document.addEventListener("DOMContentLoaded", function () {
             const valID = `uuid${cadenaRandom(5, alfabetico)}`;
             const saludo = "Hola 👋 ¡Bienvenido! Soy tu asistente virtual ¿En qué puedo ayudarte hoy?";
             const htmlBlock = `
-                <div class="output_block">
                     <div class="btn_detail chat_msg asistent_response" data-tokeid="${valID}">
                         <span>${saludo}</span>
-                    </div>
-                </div>`;
+                    </div>`;
 
             contOutput.insertAdjacentHTML("beforeend", htmlBlock);
 
