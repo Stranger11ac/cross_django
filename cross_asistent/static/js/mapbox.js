@@ -547,7 +547,7 @@ document.getElementById("calcularRuta").addEventListener("click", () => {
 
         map.addControl(directions, "top-left");
     } else {
-        alert("Por favor selecciona un origen y un destino válidos.");
+        alertSToast("center", 5000, "warning", "Por favor, llena ambos campos. 🧐😬🤔");
     }
 });
 
@@ -587,7 +587,7 @@ class CustomControl {
             console.log("Alerta 1 activada");
         });
 
-        const btnroute = createButton("location-dot", '<i class="fa-solid fa-location-dot"></i>', "Ir a...", () => {
+        const btnroute = createButton("location-dot", '<i class="fa-solid fa-route"></i>', "Ir a...", () => {
             document.querySelector(".controls_route").classList.toggle("show");
         });
 
