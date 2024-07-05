@@ -281,7 +281,7 @@ const edificios = {
             },
             geometry: {
                 type: "Polygon",
-                door: [-100.93419, 25.55492],
+                door: [-100.93415, 25.55486],
                 coordinates: [
                     [
                         [-100.93408, 25.55501],
