@@ -325,6 +325,7 @@ nav .navbar-collapse {
 main {
     width: 100%;
     min-height: 50vh;
+    position: relative;
 }
 
 main.full_page {
@@ -728,6 +729,15 @@ img.img-tiny {
     right: 4px;
     top: 50%;
     transform: translateY(-50%);
+}
+
+/* Controles de rutas en mapa */
+.controls_route{
+    position: absolute;
+    z-index: 1;
+    top: 0;
+    left: 0;
+    display: none;
 }
 
 /*#################### Template Buttons ####################*/

@@ -99,11 +99,6 @@ def map(request):
         'active_page': 'map'
     })
 
-def mapa2(request):
-    return render(request, 'mapa2.html', {
-        'edificios': elements.edificios
-    })
-
 def about(request):
     if not request.user.is_staff:
         logout(request)

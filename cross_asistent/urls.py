@@ -45,7 +45,4 @@ urlpatterns = [
     path('administracion/obtener_edificio/', views.obtenerEdificio, name='obtenerEdificio'),
     path('administracion/editar_mapa/', views.obtenerinfoEdif, name='consultaMap'),
     path('administracion/crearEditar_mapa/', views.crearEditarMapa, name='crearEditar'),
-
-    # Nueva ruta para mapa2
-    path('mapa2/', views.mapa2, name='mapa2'),
 ]
