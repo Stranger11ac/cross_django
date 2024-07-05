@@ -324,7 +324,7 @@ nav .navbar-collapse {
 /*##################### Contenido #####################*/
 main {
     width: 100%;
-    min-height: 50vh;
+    min-height: 80vh;
     position: relative;
 }
 
@@ -758,8 +758,16 @@ img.img-tiny {
     position: absolute;
     z-index: 1;
     top: 0;
-    left: 0;
+    left: -150%;
+    opacity: 0;
+    transition: left 0.3s ease, opacity 0.3s ease;
 }
+
+.controls_route.show {
+    left: 0;
+    opacity: 1;
+}
+
 
 .position-absolute {
     z-index: 1;
