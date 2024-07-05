@@ -758,9 +758,9 @@ img.img-tiny {
     position: absolute;
     z-index: 1;
     top: 0;
-    left: -150%;
+    left: -110%;
     opacity: 0;
-    transition: left 0.3s ease, opacity 0.3s ease;
+    transition: left 0.5s ease, opacity 0.5s ease;
 }
 
 .controls_route.show {

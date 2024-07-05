@@ -576,7 +576,9 @@ class CustomControl {
             '<i class="fa-solid fa-map-location-dot"></i>',
             "Google Maps",
             () => {
-                console.log("Alerta 1 activada");
+                const url =
+                    "https://www.google.com.mx/maps/dir//Universidad+Tecnol%C3%B3gica+de+Coahuila,+Boulevard+del+Parque+Industrial+Francisco+R.+Alanis,+Zona+Industrial,+Ramos+Arizpe,+Coahuila+de+Zaragoza/@25.5584689,-100.9780617,13z/data=!3m1!4b1!4m9!4m8!1m0!1m5!1m1!1s0x868814c0002295ff:0x5c622cc711957b03!2m2!1d-100.9368619!2d25.5583972!3e2?entry=ttu";
+                window.open(url, '_blank');
             }
         );
 
