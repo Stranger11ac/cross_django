@@ -624,7 +624,7 @@ main.main_anchor {
 }
 
 .mask_white {
-    background: linear-gradient(to top, rgb(255, 255, 255) 30px, rgba(0, 0, 0, 0.326) 30%);
+    background: linear-gradient(to top, rgb(255, 255, 255) 30px, rgba(0, 0, 0, 0.326) 30%, transparent 90% );
 }
 
 .carousel_container {
@@ -735,6 +735,10 @@ img.img-tiny {
     transform: translateY(-50%);
 }
 
+.img_form_map {
+    min-height: 200px;
+}
+
 /* Mapbox */
 .mapboxgl-ctrl-group button {
     display: grid;
@@ -755,7 +759,10 @@ img.img-tiny {
     z-index: 1;
     top: 0;
     left: 0;
-    display: none;
+}
+
+.position-absolute {
+    z-index: 1;
 }
 
 /*#################### Template Buttons ####################*/

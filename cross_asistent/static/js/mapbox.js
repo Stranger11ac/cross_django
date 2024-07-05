@@ -44,7 +44,7 @@ const edificios = {
       properties: {
         nombre: 'Edificio 4',
         descripcion: 'Descripción del Edificio 4',
-        imagen_url: 'img/Edificio_4.webp',
+        imagen_url: '/static/img/Edificio_4.webp',
         fill: 'red',
       },
       geometry: {
@@ -65,7 +65,7 @@ const edificios = {
       properties: {
         nombre: 'Centro de Idiomas',
         descripcion: 'Descripción del Centro de Idiomas',
-        imagen_url: 'img/Centro_Idiomas.webp',
+        imagen_url: '/static/img/Centro_Idiomas.webp',
         fill: 'red',
       },
       geometry: {
@@ -86,7 +86,7 @@ const edificios = {
       properties: {
         nombre: 'Laboratorio 7B',
         descripcion: 'Descripción del Laboratorio 7B',
-        imagen_url: 'img/Laboratorio_7B.webp',
+        imagen_url: '/static/img/Laboratorio_7B.webp',
         fill: '#00FFFF',
       },
       geometry: {
@@ -107,7 +107,7 @@ const edificios = {
       properties: {
         nombre: 'Vinculación',
         descripcion: 'Descripción de Vinculación',
-        imagen_url: 'img/Vinculacion.webp',
+        imagen_url: '/static/img/Vinculacion.webp',
         fill: 'yellow',
       },
       geometry: {
@@ -128,7 +128,7 @@ const edificios = {
       properties: {
         nombre: 'Rectoria',
         descripcion: 'Descripcion de Rectoria',
-        imagen_url: 'img/Rectoria.webp',
+        imagen_url: '/static/img/Rectoria.webp',
         fill: 'yellow',
       },
       geometry: {
@@ -149,7 +149,7 @@ const edificios = {
       properties: {
         nombre: 'Biblioteca',
         descripcion: 'Descripción de Biblioteca',
-        imagen_url: 'img/Biblioteca.webp',
+        imagen_url: '/static/img/Biblioteca.webp',
         fill: 'blue',
       },
       geometry: {
@@ -170,7 +170,7 @@ const edificios = {
       properties: {
         nombre: 'Cafeteria UTC',
         descripcion: 'Descripción de Cafeteria UTC',
-        imagen_url: 'img/Cafeteria_UTC.webp',
+        imagen_url: '/static/img/Cafeteria_UTC.webp',
         fill: 'orange',
       },
       geometry: {
@@ -191,7 +191,7 @@ const edificios = {
       properties: {
         nombre: 'Edificio 3',
         descripcion: 'Descripción de Edificio 3',
-        imagen_url: 'img/Edificio_3.webp',
+        imagen_url: '/static/img/Edificio_3.webp',
         fill: 'red',
       },
       geometry: {
@@ -212,7 +212,7 @@ const edificios = {
       properties: {
         nombre: 'Domo',
         descripcion: 'Descripción de Domo',
-        imagen_url: 'img/Domo.webp',
+        imagen_url: '/static/img/Domo.webp',
         fill: 'lime',
       },
       geometry: {
@@ -232,8 +232,8 @@ const edificios = {
       type: 'Feature',
       properties: {
         nombre: 'Edificio Docente 2',
-        descripcion: 'Tecnologias de la Informacion y Comunicacion',
-        imagen_url: 'img/Edificio_2.webp',
+        descripcion: '<h5>Carreras:</h5> <ul>Desarrollo y Gestion de Software Multiplataforma<br>Entornos Virtuales y Negocios Digitales<br>Diseño y Gestion de Redes Logisticas</ul> ',
+        imagen_url: '/static/img/Edificio_2.webp',
         fill: 'red',
       },
       geometry: {
@@ -254,7 +254,7 @@ const edificios = {
       properties: {
         nombre: 'Laboratorio 4-E',
         descripcion: 'Descripción del Laboratorio 4-E',
-        imagen_url: 'img/Laboratorio_4-E.webp',
+        imagen_url: '/static/img/Laboratorio_4-E.webp',
         fill: '#00FFFF',
       },
       geometry: {
@@ -275,7 +275,7 @@ const edificios = {
       properties: {
         nombre: 'Cafeteria UTC 1',
         descripcion: 'Descripción de Cafeteria UTC 1',
-        imagen_url: 'img/cafeteria1.webp',
+        imagen_url: '/static/img/cafeteria1.webp',
         fill: 'orange',
       },
       geometry: {
@@ -296,7 +296,7 @@ const edificios = {
       properties: {
         nombre: 'Edificio 1',
         descripcion: 'Descripción del Edificio 1',
-        imagen_url: 'img/Edificio_1.webp',
+        imagen_url: '/static/img/Edificio_1.webp',
         fill: 'red',
       },
       geometry: {
@@ -317,7 +317,7 @@ const edificios = {
       properties: {
         nombre: 'Laboratorio de 7A',
         descripcion: 'Descripción del Laboratorio de PLC',
-        imagen_url: 'img/Laboratorio_7A.webp',
+        imagen_url: '/static/img/Laboratorio_7A.webp',
         fill: '#00FFFF',
       },
       geometry: {
@@ -338,7 +338,7 @@ const edificios = {
       properties: {
         nombre: 'Caceta 1',
         descripcion: 'Descripción de Caceta 1',
-        imagen_url: 'img/Caseta_1.webp',
+        imagen_url: '/static/img/Caseta_1.webp',
         fill: 'gray',
       },
       geometry: {
@@ -359,7 +359,7 @@ const edificios = {
       properties: {
         nombre: 'Caceta 2',
         descripcion: 'Descripción de Caceta 2',
-        imagen_url: 'img/Caseta_2.webp',
+        imagen_url: '/static/img/Caseta_2.webp',
         fill: 'gray',
       },
       geometry: {
@@ -380,7 +380,7 @@ const edificios = {
       properties: {
         nombre: 'Oxxo',
         descripcion: 'Descripción de Oxxo',
-        imagen_url: 'img/Oxxo.webp',
+        imagen_url: '/static/img/Oxxo.webp',
         fill: 'white',
       },
       geometry: {
@@ -401,7 +401,7 @@ const edificios = {
       properties: {
         nombre: 'Papeleria',
         descripcion: 'Descripción de Papeleria',
-        imagen_url: 'img/papeleriautc.webp',
+        imagen_url: '/static/img/papeleriautc.webp',
         fill: 'blue',
       },
       geometry: {
@@ -422,7 +422,7 @@ const edificios = {
       properties: {
         nombre: 'Campo De Fútbol',
         descripcion: 'Descripción de Campo De Fútbol',
-        imagen_url: 'img/futbol.webp',
+        imagen_url: '/static/img/futbol.webp',
         fill: 'lime',
       },
       geometry: {
@@ -443,7 +443,7 @@ const edificios = {
       properties: {
         nombre: 'Campo de Softbol',
         descripcion: 'Descripción de Campo de Softbol',
-        imagen_url: 'img/softbol.webp',
+        imagen_url: '/static/img/softbol.webp',
         fill: 'lime',
       },
       geometry: {
@@ -498,17 +498,19 @@ map.on('load', () => {
 map.on('click', 'places-layer', (e) => {
   const feature = e.features[0];
   const { nombre, descripcion, imagen_url } = feature.properties;
+  const offcanvas = document.getElementById('infoLateral');
+  document.getElementById('lateralTitle').innerText = nombre;
+  document.getElementById('imagen_actual').src = imagen_url;
+
   const offcanvasContent = document.getElementById('offcanvasContent');
   offcanvasContent.innerHTML = `
   <div class="feature-info">
-    <h5>${nombre}</h5>
     <p>${descripcion}</p>
-    <img src="${imagen_url}" alt="${nombre}" style="max-width: 100%;">
   </div>
 `;
 
   // Mostrar el offcanvas
-  const offcanvasElement = new bootstrap.Offcanvas(document.getElementById('offcanvasExample'));
+  const offcanvasElement = new bootstrap.Offcanvas(offcanvas);
   offcanvasElement.show();
 });
 

@@ -354,7 +354,7 @@ function copyValInput() {
 copyValInput();
 
 function getCSRFToken() {
-    const csrfCookie = document.querySelector("[name=csrfmiddlewaretoken]").value;
+    const csrfCookie = $("[name=csrfmiddlewaretoken]").val();
     return csrfCookie;
 }
 
@@ -393,7 +393,7 @@ $("#cancelNewEdif").on("click", function () {
     
     $("#mapTitle").text('');
     $("#formTitle").val('');
-    $("#mainTiny").setContent('');
+    $("#textTiny").setContent('');
 });
 
 function obtenerDatosEdificio(infoid, urlConsulta) {
@@ -410,7 +410,7 @@ function obtenerDatosEdificio(infoid, urlConsulta) {
 
                 $("#mapTitle").text(data.titulo);
                 $("#formTitle").val(data.titulo);
-                tinymce.get("mainTiny").setContent(data.informacion);
+                tinymce.get("textTiny").setContent(data.informacion);
 
                 const oldImgUrl = data.imagen_url;
                 let newImgUrl;
