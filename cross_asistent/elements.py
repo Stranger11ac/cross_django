@@ -311,7 +311,6 @@ edificios = [
     ]
 
 
-
 # Crear nuevo usuario Funcion ---------------------------------------------
 def create_newuser(first_name, last_name, username, email, password1, password2=None, is_staff=False, is_active=False):
     if not (password1 and username and email):

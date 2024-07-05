@@ -464,7 +464,7 @@ const edificios = {
 };
 
 // Agregar la fuente de datos y la capa al mapa
-map.on("load", () => {
+function createEdificios() {
     map.addSource("places", {
         type: "geojson",
         data: edificios,
@@ -492,7 +492,8 @@ map.on("load", () => {
         document.getElementById("origen").add(option);
         document.getElementById("destino").add(option.cloneNode(true));
     });
-});
+}
+map.on("load", createEdificios);
 
 // Mostrar información del edificio al hacer clic en el polígono
 map.on("click", "places-layer", (e) => {
@@ -514,11 +515,19 @@ map.on("click", "places-layer", (e) => {
     offcanvasElement.show();
 });
 
-// Función para cerrar el sidebar
-function closeSidebar() {
-    const sidebar = document.getElementById("sidebar");
-    sidebar.style.display = "none";
+const layerList = document.getElementById("offcanvasbody");
+const inputs = layerList.getElementsByTagName("input");
+
+for (const input of inputs) {
+    input.onclick = (layer) => {
+        const layerId = layer.target.id;
+        map.setStyle("mapbox://styles/mapbox/" + layerId);
+    };
 }
+
+map.on("style.load", () => {
+    createEdificios();
+});
 
 // Inicializar la herramienta de direcciones
 const directions = new MapboxDirections({
@@ -576,10 +585,10 @@ class CustomControl {
             '<i class="fa-solid fa-map-location-dot"></i>',
             "Google Maps",
             () => {
-                window.location.href = 'https://www.google.com.mx/maps'
+                window.location.href = "https://www.google.com.mx/maps";
                 const url =
                     "https://www.google.com.mx/maps/dir//Universidad+Tecnol%C3%B3gica+de+Coahuila,+Boulevard+del+Parque+Industrial+Francisco+R.+Alanis,+Zona+Industrial,+Ramos+Arizpe,+Coahuila+de+Zaragoza/@25.5584689,-100.9780617,13z/data=!3m1!4b1!4m9!4m8!1m0!1m5!1m1!1s0x868814c0002295ff:0x5c622cc711957b03!2m2!1d-100.9368619!2d25.5583972!3e2?entry=ttu";
-                window.open(url, '_blank');
+                window.open(url, "_blank");
             }
         );
 
@@ -587,13 +596,19 @@ class CustomControl {
             console.log("Alerta 1 activada");
         });
 
+        const layers = createButton("style-map", '<i class="fa-solid fa-layer-group"></i>', "Cambiar Aspecto", () => {
+            const offcanvasElement = new bootstrap.Offcanvas(document.querySelector("#offcanvasBottom"));
+            offcanvasElement.show();
+        });
+        
         const btnroute = createButton("location-dot", '<i class="fa-solid fa-route"></i>', "Ir a...", () => {
-            document.querySelector(".controls_route").classList.toggle("show");
+            document.querySelector(".controls_styles").classList.toggle("show");
         });
 
         // Agregar botones al contenedor personalizado
         this._container.appendChild(tomaps);
         this._container.appendChild(btn3d);
+        this._container.appendChild(layers);
         this._container.appendChild(btnroute);
 
         return this._container;

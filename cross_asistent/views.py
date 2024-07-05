@@ -23,10 +23,12 @@ import json
 import csv
 
 
+databaseall = models.Database.objects.all()
+
 def index(request):
     if not request.user.is_staff:
         logout(request)
-    banners_all = models.Banners.objects.all()
+    banners_all = models.Banners.objects.filter(visible=True)
     banners_modificados = []
 
     for banner in banners_all:
@@ -54,9 +56,7 @@ def faq(request):
         'active_page': 'faq'
     })
 
-def crear_pregunta(request):
-    quest_all = models.Database.objects.all()
-    
+def crear_pregunta(request):    
     if request.method == "POST":
         if request.content_type == 'application/json':
             try:
@@ -74,7 +74,7 @@ def crear_pregunta(request):
         else:
             print('error, no JSON')
             return JsonResponse({'success': False, 'message': 'Error: no se permite este tipo de archivo '}, status=400)
-    return render(request, 'frecuentes.html', {'quest_all': quest_all})
+    return render(request, 'frecuentes.html', {'quest_all': databaseall})
 
 def blog(request):
     if not request.user.is_staff:
@@ -176,7 +176,7 @@ def export_database(request):
         writer = csv.writer(response)
         writer.writerow(['Categoria', 'Titulo', 'Informacion', 'Redirigir', 'Frecuencia', 'Documentos', 'Imagenes', 'Fecha Modificacion'])
         # Obtener todos los objetos del modelo Database
-        databaseall = models.Database.objects.all()
+        
         for info in databaseall:
             writer.writerow([
                 info.categoria if info.categoria else '',
