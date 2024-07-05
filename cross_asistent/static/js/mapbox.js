@@ -232,7 +232,7 @@ const edificios = {
       type: 'Feature',
       properties: {
         nombre: 'Edificio Docente 2',
-        descripcion: '<h5>Carreras:</h5> <ul>Desarrollo y Gestion de Software Multiplataforma<br>Entornos Virtuales y Negocios Digitales<br>Diseño y Gestion de Redes Logisticas</ul> ',
+        descripcion: '<h6>Carreras:</h6> <ul>Desarrollo y Gestion de Software Multiplataforma<br>Entornos Virtuales y Negocios Digitales<br>Diseño y Gestion de Redes Logisticas</ul> ',
         imagen_url: '/static/img/Edificio_2.webp',
         fill: 'red',
       },
@@ -572,15 +572,15 @@ class CustomControl {
     };
 
     const tomaps = createButton('map-location', '<i class="fa-solid fa-map-location-dot"></i>', 'Google Maps', () => {
-      alert('Alerta 1 activada');
+      console.log('Alerta 1 activada');
     });
 
     const btn3d = createButton('cube', '<i class="fa-solid fa-cube"></i>', 'Recorrido Virtual', () => {
-      alert('Alerta 1 activada');
+      console.log('Alerta 1 activada');
     });
 
     const btnroute = createButton('location-dot', '<i class="fa-solid fa-location-dot"></i>', 'Ir a...', () => {
-      alert('Alerta 2 activada');
+      console.log('Alerta 2 activada');
     });
 
     // Agregar botones al contenedor personalizado
