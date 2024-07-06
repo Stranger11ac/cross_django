@@ -147,6 +147,11 @@ def chatbot(request):
     return JsonResponse({'success': False, 'message': 'Método no permitido.'})
 
 # Mapa ---------------------------------------------------
+def mapa_data(request):
+    mapas = models.Mapa.objects.all().values('titulo', 'informacion', 'color', 'door_cords', 'p1_polygons', 'p2_polygons', 'p3_polygons', 'p4_polygons')
+    mapas_list = list(mapas)
+    return JsonResponse(mapas_list, safe=False)
+
 edificios = [
         {
             'edifcolor': 'red','edifill': 'red',

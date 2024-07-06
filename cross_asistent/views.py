@@ -95,7 +95,6 @@ def map(request):
     if not request.user.is_staff:
         logout(request)
     return render(request, 'mapa.html', {
-        'edificios': elements.edificios,
         'active_page': 'map'
     })
 

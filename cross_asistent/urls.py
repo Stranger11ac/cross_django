@@ -8,6 +8,7 @@ urlpatterns = [
     path('blog-eventos/', views.blog, name='blog'),
     path('blog/<int:Articulos_id>/', views.mostrar_blog, name='mostrar_blog'),
     path('mapa/', views.map, name='map'),
+    path('mapa/edificios/', elements.mapa_data, name='mapa_edificios'),
     path('acercade/', views.about, name='about'),
     path('preguntas_frecuentes/', views.faq, name='faq'),
     path('preguntar/', views.crear_pregunta, name='preguntas'),

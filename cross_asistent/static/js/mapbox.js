@@ -1,5 +1,7 @@
 mapboxgl.accessToken = "pk.eyJ1Ijoic2FsdmFoZHotMTEiLCJhIjoiY2x3czBoYTJiMDI1OTJqb2VmZzVueG1ocCJ9.dDJweS7MAR5N2U3SF64_Xw";
 
+let currentRoute;
+
 const map = new mapboxgl.Map({
     container: "map",
     style: "mapbox://styles/mapbox/streets-v12",
@@ -29,6 +31,7 @@ const universityBoundary = {
                         [-100.9736, 25.5735],
                         [-100.9736, 25.5142],
                         [-100.9736, 25.5735],
+                        [-100.9736, 25.5142],
                     ],
                 ],
             },
@@ -56,6 +59,7 @@ const edificios = {
                         [-100.93647, 25.55633],
                         [-100.93662, 25.55613],
                         [-100.93703, 25.55642],
+                        [-100.93688, 25.55661],
                     ],
                 ],
             },
@@ -77,6 +81,7 @@ const edificios = {
                         [-100.93724, 25.55742],
                         [-100.93711, 25.55757],
                         [-100.9367, 25.55731],
+                        [-100.93684, 25.55715],
                     ],
                 ],
             },
@@ -98,6 +103,7 @@ const edificios = {
                         [-100.93631, 25.55718],
                         [-100.93593, 25.55694],
                         [-100.93606, 25.55679],
+                        [-100.93644, 25.55704],
                     ],
                 ],
             },
@@ -119,6 +125,7 @@ const edificios = {
                         [-100.93623, 25.55794],
                         [-100.93646, 25.55765],
                         [-100.93676, 25.55785],
+                        [-100.93653, 25.55813],
                     ],
                 ],
             },
@@ -140,6 +147,7 @@ const edificios = {
                         [-100.93559, 25.55748],
                         [-100.93581, 25.55719],
                         [-100.93612, 25.55741],
+                        [-100.9359, 25.55767],
                     ],
                 ],
             },
@@ -161,6 +169,7 @@ const edificios = {
                         [-100.93594, 25.55639],
                         [-100.93616, 25.55615],
                         [-100.93633, 25.55628],
+                        [-100.93613, 25.55651],
                     ],
                 ],
             },
@@ -182,6 +191,7 @@ const edificios = {
                         [-100.93618, 25.55607],
                         [-100.93608, 25.55599],
                         [-100.93601, 25.55607],
+                        [-100.9361, 25.55616],
                     ],
                 ],
             },
@@ -203,6 +213,7 @@ const edificios = {
                         [-100.93547, 25.55583],
                         [-100.93564, 25.55566],
                         [-100.936, 25.55594],
+                        [-100.93582, 25.55611],
                     ],
                 ],
             },
@@ -224,6 +235,7 @@ const edificios = {
                         [-100.93471, 25.55533],
                         [-100.93486, 25.55515],
                         [-100.93514, 25.55534],
+                        [-100.93498, 25.55552],
                     ],
                 ],
             },
@@ -246,6 +258,7 @@ const edificios = {
                         [-100.93458, 25.55471],
                         [-100.93471, 25.55455],
                         [-100.93508, 25.55479],
+                        [-100.93495, 25.55495],
                     ],
                 ],
             },
@@ -267,6 +280,7 @@ const edificios = {
                         [-100.93479, 25.55515],
                         [-100.93462, 25.55503],
                         [-100.93451, 25.55515],
+                        [-100.93468, 25.55527],
                     ],
                 ],
             },
@@ -288,6 +302,7 @@ const edificios = {
                         [-100.9343, 25.55482],
                         [-100.93421, 25.55473],
                         [-100.93399, 25.55491],
+                        [-100.93408, 25.55501],
                     ],
                 ],
             },
@@ -309,6 +324,7 @@ const edificios = {
                         [-100.93352, 25.55545],
                         [-100.93393, 25.55575],
                         [-100.93409, 25.55556],
+                        [-100.93369, 25.55527],
                     ],
                 ],
             },
@@ -330,6 +346,7 @@ const edificios = {
                         [-100.93411, 25.55586],
                         [-100.93447, 25.55615],
                         [-100.93461, 25.55602],
+                        [-100.93424, 25.55573],
                     ],
                 ],
             },
@@ -351,6 +368,7 @@ const edificios = {
                         [-100.93672, 25.55815],
                         [-100.93682, 25.55805],
                         [-100.93691, 25.55812],
+                        [-100.93682, 25.55821],
                     ],
                 ],
             },
@@ -372,6 +390,7 @@ const edificios = {
                         [-100.93457, 25.55613],
                         [-100.9347, 25.55624],
                         [-100.93477, 25.55616],
+                        [-100.93464, 25.55606],
                     ],
                 ],
             },
@@ -393,6 +412,7 @@ const edificios = {
                         [-100.93613, 25.55785],
                         [-100.93602, 25.55776],
                         [-100.9361, 25.55769],
+                        [-100.93619, 25.55777],
                     ],
                 ],
             },
@@ -414,6 +434,7 @@ const edificios = {
                         [-100.93709, 25.55708],
                         [-100.93701, 25.55704],
                         [-100.93706, 25.55697],
+                        [-100.93713, 25.557],
                     ],
                 ],
             },
@@ -435,6 +456,7 @@ const edificios = {
                         [-100.93763, 25.55835],
                         [-100.93786, 25.55819],
                         [-100.93816, 25.55855],
+                        [-100.93793, 25.55871],
                     ],
                 ],
             },
@@ -456,6 +478,7 @@ const edificios = {
                         [-100.93925, 25.55844],
                         [-100.93869, 25.55796],
                         [-100.93837, 25.55848],
+                        [-100.93881, 25.55886],
                     ],
                 ],
             },
@@ -465,27 +488,35 @@ const edificios = {
 
 // Agregar la fuente de datos y la capa al mapa
 function createEdificios() {
-    map.addSource("places", {
-        type: "geojson",
-        data: edificios,
-    });
+    // Verificar si la fuente "places" ya existe
+    if (!map.getSource("places")) {
+        map.addSource("places", {
+            type: "geojson",
+            data: edificios,
+        });
+    }
 
-    map.addLayer({
-        id: "places-layer",
-        type: "fill",
-        source: "places",
-        paint: {
-            "fill-color": ["get", "fill"],
-            "fill-opacity": 0.5,
-        },
-    });
+    // Verificar si la capa "places-layer" ya existe
+    if (!map.getLayer("places-layer")) {
+        map.addLayer({
+            id: "places-layer",
+            type: "fill",
+            source: "places",
+            paint: {
+                "fill-color": ["get", "fill"],
+                "fill-opacity": 0.5,
+            },
+        });
+    }
 
-    // Agregar el límite de la universidad como una fuente de datos
-    map.addSource("university-boundary", {
-        type: "geojson",
-        data: universityBoundary,
-    });
-
+    // Verificar si la fuente "university-boundary" ya existe
+    if (!map.getSource("university-boundary")) {
+        map.addSource("university-boundary", {
+            type: "geojson",
+            data: universityBoundary,
+        });
+    }
+    
     // Llenar los selectores con los nombres de los polígonos
     edificios.features.forEach((feature, index) => {
         const option = new Option(feature.properties.nombre, index);
@@ -493,6 +524,7 @@ function createEdificios() {
         document.getElementById("destino").add(option.cloneNode(true));
     });
 }
+
 map.on("load", createEdificios);
 
 // Mostrar información del edificio al hacer clic en el polígono
@@ -515,18 +547,46 @@ map.on("click", "places-layer", (e) => {
     offcanvasElement.show();
 });
 
-const layerList = document.getElementById("offcanvasbody");
-const inputs = layerList.getElementsByTagName("input");
 
+// Modificar el código que cambia el estilo del mapa
+const inputs = document.querySelectorAll("#offcanvasbody input");
 for (const input of inputs) {
     input.onclick = (layer) => {
-        const layerId = layer.target.id;
+        // Guardar la ruta actual antes de cambiar el estilo
+        if (map.getLayer("directions-route-line")) {
+            currentRoute = map.getSource("directions")._data;
+        }
+
+        layerId = layer.target.id;
         map.setStyle("mapbox://styles/mapbox/" + layerId);
     };
 }
 
+// Escuchar el evento style.load y llamar a createEdificios
 map.on("style.load", () => {
     createEdificios();
+
+    // Volver a agregar la ruta si existe
+    if (currentRoute) {
+        map.addSource('directions', {
+            type: 'geojson',
+            data: currentRoute
+        });
+
+        map.addLayer({
+            id: 'directions-route-line',
+            type: 'line',
+            source: 'directions',
+            layout: {
+                'line-join': 'round',
+                'line-cap': 'round'
+            },
+            paint: {
+                'line-color': '#3b9ddd',
+                'line-width': 6
+            }
+        });
+    }
 });
 
 // Inicializar la herramienta de direcciones
@@ -553,6 +613,11 @@ document.getElementById("calcularRuta").addEventListener("click", () => {
 
         directions.setOrigin(origenCoords);
         directions.setDestination(destinoCoords);
+
+        // Agregar la capa de la ruta al mapa
+        directions.on('route', (e) => {
+            currentRoute = e.route[0].geometry;
+        });
 
         map.addControl(directions, "top-left");
     } else {
@@ -600,9 +665,9 @@ class CustomControl {
             const offcanvasElement = new bootstrap.Offcanvas(document.querySelector("#offcanvasBottom"));
             offcanvasElement.show();
         });
-        
+
         const btnroute = createButton("location-dot", '<i class="fa-solid fa-route"></i>', "Ir a...", () => {
-            document.querySelector(".controls_styles").classList.toggle("show");
+            document.querySelector("#controls_route").classList.toggle("show");
         });
 
         // Agregar botones al contenedor personalizado

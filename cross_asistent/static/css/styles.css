@@ -102,8 +102,13 @@ html {
     transform: rotate(180deg);
 }
 
-.btn {transition: transform 0.1s ease;}
-.btn:active {transform: scale(0.95);}
+.btn {
+    transition: transform 0.1s ease;
+}
+
+.btn:active {
+    transform: scale(0.95);
+}
 
 /*######### Generales #########*/
 body {
@@ -624,7 +629,7 @@ main.main_anchor {
 }
 
 .mask_white {
-    background: linear-gradient(to top, rgb(255, 255, 255) 30px, rgba(0, 0, 0, 0.326) 30%, transparent 90% );
+    background: linear-gradient(to top, rgb(255, 255, 255) 30px, rgba(0, 0, 0, 0.326) 30%, transparent 90%);
 }
 
 .carousel_container {
@@ -754,7 +759,7 @@ img.img-tiny {
     font-size: 1.2rem !important;
 }
 
-.controls_route{
+.controls_route {
     position: absolute;
     z-index: 1;
     top: 0;
@@ -768,9 +773,17 @@ img.img-tiny {
     opacity: 1;
 }
 
-
 .position-absolute {
     z-index: 1;
+}
+
+.offcanvas.offcanvas-bottom {
+    height: fit-content;
+}
+
+
+.offcanvas.offcanvas-bottom label i {
+    font-size: 2rem;
 }
 
 /*#################### Template Buttons ####################*/
@@ -1034,12 +1047,15 @@ img.img-tiny {
 .fs-5 {
     font-size: 0.5rem !important;
 }
+
 .fs-6 {
     font-size: 0.6rem !important;
 }
+
 .fs-8 {
     font-size: 0.8rem !important;
 }
+
 .fs-9 {
     font-size: 0.9rem !important;
 }

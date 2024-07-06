@@ -9,7 +9,7 @@
   integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
 {% endblock %}
 {% block content %}
-<main class="full_page" id='map'>
+<main class="full_page" id='map' data-mapa_edif="{% url 'mapa_edificios' %}">
   <!-- Controles de ruta -->
   <section class="controls_route show card m-2" id="controls_route">
     <div class="card-header d-flex justify-content-between align-items-center p-3">
@@ -23,22 +23,11 @@
       <select id="destino" class="form-control form-control-sm">
         <option value="">Seleccionar destino</option>
       </select>
-      <button id="calcularRuta" type="button" class="btn btn_detail btn-block mt-2" required>
+      <button id="calcularRuta" type="button" class="btn btn_detail btn-block btn-sm mt-2" required>
         ir <i class="fa-solid fa-diamond-turn-right ms-1"></i>
       </button>
     </form>
   </section>
-
-  <style>
-    #menu {
-      position: absolute;
-      background: #efefef;
-      padding: 10px;
-      z-index: 1;
-      bottom: 50px;
-      font-family: 'Open Sans', sans-serif;
-    }
-  </style>
 </main>
 
 <!-- Canvas lateral -->
@@ -49,7 +38,7 @@
       <img src="{% static 'img/default_image.webp' %}" id="imagen_actual" class="img-fluid" />
       <div class="mask mask_white">
         <div class="d-flex align-items-end h-100 px-4 px-md-3 px-xl-5">
-          <h5 class="fw-bold mb-0" id="lateralTitle">Informacion"</h5>
+          <h5 class="fw-bold mb-0" id="lateralTitle"></h5>
         </div>
       </div>
     </div>
@@ -64,20 +53,55 @@
 <!-- Canvas Bajo -->
 <div class="offcanvas offcanvas-bottom" tabindex="-1" id="offcanvasBottom" aria-labelledby="offcanvasBottomLabel">
   <div class="offcanvas-header">
-    <h5 class="offcanvas-title" id="offcanvasBottomLabel">Offcanvas bottom</h5>
+    <h5 class="offcanvas-title" id="offcanvasBottomLabel">Cambiar Estilo <i class="fa-solid fa-layer-group ms-1"></i></h5>
     <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
   </div>
-  <div class="offcanvas-body small" id="offcanvasbody">
-    <input id="satellite-streets-v12" type="radio" name="rtoggle" value="satellite" checked="checked">
-    <label for="satellite-streets-v12">satellite streets</label>
-    <input id="light-v11" type="radio" name="rtoggle" value="light">
-    <label for="light-v11">light</label>
-    <input id="dark-v11" type="radio" name="rtoggle" value="dark">
-    <label for="dark-v11">dark</label>
-    <input id="streets-v12" type="radio" name="rtoggle" value="streets">
-    <label for="streets-v12">streets</label>
-    <input id="outdoors-v12" type="radio" name="rtoggle" value="outdoors">
-    <label for="outdoors-v12">outdoors</label>
+  <div class="offcanvas-body row" id="offcanvasbody">
+    <div class="col-4 col-md p-2">
+      <label class="card" for="satellite-streets-v12">
+        <input id="satellite-streets-v12" type="radio" name="rtoggle" value="satellite" class="none">
+        <div class="card-body pb-1 p-3 text-center">
+          <div><i class="fa-solid fa-satellite"></i></div>
+          <div>Satelital</div>
+        </div>
+      </label>
+    </div>
+    <div class="col-4 col-md p-2">
+      <label class="card btn_detail text-white" for="streets-v12">
+        <input id="streets-v12" type="radio" name="rtoggle" value="streets" checked class="none">
+        <div class="card-body pb-1 p-3 text-center">
+          <div><i class="fa-solid fa-signs-post"></i></div>
+          <div>Caminos</div>
+        </div>
+      </label>
+    </div>
+    <div class="col-4 col-md p-2">
+      <label class="card" for="outdoors-v12">
+        <input id="outdoors-v12" type="radio" name="rtoggle" value="outdoors" class="none">
+        <div class="card-body pb-1 p-3 text-center">
+          <div><i class="fa-solid fa-road"></i></div>
+          <div>Secundario</div>
+        </div>
+      </label>
+    </div>
+    <div class="col-6 col-md p-2">
+      <label class="card" for="light-v11">
+        <input id="light-v11" type="radio" name="rtoggle" value="light" class="none">
+        <div class="card-body pb-1 p-3 text-center">
+          <div><i class="fa-regular fa-map"></i></div>
+          <div>Claro</div>
+        </div>
+      </label>
+    </div>
+    <div class="col-6 col-md p-2">
+      <label class="card" for="dark-v11">
+        <input id="dark-v11" type="radio" name="rtoggle" value="dark" class="none">
+        <div class="card-body pb-1 p-3 text-center">
+          <div><i class="fa-solid fa-map"></i></div>
+          <div>Obscuro</div>
+        </div>
+      </label>
+    </div>
   </div>
 </div>
 
