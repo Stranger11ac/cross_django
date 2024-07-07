@@ -86,6 +86,36 @@ $(document).ready(function () {
                 .val(newRandomPass)
                 .focus();
         }
+
+        // Quitar clase show #####################################
+        $("[data-btn_closed]").on("click", function () {
+            var targetId = $(this).attr("data-btn_closed");
+            $("#" + targetId).toggleClass("show");
+        });
+
+        // Resetear formulario / vaciar todo el formulario
+        $("[data-reset_form]").on("click", function () {
+            var formId = $(this).attr("data-reset_form");
+            var formElement = $("#" + formId)[0];
+
+            if (formElement) {
+                formElement.reset();
+            }
+        });
+
+        // Estilo Texto Google #####################
+        function colorizeGoogle() {
+            const colors = ["#4285F4", "#EA4335", "#FBBC05", "#4285F4", "#34A853", "#EA4335"];
+            const googleSpan = $(".style_google");
+            const text = googleSpan.text();
+
+            googleSpan.empty();
+            for (let i = 0; i < text.length; i++) {
+                googleSpan.append(`<span style="color:${colors[i]}">${text[i]}</span>`);
+            }
+        }
+        colorizeGoogle();
+
         //
         //
     } catch (error) {
@@ -388,10 +418,10 @@ $("#cancelNewEdif").on("click", function () {
     $("#cancelNewEdif").slideToggle("fast");
     $(".img_form_map").slideToggle();
     $("#isNewEdif").prop("checked", true);
-    
-    $("#mapTitle").text('');
-    $("#formTitle").val('');
-    $("#textTiny").setContent('');
+
+    $("#mapTitle").text("");
+    $("#formTitle").val("");
+    $("#textTiny").setContent("");
 });
 
 function obtenerDatosEdificio(infoid, urlConsulta) {

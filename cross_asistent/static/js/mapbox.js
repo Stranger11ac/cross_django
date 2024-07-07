@@ -1,9 +1,11 @@
 var mapToken = "pk.eyJ1Ijoic2FsdmFoZHotMTEiLCJhIjoiY2x3czBoYTJiMDI1OTJqb2VmZzVueG1ocCJ9.dDJweS7MAR5N2U3SF64_Xw";
-mapboxgl.accessToken = mapToken;
 var offcanvas = document.getElementById("infoLateral");
 var offcanvasElement = new bootstrap.Offcanvas(offcanvas);
 let colorlabels = "#000";
-let currentRoute;
+var currentMarker;
+var currentRoute;
+
+mapboxgl.accessToken = mapToken;
 
 const map = new mapboxgl.Map({
     container: "map",
@@ -17,8 +19,6 @@ const map = new mapboxgl.Map({
         [-100.9117, 25.5735],
     ],
 });
-
-map.addControl(new mapboxgl.NavigationControl());
 
 const universityBoundary = {
     type: "FeatureCollection",
@@ -42,7 +42,8 @@ const universityBoundary = {
     ],
 };
 
-// Crear nuevo menu de botones personalizados
+// Crear nuevo menu de botones personalizados ########################################
+map.addControl(new mapboxgl.NavigationControl());
 class CustomControl {
     constructor() {
         this._container = null;
@@ -62,13 +63,14 @@ class CustomControl {
             return button;
         };
 
-        const url =
-            "https://www.google.com.mx/maps/dir//Universidad+Tecnol%C3%B3gica+de+Coahuila,+Boulevard+del+Parque+Industrial+Francisco+R.+Alanis,+Zona+Industrial,+Ramos+Arizpe,+Coahuila+de+Zaragoza/@25.5584689,-100.9780617,13z/data=!3m1!4b1!4m9!4m8!1m0!1m5!1m1!1s0x868814c0002295ff:0x5c622cc711957b03!2m2!1d-100.9368619!2d25.5583972!3e2?entry=ttu";
-
         const linkmaps = createButton(
             "gmaps",
-            `<a target="_blank" href="${url}" class="mapboxgl-ctrl-icon"><i class="fa-solid fa-map-location-dot"></i></a>`,
-            "Google Maps"
+            `<div class="mapboxgl-ctrl-icon"><i class="fa-solid fa-map-location-dot"></i></div>`,
+            "Google Maps",
+            () => {
+                var myModal = new mdb.Modal(document.getElementById("goMaps"));
+                myModal.show();
+            }
         );
 
         const btn3d = createButton("virtual", '<i class="fa-solid fa-cube"></i>', "Recorrido Virtual", () => {
@@ -80,9 +82,11 @@ class CustomControl {
             offcanvasElement.show();
         });
 
-        const btnroute = createButton("route", '<i class="fa-solid fa-route"></i>', "Ir a...", () => {
-            document.querySelector("#controls_route").classList.toggle("show");
-        });
+        const btnroute = createButton(
+            "route",
+            '<div class="mapboxgl-ctrl-icon" data-btn_closed="controls_route"><i class="fa-solid fa-route"></i></div>',
+            "Ir a..."
+        );
 
         // Agregar botones al contenedor personalizado
         this._container.appendChild(linkmaps);
@@ -93,12 +97,10 @@ class CustomControl {
         return this._container;
     }
 }
-document.querySelector("#closeControlsRoute").addEventListener("click", function () {
-    document.querySelector(".controls_route").classList.toggle("show");
-});
 const customControl = new CustomControl();
 map.addControl(customControl, "top-right");
 
+// Cargar datos ##################################################################
 document.addEventListener("DOMContentLoaded", function () {
     const url = document.querySelector("#map").getAttribute("data-mapa_edif");
     fetch(url)
@@ -149,48 +151,115 @@ document.addEventListener("DOMContentLoaded", function () {
                     });
                 }
 
-                // Crear marcador
-                let currentMarker;
-                function createMarker(lngLat) {
-                    if (currentMarker) {
-                        currentMarker.remove();
-                    }
-
-                    currentMarker = new mapboxgl.Marker({
-                        draggable: false,
-                        color: "#3b71ca",
-                    })
-                        .setLngLat(lngLat)
-                        .addTo(map);
-
-                    currentMarker.getElement().addEventListener("mouseenter", function () {
-                        map.getCanvas().style.cursor = "pointer";
-                    });
-
-                    currentMarker.getElement().addEventListener("mouseleave", function () {
-                        map.getCanvas().style.cursor = "default";
-                    });
-                }
-
                 map.on("click", (e) => {
                     const lngLat = e.lngLat;
                     createMarker(lngLat);
                     console.log("Nuevo LngLat:", lngLat.lng, lngLat.lat);
                 });
             }
+            function createMarker(lngLat) {
+                if (currentMarker) {
+                    currentMarker.remove();
+                }
 
-            geojsonEdificios.features.forEach((feature, index) => {
-                const option = new Option(feature.properties.nombre, index);
-                document.getElementById("origen").add(option);
-                document.getElementById("destino").add(option.cloneNode(true));
-            });
+                currentMarker = new mapboxgl.Marker({
+                    draggable: false,
+                    color: "#3b71ca",
+                })
+                    .setLngLat(lngLat)
+                    .addTo(map);
+
+                currentMarker.getElement().addEventListener("mouseenter", function () {
+                    map.getCanvas().style.cursor = "pointer";
+                });
+
+                currentMarker.getElement().addEventListener("mouseleave", function () {
+                    map.getCanvas().style.cursor = "default";
+                });
+            }
+            function calcularRuta() {
+                const origen = document.getElementById("origen").value;
+                const destino = document.getElementById("destino").value;
+
+                if (origen && destino && origen !== destino) {
+                    const origenFeature = geojsonEdificios.features.find(
+                        (feature) => feature.properties.nombre === origen
+                    );
+                    const destinoFeature = geojsonEdificios.features.find(
+                        (feature) => feature.properties.nombre === destino
+                    );
+
+                    if (origenFeature && destinoFeature) {
+                        const origenCoords = origenFeature.properties.door;
+                        const destinoCoords = destinoFeature.properties.door;
+
+                        directions.setOrigin(origenCoords);
+                        directions.setDestination(destinoCoords);
+
+                        $("#buttons_route").slideDown("fast");
+
+                        // Agregar la capa de la ruta al mapa
+                        directions.on("route", (e) => {
+                            if (e.route.length > 0) {
+                                currentRoute = e.route[0];
+                                console.log(currentRoute);
+                            } else {
+                                console.warn("No se encontraron rutas.");
+                            }
+                        });
+
+                        map.addControl(directions, "top-left");
+                        // } else {
+                        //     alertSToast("center",5000,"warning","Los edificios seleccionados no tienen coordenadas válidas.");
+                    }
+                } else {
+                    alertSToast("center", 5000, "warning", "Por favor, selecciona tanto origen como destino.");
+                }
+            }
+            function addRouteLayer(routeData) {
+                map.addSource("directions", {
+                    type: "geojson",
+                    data: routeData,
+                });
+
+                map.addLayer({
+                    id: "directions-route-line",
+                    type: "line",
+                    source: "directions",
+                    layout: {
+                        "line-join": "round",
+                        "line-cap": "round",
+                    },
+                    paint: {
+                        "line-color": "#3b9ddd",
+                        "line-width": 6,
+                    },
+                });
+            }
+            function deleteLabels() {
+                map.getStyle().layers.forEach(function (layer) {
+                    if (layer.type === "symbol" && layer.layout["text-field"]) {
+                        map.setLayoutProperty(layer.id, "visibility", "none");
+                    }
+                });
+            }
 
             map.on("load", function () {
                 deleteLabels();
                 createEdificios();
-            });
 
-            // Mostrar información del edificio al hacer clic en el polígono
+                if (currentRoute) {
+                    addRouteLayer(currentRoute);
+                }
+            });
+            map.on("style.load", () => {
+                deleteLabels();
+                createEdificios();
+
+                if (currentRoute) {
+                    addRouteLayer(currentRoute);
+                }
+            });
             map.on("click", "places-layer", (e) => {
                 const feature = e.features[0];
                 const { nombre, informacion, imagen_url } = feature.properties;
@@ -202,31 +271,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 offcanvasElement.show();
             });
 
-            // Calcular y mostrar la ruta más corta
-            document.getElementById("calcularRuta").addEventListener("click", () => {
-                const origenIndex = document.getElementById("origen").value;
-                const destinoIndex = document.getElementById("destino").value;
-
-                if (origenIndex && destinoIndex && origenIndex !== destinoIndex) {
-                    const origenCoords = geojsonEdificios.features[origenIndex].properties.door;
-                    const destinoCoords = geojsonEdificios.features[destinoIndex].properties.door;
-
-                    directions.setOrigin(origenCoords);
-                    directions.setDestination(destinoCoords);
-
-                    // Agregar la capa de la ruta al mapa
-                    directions.on("route", (e) => {
-                        currentRoute = e.route[0].properties;
-                    });
-
-                    map.addControl(directions, "top-left");
-                } else {
-                    alertSToast("center", 5000, "warning", "Por favor, llena ambos campos. 🧐😬🤔");
-                }
-            });
-
             const inputsw = document.querySelectorAll("#offcanvasbody input[type='radio']");
-
             inputsw.forEach((input) => {
                 input.addEventListener("click", function (layer) {
                     const layerId = layer.target.id;
@@ -253,73 +298,74 @@ document.addEventListener("DOMContentLoaded", function () {
                 });
             });
 
-            // Escuchar el evento style.load
-            map.on("style.load", () => {
-                deleteLabels();
-                createEdificios();
+            // Obtener nombres de los edificios y ordenar alfabéticamente
+            const nombresEdificios = geojsonEdificios.features.map((feature) => feature.properties.nombre).sort();
+            nombresEdificios.forEach((nombre) => {
+                const option = new Option(nombre, nombre);
+                document.getElementById("origen").add(option);
+                document.getElementById("destino").add(option.cloneNode(true));
+            });
 
-                // Volver a agregar la ruta si existe
-                if (currentRoute) {
-                    map.addSource("directions", {
-                        type: "geojson",
-                        data: currentRoute,
-                    });
+            // Sincronizar opciones entre selectores
+            document.getElementById("origen").addEventListener("change", function () {
+                const seleccionOrigen = this.value;
+                document.querySelectorAll("#destino option").forEach((option) => {
+                    if (option.value === seleccionOrigen) {
+                        option.disabled = true;
+                    } else {
+                        option.disabled = false;
+                    }
+                });
+            });
+            document.getElementById("destino").addEventListener("change", function () {
+                const seleccionDestino = this.value;
+                document.querySelectorAll("#origen option").forEach((option) => {
+                    if (option.value === seleccionDestino) {
+                        option.disabled = true;
+                    } else {
+                        option.disabled = false;
+                    }
+                });
+            });
 
-                    map.addLayer({
-                        id: "directions-route-line",
-                        type: "line",
-                        source: "directions",
-                        layout: {
-                            "line-join": "round",
-                            "line-cap": "round",
-                        },
-                        paint: {
-                            "line-color": "#3b9ddd",
-                            "line-width": 6,
-                        },
-                    });
+            // Ejecutar calcularRuta cuando se seleccionen opciones en ambos selectores
+            document.getElementById("origen").addEventListener("change", function () {
+                if (document.getElementById("destino").value) {
+                    calcularRuta();
                 }
+            });
+            document.getElementById("destino").addEventListener("change", function () {
+                if (document.getElementById("origen").value) {
+                    calcularRuta();
+                }
+            });
+
+            const directions = new MapboxDirections({
+                accessToken: mapboxgl.accessToken,
+                unit: "metric",
+                profile: "mapbox/walking",
+                controls: {
+                    inputs: false,
+                    instructions: false,
+                    profileSwitcher: false,
+                },
+                alternatives: true,
+                interactive: false,
             });
         })
         .catch((error) => console.error("Error al obtener los datos del mapa:", error));
 });
 
-// Inicializar la herramienta de direcciones
-const directions = new MapboxDirections({
-    accessToken: mapboxgl.accessToken,
-    unit: "metric",
-    profile: "mapbox/walking",
-    controls: {
-        inputs: false,
-        instructions: false,
-        profileSwitcher: false,
-    },
-    alternatives: true,
-    interactive: false,
-});
-
 map.getCanvas().style.cursor = "default";
-
 map.on("dragstart", () => {
     map.getCanvas().style.cursor = "move";
 });
-
 map.on("dragend", () => {
     map.getCanvas().style.cursor = "default";
 });
-
 map.on("mousedown", () => {
     map.getCanvas().style.cursor = "pointer";
 });
-
 map.on("mouseup", () => {
     map.getCanvas().style.cursor = "default";
 });
-
-function deleteLabels() {
-    map.getStyle().layers.forEach(function (layer) {
-        if (layer.type === "symbol" && layer.layout["text-field"]) {
-            map.setLayoutProperty(layer.id, "visibility", "none");
-        }
-    });
-}

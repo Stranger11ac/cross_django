@@ -629,7 +629,7 @@ main.main_anchor {
 }
 
 .mask_white {
-    background: linear-gradient(to top, rgb(255, 255, 255) 30px, rgba(0, 0, 0, 0.326) 30%, transparent 90%);
+    background: linear-gradient(to top, rgb(255, 255, 255) 40px, rgba(0, 0, 0, 0.4) 20%, transparent 60%);
 }
 
 .carousel_container {
@@ -753,6 +753,7 @@ img.img-tiny {
     color: #292f38 !important;
 }
 
+.mapboxgl-ctrl-group button div,
 .mapboxgl-ctrl-group button a {
     place-content: center;
 }
@@ -769,7 +770,7 @@ img.img-tiny {
     top: 0;
     left: -110%;
     opacity: 0;
-    transition: left 0.8s ease, opacity 0.5s ease;
+    transition: left 0.6s ease, opacity 0.5s ease;
     transition-delay: 0s, 0.1s;
 }
 
@@ -786,6 +787,7 @@ img.img-tiny {
 .offcanvas.offcanvas-bottom {
     height: fit-content;
 }
+
 .offcanvas.offcanvas-bottom label i {
     font-size: 2rem;
 }
@@ -800,12 +802,24 @@ img.img-tiny {
     opacity: unset !important;
 }
 
-main#map{
+main#map {
     cursor: pointer !important;
 }
-main#map:active{
+
+main#map:active {
     cursor: move !important;
 }
+
+/* Modal MBD */
+/* Cambia la duración de la animación del modal */
+.modal.fade .modal-dialog {
+    transition: transform 0.2s ease-out, -webkit-transform 0.2s ease-out !important;
+}
+
+.modal.fade.show .modal-dialog {
+    transition: transform 0.2s ease-out, -webkit-transform 0.2s ease-out !important;
+}
+
 
 /*#################### Template Buttons ####################*/
 @media (min-width: 992px) {
@@ -1087,6 +1101,10 @@ main#map:active{
 
 .fs-12 {
     font-size: 1.2rem !important;
+}
+
+.fs-13 {
+    font-size: 1.3rem !important;
 }
 
 .fs-14 {
