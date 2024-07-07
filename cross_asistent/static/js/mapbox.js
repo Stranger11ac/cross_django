@@ -3,7 +3,6 @@ var offcanvas = document.getElementById("infoLateral");
 var offcanvasElement = new bootstrap.Offcanvas(offcanvas);
 let colorlabels = "#000";
 var currentMarker;
-var currentRoute;
 
 mapboxgl.accessToken = mapToken;
 
@@ -198,19 +197,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
                         $("#buttons_route").slideDown("fast");
 
-                        // Agregar la capa de la ruta al mapa
-                        directions.on("route", (e) => {
-                            if (e.route.length > 0) {
-                                currentRoute = e.route[0];
-                                console.log(currentRoute);
-                            } else {
-                                console.warn("No se encontraron rutas.");
-                            }
-                        });
-
                         map.addControl(directions, "top-left");
-                        // } else {
-                        //     alertSToast("center",5000,"warning","Los edificios seleccionados no tienen coordenadas válidas.");
                     }
                 } else {
                     alertSToast("center", 5000, "warning", "Por favor, selecciona tanto origen como destino.");
@@ -247,18 +234,10 @@ document.addEventListener("DOMContentLoaded", function () {
             map.on("load", function () {
                 deleteLabels();
                 createEdificios();
-
-                if (currentRoute) {
-                    addRouteLayer(currentRoute);
-                }
             });
-            map.on("style.load", () => {
+            map.on("style.load", function() {
                 deleteLabels();
                 createEdificios();
-
-                if (currentRoute) {
-                    addRouteLayer(currentRoute);
-                }
             });
             map.on("click", "places-layer", (e) => {
                 const feature = e.features[0];
