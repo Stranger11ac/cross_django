@@ -154,15 +154,7 @@
             <div class="card mb-4">
                 <div class="card-body">
                     <h3 class="text-center mb-4">Base de datos</h3>
-                    <form action="{% url 'export_database_to_csv' %}" method="get">
-                        {% comment %} {% csrf_token %}
-                        <label for="selecTable">Selecciona la Tabla que desea Descargar</label>
-                        <select id="selecTable" name="selecTable" class="form-select">
-                            <option value="" disabled selected>Selecciona la Tabla</option>
-                            {% for tabla in data_table %}
-                            <option value="{{ tabla }}">{{ tabla }}</option>
-                            {% endfor %}
-                        </select><br> {% endcomment %}
+                    <form action="{% url 'export_database' %}" method="get">
                         <button type="submit" class="btn btn_detail btn-block">
                             Descargar <i class="fa-solid fa-file-arrow-down ms-1"></i>
                         </button>
@@ -173,6 +165,33 @@
                 <div class="card-body">
                     <h3 class="text-center mb-4">Importar Base de Datos</h3>
                     <form method="POST" enctype="multipart/form-data" action="{% url 'import_database' %}" data-submit-form>
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <input type="file" name="file" accept=".csv" class="form-control">
+                        </div>
+                        <button type="submit" class="btn btn_detail btn-block">
+                            Importar <i class="fa-solid fa-file-arrow-up ms-1"></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-6 col-md-12">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h3 class="text-center mb-4">Mapa</h3>
+                    <form action="{% url 'export_mapa' %}" method="get">
+                        <button type="submit" class="btn btn_detail btn-block">
+                            Descargar <i class="fa-solid fa-file-arrow-down ms-1"></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h3 class="text-center mb-4">Importar Base de Datos</h3>
+                    <form method="POST" enctype="multipart/form-data" action="{% url 'import_mapa' %}" data-submit-form>
                         {% csrf_token %}
                         <div class="mb-3">
                             <input type="file" name="file" accept=".csv" class="form-control">

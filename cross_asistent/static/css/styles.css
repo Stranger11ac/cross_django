@@ -753,6 +753,10 @@ img.img-tiny {
     color: #292f38 !important;
 }
 
+.mapboxgl-ctrl-group button a {
+    place-content: center;
+}
+
 
 .mapboxgl-ctrl-group button i.fa-solid,
 .mapboxgl-ctrl-group button i.fa-regular {
@@ -765,12 +769,14 @@ img.img-tiny {
     top: 0;
     left: -110%;
     opacity: 0;
-    transition: left 0.5s ease, opacity 0.5s ease;
+    transition: left 0.8s ease, opacity 0.5s ease;
+    transition-delay: 0s, 0.1s;
 }
 
 .controls_route.show {
     left: 0;
     opacity: 1;
+    transition-delay: 0s, 0s;
 }
 
 .position-absolute {
@@ -784,6 +790,13 @@ img.img-tiny {
 
 .offcanvas.offcanvas-bottom label i {
     font-size: 2rem;
+}
+
+main#map{
+    cursor: pointer !important;
+}
+main#map:active{
+    cursor: move !important;
 }
 
 /*#################### Template Buttons ####################*/

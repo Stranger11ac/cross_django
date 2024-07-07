@@ -1,5 +1,5 @@
 from django.urls import path
-from . import views, elements
+from . import views, elements, imex_port
 
 urlpatterns = [
     # Páginas de inicio
@@ -25,8 +25,6 @@ urlpatterns = [
     path('administracion/programador/', views.vista_programador, name='vista_programador'),
     path('administracion/perfil/', views.ver_perfil, name='perfil'),
     path('administracion/responderpreguntas/', views.responder_preguntas, name='responder_preguntas'),
-    path('administracion/export/csv/', views.export_database, name='export_database_to_csv'),
-    path('administracion/importar/csv/', views.import_database, name='import_database'),
     path('banners/', views.upload_banner, name='upload_banner'),
     path('administracion/banners/<int:banner_id>/edit/', views.edit_banner, name='edit_banner'),
     path('banners/delete/<int:banner_id>/', views.delete_banner, name='delete_banner'),
@@ -46,4 +44,10 @@ urlpatterns = [
     path('administracion/obtener_edificio/', views.obtenerEdificio, name='obtenerEdificio'),
     path('administracion/editar_mapa/', views.obtenerinfoEdif, name='consultaMap'),
     path('administracion/regEdificio_mapa/', views.regEdificioMapa, name='regEdificio'),
+    
+    # Importar y Exportar
+    path('administracion/export/database/', imex_port.export_database, name='export_database'),
+    path('administracion/importar/database/', imex_port.import_database, name='import_database'),
+    path('administracion/export/mapa/', imex_port.export_mapa, name='export_mapa'),
+    path('administracion/importar/mapa/', imex_port.import_mapa, name='import_mapa'),
 ]

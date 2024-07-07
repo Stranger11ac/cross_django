@@ -148,11 +148,45 @@ def chatbot(request):
 
 # Mapa ---------------------------------------------------
 def mapa_data(request):
-    mapas = models.Mapa.objects.all().values('titulo', 'informacion', 'color', 'door_cords', 'p1_polygons', 'p2_polygons', 'p3_polygons', 'p4_polygons')
-    mapas_list = list(mapas)
-    return JsonResponse(mapas_list, safe=False)
+    mapas = models.Mapa.objects.all()
+    features = []
+    for mapa in mapas:
+        
+        imagen_qs = models.Database.objects.filter(titulo=mapa.nombre).values_list('imagenes', flat=True)
+        imagen = imagen_qs.first() if imagen_qs.exists() else None
+        
+        feature = {
+            "type": "Feature",
+            "properties": {
+                "color": mapa.color,
+                "imagen_url": imagen,
+                "nombre": mapa.nombre,
+                "informacion": mapa.informacion,
+                "door": [float(coord) for coord in mapa.door_cords.split(",")],
+            },
+            "geometry": {
+                "type": "Polygon",
+                "coordinates": [
+                    [
+                        [float(coord) for coord in mapa.p1_polygons.split(",")],
+                        [float(coord) for coord in mapa.p2_polygons.split(",")],
+                        [float(coord) for coord in mapa.p3_polygons.split(",")],
+                        [float(coord) for coord in mapa.p4_polygons.split(",")],
+                        [float(coord) for coord in mapa.p1_polygons.split(",")]
+                    ]
+                ],
+            },
+        }
+        features.append(feature)
 
-edificios = [
+    geojsonEdificios = {
+        "type": "FeatureCollection",
+        "features": features,
+    }
+    return JsonResponse(geojsonEdificios)
+
+
+edificios_old = [
         {
             'edifcolor': 'red','edifill': 'red',
             'nombre': 'Edificio 4',
@@ -346,3 +380,460 @@ def create_newuser(first_name, last_name, username, email, password1, password2=
         return {'success': False, 'message': 'Ocurrió un error durante el registro. Intente nuevamente.'}
 
 
+
+features=''
+properties=''
+nombre=''
+descripcion=''
+imagen_url=''
+fill=''
+geometry=''
+door=''
+coordinates=''
+
+edificios = {
+    type: "FeatureCollection",
+    features: [
+        {
+            type: "Feature",
+            properties: {
+                nombre: "Edificio 4",
+                descripcion: "Descripción del Edificio 4",
+                imagen_url: "/static/img/Edificio_4.webp",
+                fill: "red",
+            },
+            geometry: {
+                type: "Polygon",
+                door: [-100.93669, 25.55647],
+                coordinates: [
+                    [
+                        [-100.93688, 25.55661],
+                        [-100.93647, 25.55633],
+                        [-100.93662, 25.55613],
+                        [-100.93703, 25.55642],
+                        [-100.93688, 25.55661],
+                    ],
+                ],
+            },
+        },
+        {
+            type: "Feature",
+            properties: {
+                nombre: "Centro de Idiomas",
+                descripcion: "Descripción del Centro de Idiomas",
+                imagen_url: "/static/img/Centro_Idiomas.webp",
+                fill: "red",
+            },
+            geometry: {
+                type: "Polygon",
+                door: [-100.93705, 25.5573],
+                coordinates: [
+                    [
+                        [-100.93684, 25.55715],
+                        [-100.93724, 25.55742],
+                        [-100.93711, 25.55757],
+                        [-100.9367, 25.55731],
+                        [-100.93684, 25.55715],
+                    ],
+                ],
+            },
+        },
+        {
+            type: "Feature",
+            properties: {
+                nombre: "Laboratorio 7B",
+                descripcion: "Descripción del Laboratorio 7B",
+                imagen_url: "/static/img/Laboratorio_7B.webp",
+                fill: "#00FFFF",
+            },
+            geometry: {
+                type: "Polygon",
+                door: [-100.93626, 25.55694],
+                coordinates: [
+                    [
+                        [-100.93644, 25.55704],
+                        [-100.93631, 25.55718],
+                        [-100.93593, 25.55694],
+                        [-100.93606, 25.55679],
+                        [-100.93644, 25.55704],
+                    ],
+                ],
+            },
+        },
+        {
+            type: "Feature",
+            properties: {
+                nombre: "Vinculación",
+                descripcion: "Descripción de Vinculación",
+                imagen_url: "/static/img/Vinculacion.webp",
+                fill: "yellow",
+            },
+            geometry: {
+                type: "Polygon",
+                door: [-100.93639, 25.55773],
+                coordinates: [
+                    [
+                        [-100.93653, 25.55813],
+                        [-100.93623, 25.55794],
+                        [-100.93646, 25.55765],
+                        [-100.93676, 25.55785],
+                        [-100.93653, 25.55813],
+                    ],
+                ],
+            },
+        },
+        {
+            type: "Feature",
+            properties: {
+                nombre: "Rectoria",
+                descripcion: "Descripcion de Rectoria",
+                imagen_url: "/static/img/Rectoria.webp",
+                fill: "yellow",
+            },
+            geometry: {
+                type: "Polygon",
+                door: [-100.93601, 25.55754],
+                coordinates: [
+                    [
+                        [-100.9359, 25.55767],
+                        [-100.93559, 25.55748],
+                        [-100.93581, 25.55719],
+                        [-100.93612, 25.55741],
+                        [-100.9359, 25.55767],
+                    ],
+                ],
+            },
+        },
+        {
+            type: "Feature",
+            properties: {
+                nombre: "Biblioteca",
+                descripcion: "Descripción de Biblioteca",
+                imagen_url: "/static/img/Biblioteca.webp",
+                fill: "blue",
+            },
+            geometry: {
+                type: "Polygon",
+                door: [-100.93604, 25.55646],
+                coordinates: [
+                    [
+                        [-100.93613, 25.55651],
+                        [-100.93594, 25.55639],
+                        [-100.93616, 25.55615],
+                        [-100.93633, 25.55628],
+                        [-100.93613, 25.55651],
+                    ],
+                ],
+            },
+        },
+        {
+            type: "Feature",
+            properties: {
+                nombre: "Cafeteria UTC",
+                descripcion: "Descripción de Cafeteria UTC",
+                imagen_url: "/static/img/Cafeteria_UTC.webp",
+                fill: "orange",
+            },
+            geometry: {
+                type: "Polygon",
+                door: [-100.93606, 25.55613],
+                coordinates: [
+                    [
+                        [-100.9361, 25.55616],
+                        [-100.93618, 25.55607],
+                        [-100.93608, 25.55599],
+                        [-100.93601, 25.55607],
+                        [-100.9361, 25.55616],
+                    ],
+                ],
+            },
+        },
+        {
+            type: "Feature",
+            properties: {
+                nombre: "Edificio 3",
+                descripcion: "Descripción de Edificio 3",
+                imagen_url: "/static/img/Edificio_3.webp",
+                fill: "red",
+            },
+            geometry: {
+                type: "Polygon",
+                door: [-100.93563, 25.55596],
+                coordinates: [
+                    [
+                        [-100.93582, 25.55611],
+                        [-100.93547, 25.55583],
+                        [-100.93564, 25.55566],
+                        [-100.936, 25.55594],
+                        [-100.93582, 25.55611],
+                    ],
+                ],
+            },
+        },
+        {
+            type: "Feature",
+            properties: {
+                nombre: "Domo",
+                descripcion: "Descripción de Domo",
+                imagen_url: "/static/img/Domo.webp",
+                fill: "lime",
+            },
+            geometry: {
+                type: "Polygon",
+                door: [-100.93495, 25.5552],
+                coordinates: [
+                    [
+                        [-100.93498, 25.55552],
+                        [-100.93471, 25.55533],
+                        [-100.93486, 25.55515],
+                        [-100.93514, 25.55534],
+                        [-100.93498, 25.55552],
+                    ],
+                ],
+            },
+        },
+        {
+            type: "Feature",
+            properties: {
+                nombre: "Edificio Docente 2",
+                descripcion:
+                    "<h6>Carreras:</h6> <ul>Desarrollo y Gestion de Software Multiplataforma<br>Entornos Virtuales y Negocios Digitales<br>Diseño y Gestion de Redes Logisticas</ul> ",
+                imagen_url: "/static/img/Edificio_2.webp",
+                fill: "red",
+            },
+            geometry: {
+                type: "Polygon",
+                door: [-100.93474, 25.55485],
+                coordinates: [
+                    [
+                        [-100.93495, 25.55495],
+                        [-100.93458, 25.55471],
+                        [-100.93471, 25.55455],
+                        [-100.93508, 25.55479],
+                        [-100.93495, 25.55495],
+                    ],
+                ],
+            },
+        },
+        {
+            type: "Feature",
+            properties: {
+                nombre: "Laboratorio 4-E",
+                descripcion: "Descripción del Laboratorio 4-E",
+                imagen_url: "/static/img/Laboratorio_4-E.webp",
+                fill: "#00FFFF",
+            },
+            geometry: {
+                type: "Polygon",
+                door: [-100.93471, 25.55511],
+                coordinates: [
+                    [
+                        [-100.93468, 25.55527],
+                        [-100.93479, 25.55515],
+                        [-100.93462, 25.55503],
+                        [-100.93451, 25.55515],
+                        [-100.93468, 25.55527],
+                    ],
+                ],
+            },
+        },
+        {
+            type: "Feature",
+            properties: {
+                nombre: "Cafeteria UTC 1",
+                descripcion: "Descripción de Cafeteria UTC 1",
+                imagen_url: "/static/img/cafeteria1.webp",
+                fill: "orange",
+            },
+            geometry: {
+                type: "Polygon",
+                door: [-100.93415, 25.55486],
+                coordinates: [
+                    [
+                        [-100.93408, 25.55501],
+                        [-100.9343, 25.55482],
+                        [-100.93421, 25.55473],
+                        [-100.93399, 25.55491],
+                        [-100.93408, 25.55501],
+                    ],
+                ],
+            },
+        },
+        {
+            type: "Feature",
+            properties: {
+                nombre: "Edificio 1",
+                descripcion: "Descripción del Edificio 1",
+                imagen_url: "/static/img/Edificio_1.webp",
+                fill: "red",
+            },
+            geometry: {
+                type: "Polygon",
+                door: [-100.93386, 25.55541],
+                coordinates: [
+                    [
+                        [-100.93369, 25.55527],
+                        [-100.93352, 25.55545],
+                        [-100.93393, 25.55575],
+                        [-100.93409, 25.55556],
+                        [-100.93369, 25.55527],
+                    ],
+                ],
+            },
+        },
+        {
+            type: "Feature",
+            properties: {
+                nombre: "Laboratorio de 7A",
+                descripcion: "Descripción del Laboratorio de PLC",
+                imagen_url: "/static/img/Laboratorio_7A.webp",
+                fill: "#00FFFF",
+            },
+            geometry: {
+                type: "Polygon",
+                door: [-100.93444, 25.55588],
+                coordinates: [
+                    [
+                        [-100.93424, 25.55573],
+                        [-100.93411, 25.55586],
+                        [-100.93447, 25.55615],
+                        [-100.93461, 25.55602],
+                        [-100.93424, 25.55573],
+                    ],
+                ],
+            },
+        },
+        {
+            type: "Feature",
+            properties: {
+                nombre: "Caceta 1",
+                descripcion: "Descripción de Caceta 1",
+                imagen_url: "/static/img/Caseta_1.webp",
+                fill: "gray",
+            },
+            geometry: {
+                type: "Polygon",
+                door: [-100.9368, 25.55812],
+                coordinates: [
+                    [
+                        [-100.93682, 25.55821],
+                        [-100.93672, 25.55815],
+                        [-100.93682, 25.55805],
+                        [-100.93691, 25.55812],
+                        [-100.93682, 25.55821],
+                    ],
+                ],
+            },
+        },
+        {
+            type: "Feature",
+            properties: {
+                nombre: "Caceta 2",
+                descripcion: "Descripción de Caceta 2",
+                imagen_url: "/static/img/Caseta_2.webp",
+                fill: "gray",
+            },
+            geometry: {
+                type: "Polygon",
+                door: [-100.9347, 25.55613],
+                coordinates: [
+                    [
+                        [-100.93464, 25.55606],
+                        [-100.93457, 25.55613],
+                        [-100.9347, 25.55624],
+                        [-100.93477, 25.55616],
+                        [-100.93464, 25.55606],
+                    ],
+                ],
+            },
+        },
+        {
+            type: "Feature",
+            properties: {
+                nombre: "Oxxo",
+                descripcion: "Descripción de Oxxo",
+                imagen_url: "/static/img/Oxxo.webp",
+                fill: "white",
+            },
+            geometry: {
+                type: "Polygon",
+                door: [-100.93613, 25.55775],
+                coordinates: [
+                    [
+                        [-100.93619, 25.55777],
+                        [-100.93613, 25.55785],
+                        [-100.93602, 25.55776],
+                        [-100.9361, 25.55769],
+                        [-100.93619, 25.55777],
+                    ],
+                ],
+            },
+        },
+        {
+            type: "Feature",
+            properties: {
+                nombre: "Papeleria",
+                descripcion: "Descripción de Papeleria",
+                imagen_url: "/static/img/papeleriautc.webp",
+                fill: "blue",
+            },
+            geometry: {
+                type: "Polygon",
+                door: [-100.93706, 25.55702],
+                coordinates: [
+                    [
+                        [-100.93713, 25.557],
+                        [-100.93709, 25.55708],
+                        [-100.93701, 25.55704],
+                        [-100.93706, 25.55697],
+                        [-100.93713, 25.557],
+                    ],
+                ],
+            },
+        },
+        {
+            type: "Feature",
+            properties: {
+                nombre: "Campo De Fútbol",
+                descripcion: "Descripción de Campo De Fútbol",
+                imagen_url: "/static/img/futbol.webp",
+                fill: "lime",
+            },
+            geometry: {
+                type: "Polygon",
+                door: [-100.93778, 25.55853],
+                coordinates: [
+                    [
+                        [-100.93793, 25.55871],
+                        [-100.93763, 25.55835],
+                        [-100.93786, 25.55819],
+                        [-100.93816, 25.55855],
+                        [-100.93793, 25.55871],
+                    ],
+                ],
+            },
+        },
+        {
+            type: "Feature",
+            properties: {
+                nombre: "Campo de Softbol",
+                descripcion: "Descripción de Campo de Softbol",
+                imagen_url: "/static/img/softbol.webp",
+                fill: "lime",
+            },
+            geometry: {
+                type: "Polygon",
+                door: [-100.9384, 25.55849],
+                coordinates: [
+                    [
+                        [-100.93881, 25.55886],
+                        [-100.93925, 25.55844],
+                        [-100.93869, 25.55796],
+                        [-100.93837, 25.55848],
+                        [-100.93881, 25.55886],
+                    ],
+                ],
+            },
+        },
+    ],
+}

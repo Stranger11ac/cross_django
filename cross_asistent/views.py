@@ -6,24 +6,20 @@ from django.contrib.auth.decorators import login_required
 from django.utils.encoding import force_bytes, force_str
 from django.views.decorators.cache import never_cache
 from django.template.loader import render_to_string
-from django.http import JsonResponse, HttpResponse
-from .forms import BannersForm, CSVUploadForm, ProfileImageForm
+from django.http import JsonResponse
+from .forms import BannersForm, ProfileImageForm
 from django.db import models, transaction
 from django.contrib.auth.models import User
 from django.core.mail import send_mail
-from django.utils import timezone
 from django.conf import settings
 from django.urls import reverse
 from django.apps import apps
-
 from django.core.files.storage import default_storage
 from . import models, elements
-
 import json
-import csv
-
 
 databaseall = models.Database.objects.all()
+mapaall = models.Mapa.objects.all()
 
 def index(request):
     if not request.user.is_staff:
@@ -165,58 +161,6 @@ def singoutpage(request):
     logout(request)
     return redirect('singin')
 
-@login_required
-@never_cache
-def export_database(request):
-    now = timezone.localtime(timezone.now()).strftime('%d-%m-%Y_%H%M%S')
-    if request.user.is_staff:
-        response = HttpResponse(content_type='text/csv')
-        response['Content-Disposition'] = f'attachment; filename="UTC_database_{now}.csv"'
-        writer = csv.writer(response)
-        writer.writerow(['Categoria', 'Titulo', 'Informacion', 'Redirigir', 'Frecuencia', 'Documentos', 'Imagenes', 'Fecha Modificacion'])
-        # Obtener todos los objetos del modelo Database
-        
-        for info in databaseall:
-            writer.writerow([
-                info.categoria if info.categoria else '',
-                info.titulo,
-                info.informacion,
-                info.redirigir,
-                info.frecuencia,
-                info.documentos.url if info.documentos else '',
-                info.imagenes.url if info.imagenes else '',
-                info.fecha_modificacion
-            ])
-        return response
-
-@login_required
-@never_cache
-def import_database(request):
-    if request.method == 'POST':
-        form = CSVUploadForm(request.POST, request.FILES)
-        if form.is_valid():
-            file = request.FILES['file']
-            csv_file = file.read().decode('utf-8').splitlines()
-            reader = csv.reader(csv_file)
-            next(reader)  # Omitir la fila de encabezado
-            for row in reader:
-                categoria, _ = models.Categorias.objects.get_or_create(categoria=row[0])
-                # Crear la instancia del modelo
-                models.Database.objects.create(
-                    categoria=categoria,
-                    titulo=row[1],
-                    informacion=row[2],
-                    redirigir=row[3],
-                    frecuencia=int(row[4]),
-                    documentos=row[5],
-                    imagenes=row[6],
-                    fecha_modificacion=row[7]
-                )
-            # Redirigir a la vista programador después de procesar el formulario
-        return JsonResponse({'success': True, 'message': 'Base de datos importada correctamente ✔'}, status=200)
-    else:
-        form = CSVUploadForm()
-    
 # def para la vista administrador
 @login_required
 @never_cache
@@ -413,7 +357,7 @@ def obtenerEdificio(request):
         if (edificio_id):
             edificio = get_object_or_404(models.Database, id=edificio_id)
             data = {
-                'titulo': edificio.titulo,
+                'titulo': edificio.nombre,
                 'informacion': edificio.informacion,
                 'imagen_url': edificio.imagenes.url if edificio.imagenes else None,
             }
@@ -426,7 +370,7 @@ def regEdificioMapa(request):
         return JsonResponse({'error': 'Metodo no valido'}, status=400)
 
     isNewPost = request.POST.get('isNew')
-    tituloPost = request.POST.get('titulo')
+    nombrePost = request.POST.get('titulo')
     colorPost = request.POST.get('color')
     p1Post = request.POST.get('p1_polygons')
     p2Post = request.POST.get('p2_polygons')
@@ -440,8 +384,8 @@ def regEdificioMapa(request):
     with transaction.atomic():
         if isNewPost is None:
             # Update existing Mapa
-            if models.Mapa.objects.filter(titulo=tituloPost).exists():
-                edificio = get_object_or_404(models.Mapa, titulo=tituloPost)
+            if models.Mapa.objects.filter(nombre=nombrePost).exists():
+                edificio = get_object_or_404(models.Mapa, nombre=nombrePost)
                 edificio.color = colorPost
                 edificio.p1_polygons = p1Post
                 edificio.p2_polygons = p2Post
@@ -450,10 +394,10 @@ def regEdificioMapa(request):
                 edificio.door_cords = door_cordsPost
                 edificio.informacion = informacionPost
                 edificio.save()
-                success_message = f'Se Actualizo el "{tituloPost}", los cambios se reflejaran en el mapa 🧐😊🎈'
+                success_message = f'Se Actualizo el "{nombrePost}", los cambios se reflejaran en el mapa 🧐😊🎈'
             else:
                 models.Mapa.objects.create(
-                    titulo=tituloPost,
+                    nombre=nombrePost,
                     color=colorPost,
                     p1_polygons=p1Post,
                     p2_polygons=p2Post,
@@ -462,10 +406,10 @@ def regEdificioMapa(request):
                     door_cords=door_cordsPost,
                     informacion=informacionPost,
                 )
-                success_message = f'El "{tituloPost}" se creo exitosamente en el Mapa 🎉🎈🥳'
+                success_message = f'El "{nombrePost}" se creo exitosamente en el Mapa 🎉🎈🥳'
 
             if imagenPost:
-                mapIndb = get_object_or_404(models.Database, titulo=tituloPost)
+                mapIndb = get_object_or_404(models.Database, nombre=nombrePost)
                 mapIndb.imagenes = imagenPost
                 mapIndb.save()
 
@@ -473,7 +417,7 @@ def regEdificioMapa(request):
 
         # Create new Mapa and Database
         models.Mapa.objects.create(
-            titulo=tituloPost,
+            nombre=nombrePost,
             color=colorPost,
             p1_polygons=p1Post,
             p2_polygons=p2Post,
@@ -485,7 +429,7 @@ def regEdificioMapa(request):
         
         models.Database.objects.create(
             categoria=models.Categorias.objects.get(categoria="Mapa"),
-            titulo=tituloPost,
+            nombre=nombrePost,
             informacion=informacionText,
             imagenes=imagenPost
         )

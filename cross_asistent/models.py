@@ -63,7 +63,7 @@ class Banners(models.Model):
         super(Banners, self).save(*args, **kwargs)
 
 class Mapa(models.Model):
-    titulo = models.CharField(max_length=200, blank=False)
+    nombre = models.CharField(max_length=200, blank=False)
     informacion = models.TextField(null=False)
     color = models.CharField(max_length=50, null=False)
     door_cords = models.CharField(max_length=100, null=True)
@@ -73,7 +73,7 @@ class Mapa(models.Model):
     p4_polygons = models.CharField(max_length=100, blank=True, null=True)
 
     def __str__(self):
-        return self.titulo
+        return self.nombre
 
 class Articulos(models.Model):
     creacion = models.DateField(auto_now_add=True, blank=False)
