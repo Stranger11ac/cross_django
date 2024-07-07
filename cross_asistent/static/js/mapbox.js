@@ -19,28 +19,6 @@ const map = new mapboxgl.Map({
     ],
 });
 
-const universityBoundary = {
-    type: "FeatureCollection",
-    features: [
-        {
-            type: "Feature",
-            properties: {},
-            geometry: {
-                type: "Polygon",
-                coordinates: [
-                    [
-                        [-100.9736, 25.5142],
-                        [-100.9736, 25.5735],
-                        [-100.9736, 25.5142],
-                        [-100.9736, 25.5735],
-                        [-100.9736, 25.5142],
-                    ],
-                ],
-            },
-        },
-    ],
-};
-
 // Crear nuevo menu de botones personalizados ########################################
 map.addControl(new mapboxgl.NavigationControl());
 class CustomControl {
@@ -67,7 +45,7 @@ class CustomControl {
             `<div class="mapboxgl-ctrl-icon"><i class="fa-solid fa-map-location-dot"></i></div>`,
             "Google Maps",
             () => {
-                var myModal = new mdb.Modal(document.getElementById("goMaps"));
+                var myModal = new mdb.Modal(document.getElementById("beforeSend"));
                 myModal.show();
             }
         );
@@ -84,7 +62,7 @@ class CustomControl {
         const btnroute = createButton(
             "route",
             '<div class="mapboxgl-ctrl-icon" data-btn_closed="controls_route"><i class="fa-solid fa-route"></i></div>',
-            "Ir a..."
+            "Como ir a..."
         );
 
         // Agregar botones al contenedor personalizado
@@ -125,13 +103,6 @@ document.addEventListener("DOMContentLoaded", function () {
                     });
                 }
 
-                if (!map.getSource("university-boundary")) {
-                    map.addSource("university-boundary", {
-                        type: "geojson",
-                        data: universityBoundary,
-                    });
-                }
-
                 // Agregar capa para las etiquetas
                 if (!map.getLayer("places-label")) {
                     map.addLayer({
@@ -153,7 +124,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 map.on("click", (e) => {
                     const lngLat = e.lngLat;
                     createMarker(lngLat);
-                    console.log("Nuevo LngLat:", lngLat.lng, lngLat.lat);
+                    // console.log("Nuevo LngLat:", lngLat.lng, lngLat.lat);
                 });
             }
             function createMarker(lngLat) {
@@ -167,14 +138,6 @@ document.addEventListener("DOMContentLoaded", function () {
                 })
                     .setLngLat(lngLat)
                     .addTo(map);
-
-                currentMarker.getElement().addEventListener("mouseenter", function () {
-                    map.getCanvas().style.cursor = "pointer";
-                });
-
-                currentMarker.getElement().addEventListener("mouseleave", function () {
-                    map.getCanvas().style.cursor = "default";
-                });
             }
             function calcularRuta() {
                 const origen = document.getElementById("origen").value;
@@ -202,26 +165,6 @@ document.addEventListener("DOMContentLoaded", function () {
                 } else {
                     alertSToast("center", 5000, "warning", "Por favor, selecciona tanto origen como destino.");
                 }
-            }
-            function addRouteLayer(routeData) {
-                map.addSource("directions", {
-                    type: "geojson",
-                    data: routeData,
-                });
-
-                map.addLayer({
-                    id: "directions-route-line",
-                    type: "line",
-                    source: "directions",
-                    layout: {
-                        "line-join": "round",
-                        "line-cap": "round",
-                    },
-                    paint: {
-                        "line-color": "#3b9ddd",
-                        "line-width": 6,
-                    },
-                });
             }
             function deleteLabels() {
                 map.getStyle().layers.forEach(function (layer) {

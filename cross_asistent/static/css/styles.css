@@ -745,6 +745,11 @@ img.img-tiny {
 }
 
 /* Mapbox */
+.mapboxgl-canvas-container.mapboxgl-interactive,
+.mapboxgl-ctrl-group button.mapboxgl-ctrl-compass {
+    cursor: unset !important;
+}
+
 .mapboxgl-ctrl-group button {
     display: grid;
     place-items: center;
