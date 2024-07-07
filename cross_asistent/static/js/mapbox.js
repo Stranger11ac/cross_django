@@ -2,6 +2,7 @@ var mapToken = "pk.eyJ1Ijoic2FsdmFoZHotMTEiLCJhIjoiY2x3czBoYTJiMDI1OTJqb2VmZzVue
 mapboxgl.accessToken = mapToken;
 var offcanvas = document.getElementById("infoLateral");
 var offcanvasElement = new bootstrap.Offcanvas(offcanvas);
+let colorlabels = "#000";
 let currentRoute;
 
 const map = new mapboxgl.Map({
@@ -118,7 +119,7 @@ document.addEventListener("DOMContentLoaded", function () {
                         source: "places",
                         paint: {
                             "fill-color": ["get", "color"],
-                            "fill-opacity": 0.5,
+                            "fill-opacity": 0.4,
                         },
                     });
                 }
@@ -129,7 +130,7 @@ document.addEventListener("DOMContentLoaded", function () {
                         data: universityBoundary,
                     });
                 }
-                
+
                 // Agregar capa para las etiquetas
                 if (!map.getLayer("places-label")) {
                     map.addLayer({
@@ -138,19 +139,44 @@ document.addEventListener("DOMContentLoaded", function () {
                         source: "places",
                         layout: {
                             "text-field": ["get", "nombre"],
-                            "text-font": ["Open Sans Bold", "Arial Unicode MS Bold"],
                             "text-size": 12,
-                            "text-offset": [0, 0.6],
+                            "text-offset": [0, -0.6],
                             "text-anchor": "top",
                         },
                         paint: {
-                            "text-color": "#000000",
+                            "text-color": colorlabels,
                         },
                     });
                 }
 
-                // Mover la capa de etiquetas por encima de la capa de polígonos
-                map.moveLayer("places-label");
+                // Crear marcador
+                let currentMarker;
+                function createMarker(lngLat) {
+                    if (currentMarker) {
+                        currentMarker.remove();
+                    }
+
+                    currentMarker = new mapboxgl.Marker({
+                        draggable: false,
+                        color: "#3b71ca",
+                    })
+                        .setLngLat(lngLat)
+                        .addTo(map);
+
+                    currentMarker.getElement().addEventListener("mouseenter", function () {
+                        map.getCanvas().style.cursor = "pointer";
+                    });
+
+                    currentMarker.getElement().addEventListener("mouseleave", function () {
+                        map.getCanvas().style.cursor = "default";
+                    });
+                }
+
+                map.on("click", (e) => {
+                    const lngLat = e.lngLat;
+                    createMarker(lngLat);
+                    console.log("Nuevo LngLat:", lngLat.lng, lngLat.lat);
+                });
             }
 
             geojsonEdificios.features.forEach((feature, index) => {
@@ -159,7 +185,10 @@ document.addEventListener("DOMContentLoaded", function () {
                 document.getElementById("destino").add(option.cloneNode(true));
             });
 
-            map.on("load", createEdificios);
+            map.on("load", function () {
+                deleteLabels();
+                createEdificios();
+            });
 
             // Mostrar información del edificio al hacer clic en el polígono
             map.on("click", "places-layer", (e) => {
@@ -196,22 +225,37 @@ document.addEventListener("DOMContentLoaded", function () {
                 }
             });
 
-            // Modificar el código que cambia el estilo del mapa
-            const inputs = document.querySelectorAll("#offcanvasbody input");
-            for (const input of inputs) {
-                input.onclick = (layer) => {
-                    // Guardar la ruta actual antes de cambiar el estilo
-                    if (map.getLayer("directions-route-line")) {
-                        currentRoute = map.getSource("directions")._data;
+            const inputsw = document.querySelectorAll("#offcanvasbody input[type='radio']");
+
+            inputsw.forEach((input) => {
+                input.addEventListener("click", function (layer) {
+                    const layerId = layer.target.id;
+                    const label = document.querySelector(`label[for='${layerId}']`);
+
+                    document.querySelectorAll("#offcanvasbody label").forEach((label) => {
+                        label.classList.remove("btn_detail", "text-white");
+                    });
+
+                    label.classList.add("btn_detail", "text-white");
+
+                    inputsw.forEach((input) => {
+                        input.removeAttribute("disabled");
+                    });
+                    this.setAttribute("disabled", "disabled");
+
+                    if (layerId === "dark-v11") {
+                        colorlabels = "#fff";
+                    } else {
+                        colorlabels = "#000";
                     }
 
-                    const layerId = layer.target.id;
                     map.setStyle("mapbox://styles/mapbox/" + layerId);
-                };
-            }
+                });
+            });
 
-            // Escuchar el evento style.load y llamar a createEdificios
+            // Escuchar el evento style.load
             map.on("style.load", () => {
+                deleteLabels();
                 createEdificios();
 
                 // Volver a agregar la ruta si existe
@@ -236,7 +280,6 @@ document.addEventListener("DOMContentLoaded", function () {
                     });
                 }
             });
-
         })
         .catch((error) => console.error("Error al obtener los datos del mapa:", error));
 });
@@ -253,25 +296,6 @@ const directions = new MapboxDirections({
     },
     alternatives: true,
     interactive: false,
-});
-
-// Crear marcador
-let currentMarker;
-function createMarker(lngLat) {
-    // Sin este if el marcador se cuplica
-    if (currentMarker) {
-        currentMarker.remove();
-    }
-
-    currentMarker = new mapboxgl.Marker({
-        draggable: false,
-    })
-        .setLngLat(lngLat)
-        .addTo(map);
-}
-map.on("click", (e) => {
-    const lngLat = e.lngLat;
-    createMarker(lngLat);
 });
 
 map.getCanvas().style.cursor = "default";
@@ -291,3 +315,11 @@ map.on("mousedown", () => {
 map.on("mouseup", () => {
     map.getCanvas().style.cursor = "default";
 });
+
+function deleteLabels() {
+    map.getStyle().layers.forEach(function (layer) {
+        if (layer.type === "symbol" && layer.layout["text-field"]) {
+            map.setLayoutProperty(layer.id, "visibility", "none");
+        }
+    });
+}

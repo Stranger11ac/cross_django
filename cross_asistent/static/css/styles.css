@@ -786,10 +786,18 @@ img.img-tiny {
 .offcanvas.offcanvas-bottom {
     height: fit-content;
 }
-
-
 .offcanvas.offcanvas-bottom label i {
     font-size: 2rem;
+}
+
+.offcanvas-backdrop {
+    background: var(--darkA4);
+    backdrop-filter: blur(1px);
+}
+
+.offcanvas-backdrop.fade,
+.offcanvas-backdrop.show {
+    opacity: unset !important;
 }
 
 main#map{
