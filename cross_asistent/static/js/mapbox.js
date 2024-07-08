@@ -128,7 +128,48 @@ document.addEventListener("DOMContentLoaded", function () {
                     });
                     map.moveLayer("places-label");
                 }
+
+                // Crear capas para cada tipo de camino
+                if (!map.getLayer("smooth-path")) {
+                    map.addLayer({
+                        id: "smooth-path",
+                        type: "line",
+                        source: "places",
+                        filter: ["==", ["get", "type"], "smooth_path"],
+                        paint: {
+                            "line-color": "green",
+                            "line-width": 4,
+                        },
+                    });
+                }
+
+                if (!map.getLayer("stairs")) {
+                    map.addLayer({
+                        id: "stairs",
+                        type: "line",
+                        source: "places",
+                        filter: ["==", ["get", "type"], "stairs"],
+                        paint: {
+                            "line-color": "blue",
+                            "line-width": 4,
+                        },
+                    });
+                }
+
+                if (!map.getLayer("streets")) {
+                    map.addLayer({
+                        id: "streets",
+                        type: "line",
+                        source: "places",
+                        filter: ["==", ["get", "type"], "street"],
+                        paint: {
+                            "line-color": "darkgray",
+                            "line-width": 4,
+                        },
+                    });
+                }
             }
+
             function createMarker(lngLat) {
                 if (currentMarker) {
                     currentMarker.remove();
@@ -141,6 +182,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     .setLngLat(lngLat)
                     .addTo(map);
             }
+
             function calcularRuta() {
                 const origen = document.getElementById("origen").value;
                 const destino = document.getElementById("destino").value;
@@ -170,11 +212,13 @@ document.addEventListener("DOMContentLoaded", function () {
                     alertSToast("center", 5000, "warning", "Por favor, selecciona tanto origen como destino.");
                 }
             }
+
             function resetRout() {
                 formRoute.querySelectorAll("option").forEach((option) => {
                     option.disabled = false;
                 });
             }
+
             function addRouteLayer() {
                 map.addSource("directions", {
                     type: "geojson",
@@ -196,6 +240,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 });
                 map.moveLayer("places-label");
             }
+
             function deleteLabels() {
                 map.getStyle().layers.forEach(function (layer) {
                     if (layer.type === "symbol" && layer.layout["text-field"]) {
@@ -208,16 +253,19 @@ document.addEventListener("DOMContentLoaded", function () {
                 deleteLabels();
                 createEdificios();
             });
+
             map.on("style.load", function () {
                 deleteLabels();
                 createEdificios();
                 addRouteLayer();
             });
+
             map.on("click", function (e) {
                 const lngLat = e.lngLat;
                 createMarker(lngLat);
                 // console.log("Nuevo LngLat:", lngLat.lng, lngLat.lat);
             });
+
             map.on("click", "places-layer", (e) => {
                 const feature = e.features[0];
                 const { nombre, informacion, imagen_url } = feature.properties;
@@ -277,6 +325,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     }
                 });
             });
+
             selectDestiny.addEventListener("change", function () {
                 const seleccionDestino = this.value;
                 selectOrigin.querySelectorAll("option").forEach((option) => {
@@ -294,6 +343,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     calcularRuta();
                 }
             });
+
             selectDestiny.addEventListener("change", function () {
                 if (document.getElementById("origen").value) {
                     calcularRuta();
