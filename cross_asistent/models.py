@@ -95,9 +95,8 @@ class CustomUser(AbstractUser):
     profile_image = models.ImageField(upload_to='profile_images', blank=True, null=True)
     is_online = models.BooleanField(default=False)
 
-    # Add related_name to groups and user_permissions
-    groups = models.ManyToManyField('auth.Group', related_name='customuser_set')  # related_name for groups
-    user_permissions = models.ManyToManyField('auth.Permission', related_name='customuser_set')  # related_name for permissions
+    groups = models.ManyToManyField('auth.Group', related_name='customuser_set')
+    user_permissions = models.ManyToManyField('auth.Permission', related_name='customuser_set')
 
     class Meta:
         permissions = (("can_view_profile", "Can view profile"),)

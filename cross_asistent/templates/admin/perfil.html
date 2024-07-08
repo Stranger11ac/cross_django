@@ -13,7 +13,7 @@
         <div class="card__img_perfil" style="--color-bg1:#efefef; --color-bg2:#3591d7;">
             <div class="card__avatar_perfil">
                 {% if perfil_usuario.profile_image %}
-                    <img src="{{ perfil_usuario.profile_image.url }}" alt="Profile Image" />
+                    <img src="{{ perfil_usuario.profile_image }}" alt="Profile Image" />
                 {% else %}
                     <img src="/static/img/Default_image.webp" alt="Default Image" />
                 {% endif %}
@@ -38,7 +38,10 @@
 
     <form method="POST" enctype="multipart/form-data">
         {% csrf_token %}
-        {{ form.as_p }}
+        <div class="mb-3">
+            <label for="profile_image" class="form-label">Subir imagen de perfil</label>
+            <input class="form-control" type="file" id="profile_image" name="profile_image">
+        </div>
         <button type="submit" class="btn btn-primary">Subir imagen</button>
     </form>
 </main>

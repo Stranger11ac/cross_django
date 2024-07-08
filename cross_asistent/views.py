@@ -661,7 +661,6 @@ def delete_banner(request, banner_id):
 @login_required
 @never_cache
 def ver_perfil(request):
-    # Obtener el perfil del usuario actual
     perfil_usuario = request.user
 
     if request.method == 'POST':
@@ -669,10 +668,13 @@ def ver_perfil(request):
         if form.is_valid():
             form.save()
             return redirect('perfil')
+        else:
+            print(form.errors)  # Añade esto para ver errores en el formulario
     else:
         form = ProfileImageForm(instance=perfil_usuario)
 
     return render(request, 'admin/perfil.html', {'perfil_usuario': perfil_usuario, 'form': form})
+
 
 def password_reset_request(request):
     if request.method == 'POST' and request.headers.get('X-Requested-With') == 'XMLHttpRequest':
