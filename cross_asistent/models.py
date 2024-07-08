@@ -106,3 +106,13 @@ class CustomUser(AbstractUser):
 
     class Meta:
         permissions = (("can_view_profile", "Can view profile"),)
+
+class Notificacion(models.Model):
+    usuario = models.ForeignKey(User, on_delete=models.CASCADE)
+    tipo = models.CharField(max_length=50)
+    mensaje = models.TextField()
+    fecha = models.DateTimeField(auto_now_add=True)
+    leida = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f'{self.tipo} - {self.mensaje}'

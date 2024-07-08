@@ -29,7 +29,7 @@ urlpatterns = [
     path('administracion/banners/<int:banner_id>/edit/', views.edit_banner, name='edit_banner'),
     path('banners/delete/<int:banner_id>/', views.delete_banner, name='delete_banner'),
     
-    # usuarios
+    # Usuarios
     path('administracion/modificar_usuario/', views.in_active, name='in_active'),
     path('administracion/editar_usuario/<int:user_id>/', views.editar_usuario, name='editar_usuario'),
     path('administracion/eliminar_usuario/<int:user_id>/', views.eliminar_usuario, name='eliminar_usuario'),
@@ -50,4 +50,7 @@ urlpatterns = [
     path('administracion/importar/database/', imex_port.import_database, name='import_database'),
     path('administracion/export/mapa/', imex_port.export_mapa, name='export_mapa'),
     path('administracion/importar/mapa/', imex_port.import_mapa, name='import_mapa'),
+    
+    # Notificaciones
+    path('administracion/notificaciones/', views.ver_notis, name='notificaciones'),
 ]
