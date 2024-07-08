@@ -86,6 +86,36 @@ $(document).ready(function () {
                 .val(newRandomPass)
                 .focus();
         }
+
+        // Quitar clase show #####################################
+        $("[data-btn_closed]").on("click", function () {
+            var targetId = $(this).attr("data-btn_closed");
+            $("#" + targetId).toggleClass("show");
+        });
+
+        // Resetear formulario / vaciar todo el formulario
+        $("[data-reset_form]").on("click", function () {
+            var formId = $(this).attr("data-reset_form");
+            var formElement = $("#" + formId)[0];
+
+            if (formElement) {
+                formElement.reset();
+            }
+        });
+
+        // Estilo Texto Google #####################
+        function colorizeGoogle() {
+            const colors = ["#4285F4", "#EA4335", "#FBBC05", "#4285F4", "#34A853", "#EA4335"];
+            const googleSpan = $(".style_google");
+            const text = googleSpan.text();
+
+            googleSpan.empty();
+            for (let i = 0; i < text.length; i++) {
+                googleSpan.append(`<span style="color:${colors[i]}">${text[i]}</span>`);
+            }
+        }
+        colorizeGoogle();
+
         //
         //
     } catch (error) {
@@ -108,6 +138,8 @@ var alfabetico = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
 var alfanumerico = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 var caracteres = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_-%$#@!*&^.";
 var texto3 = /[a-zA-Z0-9]{3}/;
+var formToken = getCSRFToken();
+var timerOut = 6000;
 
 function cadenaRandom(longitud, caracteres) {
     var cadenaAleatoria = "";
@@ -121,15 +153,14 @@ function cadenaRandom(longitud, caracteres) {
 // Funcion de iniciar secion y Registrar nuevo Usuario ######################################################################
 function jsonSubmit(e) {
     e.preventDefault();
-    const timerOut = 6000;
     const thisForm = e.target;
     const formData = new FormData(thisForm);
-    const formToken = getCSRFToken();
-    console.log(formToken);
 
     if (formData.has("contenidoWord")) {
         const contenidoTiny = tinymce.activeEditor.getContent();
         formData.set("contenidoWord", contenidoTiny);
+        const contenidoTextTiny = tinymce.activeEditor.getContent({ format: "text" });
+        formData.set("textTiny", contenidoTextTiny);
     }
 
     fetch(thisForm.action, {
@@ -235,9 +266,27 @@ function chatSubmit(e) {
         .then((data) => {
             if (data.success) {
                 console.table(data.answer);
+
+                const dataImage = data.answer.imagenes;
+                const dataRedirigir = data.answer.redirigir;
+
+                console.log("img:" + typeof dataImage);
+                console.log("url:" + typeof dataRedirigir);
+
+                let viewImage = "";
+                let btnRedir = "";
+
+                if (dataImage != null) {
+                    viewImage = `<br><br> <img src="${dataImage}" width="350">`;
+                }
+
+                if (dataRedirigir != null) {
+                    btnRedir = `<br><br> <a class="btn btn_secondary mb-2" style="min-width:300px;" target="_blank" rel="noopener noreferrer" href="${dataRedirigir}" >Ver Mas <i class="fa-solid fa-arrow-up-right-from-square ms-1"></i></a>`;
+                }
                 const htmlBlock = `
                 <div class="btn_detail chat_msg asistent_response" data-tokeid="${valID}">
-                    <span>${data.answer.informacion}</span>
+                    <span>${data.answer.informacion}  ${btnRedir} </span>
+                    <span>${viewImage} </span>
                 </div>
             `;
 
@@ -270,11 +319,9 @@ document.addEventListener("DOMContentLoaded", function () {
             const valID = `uuid${cadenaRandom(5, alfabetico)}`;
             const saludo = "Hola 👋 ¡Bienvenido! Soy tu asistente virtual ¿En qué puedo ayudarte hoy?";
             const htmlBlock = `
-                <div class="output_block">
                     <div class="btn_detail chat_msg asistent_response" data-tokeid="${valID}">
                         <span>${saludo}</span>
-                    </div>
-                </div>`;
+                    </div>`;
 
             contOutput.insertAdjacentHTML("beforeend", htmlBlock);
 
@@ -335,7 +382,7 @@ function copyValInput() {
 copyValInput();
 
 function getCSRFToken() {
-    const csrfCookie = document.querySelector("[name=csrfmiddlewaretoken]").value;
+    const csrfCookie = $("[name=csrfmiddlewaretoken]").val();
     return csrfCookie;
 }
 
@@ -366,30 +413,54 @@ function alertSToast(posittionS, timerS, iconS, titleS, didDestroyS) {
 }
 
 // alertSToast('top', 8000, 'success', '<br>lo normal');
+$("#cancelNewEdif").on("click", function () {
+    $("#groupTitleMap").slideToggle("fast");
+    $("#cancelNewEdif").slideToggle("fast");
+    $(".img_form_map").slideToggle();
+    $("#isNewEdif").prop("checked", true);
+
+    $("#mapTitle").text("");
+    $("#formTitle").val("");
+    $("#textTiny").setContent("");
+});
 
 function obtenerDatosEdificio(infoid, urlConsulta) {
-    console.log(`AJAX: ${urlConsulta}`);
     if (infoid) {
         $.ajax({
             url: urlConsulta,
             type: "GET",
             data: { id: infoid },
             success: function (data) {
-                $("#titulo").val(data.titulo);
-                $("#informacion").val(data.informacion);
+                $("#isNewEdif").prop("checked", false);
+                $("#groupTitleMap").hide();
+                $(".img_form_map").slideDown();
+                $("#cancelNewEdif").show();
+
+                $("#mapTitle").text(data.titulo);
+                $("#formTitle").val(data.titulo);
+                tinymce.get("textTiny").setContent(data.informacion);
+
+                const oldImgUrl = data.imagen_url;
+                let newImgUrl;
+                let suggestImgText;
+
                 if (data.imagen_url) {
-                    const oldImgUrl = data.imagen_url;
-                    const newImgUrl = oldImgUrl.replace("/cross_asistent", "");
-                    $("#imagen_actual").attr("src", newImgUrl).show();
+                    $("#suggestImg").hide();
+                    newImgUrl = oldImgUrl.replace("/cross_asistent", "");
+                    suggestImgText = "(Opcional)";
                 } else {
-                    $("#imagen_actual").hide();
+                    $("#suggestImg").show();
+                    newImgUrl = "/static/img/default_image.webp";
+                    suggestImgText = "(fachada)";
                 }
+                $("#suggestImgText").text(suggestImgText);
+                $("#imagen_actual").attr("src", newImgUrl);
             },
         });
     }
 }
 
-$("#selectArticulo").change(function () {
+$("#selectEdif").change(function () {
     var infoid = $(this).val();
     const urlConsulta = $(this).data("second-action");
     obtenerDatosEdificio(infoid, urlConsulta);
@@ -398,17 +469,5 @@ $("#selectArticulo").change(function () {
 $("#color_picker").on("input", function () {
     var color = $(this).val();
     $("#color").val(color);
-});
-
-$("#edificioForm").submit(function (event) {
-    event.preventDefault();
-    var formData = new FormData(this);
-
-    $.ajax({
-        url: $(this).attr("action"),
-        type: $(this).attr("method"),
-        data: formData,
-        contentType: false,
-        processData: false,
-    });
+    $("#colorVal").text(color);
 });

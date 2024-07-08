@@ -1,13 +1,14 @@
 from django.urls import path
-from . import views
+from . import views, elements, imex_port
 
 urlpatterns = [
     # Páginas de inicio
     path('', views.index, name='home'),
-    path('chatbot/', views.chatbot, name='chatbot'),
+    path('chatbot/', elements.chatbot, name='chatbot'),
     path('blog-eventos/', views.blog, name='blog'),
     path('blog/<int:Articulos_id>/', views.mostrar_blog, name='mostrar_blog'),
     path('mapa/', views.map, name='map'),
+    path('mapa/edificios/', elements.mapa_data, name='mapa_edificios'),
     path('acercade/', views.about, name='about'),
     path('preguntas_frecuentes/', views.faq, name='faq'),
     path('preguntar/', views.crear_pregunta, name='preguntas'),
@@ -24,8 +25,6 @@ urlpatterns = [
     path('administracion/programador/', views.vista_programador, name='vista_programador'),
     path('administracion/perfil/', views.ver_perfil, name='perfil'),
     path('administracion/responderpreguntas/', views.responder_preguntas, name='responder_preguntas'),
-    path('administracion/export/csv/', views.export_database, name='export_database_to_csv'),
-    path('administracion/importar/csv/', views.import_database, name='import_database'),
     path('banners/', views.upload_banner, name='upload_banner'),
     path('administracion/banners/<int:banner_id>/edit/', views.edit_banner, name='edit_banner'),
     path('banners/delete/<int:banner_id>/', views.delete_banner, name='delete_banner'),
@@ -44,8 +43,11 @@ urlpatterns = [
     # Mapa
     path('administracion/obtener_edificio/', views.obtenerEdificio, name='obtenerEdificio'),
     path('administracion/editar_mapa/', views.obtenerinfoEdif, name='consultaMap'),
-    path('administracion/crearEditar_mapa/', views.crearEditarMapa, name='crearEditar'),
-
-    # Nueva ruta para mapa2
-    path('mapa2/', views.mapa2, name='mapa2'),
+    path('administracion/regEdificio_mapa/', views.regEdificioMapa, name='regEdificio'),
+    
+    # Importar y Exportar
+    path('administracion/export/database/', imex_port.export_database, name='export_database'),
+    path('administracion/importar/database/', imex_port.import_database, name='import_database'),
+    path('administracion/export/mapa/', imex_port.export_mapa, name='export_mapa'),
+    path('administracion/importar/mapa/', imex_port.import_mapa, name='import_mapa'),
 ]

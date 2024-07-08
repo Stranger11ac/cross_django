@@ -6,29 +6,25 @@ from django.contrib.auth.decorators import login_required
 from django.utils.encoding import force_bytes, force_str
 from django.views.decorators.cache import never_cache
 from django.template.loader import render_to_string
-from django.http import JsonResponse, HttpResponse
-from .forms import BannersForm, CSVUploadForm, ProfileImageForm
-from django.db import IntegrityError, models
+from django.http import JsonResponse
+from .forms import BannersForm, ProfileImageForm
+from django.db import models, transaction
 from django.contrib.auth.models import User
 from django.core.mail import send_mail
-from django.utils import timezone
 from django.conf import settings
 from django.urls import reverse
 from django.apps import apps
-
 from django.core.files.storage import default_storage
-from django.db.models import Q
 from . import models, elements
-
-import openai
 import json
-import csv
 
+databaseall = models.Database.objects.all()
+mapaall = models.Mapa.objects.all()
 
 def index(request):
     if not request.user.is_staff:
         logout(request)
-    banners_all = models.Banners.objects.all()
+    banners_all = models.Banners.objects.filter(visible=True)
     banners_modificados = []
 
     for banner in banners_all:
@@ -46,130 +42,6 @@ def index(request):
         'active_page': 'inicio'
     })
 
-def chatgpt(question, instructions):
-    client = openai.OpenAI(api_key=settings.OPENAI_API_KEY)
-    response = client.chat.completions.create(
-        model="gpt-3.5-turbo",
-        messages=[
-            {"role": "system", "content": instructions},
-            {"role": "user", "content": question},
-        ],
-        temperature=0,
-    )
-    print(f"Prompt:{response.usage.prompt_tokens}")
-    print(f"Compl:{response.usage.completion_tokens}")
-    print(f"Total:{response.usage.total_tokens}")
-    print('')
-    return response.choices[0].message.content
-
-def process_question(pregunta):
-    # Procesar la pregunta usando spaCy
-    doc = elements.nlp(pregunta.lower().strip())
-    
-    # Filtrar stopwords y lematizar los tokens
-    tokens = [token.lemma_ for token in doc if not token.is_stop and token.is_alpha]
-    pregunta_procesada = " ".join(tokens)
-    
-    print(f"Pregunta procesada: {pregunta_procesada}")
-    return pregunta_procesada
-
-def extract_entities(pregunta):
-    # Extraer entidades nombradas
-    doc = elements.nlp(pregunta)
-    entities = [ent.text for ent in doc.ents]
-    print(f"Entidades nombradas: {entities}")
-    return entities
-
-def create_query(palabras_clave, entities):
-    # Crear una consulta más precisa utilizando palabras clave y entidades
-    query = Q()
-    for palabra in palabras_clave:
-        query |= Q(titulo__icontains=palabra) | Q(informacion__icontains=palabra)
-    for entidad in entities:
-        query |= Q(titulo__icontains=entidad) | Q(informacion__icontains=entidad)
-    return query
-
-def score_result(result, palabras_clave, entities):
-    score = 0
-    for palabra in palabras_clave:
-        if palabra in result.titulo.lower():
-            score += 3  # Peso mayor a coincidencias en el título
-        if palabra in result.informacion.lower():
-            score += 2
-    for entidad in entities:
-        if entidad in result.titulo.lower():
-            score += 4  # Peso mayor a coincidencias de entidades en el título
-        if entidad in result.informacion.lower():
-            score += 3
-    return score
-
-def chatbot(request):
-    if request.method == 'POST':
-        try:
-            data = json.loads(request.body)
-            question = data.get('question', '').lower().strip()
-            
-            # Verificar respuestas simples predefinidas
-            for clave, respuesta in elements.respuestas_simples.items():
-                if clave in question:
-                    return JsonResponse({'success': True, 'answer': {'informacion': respuesta}})
-
-            # Procesar pregunta y extraer entidades
-            pregunta_procesada = process_question(question)
-            entidades = extract_entities(question)
-            
-            # Crear consulta con palabras clave y entidades
-            palabras_clave = pregunta_procesada.split()
-            query = create_query(palabras_clave, entidades)
-            
-            # Buscar coincidencias en la base de datos
-            coincidencias = models.Database.objects.filter(query)
-            
-            # Evaluar y seleccionar la mejor coincidencia
-            mejor_coincidencia = None
-            mejor_puntuacion = 0
-            
-            for coincidencia in coincidencias:
-                puntuacion = score_result(coincidencia, palabras_clave, entidades)
-                if puntuacion > mejor_puntuacion:
-                    mejor_puntuacion = puntuacion
-                    mejor_coincidencia = coincidencia
-
-            print(f"Mejor coincidencia: {mejor_coincidencia}")
-            print(f"Mejor puntuación: {mejor_puntuacion}")
-            if mejor_coincidencia:
-                # Utilizar la información de la mejor coincidencia encontrada
-                informacion = mejor_coincidencia.informacion
-                system_prompt = f"Utiliza emojis sutilmente. Eres un asistente de la Universidad Tecnologica de Coahuila. Responde la pregunta con esta información encontrada: {informacion}"
-                answer = chatgpt(question, system_prompt)
-                print(f"Informacion: {informacion}")
-
-                respuesta = {
-                    "titulo": mejor_coincidencia.titulo,
-                    "informacion": answer,
-                    "redirigir": mejor_coincidencia.redirigir,
-                    "documentos": mejor_coincidencia.documentos.url if mejor_coincidencia.documentos else None,
-                    "imagenes": mejor_coincidencia.imagenes.url if mejor_coincidencia.imagenes else None
-                }
-                
-                return JsonResponse({'success': True, 'answer': respuesta})
-            else:
-                # Si no se encuentran coincidencias en la base de datos
-                if len(palabras_clave) == 0 and len(entidades) == 0:
-                    respuesta = {
-                        "informacion": "¿Podrías ser más específico en tu pregunta? No logré entender completamente lo que necesitas."
-                    }
-                    return JsonResponse({'success': True, 'answer': respuesta})
-                else:
-                    respuesta = {
-                        "informacion": "Lo siento, no encontré información relevante."
-                    }
-                    return JsonResponse({'success': True, 'answer': respuesta})
-        
-        except json.JSONDecodeError:
-            return JsonResponse({'success': False, 'message': 'Error en el formato del JSON.'})
-
-    return JsonResponse({'success': False, 'message': 'Método no permitido.'})
 
 def faq(request):
     if not request.user.is_staff:
@@ -180,9 +52,7 @@ def faq(request):
         'active_page': 'faq'
     })
 
-def crear_pregunta(request):
-    quest_all = models.Database.objects.all()
-    
+def crear_pregunta(request):    
     if request.method == "POST":
         if request.content_type == 'application/json':
             try:
@@ -200,7 +70,7 @@ def crear_pregunta(request):
         else:
             print('error, no JSON')
             return JsonResponse({'success': False, 'message': 'Error: no se permite este tipo de archivo '}, status=400)
-    return render(request, 'frecuentes.html', {'quest_all': quest_all})
+    return render(request, 'frecuentes.html', {'quest_all': databaseall})
 
 def blog(request):
     if not request.user.is_staff:
@@ -221,7 +91,6 @@ def map(request):
     if not request.user.is_staff:
         logout(request)
     return render(request, 'mapa.html', {
-        'edificios': elements.edificios,
         'active_page': 'map'
     })
 
@@ -292,58 +161,6 @@ def singoutpage(request):
     logout(request)
     return redirect('singin')
 
-@login_required
-@never_cache
-def export_database(request):
-    now = timezone.localtime(timezone.now()).strftime('%d-%m-%Y_%H%M%S')
-    if request.user.is_staff:
-        response = HttpResponse(content_type='text/csv')
-        response['Content-Disposition'] = f'attachment; filename="UTC_database_{now}.csv"'
-        writer = csv.writer(response)
-        writer.writerow(['Categoria', 'Titulo', 'Informacion', 'Redirigir', 'Frecuencia', 'Documentos', 'Imagenes', 'Fecha Modificacion'])
-        # Obtener todos los objetos del modelo Database
-        databaseall = models.Database.objects.all()
-        for info in databaseall:
-            writer.writerow([
-                info.categoria if info.categoria else '',
-                info.titulo,
-                info.informacion,
-                info.redirigir,
-                info.frecuencia,
-                info.documentos.url if info.documentos else '',
-                info.imagenes.url if info.imagenes else '',
-                info.fecha_modificacion
-            ])
-        return response
-
-@login_required
-@never_cache
-def import_database(request):
-    if request.method == 'POST':
-        form = CSVUploadForm(request.POST, request.FILES)
-        if form.is_valid():
-            file = request.FILES['file']
-            csv_file = file.read().decode('utf-8').splitlines()
-            reader = csv.reader(csv_file)
-            next(reader)  # Omitir la fila de encabezado
-            for row in reader:
-                categoria, _ = models.Categorias.objects.get_or_create(categoria=row[0])
-                # Crear la instancia del modelo
-                models.Database.objects.create(
-                    categoria=categoria,
-                    titulo=row[1],
-                    informacion=row[2],
-                    redirigir=row[3],
-                    frecuencia=int(row[4]),
-                    documentos=row[5],
-                    imagenes=row[6],
-                    fecha_modificacion=row[7]
-                )
-            # Redirigir a la vista programador después de procesar el formulario
-        return JsonResponse({'success': True, 'message': 'Base de datos importada correctamente ✔'}, status=200)
-    else:
-        form = CSVUploadForm()
-    
 # def para la vista administrador
 @login_required
 @never_cache
@@ -464,8 +281,6 @@ def editar_usuario(request, user_id):
         return JsonResponse({'success': True, 'message': f'El usuario <u>{username}</u> fue modificado exitosamente 🥳🎉🎈.'}, status=200)
     return JsonResponse({'success': False, 'message': 'Acción no permitida.'}, status=403)
 
-def mapa2(request):
-    return render(request, 'mapa2.html')
 
 # te manda a la vista para crear el blog siendo staff
 @login_required
@@ -529,64 +344,98 @@ def lista_imagenes(request):
 
 
 #Consulta para informacion del Mapa##################
+@login_required
 def obtenerinfoEdif(request):
-        categoria_mapa = models.Categorias.objects.get(categoria="Mapa")
-        articulos_mapa = models.Database.objects.filter(categoria=categoria_mapa)
-        return render(request, 'admin/mapa.html', {'articulos_mapa': articulos_mapa})
+    categoria_mapa = models.Categorias.objects.get(categoria="Mapa")
+    map_inDB = models.Database.objects.filter(categoria=categoria_mapa)
+    return render(request, 'admin/mapa.html', {'map_inDB': map_inDB})
 
+@login_required
 def obtenerEdificio(request):
     if request.method == 'GET':
         edificio_id = request.GET.get('id')
         if (edificio_id):
             edificio = get_object_or_404(models.Database, id=edificio_id)
             data = {
-                'titulo': edificio.titulo,
+                'titulo': edificio.nombre,
                 'informacion': edificio.informacion,
                 'imagen_url': edificio.imagenes.url if edificio.imagenes else None,
             }
             return JsonResponse(data)
     return JsonResponse({'error': 'Invalid request'}, status=400)
 
-def crearEditarMapa(request):
-    if request.method == 'POST':
-        edificio_id = request.POST.get('edificio_id')
-        titulo = request.POST.get('titulo')
-        informacion = request.POST.get('informacion')
-        color = request.POST.get('color')
-        p1_polygons = request.POST.get('p1_polygons')
-        p2_polygons = request.POST.get('p2_polygons')
-        p3_polygons = request.POST.get('p3_polygons')
-        p4_polygons = request.POST.get('p4_polygons')
-        categoria = models.Categorias.objects.get(categoria="Mapa")
-        imagen = request.FILES.get('imagenes')
+@login_required
+def regEdificioMapa(request):
+    if request.method != 'POST':
+        return JsonResponse({'error': 'Metodo no valido'}, status=400)
 
-        if edificio_id:
-            # Editar edificio existente
-            edificio = get_object_or_404(models.Mapa, id=edificio_id)
-            edificio.titulo = titulo
-            edificio.informacion = informacion
-            edificio.color = color
-            edificio.p1_polygons = p1_polygons
-            edificio.p2_polygons = p2_polygons
-            edificio.p3_polygons = p3_polygons
-            edificio.p4_polygons = p4_polygons
-            if imagen:
-                edificio.imagenes = imagen
-            edificio.save()
-        else:
-            # Crear nuevo edificio
-            models.Mapa.objects.create(
-                categoria=categoria,
-                titulo=titulo,
-                informacion=informacion,
-                color=color,
-                p1_polygons=p1_polygons,
-                p2_polygons=p2_polygons,
-                p3_polygons=p3_polygons,
-                p4_polygons=p4_polygons,
-                imagenes=imagen
-            )
-    return redirect('consultaMap')
+    isNewPost = request.POST.get('isNew')
+    nombrePost = request.POST.get('titulo')
+    colorPost = request.POST.get('color')
+    p1Post = request.POST.get('p1_polygons')
+    p2Post = request.POST.get('p2_polygons')
+    p3Post = request.POST.get('p3_polygons')
+    p4Post = request.POST.get('p4_polygons')
+    informacionText = request.POST.get('textTiny')
+    informacionPost = request.POST.get('contenidoWord')
+    door_cordsPost = request.POST.get('door_cords')
+    imagenPost = request.FILES.get('imagenes')
+
+    with transaction.atomic():
+        if isNewPost is None:
+            # Update existing Mapa
+            if models.Mapa.objects.filter(nombre=nombrePost).exists():
+                edificio = get_object_or_404(models.Mapa, nombre=nombrePost)
+                edificio.color = colorPost
+                edificio.p1_polygons = p1Post
+                edificio.p2_polygons = p2Post
+                edificio.p3_polygons = p3Post
+                edificio.p4_polygons = p4Post
+                edificio.door_cords = door_cordsPost
+                edificio.informacion = informacionPost
+                edificio.save()
+                success_message = f'Se Actualizo el "{nombrePost}", los cambios se reflejaran en el mapa 🧐😊🎈'
+            else:
+                models.Mapa.objects.create(
+                    nombre=nombrePost,
+                    color=colorPost,
+                    p1_polygons=p1Post,
+                    p2_polygons=p2Post,
+                    p3_polygons=p3Post,
+                    p4_polygons=p4Post,
+                    door_cords=door_cordsPost,
+                    informacion=informacionPost,
+                )
+                success_message = f'El "{nombrePost}" se creo exitosamente en el Mapa 🎉🎈🥳'
+
+            if imagenPost:
+                mapIndb = get_object_or_404(models.Database, nombre=nombrePost)
+                mapIndb.imagenes = imagenPost
+                mapIndb.save()
+
+            return JsonResponse({'success': True, 'message': success_message}, status=200)
+
+        # Create new Mapa and Database
+        models.Mapa.objects.create(
+            nombre=nombrePost,
+            color=colorPost,
+            p1_polygons=p1Post,
+            p2_polygons=p2Post,
+            p3_polygons=p3Post,
+            p4_polygons=p4Post,
+            door_cords=door_cordsPost,
+            informacion=informacionPost,
+        )
+        
+        models.Database.objects.create(
+            categoria=models.Categorias.objects.get(categoria="Mapa"),
+            nombre=nombrePost,
+            informacion=informacionText,
+            imagenes=imagenPost
+        )
+
+        return JsonResponse({'success': True, 'message': 'Se creo un nuevo edificio en el mapa y en la base de datos de forma exitosa 🎉🎉🎉'}, status=200)
+
 
 # subir banners###########################
 @login_required

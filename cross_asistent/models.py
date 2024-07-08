@@ -16,8 +16,15 @@ class Database(models.Model):
     redirigir = models.URLField(blank=True, null=True)
     frecuencia = models.IntegerField(default=0)
     documentos = models.FileField(upload_to='cross_asistent/static/files/documentos/', blank=True, null=True)
-    imagenes =  models.ImageField(upload_to='cross_asistent/static/files/imagenes/', blank=True, null=True)
+    imagenes = models.ImageField(upload_to='cross_asistent/static/files/imagenes/', blank=True, null=True)
     fecha_modificacion = models.DateTimeField(auto_now=True)
+
+    def save(self, *args, **kwargs):
+        if self.categoria and self.categoria.categoria == 'Mapa':  # Ajusta esto según el campo correcto en tu modelo Categorias
+            self.imagenes.upload_to = 'cross_asistent/static/files/imagenes/mapa/'
+        else:
+            self.imagenes.upload_to = 'cross_asistent/static/files/imagenes/'
+        super(Database, self).save(*args, **kwargs)
     
     def __str__(self):
         return self.titulo
@@ -56,18 +63,17 @@ class Banners(models.Model):
         super(Banners, self).save(*args, **kwargs)
 
 class Mapa(models.Model):
-    titulo = models.CharField(max_length=200, blank=False)
+    nombre = models.CharField(max_length=200, blank=False)
     informacion = models.TextField(null=False)
-    imagenes =  models.ImageField(upload_to='cross_asistent/static/files/imagenes/mapa/', blank=True, null=True)
-    color = models.CharField(max_length=50, null=False, default='#3b71ca')
-    cords_centro = models.CharField(max_length=10, null=True)
+    color = models.CharField(max_length=50, null=False)
+    door_cords = models.CharField(max_length=100, null=True)
     p1_polygons = models.CharField(max_length=100, blank=True, null=True)
     p2_polygons = models.CharField(max_length=100, blank=True, null=True)
     p3_polygons = models.CharField(max_length=100, blank=True, null=True)
     p4_polygons = models.CharField(max_length=100, blank=True, null=True)
 
     def __str__(self):
-        return self.titulo
+        return self.nombre
 
 class Articulos(models.Model):
     creacion = models.DateField(auto_now_add=True, blank=False)
