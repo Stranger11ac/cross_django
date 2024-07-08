@@ -1,5 +1,10 @@
 var mapToken = "pk.eyJ1Ijoic2FsdmFoZHotMTEiLCJhIjoiY2x3czBoYTJiMDI1OTJqb2VmZzVueG1ocCJ9.dDJweS7MAR5N2U3SF64_Xw";
 const inputs = document.querySelectorAll("#offcanvasbody input[type='radio']");
+const formRoute = document.querySelector("#form_route");
+const selectOrigin = formRoute.querySelector("#origen");
+const selectDestiny = formRoute.querySelector("#destino");
+const resetRoutBtn = formRoute.querySelector("[data-reset_form]");
+const delRoutBtn = formRoute.querySelector("[data-del_route]");
 var offcanvas = document.getElementById("infoLateral");
 var offcanvasElement = new bootstrap.Offcanvas(offcanvas);
 let colorlabels = "#000";
@@ -121,6 +126,7 @@ document.addEventListener("DOMContentLoaded", function () {
                             "text-color": colorlabels,
                         },
                     });
+                    map.moveLayer("places-label");
                 }
             }
             function createMarker(lngLat) {
@@ -154,17 +160,41 @@ document.addEventListener("DOMContentLoaded", function () {
                         directions.setOrigin(origenCoords);
                         directions.setDestination(destinoCoords);
                         $("#buttons_route").slideDown("fast");
-                        
-                        // Agregar la capa de la ruta al mapa
+
                         directions.on("route", (e) => {
                             currentRoute = e.route[0].geometry;
                         });
-
                         map.addControl(directions, "top-left");
                     }
                 } else {
                     alertSToast("center", 5000, "warning", "Por favor, selecciona tanto origen como destino.");
                 }
+            }
+            function resetRout() {
+                formRoute.querySelectorAll("option").forEach((option) => {
+                    option.disabled = false;
+                });
+            }
+            function addRouteLayer() {
+                map.addSource("directions", {
+                    type: "geojson",
+                    data: currentRoute,
+                });
+
+                map.addLayer({
+                    id: "directions-route-line",
+                    type: "line",
+                    source: "directions",
+                    layout: {
+                        "line-join": "round",
+                        "line-cap": "round",
+                    },
+                    paint: {
+                        "line-color": "#3b9ddd",
+                        "line-width": 8,
+                    },
+                });
+                map.moveLayer("places-label");
             }
             function deleteLabels() {
                 map.getStyle().layers.forEach(function (layer) {
@@ -181,27 +211,7 @@ document.addEventListener("DOMContentLoaded", function () {
             map.on("style.load", function () {
                 deleteLabels();
                 createEdificios();
-
-                if (currentRoute) {
-                    map.addSource("directions", {
-                        type: "geojson",
-                        data: currentRoute,
-                    });
-
-                    map.addLayer({
-                        id: "directions-route-line",
-                        type: "line",
-                        source: "directions",
-                        layout: {
-                            "line-join": "round",
-                            "line-cap": "round",
-                        },
-                        paint: {
-                            "line-color": "#3b9ddd",
-                            "line-width": 6,
-                        },
-                    });
-                }
+                addRouteLayer();
             });
             map.on("click", function (e) {
                 const lngLat = e.lngLat;
@@ -240,7 +250,6 @@ document.addEventListener("DOMContentLoaded", function () {
                     } else {
                         colorlabels = "#000";
                     }
-                    // Guardar la ruta actual antes de cambiar el estilo
                     if (map.getLayer("directions-route-line")) {
                         currentRoute = map.getSource("directions")._data;
                     }
@@ -258,9 +267,9 @@ document.addEventListener("DOMContentLoaded", function () {
             });
 
             // Sincronizar opciones entre selectores
-            document.getElementById("origen").addEventListener("change", function () {
+            selectOrigin.addEventListener("change", function () {
                 const seleccionOrigen = this.value;
-                document.querySelectorAll("#destino option").forEach((option) => {
+                selectDestiny.querySelectorAll("option").forEach((option) => {
                     if (option.value === seleccionOrigen) {
                         option.disabled = true;
                     } else {
@@ -268,9 +277,9 @@ document.addEventListener("DOMContentLoaded", function () {
                     }
                 });
             });
-            document.getElementById("destino").addEventListener("change", function () {
+            selectDestiny.addEventListener("change", function () {
                 const seleccionDestino = this.value;
-                document.querySelectorAll("#origen option").forEach((option) => {
+                selectOrigin.querySelectorAll("option").forEach((option) => {
                     if (option.value === seleccionDestino) {
                         option.disabled = true;
                     } else {
@@ -280,12 +289,12 @@ document.addEventListener("DOMContentLoaded", function () {
             });
 
             // Ejecutar calcularRuta cuando se seleccionen opciones en ambos selectores
-            document.getElementById("origen").addEventListener("change", function () {
+            selectOrigin.addEventListener("change", function () {
                 if (document.getElementById("destino").value) {
                     calcularRuta();
                 }
             });
-            document.getElementById("destino").addEventListener("change", function () {
+            selectDestiny.addEventListener("change", function () {
                 if (document.getElementById("origen").value) {
                     calcularRuta();
                 }
@@ -303,6 +312,18 @@ document.addEventListener("DOMContentLoaded", function () {
                 alternatives: true,
                 interactive: false,
             });
+
+            resetRoutBtn.addEventListener("click", resetRout);
+            delRoutBtn.addEventListener("click", function () {
+                if (map.getLayer("directions-route-line")) {
+                    map.removeLayer("directions-route-line");
+                }
+                if (directions) {
+                    map.removeControl(directions);
+                }
+                resetRout();
+                addRouteLayer();
+            });
         })
         .catch((error) => console.error("Error al obtener los datos del mapa:", error));
 });
@@ -318,5 +339,8 @@ map.on("mousedown", () => {
     map.getCanvas().style.cursor = "pointer";
 });
 map.on("mouseup", () => {
+    map.getCanvas().style.cursor = "default";
+});
+map.on("mouseover", () => {
     map.getCanvas().style.cursor = "default";
 });
