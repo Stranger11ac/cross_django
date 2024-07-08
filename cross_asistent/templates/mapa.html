@@ -11,7 +11,7 @@
 {% block content %}
 <main class="full_page" id='map' data-mapa_edif="{% url 'mapa_edificios' %}">
     <!-- Controles de ruta -->
-    <section class="controls_route card m-2" id="controls_route">
+    <section class="controls_route card m-2 show" id="controls_route">
         <div class="card-header d-flex justify-content-between align-items-center p-3">
             <h6 class="m-0"><i class="fa-solid fa-route me-1"></i>Como ir a...</h6>
             <button type="button" class="btn-close" data-btn_closed="controls_route"></button>
@@ -23,20 +23,13 @@
             <select id="destino" class="form-control">
                 <option disabled selected hidden>Seleccionar destino</option>
             </select>
-            <section class="none mt-3" id="buttons_route">
-                <div class="row">
-                    <div class="col">
-                        <button title="Borrar Formulario" type="button" class="btn btn_detail p-2 px-3 fs-13" data-reset_form="form_route">
-                            <!-- <i class="fa-solid fa-trash-arrow-up"></i> -->
-                            <i class="fa-solid fa-rotate-left"></i>
-                        </button>
-                    </div>
-                    <div class="col none">
-                        <button title="Borrar Ruta" type="button" class="btn btn-danger btn-block fs-13" data-reset_form="form_route" data-del_route>
-                            <i class="fa-solid fa-route me-1"></i><i class="fa-solid fa-trash-arrow-up"></i>
-                        </button>
-                    </div>
-                </div>
+            <section class="d-flex justify-content-between mt-3" id="buttons_route">
+                <button title="Borrar Formulario" type="button" class="btn btn_detail p-2 px-3 fs-13" data-reset_form="form_route">
+                    <i class="fa-solid fa-rotate-left"></i>
+                </button>
+                <button title="Borrar Ruta" type="button" class="btn btn-danger p-2 px-3 fs-13" data-reset_form="form_route" data-del_route>
+                    <i class="fa-regular fa-trash-can"></i>
+                </button>
             </section>
         </form>
     </section>

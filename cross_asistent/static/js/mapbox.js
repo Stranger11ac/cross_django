@@ -1,8 +1,10 @@
 var mapToken = "pk.eyJ1Ijoic2FsdmFoZHotMTEiLCJhIjoiY2x3czBoYTJiMDI1OTJqb2VmZzVueG1ocCJ9.dDJweS7MAR5N2U3SF64_Xw";
+const inputs = document.querySelectorAll("#offcanvasbody input[type='radio']");
 var offcanvas = document.getElementById("infoLateral");
 var offcanvasElement = new bootstrap.Offcanvas(offcanvas);
 let colorlabels = "#000";
 var currentMarker;
+let currentRoute;
 
 mapboxgl.accessToken = mapToken;
 
@@ -120,12 +122,6 @@ document.addEventListener("DOMContentLoaded", function () {
                         },
                     });
                 }
-
-                map.on("click", (e) => {
-                    const lngLat = e.lngLat;
-                    createMarker(lngLat);
-                    // console.log("Nuevo LngLat:", lngLat.lng, lngLat.lat);
-                });
             }
             function createMarker(lngLat) {
                 if (currentMarker) {
@@ -157,8 +153,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
                         directions.setOrigin(origenCoords);
                         directions.setDestination(destinoCoords);
-
                         $("#buttons_route").slideDown("fast");
+                        
+                        // Agregar la capa de la ruta al mapa
+                        directions.on("route", (e) => {
+                            currentRoute = e.route[0].geometry;
+                        });
 
                         map.addControl(directions, "top-left");
                     }
@@ -178,9 +178,35 @@ document.addEventListener("DOMContentLoaded", function () {
                 deleteLabels();
                 createEdificios();
             });
-            map.on("style.load", function() {
+            map.on("style.load", function () {
                 deleteLabels();
                 createEdificios();
+
+                if (currentRoute) {
+                    map.addSource("directions", {
+                        type: "geojson",
+                        data: currentRoute,
+                    });
+
+                    map.addLayer({
+                        id: "directions-route-line",
+                        type: "line",
+                        source: "directions",
+                        layout: {
+                            "line-join": "round",
+                            "line-cap": "round",
+                        },
+                        paint: {
+                            "line-color": "#3b9ddd",
+                            "line-width": 6,
+                        },
+                    });
+                }
+            });
+            map.on("click", function (e) {
+                const lngLat = e.lngLat;
+                createMarker(lngLat);
+                // console.log("Nuevo LngLat:", lngLat.lng, lngLat.lat);
             });
             map.on("click", "places-layer", (e) => {
                 const feature = e.features[0];
@@ -193,8 +219,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 offcanvasElement.show();
             });
 
-            const inputsw = document.querySelectorAll("#offcanvasbody input[type='radio']");
-            inputsw.forEach((input) => {
+            inputs.forEach((input) => {
                 input.addEventListener("click", function (layer) {
                     const layerId = layer.target.id;
                     const label = document.querySelector(`label[for='${layerId}']`);
@@ -203,17 +228,21 @@ document.addEventListener("DOMContentLoaded", function () {
                         label.classList.remove("btn_detail", "text-white");
                     });
 
-                    label.classList.add("btn_detail", "text-white");
-
-                    inputsw.forEach((input) => {
+                    inputs.forEach((input) => {
                         input.removeAttribute("disabled");
                     });
+
+                    label.classList.add("btn_detail", "text-white");
                     this.setAttribute("disabled", "disabled");
 
                     if (layerId === "dark-v11") {
                         colorlabels = "#fff";
                     } else {
                         colorlabels = "#000";
+                    }
+                    // Guardar la ruta actual antes de cambiar el estilo
+                    if (map.getLayer("directions-route-line")) {
+                        currentRoute = map.getSource("directions")._data;
                     }
 
                     map.setStyle("mapbox://styles/mapbox/" + layerId);
