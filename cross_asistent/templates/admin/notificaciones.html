@@ -1,0 +1,22 @@
+{% extends 'base/widget.html' %}
+{% load static filtros %}
+{% block title %}Notificaciones{% endblock %}
+{% block link_home %}{% url 'vista_programador' %}{% endblock %}
+{% block link_default %}
+{% include 'base/widget_links-admin.html' %}
+{% endblock %}
+
+
+{% block content %}
+<div class="container mt-5">
+    <h2>Notificaciones</h2>
+    <ul class="list-group">
+        {% for notificacion in notificaciones %}
+        <li class="list-group-item{% if notificacion.leida %} list-group-item-secondary{% else %} list-group-item-primary{% endif %}">
+            <strong>{{ notificacion.tipo }}:</strong> {{ notificacion.mensaje }} <br>
+            <small>{{ notificacion.fecha }}</small>
+        </li>
+        {% endfor %}
+    </ul>
+</div>
+{% endblock %}

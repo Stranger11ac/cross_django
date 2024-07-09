@@ -62,6 +62,11 @@ def crear_pregunta(request):
 
                 pregunta = models.Database(titulo=tituloPOST, categoria=categoria_preguntas)
                 pregunta.save()
+                models.Notificacion.objects.create(
+                    usuario=request.user,
+                    tipo='Pregunta',
+                    mensaje=f'El usuario {request.user.username} ha realizado una nueva pregunta: "{tituloPOST}".',
+                )
 
                 return JsonResponse({'success': True, 'message': 'Gracias por tu pregunta ❤️💕😁👍 '}, status=200)
             except Exception as e:
@@ -113,6 +118,13 @@ def singuppage(request):
             password1=request.POST.get('password1'),
             password2=request.POST.get('password2'),
         )
+        if response['success']:
+            user = User.objects.get(username=request.POST.get('username'))
+            models.Notificacion.objects.create(
+                usuario=user,
+                tipo='Registro',
+                mensaje=f'El usuario {user.username} se ha registrado y necesita activación.',
+            )
         response['functions'] = 'reload'
         status = 200 if response['success'] else 400
         return JsonResponse(response, status=status)
@@ -306,11 +318,17 @@ def crear_articulo(request):
                 encabezado=encabezadoPOST
             )
             articulo.save()
+            models.Notificacion.objects.create(
+                usuario=request.user,
+                tipo='Blog',
+                mensaje=f'El usuario {request.user.username} ha subido un nuevo blog titulado "{articulo.titulo}".',
+            )
 
             return JsonResponse({'success': True, 'functions': 'reload', 'message': 'Excelente 🥳🎈🎉. Tu articulo ya fue publicado. Puedes editarlo cuando gustes. 🧐😊'}, status=200)
         except Exception as e:
             return JsonResponse({'success': False, 'message': f'Ocurrio un error😯😥 <br>{str(e)}'}, status=400)
     return JsonResponse({'success': False, 'message': 'Método no permitido'}, status=405)
+
 
 @login_required
 @never_cache
@@ -443,7 +461,12 @@ def upload_banner(request):
     if request.method == 'POST':
         form = BannersForm(request.POST, request.FILES)
         if form.is_valid():
-            form.save()
+            banner = form.save()
+            models.Notificacion.objects.create(
+                usuario=request.user,
+                tipo='Banner',
+                mensaje=f'El usuario {request.user.username} ha subido un nuevo banner titulado "{banner.titulo}".',
+            )
             return redirect('upload_banner')
     else:
         form = BannersForm()
@@ -459,9 +482,9 @@ def upload_banner(request):
             'descripcion': banner.descripcion,
             'articulo': banner.articulo,
             'imagen': imagen_url,
-            'expiracion':banner.expiracion,
+            'expiracion': banner.expiracion,
         })
-    context = { 'banners': banners_modificados}
+    context = { 'banners': banners_modificados }
     return render(request, 'admin/banners.html', context)
 
 @login_required
@@ -581,3 +604,8 @@ def password_reset_confirm(request, uidb64, token):
             return render(request, 'password_reset_confirm.html', {'validlink': True})
     else:
         return render(request, 'password_reset_confirm.html', {'validlink': False})
+
+@login_required
+def ver_notis(request):
+    notificaciones = models.Notificacion.objects.filter(usuario=request.user).order_by('-fecha')
+    return render(request, 'admin/notificaciones.html', {'notificaciones': notificaciones})
