@@ -61,6 +61,7 @@ tinymce.init({
     mobile: {
         menubar: true,
         toolbar_mode: "sliding",
+        toolbar_sticky: true
     },
     menubar: "file edit view format table",
     menu: {
@@ -70,6 +71,7 @@ tinymce.init({
     contextmenu: "removeformat | bold italic underline | link image table | hr pagebreak",
     contextmenu_never_use_native: true,
     toolbar_mode: "wrap", // wrap floating sliding
+    toolbar_sticky: true,
     toolbar:
         "undo redo restoredraft | forecolor backcolor | fontfamily styles | bold italic underline removeformat | alignleft aligncenter alignright | alignjustify outdent indent | bullist numlist | table tabledelete | image gallerycustom | insertdatetime link unlink openlink | cut paste wordcount",
     quickbars_insert_toolbar: false,
@@ -128,8 +130,8 @@ tinymce.init({
     // file_picker_types: "image",
     images_upload_url: "../../administracion/registrar_img_blog/",
     images_upload_handler: uploadImageTiny,
-    min_height: 800,
-    autoresize_min_height: 800,
+    min_height: 625,
+    autoresize_min_height: 625,
     autosave_interval: "20m",
     promotion: false,
     insertdatetime_formats: ["%d-%m-%Y", "%Y-%m-%d", "%H:%M:%S", "%I:%M:%S %p"],

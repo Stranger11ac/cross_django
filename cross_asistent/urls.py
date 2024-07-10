@@ -5,7 +5,7 @@ urlpatterns = [
     # Páginas de inicio
     path('', views.index, name='home'),
     path('chatbot/', functions.chatbot, name='chatbot'),
-    path('blog-eventos/', views.blog, name='blog'),
+    path('blog-eventos/', views.blogs, name='blog'),
     path('blog/<int:Articulos_id>/', views.mostrar_blog, name='mostrar_blog'),
     path('mapa/', views.map, name='map'),
     path('mapa/edificios/', functions.mapa_data, name='mapa_edificios'),

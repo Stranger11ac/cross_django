@@ -1,0 +1,64 @@
+{% extends 'base/widget.html' %}
+{% load static %}
+{% block title %}Crear Nuevo Articulo | Administracion{% endblock %}
+{% block link_home %}{% url 'vista_programador' %}{% endblock %}
+{% block link_default %}
+{% include 'base/widget_links-admin.html' %}
+{% endblock %}
+{% block content %}
+<main class="container container-fluid py-5 {% if not user.is_authenticated %}main_container{% endif %}">
+    <div class="mb-5 text-center">
+        <h1 class="mb-3">Crear <span class="text_detail">Nuevo</span> Articulo <i class="fa-solid fa-newspaper ms-1"></i></h1>
+        <hr class="hr_divisor" />
+    </div>
+    <form method="post" id="formularioArticulo" action="{% url 'send_blog' %}" data-submit-form class="row pt-2" autocomplete="off">
+        {% csrf_token %}
+        <div class="col-12 col-md-6 mb-4">
+            <div class="row">
+                <div class="col mb-4">
+                    <div class="card h-100">
+                        <img src="{% static 'img/default_image.webp' %}" class="card-img" />
+                        <div class="card-img-overlay mask mask_dark">
+                            <div class="d-flex flex-column justify-content-end h-100">
+                                <div class="form-outline mb-4" data-mdb-input-init>
+                                    <input type="text" id="titulo" name="titulo" class="form-control text-white" required />
+                                    <label class="form-label text-white" for="titulo">Titulo / Encabezado:</label>
+                                </div>
+                                <div class="row">
+                                    <div class="col-2 d-flex align-items-center justify-content-end pe-0">
+                                        <label class="form-label text-white m-0" for="autor">Autor:</label>
+                                    </div>
+                                    <div class="col-10">
+                                        <input type="text" id="autor" name="autor" class="form-control" readonly aria-label="readonly input example"
+                                            value="{{user.first_name}} {{user.last_name}}" required />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="mb-4">
+                                <label class="form-label" for="encabezadoImg">Imagen de Encabezado: <small>(opcional)</small> </label>
+                                <input type="file" class="form-control" id="encabezadoImg" name="encabezadoImg" accept="image/*" />
+                            </div>
+                            <button type="submit" class="btn btn_detail w-100 d-block">Publicar <i class="fa-regular fa-paper-plane ms-1"></i></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-md-6">
+            <div class="card">
+                <textarea id="mainTiny" name="contenidoWord" placeholder="Escribe tu articulo..." required></textarea>
+            </div>
+        </div>
+    </form>
+</main>
+{% endblock %}
+{% block scripts_end %}
+<script src="{% static 'tinymce/tinymce.min.js' %}"></script>
+<script src="{% static 'js/settings_tinymce.js' %}"></script>
+{% endblock %}

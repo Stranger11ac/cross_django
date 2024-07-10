@@ -77,11 +77,11 @@ def crear_pregunta(request):
             return JsonResponse({'success': False, 'message': 'Error: no se permite este tipo de archivo '}, status=400)
     return render(request, 'frecuentes.html', {'quest_all': databaseall})
 
-def blog(request):
+def blogs(request):
     if not request.user.is_staff:
         logout(request)
     blogs = models.Articulos.objects.all()
-    return render(request, 'blog.html', {
+    return render(request, 'blogs.html', {
         'blogs_all': blogs,
         'active_page': 'blog'
     })
@@ -249,7 +249,7 @@ def crear_articulo(request):
             return JsonResponse({'success': True, 'functions': 'reload', 'message': 'Excelente 🥳🎈🎉. Tu articulo ya fue publicado. Puedes editarlo cuando gustes. 🧐😊'}, status=200)
         except Exception as e:
             return JsonResponse({'success': False, 'message': f'Ocurrio un error😯😥 <br>{str(e)}'}, status=400)
-    return render(request, 'admin/blogs.html', {'active_page': 'blog','pages': functions.pages})
+    return render(request, 'admin/blog.html', {'active_page': 'blog','pages': functions.pages})
 
 @login_required
 @never_cache
@@ -278,7 +278,7 @@ def lista_imagenes(request):
             'id': imagen.id,
             'url': imagen_url
         })
-    return render(request, 'admin/blogs_imgs.html', {'imagenes': imagenes_modificadas})
+    return render(request, 'admin/blog_imgs.html', {'imagenes': imagenes_modificadas})
 
 
 #Consulta para informacion del Mapa --------------------------------
