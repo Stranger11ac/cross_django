@@ -383,7 +383,11 @@ def upload_banner(request):
     if request.method == 'POST':
         form = BannersForm(request.POST, request.FILES)
         if form.is_valid():
-            banner = form.save()
+            banner = form.save(commit=False)  
+            if not request.FILES.get('imagen'):  
+                banner.imagen = 'static/img/default_image.webp'  
+            banner.save()  
+
             models.Notificacion.objects.create(
                 usuario=request.user,
                 tipo='Banner',
@@ -529,5 +533,5 @@ def password_reset_confirm(request, uidb64, token):
 
 @login_required
 def ver_notis(request):
-    notificaciones = models.Notificacion.objects.filter(usuario=request.user).order_by('-fecha')
+    notificaciones = models.Notificacion.objects.all().order_by('-fecha')
     return render(request, 'admin/notificaciones.html', {'notificaciones': notificaciones})

@@ -45,7 +45,7 @@ class Banners(models.Model):
     titulo = models.CharField(max_length=40, blank=False)
     descripcion = models.CharField(max_length=350, blank=False)
     articulo = models.CharField(max_length=200, null=True, blank=True)
-    imagen = models.ImageField(upload_to=get_image_path, blank=False)
+    imagen = models.ImageField(upload_to=get_image_path, blank=True, null=True)  # Cambiado a opcional
     expiracion = models.DateTimeField(blank=True, null=True)
     visible = models.BooleanField(default=True)
     
@@ -53,12 +53,15 @@ class Banners(models.Model):
         return self.titulo
     
     def save(self, *args, **kwargs):
-        if self.id:
-            # Obtener el banner existente
-            existing_banner = Banners.objects.get(id=self.id)
-            # Eliminar la imagen anterior si se actualiza
-            if self.imagen != existing_banner.imagen:
-                existing_banner.imagen.delete(save=False)
+        if not self.imagen:
+            self.imagen = 'static/img/default_image.webp'  # Asigna la imagen por defecto si no se proporciona una
+        else:
+            if self.id:
+                # Obtener el banner existente
+                existing_banner = Banners.objects.get(id=self.id)
+                # Eliminar la imagen anterior si se actualiza
+                if self.imagen != existing_banner.imagen:
+                    existing_banner.imagen.delete(save=False)
         
         super(Banners, self).save(*args, **kwargs)
 
