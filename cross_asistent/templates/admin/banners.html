@@ -13,19 +13,25 @@
             <div class="card-body">
                 <form method="POST" enctype="multipart/form-data" action="{% url 'upload_banner' %}">
                     {% csrf_token %}
-                    <div class="mb-3">
-                        <label for="titulo" class="form-label">Título</label>
-                        <input type="text" class="form-control" id="titulo" name="titulo" required autocomplete="off"
-                            autocapitalize="off">
+                    <div data-mdb-input-init class="form-outline position-relative mb-4">
+                        <button type="button" class="position-absolute top-0 end-0 btn p-0 fs-12 m-2 mt-1 none"
+                            data-clear="titulo"><i class="fa-solid fa-xmark m-0 p-0"></i></button>
+                        <input type="text" id="titulo" name="titulo" class="form-control form-icon-trailing"
+                            data-init-clear required />
+                        <label class="form-label" for="titulo">Titulo:</label>
                     </div>
-                    <div class="mb-3">
-                        <label for="descripcion" class="form-label">Descripción</label>
-                        <input type="text" class="form-control" id="descripcion" name="descripcion" required
-                            autocomplete="off" autocapitalize="off">
+                    <div data-mdb-input-init class="form-outline position-relative mb-4">
+                        <button type="button" class="position-absolute top-0 end-0 btn p-0 fs-12 m-2 mt-1 none"
+                            data-clear="descripcion"><i class="fa-solid fa-xmark m-0 p-0"></i></button>
+                            <textarea class="form-control" id="descripcion" data-init-clear required ></textarea>
+                            <label class="form-label" for="descripcion">Descripción:</label>
                     </div>
-                    <div class="mb-3">
-                        <label for="articulo" class="form-label">Redirigir a : </label>
-                        <input type="text" class="form-control" id="articulo" name="articulo" autocomplete="off" autocapitalize="off">
+                    <div data-mdb-input-init class="form-outline position-relative mb-4">
+                        <button type="button" class="position-absolute top-0 end-0 btn p-0 fs-12 m-2 mt-1 none"
+                            data-clear="articulo"><i class="fa-solid fa-xmark m-0 p-0"></i></button>
+                        <input type="url" id="articulo" name="articulo" class="form-control form-icon-trailing"
+                            data-init-clear required />
+                        <label class="form-label" for="articulo">Redirigir (liga/url):</label>
                     </div>
                     <div class="mb-3">
                         <label for="imagen" class="form-label">Imagen</label>
@@ -71,11 +77,11 @@
                             data-mdb-target="#editBannerModal{{ banner.id }}">
                             <i class="fa-solid fa-edit"></i>
                         </button>
-                            {% csrf_token %}
-                            <button type="button" class="btn btn-floating btn-danger"data-mdb-ripple-init data-mdb-modal-init
-                            data-mdb-target="#eliminar_modal_{{ banner.id }}" >
-                                <i class="fa-solid fa-trash"></i>
-                            </button>
+                        {% csrf_token %}
+                        <button type="button" class="btn btn-floating btn-danger" data-mdb-ripple-init
+                            data-mdb-modal-init data-mdb-target="#eliminar_modal_{{ banner.id }}">
+                            <i class="fa-solid fa-trash"></i>
+                        </button>
                         </form>
                     </td>
                 </tr>
@@ -97,20 +103,24 @@
                                     <div class="mb-3">
                                         <label for="editTitulo{{ banner.id }}" class="form-label">Título</label>
                                         <input type="text" class="form-control" id="editTitulo{{ banner.id }}"
-                                            name="titulo" value="{{ banner.titulo }}" required autocomplete="off" autocapitalize="off">
+                                            name="titulo" value="{{ banner.titulo }}" required autocomplete="off"
+                                            autocapitalize="off">
                                     </div>
                                     <div class="mb-3">
                                         <label for="editDescripcion{{ banner.id }}"
                                             class="form-label">Descripción</label>
                                         <input type="text" class="form-control" id="editDescripcion{{ banner.id }}"
-                                            name="descripcion" value="{{ banner.descripcion }}" required autocomplete="off" autocapitalize="off">
+                                            name="descripcion" value="{{ banner.descripcion }}" required
+                                            autocomplete="off" autocapitalize="off">
                                     </div>
                                     <div class="mb-3">
-                                        <label for="editArticulo{{ banner.id }}" class="form-label">Redirigir a :</label>
+                                        <label for="editArticulo{{ banner.id }}" class="form-label">Redirigir a
+                                            :</label>
                                         <input type="text" class="form-control" id="editArticulo{{ banner.id }}"
-                                            name="articulo" value="{{ banner.articulo }}"" autocomplete="off" autocapitalize="off"">
+                                            name="articulo" value="{{ banner.articulo }}"" autocomplete=" off"
+                                            autocapitalize="off"">
                                     </div>
-                                    <div class="mb-3">
+                                    <div class=" mb-3">
                                         <label for="editImagen{{ banner.id }}" class="form-label">Imagen</label>
                                         <input type="file" class="form-control" id="editImagen{{ banner.id }}"
                                             name="imagen">

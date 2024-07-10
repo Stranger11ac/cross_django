@@ -471,3 +471,31 @@ $("#color_picker").on("input", function () {
     $("#color").val(color);
     $("#colorVal").text(color);
 });
+
+// js de subir banners inputs
+const inputCleared = $("input[data-init-clear], textarea[data-init-clear]");
+    
+    // Itera sobre cada input y textarea seleccionado
+    inputCleared.each(function () {
+        // Añade un evento 'input' a cada input y textarea
+        $(this).on("input", function () {
+            let idInput = $(this).attr("id");
+            let btnCleared = $(`[data-clear="${idInput}"]`);
+            
+            // Muestra u oculta el botón dependiendo del valor del input o textarea
+            if ($(this).val() == "") {
+                btnCleared.hide();
+            } else {
+                btnCleared.show();
+            }
+        });
+    });
+
+    // Selecciona todos los elementos con el atributo data-clear
+    const btnCleared = $("[data-clear]");
+    btnCleared.on("click", function () {
+        const dataClear = $(this).attr("data-clear");
+        // Limpia el valor del input o textarea correspondiente y oculta el botón
+        $(`#${dataClear}`).val("");
+        $(this).slideUp("fast");
+    });
