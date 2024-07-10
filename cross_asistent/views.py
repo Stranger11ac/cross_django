@@ -17,6 +17,7 @@ from django.urls import reverse
 from django.apps import apps
 from . import functions, models
 import json
+from django.contrib.auth.decorators import permission_required
 
 databaseall = models.Database.objects.all()
 mapaall = models.Mapa.objects.all()
@@ -224,7 +225,6 @@ def vista_programador(request):
 
 # crear  blog --------------------------------------
 @login_required
-@never_cache
 def crear_articulo(request):
     if request.method == 'POST':
         try:
