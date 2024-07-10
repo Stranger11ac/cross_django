@@ -184,8 +184,8 @@ document.addEventListener("DOMContentLoaded", function () {
             }
 
             function calcularRuta() {
-                const origen = document.getElementById("origen").value;
-                const destino = document.getElementById("destino").value;
+                const origen = selectOrigin.value;
+                const destino = selectDestiny.value;
 
                 if (origen && destino && origen !== destino) {
                     const origenFeature = geojsonEdificios.features.find(

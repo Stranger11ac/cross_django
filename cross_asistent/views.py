@@ -15,7 +15,7 @@ from django.conf import settings
 from django.urls import reverse
 from django.apps import apps
 from django.core.files.storage import default_storage
-from . import models, elements
+from . import functios, models
 import json
 
 databaseall = models.Database.objects.all()
@@ -110,7 +110,7 @@ def about(request):
 @never_cache
 def singuppage(request):
     if request.method == 'POST' and request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-        response = elements.create_newuser(
+        response = functios.create_newuser(
             first_name=request.POST.get('first_name'),
             last_name=request.POST.get('last_name'),
             username=request.POST.get('username'),
@@ -198,14 +198,12 @@ def vista_programador(request):
         'total_usuarios': users.count(),
         'banners_all': banners_all,
         'total_banners': banners_all.count(),
-        'blogs_all': blogs_all,
         'num_blogs': blogs_all.count(),
-        'num_preguntas': models.Database.objects.filter().count(),
-        'preguntas_sin_responder': models.Database.objects.all(),
+        'num_preguntas': databaseall.count(),
     }
     
     if request.method == 'POST':
-        response = elements.create_newuser(
+        response = functios.create_newuser(
             first_name=request.POST.get('first_name'),
             last_name=request.POST.get('last_name'),
             username=request.POST.get('username'),
@@ -219,80 +217,6 @@ def vista_programador(request):
         return JsonResponse(response, status=status)
 
     return render(request, 'admin/vista_programador.html', contexto)
-
-# def responder preguntas
-@login_required
-@never_cache
-def responder_preguntas(request):
-    if request.method == 'POST':
-        pregunta_id = request.POST.get('pregunta_id')
-        respuesta = request.POST.get('respuesta')
-
-        # Buscar la pregunta por ID y actualizar la respuesta
-        pregunta = get_object_or_404(models.Database, id=pregunta_id)
-        pregunta.informacion = respuesta
-        pregunta.save()
-        return redirect('vista_programador')
-
-    # Obtener todas las preguntas sin respuesta
-    preguntas_sin_responder = models.Database.objects.filter(informacion__isnull=True)
-    return render(request, 'responder_preguntas.html', {
-        'preguntas_sin_responder': preguntas_sin_responder,
-    })
-
-@login_required
-@never_cache
-def in_active(request):
-    if request.method == 'POST' and request.user.is_staff:
-        user_id = request.POST.get('user_id')
-        action = request.POST.get('actionform')
-        userChange = get_object_or_404(User, id=user_id)
-
-        if action == 'activate':
-            userChange.is_active = True
-            message = f'Usuario "{userChange.username}" activado exitosamente. 😊🎈'
-            icon = 'info'
-        elif action == 'deactivate':
-            userChange.is_active = False
-            message = f'Usuario "{userChange.username}" <strong><u>desactivado</u></strong> exitosamente. 😯🧐😬'
-            icon = 'warning'
-        else:
-            return JsonResponse({'success': False, 'message': 'Acción no válida.'}, status=400)
-
-        userChange.save()
-        return JsonResponse({'success': True, 'functions': 'reload', 'message': message, 'icon':icon}, status=200)
-    
-    return JsonResponse({'success': False, 'message': 'Método no permitido.'}, status=405)
-
-@login_required
-@never_cache
-def eliminar_usuario(request, user_id):
-    if request.method == 'POST':
-        icon = 'warning'
-        user = get_object_or_404(User, id=user_id)
-        user.delete()
-        return JsonResponse({'success': True, 'functions': 'reload', 'message': 'Usuario eliminado exitosamente.', 'icon': icon}, status=200)
-    return JsonResponse({'success': False, 'message': 'Acción no permitida.'}, status=403)
-
-@login_required
-@never_cache
-def editar_usuario(request, user_id):
-    user = get_object_or_404(User, id=user_id)
-    if request.method == 'POST':
-        username = request.POST.get('username')
-        password = request.POST.get('password')
-        is_staff = request.POST.get('is_staff') == 'on'
-        
-        if username:
-            user.username = username
-        if password:
-            user.set_password(password)
-        user.is_active = True
-        user.is_staff = is_staff
-        user.save()
-        return JsonResponse({'success': True, 'message': f'El usuario <u>{username}</u> fue modificado exitosamente 🥳🎉🎈.'}, status=200)
-    return JsonResponse({'success': False, 'message': 'Acción no permitida.'}, status=403)
-
 
 # te manda a la vista para crear el blog siendo staff
 @login_required
@@ -357,7 +281,6 @@ def lista_imagenes(request):
             'id': imagen.id,
             'url': imagen_url
         })
-
     return render(request, 'admin/blogs_imgs.html', {'imagenes': imagenes_modificadas})
 
 
@@ -430,7 +353,6 @@ def regEdificioMapa(request):
                 mapIndb = get_object_or_404(models.Database, nombre=nombrePost)
                 mapIndb.imagenes = imagenPost
                 mapIndb.save()
-
             return JsonResponse({'success': True, 'message': success_message}, status=200)
 
         # Create new Mapa and Database
