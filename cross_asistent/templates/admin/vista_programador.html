@@ -3,7 +3,7 @@
 {% block title %}Inicio | Programadores{% endblock %}
 {% block link_home %}{% url 'vista_programador' %}{% endblock %}
 {% block link_default %}
-{% include 'base/widget_links-admin.html' %}
+{% include 'base/widget_links-admin.html' with pages=pages %}
 {% endblock %}
 {% block content %}
 <main class="container container-fluid pb-5 {% if not user.is_staff %}main_container{% endif %}">

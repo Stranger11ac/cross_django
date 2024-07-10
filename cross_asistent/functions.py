@@ -188,6 +188,12 @@ def mapa_data(request):
     }
     return JsonResponse(geojsonEdificios)
 
+# Plantilla links programador / administrador -----------------------------
+pages = [
+        {'name': 'banner', 'url': 'upload_banner', 'display_name': 'Banners', 'icon': 'fa-solid fa-image'},
+        {'name': 'blog', 'url': 'send_blog', 'display_name': 'Blogs', 'icon': 'fa-solid fa-newspaper'},
+        {'name': 'mapa', 'url': 'consultaMap', 'display_name': 'Mapa', 'icon': 'fa-solid fa-map-location-dot'},
+    ]
 
 # Crear nuevo usuario ---------------------------------------------
 def create_newuser(first_name, last_name, username, email, password1, password2=None, is_staff=False, is_active=False):

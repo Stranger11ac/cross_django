@@ -4,18 +4,18 @@ from django.contrib.auth.tokens import default_token_generator
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.decorators import login_required
 from django.utils.encoding import force_bytes, force_str
+from django.core.files.storage import default_storage
 from django.views.decorators.cache import never_cache
 from django.template.loader import render_to_string
-from django.http import JsonResponse
 from .forms import BannersForm, ProfileImageForm
-from django.db import models, transaction
 from django.contrib.auth.models import User
+from django.db import models, transaction
 from django.core.mail import send_mail
+from django.http import JsonResponse
 from django.conf import settings
 from django.urls import reverse
 from django.apps import apps
-from django.core.files.storage import default_storage
-from . import functios, models
+from . import functions, models
 import json
 
 databaseall = models.Database.objects.all()
@@ -110,7 +110,7 @@ def about(request):
 @never_cache
 def singuppage(request):
     if request.method == 'POST' and request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-        response = functios.create_newuser(
+        response = functions.create_newuser(
             first_name=request.POST.get('first_name'),
             last_name=request.POST.get('last_name'),
             username=request.POST.get('username'),
@@ -183,6 +183,8 @@ def vista_admin(request):
         'user': user,
         'num_blogs': blogs_all.count(),
         'blogs_all': blogs_all,
+        'active_page': 'home',
+        'pages': functions.pages
     }
     return render(request, 'admin/vista_admin.html', context)
 
@@ -200,10 +202,12 @@ def vista_programador(request):
         'total_banners': banners_all.count(),
         'num_blogs': blogs_all.count(),
         'num_preguntas': databaseall.count(),
+        'active_page': 'home',
+        'pages': functions.pages
     }
     
     if request.method == 'POST':
-        response = functios.create_newuser(
+        response = functions.create_newuser(
             first_name=request.POST.get('first_name'),
             last_name=request.POST.get('last_name'),
             username=request.POST.get('username'),
@@ -218,13 +222,7 @@ def vista_programador(request):
 
     return render(request, 'admin/vista_programador.html', contexto)
 
-# te manda a la vista para crear el blog siendo staff
-@login_required
-@never_cache
-def admin_blogs(request):
-    return render(request, 'admin/blogs.html')
-
-# crear  blog ##############################
+# crear  blog --------------------------------------
 @login_required
 @never_cache
 def crear_articulo(request):
@@ -251,8 +249,7 @@ def crear_articulo(request):
             return JsonResponse({'success': True, 'functions': 'reload', 'message': 'Excelente 🥳🎈🎉. Tu articulo ya fue publicado. Puedes editarlo cuando gustes. 🧐😊'}, status=200)
         except Exception as e:
             return JsonResponse({'success': False, 'message': f'Ocurrio un error😯😥 <br>{str(e)}'}, status=400)
-    return JsonResponse({'success': False, 'message': 'Método no permitido'}, status=405)
-
+    return render(request, 'admin/blogs.html', {'active_page': 'blog','pages': functions.pages})
 
 @login_required
 @never_cache
@@ -284,12 +281,12 @@ def lista_imagenes(request):
     return render(request, 'admin/blogs_imgs.html', {'imagenes': imagenes_modificadas})
 
 
-#Consulta para informacion del Mapa##################
+#Consulta para informacion del Mapa --------------------------------
 @login_required
 def obtenerinfoEdif(request):
     categoria_mapa = models.Categorias.objects.get(categoria="Mapa")
     map_inDB = models.Database.objects.filter(categoria=categoria_mapa)
-    return render(request, 'admin/mapa.html', {'map_inDB': map_inDB})
+    return render(request, 'admin/mapa.html', {'map_inDB': map_inDB, 'active_page': 'mapa','pages': functions.pages})
 
 @login_required
 def obtenerEdificio(request):
@@ -377,7 +374,7 @@ def regEdificioMapa(request):
         return JsonResponse({'success': True, 'message': 'Se creo un nuevo edificio en el mapa y en la base de datos de forma exitosa 🎉🎉🎉'}, status=200)
 
 
-# subir banners###########################
+# subir banners ----------------------------------------------
 @login_required
 def upload_banner(request):
     if request.method == 'POST':
@@ -410,7 +407,7 @@ def upload_banner(request):
             'imagen': imagen_url,
             'expiracion': banner.expiracion,
         })
-    context = { 'banners': banners_modificados }
+    context = { 'banners': banners_modificados, 'active_page': 'banner','pages': functions.pages }
     return render(request, 'admin/banners.html', context)
 
 @login_required
@@ -471,8 +468,7 @@ def ver_perfil(request):
     else:
         form = ProfileImageForm(instance=perfil_usuario)
 
-    return render(request, 'admin/perfil.html', {'perfil_usuario': perfil_usuario, 'form': form})
-
+    return render(request, 'admin/perfil.html', {'perfil_usuario': perfil_usuario, 'form': form, 'active_page': 'perfil', 'pages': functions.pages})
 
 def password_reset_request(request):
     if request.method == 'POST' and request.headers.get('X-Requested-With') == 'XMLHttpRequest':
@@ -534,4 +530,4 @@ def password_reset_confirm(request, uidb64, token):
 @login_required
 def ver_notis(request):
     notificaciones = models.Notificacion.objects.all().order_by('-fecha')
-    return render(request, 'admin/notificaciones.html', {'notificaciones': notificaciones})
+    return render(request, 'admin/notificaciones.html', {'notificaciones': notificaciones, 'pages': functions.pages})
