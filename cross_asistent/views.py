@@ -82,8 +82,22 @@ def blogs(request):
     if not request.user.is_staff:
         logout(request)
     blogs = models.Articulos.objects.all()
+    blogs_modificados = []
+
+    for oneblog in blogs:
+        imagen_url = oneblog.encabezado
+        if not imagen_url == '':
+            img = oneblog.encabezado.url.replace("/cross_asistent", "")
+        else:
+            img = ''
+        blogs_modificados.append({
+            'id': oneblog.id,
+            'titulo': oneblog.titulo,
+            'autor': oneblog.autor,
+            'imagen': img,
+        })
     return render(request, 'blogs.html', {
-        'blogs_all': blogs,
+        'blogs_all': blogs_modificados,
         'active_page': 'blog'
     })
 
@@ -246,7 +260,7 @@ def crear_articulo(request):
                 mensaje=f'El usuario {request.user.username} ha subido un nuevo blog titulado "{articulo.titulo}".',
             )
 
-            return JsonResponse({'success': True, 'functions': 'reload', 'message': 'Excelente 🥳🎈🎉. Tu articulo ya fue publicado. Puedes editarlo cuando gustes. 🧐😊'}, status=200)
+            return JsonResponse({'success': True, 'message': 'Excelente 🥳🎈🎉. Tu articulo ya fue publicado. Puedes editarlo cuando gustes. 🧐😊'}, status=200)
         except Exception as e:
             return JsonResponse({'success': False, 'message': f'Ocurrio un error😯😥 <br>{str(e)}'}, status=400)
     return render(request, 'admin/blog.html', {'active_page': 'blog','pages': functions.pages})

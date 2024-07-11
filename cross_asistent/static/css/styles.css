@@ -670,6 +670,10 @@ path.leaflet-interactive {
     box-shadow: 0 0 8px var(--darkA2) !important;
 }
 
+.card.card_blog {
+    min-height: 230px !important;
+}
+
 .leaflet-control-zoom.leaflet-bar.leaflet-control {
     border: none;
     border-radius: var(--border-radius) !important;
@@ -826,7 +830,17 @@ main#map:active {
 }
 
 
+.sticky-top-4 {
+    top: 1.5rem;
+}
+
 /*#################### Template Buttons ####################*/
+@media (min-width: 768px) {
+    .sticky-md {
+        position: sticky;
+    }
+}
+
 @media (min-width: 992px) {
     .btn_lg-circle {
         --mdb-btn-width: 2.3125rem;

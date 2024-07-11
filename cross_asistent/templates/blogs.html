@@ -3,7 +3,7 @@
 {% block title %}Articulos y noticias 📰{% endblock %}
 {% block content %}
 <main class="container container-fluid mb-100">
-    <div class="p-5 text-center">
+    <div class="p-5 px-md-0 text-center">
         <h1 class="mb-3">Muro UTC <i class="fa-solid fa-newspaper ms-1"></i></h1></h1>
         <hr class="hr_divisor" />
     </div>
@@ -11,11 +11,11 @@
         <div class="row row-cols-1 row-cols-md-3 g-4">
             {% for blog in blogs_all %}
                 <div class="col">
-                    <a href="{% url 'mostrar_blog' blog.id %}" class="card text-white h-100">
-                        <img src="{% static 'img/default_image.webp' %}" class="card-img" />
+                    <a href="{% url 'mostrar_blog' blog.id %}" class="card text-white card_blog">
+                        <img src="{{blog.imagen}}" class="card-img" />
                         <div class="card-img-overlay mask mask_dark">
                             <div class="d-flex flex-column justify-content-end h-100">
-                                <h4 class="card-title">{{ blog.titulo }}</h4>
+                                <h5 class="card-title">{{ blog.titulo }}</h5>
                                 <div class="card-text text-end lead">
                                     <small class="fs-8">Autor: {{ blog.autor }}</small>
                                 </div>

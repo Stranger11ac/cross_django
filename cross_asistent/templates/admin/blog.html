@@ -13,8 +13,8 @@
     </div>
     <form method="post" id="formularioArticulo" action="{% url 'send_blog' %}" data-submit-form class="row pt-2" autocomplete="off">
         {% csrf_token %}
-        <div class="col-12 col-md-6 mb-4">
-            <div class="row">
+        <div class="col-12 col-md-6 col-xl-4 mb-4 position-relative">
+            <div class="row sticky-md sticky-top-4">
                 <div class="col mb-4">
                     <div class="card h-100">
                         <img src="{% static 'img/default_image.webp' %}" class="card-img" />
@@ -40,19 +40,22 @@
                 <div class="col-12">
                     <div class="card">
                         <div class="card-body">
-                            <div class="mb-4">
-                                <label class="form-label" for="encabezadoImg">Imagen de Encabezado: <small>(opcional)</small> </label>
-                                <input type="file" class="form-control" id="encabezadoImg" name="encabezadoImg" accept="image/*" />
-                            </div>
-                            <button type="submit" class="btn btn_detail w-100 d-block">Publicar <i class="fa-regular fa-paper-plane ms-1"></i></button>
+                            <label class="form-label" for="encabezadoImg">Imagen de Encabezado: <span class="fs-8">(opcional)</span> </label>
+                            <input type="file" class="form-control text-right" id="encabezadoImg" name="encabezadoImg" accept="image/*" />
+                            <button type="submit" class="btn btn_detail w-100 d-none d-md-block mt-4">Publicar <i class="fa-regular fa-paper-plane ms-1"></i></button>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="col-12 col-md-6">
+        <div class="col-12 col-md-6 col-xl-8">
             <div class="card">
-                <textarea id="mainTiny" name="contenidoWord" placeholder="Escribe tu articulo..." required></textarea>
+                <textarea id="mainTiny" name="contenidoWord" placeholder="Escribe tu articulo..."></textarea>
+            </div>
+            <div class="card d-md-none mt-4">
+                <div class="card-body">
+                    <button type="submit" class="btn btn_detail w-100">Publicar <i class="fa-regular fa-paper-plane ms-1"></i></button>
+                </div>
             </div>
         </div>
     </form>
