@@ -208,6 +208,7 @@ def vista_admin(request):
 def vista_programador(request):
     blogs_all = models.Articulos.objects.all()
     banners_all = models.Banners.objects.all()
+    categorias_all = models.Categorias.objects.all()
     users = User.objects.all()
     contexto = {
         'user': request.user,
@@ -218,6 +219,7 @@ def vista_programador(request):
         'num_blogs': blogs_all.count(),
         'num_preguntas': databaseall.count(),
         'active_page': 'home',
+        'categorias': categorias_all,
         'pages': functions.pages
     }
     

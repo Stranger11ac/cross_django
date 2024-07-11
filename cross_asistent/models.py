@@ -21,9 +21,9 @@ class Database(models.Model):
 
     def save(self, *args, **kwargs):
         if self.categoria and self.categoria.categoria == 'Mapa':  # Ajusta esto según el campo correcto en tu modelo Categorias
-            self.imagenes.upload_to = 'cross_asistent/static/files/imagenes/mapa/'
+            self.imagenes.upload_to='cross_asistent/static/files/imagenes/mapa/'
         else:
-            self.imagenes.upload_to = 'cross_asistent/static/files/imagenes/'
+            self.imagenes.upload_to='cross_asistent/static/files/imagenes/'
         super(Database, self).save(*args, **kwargs)
     
     def __str__(self):
@@ -79,12 +79,13 @@ class Mapa(models.Model):
         return self.nombre
 
 class Articulos(models.Model):
-    creacion = models.DateField(auto_now_add=True, blank=False)
-    actualizacion = models.DateField(auto_now=True, blank=True, null=True)
+    encabezado =  models.ImageField(upload_to='cross_asistent/static/files/imagenes/blogs/', blank=True, null=True)
     titulo = models.CharField(max_length=200, blank=False)
     contenido = models.TextField(blank=False)
-    encabezado =  models.ImageField(upload_to='cross_asistent/static/files/imagenes/blogs/', blank=True, null=True)
-    autor = models.CharField(max_length=150, blank=False)
+    autor = models.CharField(max_length=100, blank=False)
+    firma = models.CharField(max_length=150, blank=False)
+    creacion = models.DateField(auto_now_add=True, blank=False)
+    actualizacion = models.DateField(auto_now=True, blank=True, null=True)
     
     def __str__(self):
         return f"{self.titulo} - {self.autor}"
