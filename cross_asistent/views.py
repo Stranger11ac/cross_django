@@ -398,7 +398,7 @@ def upload_banner(request):
         if form.is_valid():
             banner = form.save(commit=False)  
             if not request.FILES.get('imagen'):  
-                banner.imagen = 'static/img/default_image.webp'  
+                banner.imagen = 'static/img/default_image.webp'  # Asegúrate de que esta ruta sea correcta y la imagen exista
             banner.save()  
 
             models.Notificacion.objects.create(

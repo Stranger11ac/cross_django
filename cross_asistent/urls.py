@@ -29,6 +29,7 @@ urlpatterns = [
     path('administracion/banners/', views.upload_banner, name='upload_banner'),
     path('administracion/banners/<int:banner_id>/edit/', views.edit_banner, name='edit_banner'),
     path('administracion/banners/delete/<int:banner_id>/', views.delete_banner, name='delete_banner'),
+    path('administracion/update_banner_visibility/', functions.update_banner_visibility, name='update_banner_visibility'),
     
     # Usuarios
     path('administracion/modificar_usuario/', functions.in_active, name='in_active'),

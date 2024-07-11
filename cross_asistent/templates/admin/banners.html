@@ -23,8 +23,8 @@
                     <div data-mdb-input-init class="form-outline position-relative mb-4">
                         <button type="button" class="position-absolute top-0 end-0 btn p-0 fs-12 m-2 mt-1 none"
                             data-clear="descripcion"><i class="fa-solid fa-xmark m-0 p-0"></i></button>
-                            <textarea class="form-control" id="descripcion" data-init-clear required ></textarea>
-                            <label class="form-label" for="descripcion">Descripción:</label>
+                        <textarea class="form-control" id="descripcion" name="descripcion" data-init-clear required ></textarea>
+                        <label class="form-label" for="descripcion">Descripción:</label>
                     </div>
                     <div data-mdb-input-init class="form-outline position-relative mb-4">
                         <button type="button" class="position-absolute top-0 end-0 btn p-0 fs-12 m-2 mt-1 none"
@@ -179,4 +179,21 @@
         {% endif %}
     </div>
 </main>
+{% endblock %}
+{% block scripts_end %} 
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        fetch("{% url 'update_banner_visibility' %}")
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                console.log('Visibilidad de los banners actualizada');
+                // Opcional: recargar la página para reflejar los cambios
+            }
+        })
+        .catch(error => console.error('Error al actualizar la visibilidad de los banners:', error));
+    });
+</script>
+
 {% endblock %}
