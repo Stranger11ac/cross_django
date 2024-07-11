@@ -42,7 +42,7 @@ def index(request):
         'banners': banners_modificados,
         'active_page': 'inicio'
     })
-
+    
 
 def faq(request):
     if not request.user.is_staff:
