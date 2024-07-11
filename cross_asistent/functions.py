@@ -8,6 +8,7 @@ from django.http import JsonResponse
 from django.db import IntegrityError
 from django.conf import settings
 from django.db.models import Q
+from django.utils import timezone
 from . import models
 import openai
 import spacy
@@ -278,3 +279,10 @@ def editar_usuario(request, user_id):
         return JsonResponse({'success': True, 'message': f'El usuario <u>{username}</u> fue modificado exitosamente 🥳🎉🎈.'}, status=200)
     return JsonResponse({'success': False, 'message': 'Acción no permitida.'}, status=403)
 
+def update_banner_visibility(request):
+    now = timezone.now()
+    expired_banners = models.Banners.objects.filter(expiracion__lte=now, visible=True)
+    for banner in expired_banners:
+        banner.visible = False
+        banner.save()
+    return JsonResponse({'status': 'success'})
