@@ -236,18 +236,7 @@ def vista_programador(request):
 @never_cache
 def ver_perfil(request):
     perfil_usuario = request.user
-
-    if request.method == 'POST':
-        form = ProfileImageForm(request.POST, request.FILES, instance=perfil_usuario)
-        if form.is_valid():
-            form.save()
-            return redirect('perfil')
-        else:
-            print(form.errors)  # Añade esto para ver errores en el formulario
-    else:
-        form = ProfileImageForm(instance=perfil_usuario)
-
-    return render(request, 'admin/perfil.html', {'perfil_usuario': perfil_usuario, 'form': form, 'active_page': 'perfil', 'pages': functions.pages})
+    return render(request, 'admin/perfil.html', {'perfil_usuario': perfil_usuario, 'active_page': 'perfil', 'pages': functions.pages})
 
 @login_required
 @never_cache
