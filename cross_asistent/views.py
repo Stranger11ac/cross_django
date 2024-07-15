@@ -1,23 +1,16 @@
-from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth.tokens import default_token_generator
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.decorators import login_required
-from django.utils.encoding import force_bytes, force_str
 from django.core.files.storage import default_storage
 from django.views.decorators.cache import never_cache
-from django.template.loader import render_to_string
-from .forms import BannersForm, ProfileImageForm
+from .forms import BannersForm
 from django.contrib.auth.models import User
 from django.db import models, transaction
-from django.core.mail import send_mail
 from django.http import JsonResponse
 from django.conf import settings
 from django.urls import reverse
-from django.apps import apps
 from . import functions, models
 import json
-from django.contrib.auth.decorators import permission_required
 
 databaseall = models.Database.objects.all()
 mapaall = models.Mapa.objects.all()
@@ -42,7 +35,6 @@ def index(request):
         'banners': banners_modificados,
         'active_page': 'inicio'
     })
-    
 
 def faq(request):
     if not request.user.is_staff:
@@ -123,7 +115,7 @@ def about(request):
 
 # Administracion ----------------------------------------------------------
 @never_cache
-def singuppage(request):
+def singup(request):
     if request.method == 'POST' and request.headers.get('X-Requested-With') == 'XMLHttpRequest':
         response = functions.create_newuser(
             first_name=request.POST.get('first_name'),
@@ -145,7 +137,7 @@ def singuppage(request):
         return JsonResponse(response, status=status)
     else:
         logout(request)
-        return render(request, 'singin')
+        return redirect('singin')
 
 @never_cache
 def singinpage(request):
@@ -178,17 +170,17 @@ def singinpage(request):
             return JsonResponse({'success': False, 'functions': 'singin', 'message': 'Usuario no registrado 😅. Verifica tu nombre de usuario o correo electrónico'}, status=400)
     else:
         logout(request)
-        return render(request, 'admin/singin.html', {
+        return render(request, 'singinup.html', {
             'active_page': 'singin'
         })
 
 @login_required
 @never_cache
-def singoutpage(request):
+def singout(request):
     logout(request)
     return redirect('singin')
 
-# def para la vista administrador
+# Perfiles ----------------------------------------------------------
 @login_required
 @never_cache
 def vista_admin(request):
@@ -209,7 +201,7 @@ def vista_programador(request):
     blogs_all = models.Articulos.objects.all()
     banners_all = models.Banners.objects.all()
     categorias_all = models.Categorias.objects.all()
-    users = User.objects.all()
+    users = User.objects.all().order_by('-id')
     contexto = {
         'user': request.user,
         'users': users,
@@ -233,14 +225,121 @@ def vista_programador(request):
             is_staff=request.POST.get('is_staff', False),
             is_active=request.POST.get('is_active', False),
         )
+        response['position'] = 'top'
         response['functions'] = 'reload'
         status = 200 if response['success'] else 400
         return JsonResponse(response, status=status)
 
     return render(request, 'admin/vista_programador.html', contexto)
 
-# crear  blog --------------------------------------
 @login_required
+@never_cache
+def ver_perfil(request):
+    perfil_usuario = request.user
+
+    if request.method == 'POST':
+        form = ProfileImageForm(request.POST, request.FILES, instance=perfil_usuario)
+        if form.is_valid():
+            form.save()
+            return redirect('perfil')
+        else:
+            print(form.errors)  # Añade esto para ver errores en el formulario
+    else:
+        form = ProfileImageForm(instance=perfil_usuario)
+
+    return render(request, 'admin/perfil.html', {'perfil_usuario': perfil_usuario, 'form': form, 'active_page': 'perfil', 'pages': functions.pages})
+
+@login_required
+@never_cache
+def ver_notis(request):
+    notificaciones = models.Notificacion.objects.all().order_by('-fecha')
+    return render(request, 'admin/notificaciones.html', {'notificaciones': notificaciones, 'pages': functions.pages})
+
+# Banners ----------------------------------------------------------
+@login_required
+@never_cache
+def upload_banner(request):
+    if request.method == 'POST':
+        form = BannersForm(request.POST, request.FILES)
+        if form.is_valid():
+            banner = form.save(commit=False)  
+            if not request.FILES.get('imagen'):  
+                banner.imagen = 'static/img/default_image.webp'  # Asegúrate de que esta ruta sea correcta y la imagen exista
+            banner.save()  
+
+            models.Notificacion.objects.create(
+                usuario=request.user,
+                tipo='Banner',
+                mensaje=f'El usuario {request.user.username} ha subido un nuevo banner titulado "{banner.titulo}".',
+            )
+            return redirect('upload_banner')
+    else:
+        form = BannersForm()
+    
+    banners_all = models.Banners.objects.all()
+    banners_modificados = []
+
+    for banner in banners_all:
+        imagen_url = banner.imagen.url.replace("/cross_asistent", "")
+        banners_modificados.append({
+            'id': banner.id,
+            'titulo': banner.titulo,
+            'descripcion': banner.descripcion,
+            'articulo': banner.articulo,
+            'imagen': imagen_url,
+            'expiracion': banner.expiracion,
+        })
+    context = { 'banners': banners_modificados, 'active_page': 'banner','pages': functions.pages }
+    return render(request, 'admin/banners.html', context)
+
+@login_required
+@never_cache
+def edit_banner(request, banner_id):
+    banner = get_object_or_404(models.Banners, id=banner_id)
+    if request.method == 'POST':
+        # Obtener la nueva imagen del formulario si se proporciona
+        new_image = request.FILES.get('imagen')
+        
+        # Guardar la nueva imagen si se proporciona
+        if new_image:
+            # Eliminar la imagen anterior si existe
+            if banner.imagen:
+                if default_storage.exists(banner.imagen.name):
+                    default_storage.delete(banner.imagen.name)
+            
+            # Guardar la nueva imagen en el modelo
+            banner.imagen = new_image
+        
+        # Actualizar otros campos del banner si es necesario
+        banner.titulo = request.POST.get('titulo')
+        banner.descripcion = request.POST.get('descripcion')
+        banner.articulo = request.POST.get('articulo')
+        banner.expiracion = request.POST.get('expiracion')
+        
+        # Guardar el banner actualizado
+        banner.save()
+        
+        return JsonResponse({
+            'success': True,
+            'functions': 'reload',
+            'message': f'El banner <u>{banner.titulo}</u> fue modificado exitosamente 🥳🎉🎈.'
+        }, status=200)
+    
+    return JsonResponse({'success': False, 'message': 'Acción no permitida.'}, status=403)
+
+@login_required
+@never_cache
+def delete_banner(request, banner_id):
+    if request.method == 'POST':
+        icon = 'warning'
+        banner = get_object_or_404(models.Banners, id=banner_id)
+        banner.delete()
+        return JsonResponse({'success': True, 'functions': 'reload', 'message': 'Banner eliminado exitosamente.', 'icon': icon}, status=200)
+    return JsonResponse({'success': False, 'message': 'Acción no permitida.'}, status=403)
+
+# Blogs ----------------------------------------------------------
+@login_required
+@never_cache
 def crear_articulo(request):
     if request.method == 'POST':
         try:
@@ -297,14 +396,16 @@ def lista_imagenes(request):
     return render(request, 'admin/blog_imgs.html', {'imagenes': imagenes_modificadas})
 
 
-#Consulta para informacion del Mapa --------------------------------
+#Mapa ----------------------------------------------------------
 @login_required
+@never_cache
 def obtenerinfoEdif(request):
     categoria_mapa = models.Categorias.objects.get(categoria="Mapa")
     map_inDB = models.Database.objects.filter(categoria=categoria_mapa)
     return render(request, 'admin/mapa.html', {'map_inDB': map_inDB, 'active_page': 'mapa','pages': functions.pages})
 
 @login_required
+@never_cache
 def obtenerEdificio(request):
     if request.method == 'GET':
         edificio_id = request.GET.get('id')
@@ -319,6 +420,7 @@ def obtenerEdificio(request):
     return JsonResponse({'error': 'Invalid request'}, status=400)
 
 @login_required
+@never_cache
 def regEdificioMapa(request):
     if request.method != 'POST':
         return JsonResponse({'error': 'Metodo no valido'}, status=400)
@@ -388,162 +490,3 @@ def regEdificioMapa(request):
         )
 
         return JsonResponse({'success': True, 'message': 'Se creo un nuevo edificio en el mapa y en la base de datos de forma exitosa 🎉🎉🎉'}, status=200)
-
-
-# subir banners ----------------------------------------------
-@login_required
-def upload_banner(request):
-    if request.method == 'POST':
-        form = BannersForm(request.POST, request.FILES)
-        if form.is_valid():
-            banner = form.save(commit=False)  
-            if not request.FILES.get('imagen'):  
-                banner.imagen = 'static/img/default_image.webp'  # Asegúrate de que esta ruta sea correcta y la imagen exista
-            banner.save()  
-
-            models.Notificacion.objects.create(
-                usuario=request.user,
-                tipo='Banner',
-                mensaje=f'El usuario {request.user.username} ha subido un nuevo banner titulado "{banner.titulo}".',
-            )
-            return redirect('upload_banner')
-    else:
-        form = BannersForm()
-    
-    banners_all = models.Banners.objects.all()
-    banners_modificados = []
-
-    for banner in banners_all:
-        imagen_url = banner.imagen.url.replace("/cross_asistent", "")
-        banners_modificados.append({
-            'id': banner.id,
-            'titulo': banner.titulo,
-            'descripcion': banner.descripcion,
-            'articulo': banner.articulo,
-            'imagen': imagen_url,
-            'expiracion': banner.expiracion,
-        })
-    context = { 'banners': banners_modificados, 'active_page': 'banner','pages': functions.pages }
-    return render(request, 'admin/banners.html', context)
-
-@login_required
-def edit_banner(request, banner_id):
-    banner = get_object_or_404(models.Banners, id=banner_id)
-    if request.method == 'POST':
-        # Obtener la nueva imagen del formulario si se proporciona
-        new_image = request.FILES.get('imagen')
-        
-        # Guardar la nueva imagen si se proporciona
-        if new_image:
-            # Eliminar la imagen anterior si existe
-            if banner.imagen:
-                if default_storage.exists(banner.imagen.name):
-                    default_storage.delete(banner.imagen.name)
-            
-            # Guardar la nueva imagen en el modelo
-            banner.imagen = new_image
-        
-        # Actualizar otros campos del banner si es necesario
-        banner.titulo = request.POST.get('titulo')
-        banner.descripcion = request.POST.get('descripcion')
-        banner.articulo = request.POST.get('articulo')
-        banner.expiracion = request.POST.get('expiracion')
-        
-        # Guardar el banner actualizado
-        banner.save()
-        
-        return JsonResponse({
-            'success': True,
-            'functions': 'reload',
-            'message': f'El banner <u>{banner.titulo}</u> fue modificado exitosamente 🥳🎉🎈.'
-        }, status=200)
-    
-    return JsonResponse({'success': False, 'message': 'Acción no permitida.'}, status=403)
-
-@login_required
-def delete_banner(request, banner_id):
-    if request.method == 'POST':
-        icon = 'warning'
-        banner = get_object_or_404(models.Banners, id=banner_id)
-        banner.delete()
-        return JsonResponse({'success': True, 'functions': 'reload', 'message': 'Banner eliminado exitosamente.', 'icon': icon}, status=200)
-    return JsonResponse({'success': False, 'message': 'Acción no permitida.'}, status=403)
-
-@login_required
-@never_cache
-def ver_perfil(request):
-    perfil_usuario = request.user
-
-    if request.method == 'POST':
-        form = ProfileImageForm(request.POST, request.FILES, instance=perfil_usuario)
-        if form.is_valid():
-            form.save()
-            return redirect('perfil')
-        else:
-            print(form.errors)  # Añade esto para ver errores en el formulario
-    else:
-        form = ProfileImageForm(instance=perfil_usuario)
-
-    return render(request, 'admin/perfil.html', {'perfil_usuario': perfil_usuario, 'form': form, 'active_page': 'perfil', 'pages': functions.pages})
-
-def password_reset_request(request):
-    if request.method == 'POST' and request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-        email = request.POST.get('email')
-        print(f"Email recibido: {email}")
-
-        if email:
-            try:
-                user = User.objects.get(email=email)
-                print(f"Usuario encontrado: {user}")
-
-                token = default_token_generator.make_token(user)
-                uid = urlsafe_base64_encode(force_bytes(user.pk))
-                reset_link = request.build_absolute_uri(f'/reset-password/{uid}/{token}/')
-
-                subject = "Reestablecer la contraseña"
-                message = render_to_string('password_reset_email.html', {
-                    'user': user,
-                    'reset_link': reset_link,
-                })
-                print(f"Enlace de restablecimiento: {reset_link}")
-
-                send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [user.email])
-                print("Correo enviado exitosamente")
-
-                return JsonResponse({'success': True, 'message': 'Se ha enviado un enlace de restablecimiento de contraseña a tu correo electrónico.'}, status=200)
-            except User.DoesNotExist:
-                print("Usuario no encontrado")
-                return JsonResponse({'success': False, 'message': 'El correo electrónico no está registrado.'}, status=400)
-        else:
-            print("No se proporcionó correo electrónico")
-            return JsonResponse({'success': False, 'message': 'Por favor, ingresa tu correo electrónico.'}, status=400)
-    else:
-        return render(request, 'reset_pass.html')
-
-def password_reset_confirm(request, uidb64, token):
-    try:
-        uid = force_str(urlsafe_base64_decode(uidb64))
-        user = User.objects.get(pk=uid)
-    except (TypeError, ValueError, OverflowError, User.DoesNotExist):
-        user = None
-
-    if user is not None and default_token_generator.check_token(user, token):
-        if request.method == 'POST':
-            new_password = request.POST.get('new_password')
-            confirm_password = request.POST.get('confirm_password')
-            if new_password and new_password == confirm_password:
-                user.set_password(new_password)
-                user.save()
-                login(request, user)
-                return redirect('password_reset_complete')
-            else:
-                return render(request, 'password_reset_confirm.html', {'validlink': True, 'error': 'Las contraseñas no coinciden.'})
-        else:
-            return render(request, 'password_reset_confirm.html', {'validlink': True})
-    else:
-        return render(request, 'password_reset_confirm.html', {'validlink': False})
-
-@login_required
-def ver_notis(request):
-    notificaciones = models.Notificacion.objects.all().order_by('-fecha')
-    return render(request, 'admin/notificaciones.html', {'notificaciones': notificaciones, 'pages': functions.pages})

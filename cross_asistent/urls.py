@@ -5,20 +5,18 @@ urlpatterns = [
     # Páginas de inicio
     path('', views.index, name='home'),
     path('chatbot/', functions.chatbot, name='chatbot'),
-    path('blog-eventos/', views.blogs, name='blog'),
-    path('blog/<int:Articulos_id>/', views.mostrar_blog, name='mostrar_blog'),
+    path('preguntas_frecuentes/', views.faq, name='faq'),
+    path('preguntar/', views.crear_pregunta, name='preguntas'),
+    path('blogs/', views.blogs, name='blog'),
+    path('blogs/<int:Articulos_id>/', views.mostrar_blog, name='mostrar_blog'),
     path('mapa/', views.map, name='map'),
     path('mapa/edificios/', functions.mapa_data, name='mapa_edificios'),
     path('acercade/', views.about, name='about'),
-    path('preguntas_frecuentes/', views.faq, name='faq'),
-    path('preguntar/', views.crear_pregunta, name='preguntas'),
     
     # Sesion y registro
-    path('logout/', views.singoutpage, name='singout'),
-    path('password-reset/', views.password_reset_request, name='password_reset_email'),
+    path('logout/', views.singout, name='singout'),
     path('acceder/', views.singinpage, name='singin'),
-    path('registro/', views.singuppage, name='singup'),
-    path('reset-password/<uidb64>/<token>/', views.password_reset_confirm, name='password_reset_confirm'),
+    path('registro/', views.singup, name='singup'),
     
     # Administracion y programacion
     path('administracion/', views.vista_admin, name='vista_admin'),

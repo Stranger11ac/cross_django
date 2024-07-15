@@ -1,5 +1,5 @@
 from django.db import models
-from django.contrib.auth.models import User, AbstractUser
+from django.contrib.auth.models import User
 from django.conf import settings
 import os
 
@@ -100,16 +100,6 @@ class ImagenArticulo(models.Model):
             if os.path.isfile(image_path):
                 os.remove(image_path)
         super(Banners, self).delete(*args, **kwargs)
-
-class CustomUser(AbstractUser):
-    profile_image = models.ImageField(upload_to='profile_images', blank=True, null=True)
-    is_online = models.BooleanField(default=False)
-
-    groups = models.ManyToManyField('auth.Group', related_name='customuser_set')
-    user_permissions = models.ManyToManyField('auth.Permission', related_name='customuser_set')
-
-    class Meta:
-        permissions = (("can_view_profile", "Can view profile"),)
 
 class Notificacion(models.Model):
     usuario = models.ForeignKey(User, on_delete=models.CASCADE)

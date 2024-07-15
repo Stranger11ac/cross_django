@@ -224,7 +224,6 @@ def create_newuser(first_name, last_name, username, email, password1, password2=
         return {'success': True, 'message': f'Usuario creado exitosamente 🥳😬🎈 {aviso}'}
     except IntegrityError:
         return {'success': False, 'message': 'Ocurrió un error durante el registro. Intente nuevamente.'}
-    
 
 # Modificar usuario (programador) --------------------------------------------------------
 @login_required
