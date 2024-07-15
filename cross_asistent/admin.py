@@ -15,6 +15,7 @@ admin.site.register(models.Articulos)
 admin.site.register(models.Categorias)
 admin.site.register(models.ImagenArticulo)
 admin.site.register(models.Sugerencias_preg)
+admin.site.register(models.Notificacion)
 
 class CustomUserAdmin(UserAdmin):
     model = CustomUser
