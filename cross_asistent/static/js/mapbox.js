@@ -227,15 +227,16 @@ fetch(url)
                         const distance = e.route[0].distance / 1000; // distancia en kilómetros
                         const duration = e.route[0].duration / 60; // duración en minutos
                         // Puedes mostrar esta información en tu interfaz de usuario según sea necesario
-                        document.getElementById("route-info").innerHTML = `
-                        <div class="row mb-2">
-                            <div class="col-1"><i class="fa-solid fa-shoe-prints me-1"></i></div>
-                            <div class="col">Distancia: <strong>${distance.toFixed(2)} km</strong></div>
-                        </div>
-                        <div class="row">
-                            <div class="col-1"><i class="fa-solid fa-hourglass-half me-1"></i></div>
-                            <div class="col">Duración: <strong>${duration.toFixed(2)} minutos aprox.</strong></div>
-                        </div>`;
+                        $("#route-info").html(`
+                            <div class="row mb-2">
+                                <div class="col-1"><i class="fa-solid fa-shoe-prints me-1"></i></div>
+                                <div class="col">Distancia: <strong>${distance.toFixed(2)} km</strong></div>
+                            </div>
+                            <div class="row">
+                                <div class="col-1"><i class="fa-solid fa-hourglass-half me-1"></i></div>
+                                <div class="col">Duración: <strong>${duration.toFixed(2)} minutos aprox.</strong></div>
+                            </div>`);
+                        $("#route-info").slideDown();
                     });
                     map.addControl(directions, "top-left");
                 }
