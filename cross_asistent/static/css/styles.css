@@ -687,22 +687,21 @@ path.leaflet-interactive {
 }
 
 .table_odd .table_odd_items {
-    --mdb-table-bg: var(--mdb-light);
+    /* --mdb-table-bg: var(--mdb-light); */
     transition: var(--transitionEase);
 }
 
 .table_odd .table_odd_items td {
     height: 80px;
-    max-height: 80px !important;
 }
 
 .table_odd .table_odd_items td .btn i:where(.fa-solid, .fa-regular) {
     transform: scale(1.4) translateX(1px);
 }
 
-.table_odd .table_odd_items:nth-child(even) {
+/* .table_odd .table_odd_items:nth-child(even) {
     --mdb-table-bg: var(--var-secondary);
-}
+} */
 
 .table_odd .table_odd_items:hover {
     --mdb-table-bg: var(--var-detail);

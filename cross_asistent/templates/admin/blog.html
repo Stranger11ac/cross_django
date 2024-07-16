@@ -11,7 +11,7 @@
         <h1 class="text-center">Articulo <i class="fa-solid fa-newspaper ms-1"></i></h1>
         <hr class="hr_divisor mx-4 mx-md-0" />
     </div>
-    <form method="post" id="formularioArticulo" action="{% url 'send_blog' %}" data-submit-form class="row pt-2" autocomplete="off">
+    <form method="post" id="formularioArticulo" data-submit-form class="row pt-2" autocomplete="off">
         {% csrf_token %}
         <div class="col-12 col-md-6 col-xl-4 mb-4 position-relative">
             <div class="row sticky-md sticky-top-4">
@@ -42,16 +42,15 @@
                         <div class="card-body">
                             <label class="form-label" for="encabezadoImg">Imagen de Encabezado: <span class="fs-8">(opcional)</span> </label>
                             <input type="file" class="form-control text-right" id="encabezadoImg" name="encabezadoImg" accept="image/*" />
-                            <button type="submit" class="btn btn_detail w-100 d-none d-md-block mt-4">Publicar <i class="fa-regular fa-paper-plane ms-1"></i></button>
+                            <button type="submit" class="btn btn_detail w-100 d-none d-md-block mt-4">Publicar <i
+                                    class="fa-regular fa-paper-plane ms-1"></i></button>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
         <div class="col-12 col-md-6 col-xl-8">
-            <div class="card">
-                <textarea id="mainTiny" name="contenidoWord" placeholder="Escribe tu articulo..."></textarea>
-            </div>
+            <textarea id="mainTiny" name="contenidoWord" placeholder="Escribe tu articulo..."></textarea>
             <div class="card d-md-none mt-4">
                 <div class="card-body">
                     <button type="submit" class="btn btn_detail w-100">Publicar <i class="fa-regular fa-paper-plane ms-1"></i></button>

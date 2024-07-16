@@ -154,7 +154,7 @@ def chatbot(request):
 pages = [
         {'name': 'banner', 'url': 'upload_banner', 'display_name': 'Banners', 'icon': 'fa-solid fa-image'},
         {'name': 'database', 'url': 'upload_banner', 'display_name': 'Database', 'icon': 'fa-solid fa-database'},
-        {'name': 'blog', 'url': 'send_blog', 'display_name': 'Blogs', 'icon': 'fa-solid fa-newspaper'},
+        {'name': 'blog', 'url': 'create_blog', 'display_name': 'Blogs', 'icon': 'fa-solid fa-newspaper'},
         {'name': 'mapa', 'url': 'consultaMap', 'display_name': 'Mapa', 'icon': 'fa-solid fa-map-location-dot'},
     ]
 

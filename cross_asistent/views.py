@@ -329,7 +329,7 @@ def delete_banner(request, banner_id):
 # Blogs ----------------------------------------------------------
 @login_required
 @never_cache
-def crear_articulo(request):
+def create_blog(request):
     if request.method == 'POST':
         try:
             tituloPOST = request.POST.get('titulo')

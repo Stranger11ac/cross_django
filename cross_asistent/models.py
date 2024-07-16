@@ -3,6 +3,34 @@ from django.contrib.auth.models import User
 from django.conf import settings
 import os
 
+def get_image_path(instance, filename):
+    """Función para obtener la ruta de la imagen"""
+    return os.path.join('cross_asistent/static/files/banners/', filename)
+
+class Banners(models.Model):
+    titulo = models.CharField(max_length=60, blank=False)
+    descripcion = models.CharField(max_length=350, blank=False)
+    articulo = models.CharField(max_length=200, null=True, blank=True)
+    imagen = models.ImageField(upload_to=get_image_path, blank=True, null=True)  # Cambiado a opcional
+    expiracion = models.DateTimeField(blank=True, null=True)
+    visible = models.BooleanField(default=True)
+    
+    def __str__(self):
+        return self.titulo
+    
+    def save(self, *args, **kwargs):
+        if not self.imagen:
+            self.imagen = 'static/img/default_image.webp'  # Asigna la imagen por defecto si no se proporciona una
+        else:
+            if self.id:
+                # Obtener el banner existente
+                existing_banner = Banners.objects.get(id=self.id)
+                # Eliminar la imagen anterior si se actualiza
+                if self.imagen != existing_banner.imagen:
+                    existing_banner.imagen.delete(save=False)
+        
+        super(Banners, self).save(*args, **kwargs)
+
 class Categorias(models.Model):
     categoria = models.CharField(max_length=50)
     
@@ -29,41 +57,17 @@ class Database(models.Model):
     def __str__(self):
         return self.titulo
 
-class Sugerencias_preg(models.Model):
-    pregunta_num = models.ForeignKey(Database, on_delete=models.CASCADE)
-    sugerencia = models.TextField()
-    sugerente = models.CharField(max_length=100, default='Anonimo')
+class Articulos(models.Model):
+    encabezado =  models.ImageField(upload_to='cross_asistent/static/files/imagenes/blogs/', blank=True, null=True)
+    titulo = models.CharField(max_length=200, blank=False)
+    contenido = models.TextField(blank=False)
+    autor = models.CharField(max_length=100, blank=False)
+    firma = models.CharField(max_length=150, blank=False)
+    creacion = models.DateField(auto_now_add=True, blank=False)
+    actualizacion = models.DateField(auto_now=True, blank=True, null=True)
     
     def __str__(self):
-        return f"pregunta #:{self.pregunta_num.id} sugiere: {self.sugerente}"
-
-def get_image_path(instance, filename):
-    """Función para obtener la ruta de la imagen"""
-    return os.path.join('cross_asistent/static/files/banners/', filename)
-
-class Banners(models.Model):
-    titulo = models.CharField(max_length=40, blank=False)
-    descripcion = models.CharField(max_length=350, blank=False)
-    articulo = models.CharField(max_length=200, null=True, blank=True)
-    imagen = models.ImageField(upload_to=get_image_path, blank=True, null=True)  # Cambiado a opcional
-    expiracion = models.DateTimeField(blank=True, null=True)
-    visible = models.BooleanField(default=True)
-    
-    def __str__(self):
-        return self.titulo
-    
-    def save(self, *args, **kwargs):
-        if not self.imagen:
-            self.imagen = 'static/img/default_image.webp'  # Asigna la imagen por defecto si no se proporciona una
-        else:
-            if self.id:
-                # Obtener el banner existente
-                existing_banner = Banners.objects.get(id=self.id)
-                # Eliminar la imagen anterior si se actualiza
-                if self.imagen != existing_banner.imagen:
-                    existing_banner.imagen.delete(save=False)
-        
-        super(Banners, self).save(*args, **kwargs)
+        return f"{self.titulo} - {self.autor}"
 
 class Mapa(models.Model):
     nombre = models.CharField(max_length=200, blank=False)
@@ -77,18 +81,6 @@ class Mapa(models.Model):
 
     def __str__(self):
         return self.nombre
-
-class Articulos(models.Model):
-    encabezado =  models.ImageField(upload_to='cross_asistent/static/files/imagenes/blogs/', blank=True, null=True)
-    titulo = models.CharField(max_length=200, blank=False)
-    contenido = models.TextField(blank=False)
-    autor = models.CharField(max_length=100, blank=False)
-    firma = models.CharField(max_length=150, blank=False)
-    creacion = models.DateField(auto_now_add=True, blank=False)
-    actualizacion = models.DateField(auto_now=True, blank=True, null=True)
-    
-    def __str__(self):
-        return f"{self.titulo} - {self.autor}"
 
 class ImagenArticulo(models.Model):
     imagen = models.ImageField(upload_to='cross_asistent/static/files/imagenes/blogs/imgs_blogs/', blank=True, null=True)

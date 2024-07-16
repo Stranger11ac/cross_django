@@ -65,7 +65,7 @@
                                     <i class="fa-solid fa-newspaper position-absolute bottom-0 start-0 opacity-25 text_detail fs-25 m-1"></i>
                                     Tus Blogs:
                                 </div>
-                                <div class="text_detail ms-auto">{{ num_blogs }}</div>
+                                <strong class="text_detail ms-auto">{{ num_blogs }}</strong>
                             </h6>
                         </div>
                     </a>
@@ -80,7 +80,7 @@
                                     <i class="fa-solid fa-image position-absolute bottom-0 start-0 opacity-25 text_detail fs-25 m-1"></i>
                                     <span class="d-none d-xl-inline-flex">Total de</span> Banners:
                                 </div>
-                                <div class="text_detail ms-auto">{{total_banners}}</div>
+                                <strong class="text_detail ms-auto">{{total_banners}}</strong>
                             </h6>
                         </div>
                     </a>
@@ -95,9 +95,7 @@
                                     <i class="fa-solid fa-users position-absolute bottom-0 start-0 opacity-25 text_detail fs-25 m-1"></i>
                                     <span class="d-none d-xl-inline-flex">Total de</span> Usuarios:
                                 </div>
-                                <div class="text_detail ms-auto">
-                                    {{ total_usuarios }}
-                                </div>
+                                <strong class="text_detail ms-auto">{{ total_usuarios }}</strong>
                             </h6>
                         </div>
                     </a>
@@ -112,9 +110,7 @@
                                     <i class="fa-solid fa-clipboard-question position-absolute bottom-0 start-0 opacity-25 text_detail fs-25 m-1"></i>
                                     <span class="d-none d-xl-inline-flex">Total de</span> Preguntas:
                                 </div>
-                                <div class="text_detail ms-auto">
-                                    {{ total_usuarios }}
-                                </div>
+                                <strong class="text_detail ms-auto">{{ total_usuarios }}</strong>
                             </h6>
                         </div>
                     </a>
@@ -129,9 +125,7 @@
                                     <i class="fa-solid fa-database position-absolute bottom-0 start-0 opacity-25 text_detail fs-25 m-1"></i>
                                     <span class="d-md-none d-xl-inline-flex">Registros en la</span> DataBase:
                                 </div>
-                                <div class="text_detail ms-auto d-flex align-items-center">
-                                    {{ num_preguntas }}
-                                </div>
+                                <strong class="text_detail ms-auto">{{ num_preguntas }}</strong>
                             </h6>
                         </div>
                     </a>
@@ -285,7 +279,7 @@
                 </div>
                 <!-- tabla de usuarios -->
                 <div class="table-responsive" id="table-container">
-                    <table class="table table_odd" style="min-height: 100px; height: auto">
+                    <table class="table table_odd align-middle">
                         <thead>
                             <tr>
                                 <th>#</th>
