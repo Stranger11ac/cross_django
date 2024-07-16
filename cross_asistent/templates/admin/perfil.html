@@ -6,9 +6,11 @@
 {% endblock %}
 {% block content %}
 
-<main class="container my-5">
-    <h2 class="text-center">Tu perfil <i class="fa-solid fa-circle-user ms-1"></i></h2>
-    <hr class="hr_divisor mb-4">
+<main class="container container-fluid py-5 {% if not user.is_authenticated %}main_container{% endif %}">
+    <div class="mb-5">
+        <h1 class="text-center">Tu Perfil <i class="fa-solid fa-circle-user ms-1"></i></h1>
+        <hr class="hr_divisor mx-4 mx-md-0" />
+    </div>
     <div class="card_perfil">
         <div class="card__img_perfil" style="--color-bg1:#efefef; --color-bg2:#3591d7;">
             <div class="card__avatar_perfil">
@@ -35,15 +37,6 @@
             </div>
         </div>
     </div>
-
-    <form method="POST" enctype="multipart/form-data">
-        {% csrf_token %}
-        <div class="mb-3">
-            <label for="profile_image" class="form-label">Subir imagen de perfil</label>
-            <input class="form-control" type="file" id="profile_image" name="profile_image">
-        </div>
-        <button type="submit" class="btn btn-primary">Subir imagen</button>
-    </form>
 </main>
 
 {% endblock %}

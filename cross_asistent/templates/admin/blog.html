@@ -7,9 +7,9 @@
 {% endblock %}
 {% block content %}
 <main class="container container-fluid py-5 {% if not user.is_authenticated %}main_container{% endif %}">
-    <div class="mb-5 text-center">
-        <h1 class="mb-3">Crear <span class="text_detail">Nuevo</span> Articulo <i class="fa-solid fa-newspaper ms-1"></i></h1>
-        <hr class="hr_divisor" />
+    <div class="mb-5">
+        <h1 class="text-center">Articulo <i class="fa-solid fa-newspaper ms-1"></i></h1>
+        <hr class="hr_divisor mx-4 mx-md-0" />
     </div>
     <form method="post" id="formularioArticulo" action="{% url 'send_blog' %}" data-submit-form class="row pt-2" autocomplete="off">
         {% csrf_token %}

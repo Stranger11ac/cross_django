@@ -1,6 +1,6 @@
 {% extends 'base/widget.html' %}
 {% load static %}
-{% block title %}         
+{% block title %}
 
 {% for articulo in Articulos %}
 {{ articulo.titulo|truncatechars:25 }}
@@ -8,23 +8,17 @@
 
 {% endblock %}
 {% block content %}
-<main class="container container-fluid mb-100">
-    
-<div class="p-5 mt-5">
-    
+<main class="container container-fluid">
+    <div class="p-5 mt-5">
         {% for articulo in Articulos %}
-        
-            <h2 class="text-center">{{ articulo.titulo }}</h2>
-            <hr class="hr_divisor mb-5">
-            <p class="px-5 mx-5">{% autoescape off %}{{ articulo.contenido }}{% endautoescape %}</p>
+        <h2 class="text-center">{{ articulo.titulo }}</h2>
+        <hr class="hr_divisor mb-5">
+        <p class="px-5 mx-5">{% autoescape off %}{{ articulo.contenido }}{% endautoescape %}</p>
 
-            <p>{{ articulo.autor }}</p>
-            <p>{{ articulo.creacion }}</p>
+        <p>{{ articulo.autor }}</p>
+        <p>{{ articulo.creacion }}</p>
         {% endfor %}
-    
-</div>
-    
-
+    </div>
 </main>
 
 {% include 'base/widget_footer.html' %}

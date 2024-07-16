@@ -384,7 +384,6 @@ def lista_imagenes(request):
         })
     return render(request, 'admin/blog_imgs.html', {'imagenes': imagenes_modificadas})
 
-
 #Mapa ----------------------------------------------------------
 @login_required
 @never_cache

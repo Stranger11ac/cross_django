@@ -6,8 +6,12 @@
 {% include 'base/widget_links-admin.html' %}
 {% endblock %}
 {% block content %}
-<main class="container container-fluid">
-    <div class="d-flex justify-content-center align-items-center min-vh-100">
+<main class="container container-fluid py-5 {% if not user.is_authenticated %}main_container{% endif %}">
+    <div class="mb-5">
+        <h1 class="text-center">Banners <i class="fa-solid fa-image ms-1"></i></h1>
+        <hr class="hr_divisor mx-4 mx-md-0" />
+    </div>
+    <div>
         <section class="card mb-4 col-lg-6 col-md-8 text-center">
             <h3 class="text-center my-4">Subir Banner</h3>
             <div class="card-body">
@@ -47,7 +51,7 @@
         </section>
     </div>
 
-    <div class="container mt-5">
+    <div>
         <h3 class="text-center my-4">Banners Subidos</h3>
         {% if banners %}
         <table class="table table-bordered">
