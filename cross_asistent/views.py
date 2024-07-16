@@ -244,6 +244,12 @@ def ver_notis(request):
     notificaciones = models.Notificacion.objects.all().order_by('-fecha')
     return render(request, 'admin/notificaciones.html', {'notificaciones': notificaciones, 'pages': functions.pages})
 
+def marcar_notificaciones_leidas(request):
+    data = json.loads(request.body)
+    ids = data.get('ids', [])
+    models.Notificacion.objects.filter(id__in=ids).update(leida=True)
+    return JsonResponse({'status': 'success'})
+
 # Banners ----------------------------------------------------------
 @login_required
 @never_cache
