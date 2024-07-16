@@ -89,7 +89,27 @@ document.addEventListener("DOMContentLoaded", function () {
     const url = document.querySelector("#map").getAttribute("data-mapa_edif");
     fetch(url)
         .then((response) => response.json())
-        .then((geojsonEdificios) => {
+        .then((data) => {
+            const geojsonEdificios = {
+                type: "FeatureCollection",
+                features: data.map((item) => ({
+                    type: "Feature",
+                    properties: {
+                        color: item.color,
+                        imagen_url: item.imagen_url,
+                        nombre: item.nombre,
+                        informacion: item.informacion,
+                        door: item.door_coords,
+                    },
+                    geometry: {
+                        type: "Polygon",
+                        coordinates: [
+                            [item.polygons[0], item.polygons[1], item.polygons[2], item.polygons[3], item.polygons[0]],
+                        ],
+                    },
+                })),
+            };
+
             function createEdificios() {
                 if (!map.getSource("places")) {
                     map.addSource("places", {

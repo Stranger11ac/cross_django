@@ -291,39 +291,26 @@ def createDatabase(request):
 # Mapa ----------------------------------------------------------
 def mapa_data(request):
     mapas = models.Mapa.objects.all()
-    features = []
+    data = []
     for mapa in mapas:
         
         imagen_qs = models.Database.objects.filter(titulo=mapa.nombre).values_list('imagenes', flat=True)
         imagen = imagen_qs.first() if imagen_qs.exists() else None
         
-        feature = {
-            "type": "Feature",
-            "properties": {
-                "color": mapa.color,
-                "imagen_url": imagen,
-                "nombre": mapa.nombre,
-                "informacion": mapa.informacion,
-                "door": [float(coord) for coord in mapa.door_cords.split(",")],
-            },
-            "geometry": {
-                "type": "Polygon",
-                "coordinates": [
-                    [
-                        [float(coord) for coord in mapa.p1_polygons.split(",")],
-                        [float(coord) for coord in mapa.p2_polygons.split(",")],
-                        [float(coord) for coord in mapa.p3_polygons.split(",")],
-                        [float(coord) for coord in mapa.p4_polygons.split(",")],
-                        [float(coord) for coord in mapa.p1_polygons.split(",")]
-                    ]
-                ],
-            },
+        item = {
+            "color": mapa.color,
+            "imagen_url": imagen,
+            "nombre": mapa.nombre,
+            "informacion": mapa.informacion,
+            "door_coords": [float(coord) for coord in mapa.door_cords.split(",")],
+            "polygons": [
+                [float(coord) for coord in mapa.p1_polygons.split(",")],
+                [float(coord) for coord in mapa.p2_polygons.split(",")],
+                [float(coord) for coord in mapa.p3_polygons.split(",")],
+                [float(coord) for coord in mapa.p4_polygons.split(",")],
+            ]
         }
-        features.append(feature)
+        data.append(item)
 
-    geojsonEdificios = {
-        "type": "FeatureCollection",
-        "features": features,
-    }
-    return JsonResponse(geojsonEdificios)
+    return JsonResponse(data, safe=False)
 
