@@ -87,7 +87,7 @@
                 </div>
                 <!-- total de usuarios -->
                 <div class="col-6 mb-4">
-                    <a href="#" class="card">
+                    <a href="#tabla_usuarios" class="card">
                         <div class="card-body p-3">
                             <h6 class="card-title d-flex justify-content-between align-items-center m-0">
                                 <!-- titulo y total -->
@@ -139,18 +139,18 @@
             </div>
         </div>
     </section>
-    <!-- Nuevo registro en la base de datos -->
+    <!-- Base de datos -->
     <section class="row">
         <div class="col-12 mb-4">
             <div class="card">
                 <div class="card-body">
-                    <h3 class="text-center mb-4">Registrar Database</h3>
-                    <form method="post" enctype="multipart/form-data" id="databaseForm" autocomplete="off">
+                    <h3 class="text-center mb-4">Nuevo Registro</h3>
+                    <form method="post" action="{% url 'create_database' %}" data-submit-form id="databaseForm" autocomplete="off">
                         {% csrf_token %}
                         <div class="row pt-2">
                             <div class="col-12 col-md-3">
                                 <div class="form-outline mb-4">
-                                    <select class="form-select" id="categoria" name="categoria">
+                                    <select class="form-select" id="categoria" name="categoria" required>
                                         <option selected disabled hidden>Seleccione una categoría:</option>
                                         {% for categoria in categorias %}
                                         <option value="{{ categoria.id }}">{{ categoria.categoria }}</option>
@@ -168,27 +168,20 @@
                         </div>
                         <div class="form-outline mb-4" data-mdb-input-init>
                             <i class="fa-solid fa-keyboard trailing"></i>
-                            <textarea class="form-control form-icon-trailing" id="informacion" name="informacion" rows="3"></textarea>
+                            <textarea class="form-control form-icon-trailing" id="informacion" name="informacion" rows="3" required></textarea>
                             <label for="informacion" class="form-label">Información:</label>
                         </div>
                         <div class="row">
-                            <div class="col-12 col-md-6">
+                            <div class="col-12">
                                 <div class="form-outline mb-4" data-mdb-input-init>
                                     <i class="fa-solid fa-link trailing"></i>
                                     <input type="url" id="redirigir" name="redirigir" class="form-control form-icon-trailing" />
-                                    <label class="form-label" for="redirigir">Redirigir:</label>
-                                </div>
-                            </div>
-                            <div class="col-12 col-md-6">
-                                <div class="form-outline mb-4" data-mdb-input-init>
-                                    <i class="fa-solid fa-clock trailing"></i>
-                                    <input type="number" id="frecuencia" name="frecuencia" min="0" class="form-control form-icon-trailing" required />
-                                    <label class="form-label" for="frecuencia">Frecuencia:</label>
+                                    <label class="form-label" for="redirigir">Redirigir: (url / liga)</label>
                                 </div>
                             </div>
                             <div class="col-12 col-md-6">
                                 <div class="mb-4">
-                                    <label for="documentos" class="form-label">Documentos: (PDF)</label>
+                                    <label for="documentos" class="form-label">Documento: (PDF)</label>
                                     <input type="file" class="form-control" id="documentos" name="documentos" accept="application/pdf">
                                 </div>
                             </div>
@@ -199,8 +192,16 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-12 col-md-auto float-end">
-                            <button type="submit" class="btn btn_detail btn-block">Guardar</button>
+                        <div class="row">
+                            <div class="col d-none d-md-block"></div>
+                            <div class="col d-none d-lg-block"></div>
+                            <div class="col">
+                                <button type="button" class="btn btn_secondary btn-block">mas</button>
+                            </div>
+                            <div class="col">
+                                <button type="submit" class="btn btn_detail btn-block">Guardar</button>
+                            </div>
+                            
                         </div>
                     </form>
                 </div>
@@ -210,7 +211,7 @@
     <!-- Importar y Exportar -->
     <section class="row">
         <div class="col-12 col-md-6">
-            <div class="card mb-4">
+            <div class="card mb-4 mb-md-0">
                 <div class="card-body">
                     <h3 class="text-center mb-4">Base de datos</h3>
                     <form action="{% url 'export_database' %}" method="get">
@@ -233,9 +234,8 @@
                 </div>
             </div>
         </div>
-
         <div class="col-12 col-md-6">
-            <div class="card mb-4">
+            <div class="card">
                 <div class="card-body">
                     <h3 class="text-center mb-4">Mapa</h3>
                     <form action="{% url 'export_mapa' %}" method="get">
@@ -260,7 +260,7 @@
         </div>
     </section>
     <!-- Todos los usuarios registrados -->
-    <section class="row mx-auto">
+    <section class="row mx-auto pt-4" id="tabla_usuarios">
         <div class="card col-12">
             <div class="card-body text-center">
                 <h4 class="mb-3">Usuarios registrados</h4>

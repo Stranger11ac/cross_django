@@ -58,7 +58,7 @@ def crear_pregunta(request):
                 models.Notificacion.objects.create(
                     usuario=request.user,
                     tipo='Pregunta',
-                    mensaje=f'El usuario {request.user.username} ha realizado una nueva pregunta: "{tituloPOST}".',
+                    mensaje=f'{request.user.username} ha realizado una nueva pregunta: "{tituloPOST}".',
                 )
 
                 return JsonResponse({'success': True, 'message': 'Gracias por tu pregunta ❤️💕😁👍 '}, status=200)
@@ -130,7 +130,7 @@ def singup(request):
             models.Notificacion.objects.create(
                 usuario=user,
                 tipo='Registro',
-                mensaje=f'El usuario {user.username} se ha registrado y necesita activación.',
+                mensaje=f'{user.username} se ha registrado y necesita activación.',
             )
         response['functions'] = 'reload'
         status = 200 if response['success'] else 400
@@ -259,7 +259,7 @@ def upload_banner(request):
             models.Notificacion.objects.create(
                 usuario=request.user,
                 tipo='Banner',
-                mensaje=f'El usuario {request.user.username} ha subido un nuevo banner titulado "{banner.titulo}".',
+                mensaje=f'{request.user.username} ha subido un nuevo banner titulado "{banner.titulo}".',
             )
             return redirect('upload_banner')
     else:
@@ -347,7 +347,7 @@ def crear_articulo(request):
             models.Notificacion.objects.create(
                 usuario=request.user,
                 tipo='Blog',
-                mensaje=f'El usuario {request.user.username} ha subido un nuevo blog titulado "{articulo.titulo}".',
+                mensaje=f'{request.user.username} ha subido un nuevo blog titulado "{articulo.titulo}".',
             )
 
             return JsonResponse({'success': True, 'message': 'Excelente 🥳🎈🎉. Tu articulo ya fue publicado. Puedes editarlo cuando gustes. 🧐😊'}, status=200)
@@ -387,7 +387,7 @@ def lista_imagenes(request):
 #Mapa ----------------------------------------------------------
 @login_required
 @never_cache
-def obtenerinfoEdif(request):
+def update_mapa(request):
     categoria_mapa = models.Categorias.objects.get(categoria="Mapa")
     map_inDB = models.Database.objects.filter(categoria=categoria_mapa)
     return render(request, 'admin/mapa.html', {'map_inDB': map_inDB, 'active_page': 'mapa','pages': functions.pages})
@@ -400,7 +400,7 @@ def obtenerEdificio(request):
         if (edificio_id):
             edificio = get_object_or_404(models.Database, id=edificio_id)
             data = {
-                'titulo': edificio.nombre,
+                'titulo': edificio.titulo,
                 'informacion': edificio.informacion,
                 'imagen_url': edificio.imagenes.url if edificio.imagenes else None,
             }

@@ -15,7 +15,7 @@ import spacy
 import json
 
 
-# ChatBot ---------------------------------------------------
+# ChatBot ----------------------------------------------------------
 # Cargar el modelo de lenguaje español
 # analizar texto en aplicaciones de procesamiento de lenguaje natural.
 nlp = spacy.load("es_core_news_sm")
@@ -150,53 +150,15 @@ def chatbot(request):
 
     return JsonResponse({'success': False, 'message': 'Método no permitido.'})
 
-# Mapa ---------------------------------------------------
-def mapa_data(request):
-    mapas = models.Mapa.objects.all()
-    features = []
-    for mapa in mapas:
-        
-        imagen_qs = models.Database.objects.filter(titulo=mapa.nombre).values_list('imagenes', flat=True)
-        imagen = imagen_qs.first() if imagen_qs.exists() else None
-        
-        feature = {
-            "type": "Feature",
-            "properties": {
-                "color": mapa.color,
-                "imagen_url": imagen,
-                "nombre": mapa.nombre,
-                "informacion": mapa.informacion,
-                "door": [float(coord) for coord in mapa.door_cords.split(",")],
-            },
-            "geometry": {
-                "type": "Polygon",
-                "coordinates": [
-                    [
-                        [float(coord) for coord in mapa.p1_polygons.split(",")],
-                        [float(coord) for coord in mapa.p2_polygons.split(",")],
-                        [float(coord) for coord in mapa.p3_polygons.split(",")],
-                        [float(coord) for coord in mapa.p4_polygons.split(",")],
-                        [float(coord) for coord in mapa.p1_polygons.split(",")]
-                    ]
-                ],
-            },
-        }
-        features.append(feature)
-
-    geojsonEdificios = {
-        "type": "FeatureCollection",
-        "features": features,
-    }
-    return JsonResponse(geojsonEdificios)
-
-# Plantilla links programador / administrador -----------------------------
+# Plantilla links programador / administrador ----------------------------------------------------------
 pages = [
         {'name': 'banner', 'url': 'upload_banner', 'display_name': 'Banners', 'icon': 'fa-solid fa-image'},
+        {'name': 'database', 'url': 'upload_banner', 'display_name': 'Database', 'icon': 'fa-solid fa-database'},
         {'name': 'blog', 'url': 'send_blog', 'display_name': 'Blogs', 'icon': 'fa-solid fa-newspaper'},
         {'name': 'mapa', 'url': 'consultaMap', 'display_name': 'Mapa', 'icon': 'fa-solid fa-map-location-dot'},
     ]
 
-# Crear nuevo usuario ---------------------------------------------
+# usuarios (programacion) ----------------------------------------------------------
 def create_newuser(first_name, last_name, username, email, password1, password2=None, is_staff=False, is_active=False):
     if not (password1 and username and email):
         return {'success': False, 'message': 'Datos incompletos 😅'}
@@ -225,7 +187,6 @@ def create_newuser(first_name, last_name, username, email, password1, password2=
     except IntegrityError:
         return {'success': False, 'message': 'Ocurrió un error durante el registro. Intente nuevamente.'}
 
-# Modificar usuario (programador) --------------------------------------------------------
 @login_required
 @never_cache
 def in_active(request):
@@ -278,6 +239,7 @@ def editar_usuario(request, user_id):
         return JsonResponse({'success': True, 'message': f'El usuario <u>{username}</u> fue modificado exitosamente 🥳🎉🎈.'}, status=200)
     return JsonResponse({'success': False, 'message': 'Acción no permitida.'}, status=403)
 
+# Banners ----------------------------------------------------------
 def update_banner_visibility(request):
     now = timezone.now()
     expired_banners = models.Banners.objects.filter(expiracion__lte=now, visible=True)
@@ -285,3 +247,83 @@ def update_banner_visibility(request):
         banner.visible = False
         banner.save()
     return JsonResponse({'status': 'success'})
+
+# Base de Datos ----------------------------------------------------------
+@login_required
+@never_cache
+def createDatabase(request):
+    if request.method == 'POST':
+        try:
+            categoriaIdPOST = request.POST.get('categoria')
+            categoria = models.Categorias.objects.get(id=categoriaIdPOST) if categoriaIdPOST else None
+            tituloPOST = request.POST.get('titulo')
+            informacionPOST = request.POST.get('informacion')
+            redirigirPOST = request.POST.get('redirigir')
+            documentosPOST = request.FILES.get('documentos')
+            imagenesPOST = request.FILES.get('imagenes')
+            
+            if categoria and categoria.categoria == 'Preguntas':
+                frecuenciaPOST = 1
+            else:
+                frecuenciaPOST = 0
+            
+            models.Database.objects.create(
+                categoria=categoria,
+                titulo=tituloPOST,
+                informacion=informacionPOST,
+                redirigir=redirigirPOST,
+                frecuencia=frecuenciaPOST,
+                documentos=documentosPOST,
+                imagenes=imagenesPOST
+            )
+            
+            models.Notificacion.objects.create(
+                usuario=request.user,
+                tipo='Base de Datos',
+                mensaje=f'{request.user.username} ha creado un nuevo registro de categoría "{categoria}".',
+            )
+            return JsonResponse({'success': True, 'message': 'Nuevo registro en la base de datos 🎉🎉🎉'}, status=200)
+        
+        except Exception as e:
+            return JsonResponse({'success': False, 'message': f'Ocurrió un error 😯😥 <br>{str(e)}'}, status=400)
+    return JsonResponse({'error': 'Método no válido'}, status=400)
+
+# Mapa ----------------------------------------------------------
+def mapa_data(request):
+    mapas = models.Mapa.objects.all()
+    features = []
+    for mapa in mapas:
+        
+        imagen_qs = models.Database.objects.filter(titulo=mapa.nombre).values_list('imagenes', flat=True)
+        imagen = imagen_qs.first() if imagen_qs.exists() else None
+        
+        feature = {
+            "type": "Feature",
+            "properties": {
+                "color": mapa.color,
+                "imagen_url": imagen,
+                "nombre": mapa.nombre,
+                "informacion": mapa.informacion,
+                "door": [float(coord) for coord in mapa.door_cords.split(",")],
+            },
+            "geometry": {
+                "type": "Polygon",
+                "coordinates": [
+                    [
+                        [float(coord) for coord in mapa.p1_polygons.split(",")],
+                        [float(coord) for coord in mapa.p2_polygons.split(",")],
+                        [float(coord) for coord in mapa.p3_polygons.split(",")],
+                        [float(coord) for coord in mapa.p4_polygons.split(",")],
+                        [float(coord) for coord in mapa.p1_polygons.split(",")]
+                    ]
+                ],
+            },
+        }
+        features.append(feature)
+
+    geojsonEdificios = {
+        "type": "FeatureCollection",
+        "features": features,
+    }
+    return JsonResponse(geojsonEdificios)
+

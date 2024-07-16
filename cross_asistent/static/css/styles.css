@@ -103,6 +103,7 @@ html {
 }
 
 .btn {
+    text-transform: capitalize !important;
     transition: transform 0.1s ease;
 }
 
