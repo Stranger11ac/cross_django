@@ -85,318 +85,328 @@ const customControl = new CustomControl();
 map.addControl(customControl, "top-right");
 
 // Cargar datos ##################################################################
-document.addEventListener("DOMContentLoaded", function () {
-    const url = document.querySelector("#map").getAttribute("data-mapa_edif");
-    fetch(url)
-        .then((response) => response.json())
-        .then((data) => {
-            const geojsonEdificios = {
-                type: "FeatureCollection",
-                features: data.map((item) => ({
-                    type: "Feature",
-                    properties: {
-                        color: item.color,
-                        imagen_url: item.imagen_url,
-                        nombre: item.nombre,
-                        informacion: item.informacion,
-                        door: item.door_coords,
-                    },
-                    geometry: {
-                        type: "Polygon",
-                        coordinates: [
-                            [item.polygons[0], item.polygons[1], item.polygons[2], item.polygons[3], item.polygons[0]],
-                        ],
-                    },
-                })),
-            };
+const url = document.querySelector("#map").getAttribute("data-mapa_edif");
+fetch(url)
+    .then((response) => response.json())
+    .then((data) => {
+        const geojsonEdificios = {
+            type: "FeatureCollection",
+            features: data.map((item) => ({
+                type: "Feature",
+                properties: {
+                    color: item.color,
+                    imagen_url: item.imagen_url,
+                    nombre: item.nombre,
+                    informacion: item.informacion,
+                    door: item.door_coords,
+                },
+                geometry: {
+                    type: "Polygon",
+                    coordinates: [
+                        [item.polygons[0], item.polygons[1], item.polygons[2], item.polygons[3], item.polygons[0]],
+                    ],
+                },
+            })),
+        };
 
-            function createEdificios() {
-                if (!map.getSource("places")) {
-                    map.addSource("places", {
-                        type: "geojson",
-                        data: geojsonEdificios,
-                    });
-                }
-
-                if (!map.getLayer("places-layer")) {
-                    map.addLayer({
-                        id: "places-layer",
-                        type: "fill",
-                        source: "places",
-                        paint: {
-                            "fill-color": ["get", "color"],
-                            "fill-opacity": 0.4,
-                        },
-                    });
-                }
-
-                // Agregar capa para las etiquetas
-                if (!map.getLayer("places-label")) {
-                    map.addLayer({
-                        id: "places-label",
-                        type: "symbol",
-                        source: "places",
-                        layout: {
-                            "text-field": ["get", "nombre"],
-                            "text-size": 12,
-                            "text-offset": [0, -0.6],
-                            "text-anchor": "top",
-                        },
-                        paint: {
-                            "text-color": colorlabels,
-                        },
-                    });
-                    map.moveLayer("places-label");
-                }
-
-                // Crear capas para cada tipo de camino
-                if (!map.getLayer("smooth-path")) {
-                    map.addLayer({
-                        id: "smooth-path",
-                        type: "line",
-                        source: "places",
-                        filter: ["==", ["get", "type"], "smooth_path"],
-                        paint: {
-                            "line-color": "green",
-                            "line-width": 4,
-                        },
-                    });
-                }
-
-                if (!map.getLayer("stairs")) {
-                    map.addLayer({
-                        id: "stairs",
-                        type: "line",
-                        source: "places",
-                        filter: ["==", ["get", "type"], "stairs"],
-                        paint: {
-                            "line-color": "blue",
-                            "line-width": 4,
-                        },
-                    });
-                }
-
-                if (!map.getLayer("streets")) {
-                    map.addLayer({
-                        id: "streets",
-                        type: "line",
-                        source: "places",
-                        filter: ["==", ["get", "type"], "street"],
-                        paint: {
-                            "line-color": "darkgray",
-                            "line-width": 4,
-                        },
-                    });
-                }
-            }
-
-            function createMarker(lngLat) {
-                if (currentMarker) {
-                    currentMarker.remove();
-                }
-
-                currentMarker = new mapboxgl.Marker({
-                    draggable: false,
-                    color: "#3b71ca",
-                })
-                    .setLngLat(lngLat)
-                    .addTo(map);
-            }
-
-            function calcularRuta() {
-                const origen = selectOrigin.value;
-                const destino = selectDestiny.value;
-
-                if (origen && destino && origen !== destino) {
-                    const origenFeature = geojsonEdificios.features.find(
-                        (feature) => feature.properties.nombre === origen
-                    );
-                    const destinoFeature = geojsonEdificios.features.find(
-                        (feature) => feature.properties.nombre === destino
-                    );
-
-                    if (origenFeature && destinoFeature) {
-                        const origenCoords = origenFeature.properties.door;
-                        const destinoCoords = destinoFeature.properties.door;
-
-                        directions.setOrigin(origenCoords);
-                        directions.setDestination(destinoCoords);
-                        $("#buttons_route").slideDown("fast");
-
-                        directions.on("route", (e) => {
-                            currentRoute = e.route[0].geometry;
-                        });
-                        map.addControl(directions, "top-left");
-                    }
-                } else {
-                    alertSToast("center", 5000, "warning", "Por favor, selecciona tanto origen como destino.");
-                }
-            }
-
-            function resetRout() {
-                formRoute.querySelectorAll("option").forEach((option) => {
-                    option.disabled = false;
-                });
-            }
-
-            function addRouteLayer() {
-                map.addSource("directions", {
+        function createEdificios() {
+            if (!map.getSource("places")) {
+                map.addSource("places", {
                     type: "geojson",
-                    data: currentRoute,
+                    data: geojsonEdificios,
                 });
+            }
 
+            if (!map.getLayer("places-layer")) {
                 map.addLayer({
-                    id: "directions-route-line",
-                    type: "line",
-                    source: "directions",
+                    id: "places-layer",
+                    type: "fill",
+                    source: "places",
+                    paint: {
+                        "fill-color": ["get", "color"],
+                        "fill-opacity": 0.4,
+                    },
+                });
+            }
+
+            // Agregar capa para las etiquetas
+            if (!map.getLayer("places-label")) {
+                map.addLayer({
+                    id: "places-label",
+                    type: "symbol",
+                    source: "places",
                     layout: {
-                        "line-join": "round",
-                        "line-cap": "round",
+                        "text-field": ["get", "nombre"],
+                        "text-size": 12,
+                        "text-offset": [0, -0.6],
+                        "text-anchor": "top",
                     },
                     paint: {
-                        "line-color": "#3b9ddd",
-                        "line-width": 8,
+                        "text-color": colorlabels,
                     },
                 });
                 map.moveLayer("places-label");
             }
 
-            function deleteLabels() {
-                map.getStyle().layers.forEach(function (layer) {
-                    if (layer.type === "symbol" && layer.layout["text-field"]) {
-                        map.setLayoutProperty(layer.id, "visibility", "none");
-                    }
+            // Crear capas para cada tipo de camino
+            if (!map.getLayer("smooth-path")) {
+                map.addLayer({
+                    id: "smooth-path",
+                    type: "line",
+                    source: "places",
+                    filter: ["==", ["get", "type"], "smooth_path"],
+                    paint: {
+                        "line-color": "green",
+                        "line-width": 4,
+                    },
                 });
             }
 
-            map.on("load", function () {
-                deleteLabels();
-                createEdificios();
-            });
+            if (!map.getLayer("stairs")) {
+                map.addLayer({
+                    id: "stairs",
+                    type: "line",
+                    source: "places",
+                    filter: ["==", ["get", "type"], "stairs"],
+                    paint: {
+                        "line-color": "blue",
+                        "line-width": 4,
+                    },
+                });
+            }
 
-            map.on("style.load", function () {
-                deleteLabels();
-                createEdificios();
-                addRouteLayer();
-            });
+            if (!map.getLayer("streets")) {
+                map.addLayer({
+                    id: "streets",
+                    type: "line",
+                    source: "places",
+                    filter: ["==", ["get", "type"], "street"],
+                    paint: {
+                        "line-color": "darkgray",
+                        "line-width": 4,
+                    },
+                });
+            }
+        }
 
-            map.on("click", function (e) {
-                const lngLat = e.lngLat;
-                createMarker(lngLat);
-                // console.log("Nuevo LngLat:", lngLat.lng, lngLat.lat);
-            });
+        function createMarker(lngLat) {
+            if (currentMarker) {
+                currentMarker.remove();
+            }
 
-            map.on("click", "places-layer", (e) => {
-                const feature = e.features[0];
-                const { nombre, informacion, imagen_url } = feature.properties;
-                document.getElementById("lateralTitle").innerText = nombre;
-                document.getElementById("imagen_actual").src = imagen_url;
+            currentMarker = new mapboxgl.Marker({
+                draggable: false,
+                color: "#3b71ca",
+            })
+                .setLngLat(lngLat)
+                .addTo(map);
+        }
 
-                const offcanvasContent = document.getElementById("offcanvasContent");
-                offcanvasContent.innerHTML = `<div class="feature-info"><p>${informacion}</p></div>`;
-                offcanvasElement.show();
-            });
+        function calcularRuta() {
+            const origen = selectOrigin.value;
+            const destino = selectDestiny.value;
 
-            inputs.forEach((input) => {
-                input.addEventListener("click", function (layer) {
-                    const layerId = layer.target.id;
-                    const label = document.querySelector(`label[for='${layerId}']`);
+            if (origen && destino && origen !== destino) {
+                const origenFeature = geojsonEdificios.features.find((feature) => feature.properties.nombre === origen);
+                const destinoFeature = geojsonEdificios.features.find(
+                    (feature) => feature.properties.nombre === destino
+                );
 
-                    document.querySelectorAll("#offcanvasbody label").forEach((label) => {
-                        label.classList.remove("btn_detail", "text-white");
+                if (origenFeature && destinoFeature) {
+                    const origenCoords = origenFeature.properties.door;
+                    const destinoCoords = destinoFeature.properties.door;
+
+                    directions.setOrigin(origenCoords);
+                    directions.setDestination(destinoCoords);
+                    $("#buttons_route").slideDown("fast");
+
+                    directions.on("route", (e) => {
+                        currentRoute = e.route[0].geometry;
+
+                        // Aquí obtenemos la distancia y la duración de la ruta
+                        const distance = e.route[0].distance / 1000; // distancia en kilómetros
+                        const duration = e.route[0].duration / 60; // duración en minutos
+                        // Puedes mostrar esta información en tu interfaz de usuario según sea necesario
+                        document.getElementById("route-info").innerHTML = `
+                        <div class="row mb-2">
+                            <div class="col-1"><i class="fa-solid fa-shoe-prints me-1"></i></div>
+                            <div class="col">Distancia: <strong>${distance.toFixed(2)} km</strong></div>
+                        </div>
+                        <div class="row">
+                            <div class="col-1"><i class="fa-solid fa-hourglass-half me-1"></i></div>
+                            <div class="col">Duración: <strong>${duration.toFixed(2)} minutos aprox.</strong></div>
+                        </div>`;
                     });
-
-                    inputs.forEach((input) => {
-                        input.removeAttribute("disabled");
-                    });
-
-                    label.classList.add("btn_detail", "text-white");
-                    this.setAttribute("disabled", "disabled");
-
-                    if (layerId === "dark-v11") {
-                        colorlabels = "#fff";
-                    } else {
-                        colorlabels = "#000";
-                    }
-                    if (map.getLayer("directions-route-line")) {
-                        currentRoute = map.getSource("directions")._data;
-                    }
-
-                    map.setStyle("mapbox://styles/mapbox/" + layerId);
-                });
-            });
-
-            // Obtener nombres de los edificios y ordenar alfabéticamente
-            const nombresEdificios = geojsonEdificios.features.map((feature) => feature.properties.nombre).sort();
-            nombresEdificios.forEach((nombre) => {
-                const option = new Option(nombre, nombre);
-                document.getElementById("origen").add(option);
-                document.getElementById("destino").add(option.cloneNode(true));
-            });
-
-            // Sincronizar opciones entre selectores
-            selectOrigin.addEventListener("change", function () {
-                const seleccionOrigen = this.value;
-                selectDestiny.querySelectorAll("option").forEach((option) => {
-                    if (option.value === seleccionOrigen) {
-                        option.disabled = true;
-                    } else {
-                        option.disabled = false;
-                    }
-                });
-            });
-
-            selectDestiny.addEventListener("change", function () {
-                const seleccionDestino = this.value;
-                selectOrigin.querySelectorAll("option").forEach((option) => {
-                    if (option.value === seleccionDestino) {
-                        option.disabled = true;
-                    } else {
-                        option.disabled = false;
-                    }
-                });
-            });
-
-            // Ejecutar calcularRuta cuando se seleccionen opciones en ambos selectores
-            selectOrigin.addEventListener("change", function () {
-                if (document.getElementById("destino").value) {
-                    calcularRuta();
+                    map.addControl(directions, "top-left");
                 }
+            } else {
+                alertSToast("center", 5000, "warning", "Por favor, selecciona tanto origen como destino.");
+            }
+        }
+
+        function resetRout() {
+            formRoute.querySelectorAll("option").forEach((option) => {
+                option.disabled = false;
+            });
+        }
+
+        function addRouteLayer() {
+            map.addSource("directions", {
+                type: "geojson",
+                data: currentRoute,
             });
 
-            selectDestiny.addEventListener("change", function () {
-                if (document.getElementById("origen").value) {
-                    calcularRuta();
-                }
-            });
-
-            const directions = new MapboxDirections({
-                accessToken: mapboxgl.accessToken,
-                unit: "metric",
-                profile: "mapbox/walking",
-                controls: {
-                    inputs: false,
-                    instructions: false,
-                    profileSwitcher: false,
+            map.addLayer({
+                id: "directions-route-line",
+                type: "line",
+                source: "directions",
+                layout: {
+                    "line-join": "round",
+                    "line-cap": "round",
                 },
-                alternatives: true,
-                interactive: false,
+                paint: {
+                    "line-color": "#3b9ddd",
+                    "line-width": 8,
+                },
             });
+            map.moveLayer("places-label");
+        }
 
-            resetRoutBtn.addEventListener("click", resetRout);
-            delRoutBtn.addEventListener("click", function () {
-                if (map.getLayer("directions-route-line")) {
-                    map.removeLayer("directions-route-line");
+        function deleteLabels() {
+            map.getStyle().layers.forEach(function (layer) {
+                if (layer.type === "symbol" && layer.layout["text-field"]) {
+                    map.setLayoutProperty(layer.id, "visibility", "none");
                 }
-                if (directions) {
-                    map.removeControl(directions);
-                }
-                resetRout();
-                addRouteLayer();
             });
-        })
-        .catch((error) => console.error("Error al obtener los datos del mapa:", error));
-});
+        }
+
+        map.on("load", function () {
+            deleteLabels();
+            createEdificios();
+        });
+
+        map.on("style.load", function () {
+            deleteLabels();
+            createEdificios();
+            addRouteLayer();
+        });
+
+        map.on("click", function (e) {
+            const lngLat = e.lngLat;
+            createMarker(lngLat);
+            // console.log("Nuevo LngLat:", lngLat.lng, lngLat.lat);
+        });
+
+        map.on("click", "places-layer", (e) => {
+            const feature = e.features[0];
+            const { nombre, informacion, imagen_url } = feature.properties;
+            document.getElementById("lateralTitle").innerText = nombre;
+            document.getElementById("imagen_actual").src = imagen_url;
+
+            const offcanvasContent = document.getElementById("offcanvasContent");
+            offcanvasContent.innerHTML = `<div class="feature-info"><p>${informacion}</p></div>`;
+            offcanvasElement.show();
+        });
+
+        inputs.forEach((input) => {
+            input.addEventListener("click", function (layer) {
+                const layerId = layer.target.id;
+                const label = document.querySelector(`label[for='${layerId}']`);
+
+                document.querySelectorAll("#offcanvasbody label").forEach((label) => {
+                    label.classList.remove("btn_detail", "text-white");
+                });
+
+                inputs.forEach((input) => {
+                    input.removeAttribute("disabled");
+                });
+
+                label.classList.add("btn_detail", "text-white");
+                this.setAttribute("disabled", "disabled");
+
+                if (layerId === "dark-v11") {
+                    colorlabels = "#fff";
+                } else {
+                    colorlabels = "#000";
+                }
+                if (map.getLayer("directions-route-line")) {
+                    currentRoute = map.getSource("directions")._data;
+                }
+
+                map.setStyle("mapbox://styles/mapbox/" + layerId);
+            });
+        });
+
+        // Obtener nombres de los edificios y ordenar alfabéticamente
+        const nombresEdificios = geojsonEdificios.features.map((feature) => feature.properties.nombre).sort();
+        nombresEdificios.forEach((nombre) => {
+            const option = new Option(nombre, nombre);
+            document.getElementById("origen").add(option);
+            document.getElementById("destino").add(option.cloneNode(true));
+        });
+
+        // Sincronizar opciones entre selectores
+        selectOrigin.addEventListener("change", function () {
+            const seleccionOrigen = this.value;
+            selectDestiny.querySelectorAll("option").forEach((option) => {
+                if (option.value === seleccionOrigen) {
+                    option.disabled = true;
+                } else {
+                    option.disabled = false;
+                }
+            });
+        });
+
+        selectDestiny.addEventListener("change", function () {
+            const seleccionDestino = this.value;
+            selectOrigin.querySelectorAll("option").forEach((option) => {
+                if (option.value === seleccionDestino) {
+                    option.disabled = true;
+                } else {
+                    option.disabled = false;
+                }
+            });
+        });
+
+        // Ejecutar calcularRuta cuando se seleccionen opciones en ambos selectores
+        selectOrigin.addEventListener("change", function () {
+            if (document.getElementById("destino").value) {
+                calcularRuta();
+            }
+        });
+
+        selectDestiny.addEventListener("change", function () {
+            if (document.getElementById("origen").value) {
+                calcularRuta();
+            }
+        });
+
+        const directions = new MapboxDirections({
+            accessToken: mapboxgl.accessToken,
+            unit: "metric",
+            profile: "mapbox/walking",
+            controls: {
+                inputs: false,
+                instructions: false,
+                profileSwitcher: false,
+            },
+            alternatives: true,
+            interactive: false,
+        });
+
+        resetRoutBtn.addEventListener("click", resetRout);
+        delRoutBtn.addEventListener("click", function () {
+            if (map.getLayer("directions-route-line")) {
+                map.removeLayer("directions-route-line");
+            }
+            if (directions) {
+                map.removeControl(directions);
+            }
+            resetRout();
+            addRouteLayer();
+        });
+    })
+    .catch((error) => console.error("Error al obtener los datos del mapa:", error));
 
 map.getCanvas().style.cursor = "default";
 map.on("dragstart", () => {
