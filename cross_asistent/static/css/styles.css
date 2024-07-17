@@ -75,9 +75,6 @@ html {
 }
 
 .btn_secondary {
-    /* background-color: var(--var-white) !important;
-    background: var(--var-white) !important; */
-    /* color: var(--var-detail) !important; */
     fill: unset;
     box-shadow: unset;
     transition: filter 0.3s ease;
