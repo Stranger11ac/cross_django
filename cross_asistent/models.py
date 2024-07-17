@@ -105,7 +105,7 @@ class Notificacion(models.Model):
 
 class Preguntas(models.Model):
     pregunta = models.CharField(max_length=150, blank=False)
-    descripcion = models.TextField(null=False)
+    descripcion = models.TextField(null=False, blank=True)
     fecha = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
