@@ -1,23 +1,23 @@
 {% extends 'base/widget.html' %}
-{% block title %}{{ user.username }} | Tu perfil | Administración{% endblock %}
-{% block link_home %}{% url 'vista_admin' %}{% endblock %}
+{% load static %}
+{% block title %}{{ user.username }} | Tu perfil {% endblock %}
+{% block link_home %}{% url user.is_staff|yesno:'vista_programador,vista_admin' %}{% endblock %}
 {% block link_default %}
 {% include 'base/widget_links-admin.html' %}
 {% endblock %}
 {% block content %}
-
 <main class="container container-fluid py-5 {% if not user.is_authenticated %}main_container{% endif %}">
-    <div class="mb-5">
+    <div class="mb-4">
         <h1 class="text-center">Tu Perfil <i class="fa-solid fa-circle-user ms-1"></i></h1>
         <hr class="hr_divisor mx-4 mx-md-0" />
     </div>
-    <div class="card_perfil">
-        <div class="card__img_perfil" style="--color-bg1:#efefef; --color-bg2:#3591d7;">
+    <div class="card card_perfil">
+        <div class="card__img_perfil" style="--color-bg1:#efefef; --color-bg2:#3591d7;--var-img-perfil: url({% static 'img/Default_image.webp' %});">
             <div class="card__avatar_perfil">
                 {% if perfil_usuario.profile_image %}
                     <img src="{{ perfil_usuario.profile_image }}" alt="Profile Image" />
                 {% else %}
-                    <img src="/static/img/Default_image.webp" alt="Default Image" />
+                    <img src="{% static 'img/Default_image.webp' %}" alt="Default Image" />
                 {% endif %}
             </div>
         </div>
@@ -25,7 +25,7 @@
         <div class="card__content_perfil">
             <h3>{{ perfil_usuario.username }}</h3>
             <div class="mt-4">
-                <p class="mb-4"><strong>Nombre:</strong> <br> {{ perfil_usuario.first_name }} {{ perfil_usuario.last_name }}</p>
+                <p class="mb-5"><strong>Nombre:</strong> <br> {{ perfil_usuario.first_name }} {{ perfil_usuario.last_name }}</p>
                 <div class="flex-between-wrap mb-3">
                     <strong>Email:</strong>
                     <div class="flex-fill text-end">{{ perfil_usuario.email }}</div>

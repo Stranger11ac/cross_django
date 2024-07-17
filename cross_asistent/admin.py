@@ -1,8 +1,8 @@
 from django.contrib import admin
 from . import models
 
-class TareasProg(admin.ModelAdmin):
-    readonly_fields = ('creacion',)
+class PreguntasAdmin(admin.ModelAdmin):
+    list_display = ('pregunta', 'descripcion', 'fecha')
 
 # Register your models here.
 admin.site.register(models.Mapa)
@@ -10,6 +10,7 @@ admin.site.register(models.Banners)
 admin.site.register(models.Database)
 admin.site.register(models.Articulos)
 admin.site.register(models.Categorias)
-admin.site.register(models.ImagenArticulo)
 admin.site.register(models.Notificacion)
-admin.site.register(models.Preguntas)
+admin.site.register(models.ImagenArticulo)
+admin.site.register(models.Preguntas, PreguntasAdmin)
+

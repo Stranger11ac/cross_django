@@ -17,7 +17,7 @@ const map = new mapboxgl.Map({
     container: "map",
     style: "mapbox://styles/mapbox/streets-v12",
     center: [-100.93655, 25.55701],
-    zoom: 16,
+    zoom: 17,
     maxZoom: 20,
     minZoom: 15,
     maxBounds: [
@@ -223,10 +223,8 @@ fetch(url)
                     directions.on("route", (e) => {
                         currentRoute = e.route[0].geometry;
 
-                        // Aquí obtenemos la distancia y la duración de la ruta
-                        const distance = e.route[0].distance / 1000; // distancia en kilómetros
-                        const duration = e.route[0].duration / 60; // duración en minutos
-                        // Puedes mostrar esta información en tu interfaz de usuario según sea necesario
+                        const distance = e.route[0].distance / 1000;
+                        const duration = e.route[0].duration / 60;
                         $("#route-info").html(`
                             <div class="row mb-2">
                                 <div class="col-1"><i class="fa-solid fa-shoe-prints me-1"></i></div>
@@ -273,21 +271,11 @@ fetch(url)
             map.moveLayer("places-label");
         }
 
-        function deleteLabels() {
-            map.getStyle().layers.forEach(function (layer) {
-                if (layer.type === "symbol" && layer.layout["text-field"]) {
-                    map.setLayoutProperty(layer.id, "visibility", "none");
-                }
-            });
-        }
-
         map.on("load", function () {
-            deleteLabels();
             createEdificios();
         });
 
         map.on("style.load", function () {
-            deleteLabels();
             createEdificios();
             addRouteLayer();
         });
@@ -394,20 +382,12 @@ fetch(url)
             alternatives: true,
             interactive: false,
         });
-
-        resetRoutBtn.addEventListener("click", resetRout);
-        delRoutBtn.addEventListener("click", function () {
-            if (map.getLayer("directions-route-line")) {
-                map.removeLayer("directions-route-line");
-            }
-            if (directions) {
-                map.removeControl(directions);
-            }
-            resetRout();
-            addRouteLayer();
-        });
     })
-    .catch((error) => console.error("Error al obtener los datos del mapa:", error));
+    .catch((error) => {
+        alertSToast("top", 5000, "error", "Ocurrio un error inesperado. verifica la consola. #403");
+        console.error("Error al obtener los datos del mapa:");
+        console.error(error);
+    });
 
 map.getCanvas().style.cursor = "default";
 map.on("dragstart", () => {

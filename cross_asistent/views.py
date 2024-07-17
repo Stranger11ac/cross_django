@@ -247,10 +247,15 @@ def ver_notis(request):
     return render(request, 'admin/notificaciones.html', {'notificaciones': notificaciones, 'pages': functions.pages})
 
 def marcar_notificaciones_leidas(request):
-    data = json.loads(request.body)
-    ids = data.get('ids', [])
-    models.Notificacion.objects.filter(id__in=ids).update(leida=True)
-    return JsonResponse({'status': 'success'})
+    try:
+        data = json.loads(request.body)
+        ids = data.get('ids', [])
+        models.Notificacion.objects.filter(id__in=ids).update(leida=True)
+        # return JsonResponse({'status': 'success'})
+
+        return JsonResponse({'status': 'success', 'message': f'Notificcacion {ids}, se marco como leida para todos los usuarios', 'icon': 'info'}, status=200)
+    except Exception as e:
+        return JsonResponse({'status': 'error', 'message': f'Ocurrio un error😯😥 <br>{str(e)}', 'icon': 'error'}, status=400)
 
 # Banners ----------------------------------------------------------
 @login_required

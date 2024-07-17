@@ -1,7 +1,7 @@
 {% extends 'base/widget.html' %}
-{% load static filtros %}
+{% load static %}
 {% block title %}Notificaciones{% endblock %}
-{% block link_home %}{% url 'vista_programador' %}{% endblock %}
+{% block link_home %}{% url user.is_staff|yesno:'vista_programador,vista_admin' %}{% endblock %}
 {% block link_default %}
 {% include 'base/widget_links-admin.html' %}
 {% endblock %}
@@ -14,81 +14,16 @@
     <div class="mb-4">
         <button id="markAsReadButton" class="btn btn-primary">Marcar todos</button>
     </div>
-    <ul class="list-group"> 
+    <ul class="list-group">
         {% for notificacion in notificaciones %}
-        <li id="notif_{{ notificacion.id }}" class="list-group-item {% if notificacion.leida %}list-group-item-secondary{% else %}{% if notificacion.tipo == 'Banner' %}list-group-item-warning{% elif notificacion.tipo == 'Blog' %}list-group-item-info{% elif notificacion.tipo == 'Registro' %}list-group-item-success{% elif notificacion.tipo == 'Pregunta' %}list-group-item-danger{% else %}list-group-item-primary{% endif %}{% endif %}">
-            <div class="form-check">
-                <input class="form-check-input notification-checkbox" type="checkbox" data-id="{{ notificacion.id }}" {% if notificacion.leida %}checked style="display:none"{% endif %}>
-                <label class="form-check-label">
-                    <strong>{{ notificacion.tipo }}:</strong> {{ notificacion.mensaje }} <br>
-                    <small>{{ notificacion.fecha }}</small>
-                </label>
-            </div>
+        <li id="notif_{{ notificacion.id }}"
+            class="list-group-item {% if notificacion.leida %}list-group-item-secondary{% else %}{% if notificacion.tipo == 'Banner' %}list-group-item-warning{% elif notificacion.tipo == 'Blog' %}list-group-item-info{% elif notificacion.tipo == 'Registro' %}list-group-item-success{% elif notificacion.tipo == 'Pregunta' %}list-group-item-danger{% else %}list-group-item-primary{% endif %}{% endif %}">
+            <input class="form-check-input notification-checkbox" type="checkbox" data-id="{{ notificacion.id }}" {% if notificacion.leida %}checked
+                style="display:none" {% endif %} data-val-post='{% url "marcar_notificaciones_leidas" %}' title="Leido Para Todos">
+            <strong>{{ notificacion.tipo }}:</strong> {{ notificacion.mensaje }} <br>
+            <small>{{ notificacion.fecha }}</small>
         </li>
         {% endfor %}
     </ul>
 </main>
-{% endblock %}
-
-{% block scripts_end %} 
-<script>
-    // Marcar todas las notificaciones como leídas al hacer clic en el botón
-    $("#markAsReadButton").on('click', function () {
-        $('[id^="notif_"]').each(function () {
-            $(this).removeClass('list-group-item-warning list-group-item-info list-group-item-success list-group-item-danger list-group-item-primary');
-        });
-        $('[id^="notif_"]').each(function () {
-            $(this).addClass('list-group-item-secondary');
-        });
-        // Obtener todas las IDs que quieres guardar
-        var notificationIds = [];
-        $('[id^="notif_"]').each(function () {
-            notificationIds.push($(this).attr('id'));
-        });
-        // Convertir el array a cadena JSON y guardar en localStorage
-        localStorage.setItem('notificationIds', JSON.stringify(notificationIds));
-    });
-
-    $(document).ready(function () {
-        // Cargar las IDs desde localStorage
-        var storedIds = JSON.parse(localStorage.getItem('notificationIds')) || [];
-        // Recorrer las IDs cargadas y aplicar la clase 'secondary'
-        storedIds.forEach(function (id) {
-            $('#' + id).removeClass('list-group-item-warning list-group-item-info list-group-item-success list-group-item-danger list-group-item-primary');
-            $('#' + id).addClass('list-group-item-secondary');
-        });
-
-        // Ocultar los checkboxes de las notificaciones que ya están marcadas como leídas
-        $('.notification-checkbox').each(function () {
-            if ($(this).is(':checked')) {
-                $(this).hide();
-            }
-        });
-
-        // Manejar el evento change de los checkboxes
-        $('.notification-checkbox').on('change', function () {
-            var checkbox = $(this);
-            var id = checkbox.data('id');
-            var ids = [id];
-            $.ajax({
-                url: '{% url "marcar_notificaciones_leidas" %}',
-                method: 'POST',
-                data: JSON.stringify({ ids: ids }),
-                contentType: 'application/json',
-                headers: {
-                    'X-CSRFToken': '{{ csrf_token }}'
-                },
-                success: function (response) {
-                    if (response.status === 'success') {
-                        // Marcar como leída visualmente
-                        checkbox.closest('li').removeClass('list-group-item-warning list-group-item-info list-group-item-success list-group-item-danger list-group-item-primary');
-                        checkbox.closest('li').addClass('list-group-item-secondary');
-                        // Ocultar el checkbox
-                        checkbox.prop('checked', true).hide();
-                    }
-                }
-            });
-        });
-    });
-</script>
 {% endblock %}
