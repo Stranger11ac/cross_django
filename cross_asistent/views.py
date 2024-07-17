@@ -50,25 +50,27 @@ def crear_pregunta(request):
         if request.content_type == 'application/json':
             try:
                 data = json.loads(request.body)
-                tituloPOST = data['pregunta']
+                preguntaPOST = data['pregunta']
+                descripcionPOST = data['descripcion']
                 categoria_preguntas = models.Categorias.objects.get(id=1) 
 
-                pregunta = models.Database(titulo=tituloPOST, categoria=categoria_preguntas)
+                pregunta = models.Preguntas(pregunta=preguntaPOST, descripcion=descripcionPOST)
                 pregunta.save()
+                
                 models.Notificacion.objects.create(
                     usuario=request.user,
                     tipo='Pregunta',
-                    mensaje=f'{request.user.username} ha realizado una nueva pregunta: "{tituloPOST}".',
+                    mensaje=f'{request.user.username} ha realizado una nueva pregunta: "{preguntaPOST}".',
                 )
 
                 return JsonResponse({'success': True, 'message': 'Gracias por tu pregunta ❤️💕😁👍 '}, status=200)
             except Exception as e:
                 print(f'Hay un error en: {e}')
-                return JsonResponse({'success': False, 'message': 'Ups! 😥😯 hubo un error y tu pregunta no se pudo registrar. por favor intente de nuevo mas tarde.'}, status=400)
+                return JsonResponse({'success': False, 'message': 'Ups! 😥😯 hubo un error y tu pregunta no se pudo registrar. Por favor intente de nuevo más tarde.'}, status=400)
         else:
             print('error, no JSON')
             return JsonResponse({'success': False, 'message': 'Error: no se permite este tipo de archivo '}, status=400)
-    return render(request, 'frecuentes.html', {'quest_all': databaseall})
+    return render(request, 'frecuentes.html', {'quest_all': models.Preguntas.objects.all()})
 
 def blogs(request):
     if not request.user.is_staff:

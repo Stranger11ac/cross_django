@@ -12,11 +12,11 @@
     <div class="nav nav-pills nav-justified mb-4 col-12 col-md-8 mx-auto" id="questions-tabs" role="tablist">
         <button data-mdb-pill-init class="nav-link active" id="pills-search-quest-tab" data-mdb-target="#pills-search-quest" type="button" role="tab"
             aria-controls="pills-search-quest" aria-selected="true">
-            Acceder
+            Preguntas Frecuentes
         </button>
         <button data-mdb-pill-init class="nav-link" id="pills-create-quest-tab" data-mdb-target="#pills-create-quest" type="button" role="tab"
             aria-controls="pills-create-quest" aria-selected="false">
-            Registro
+            Registrar Pregunta
         </button>
     </div>
     <!-- Tabs navs -->
@@ -72,6 +72,12 @@
                             <input type="text" id="preguntaPOST" name="pregunta" class="form-control mx-auto"/>
                             <label class="form-label" for="preguntaPOST">Escribe tu Pregunta:</label>
                         </div>
+                        <div data-mdb-input-init class="form-outline position-relative mb-4">
+                            <button type="button" class="position-absolute top-0 end-0 btn p-0 fs-12 m-2 mt-1 none"
+                                data-clear="descripcion"><i class="fa-solid fa-xmark m-0 p-0"></i></button>
+                            <textarea class="form-control" id="descripcion" name="descripcion" data-init-clear></textarea>
+                            <label class="form-label" for="descripcion">Descripción:</label>
+                        </div>
                         <button type="submit" class="btn btn_detail btn-block">Enviar <i class="fa-solid fa-paper-plane ms-1"></i></button>
                     </form>
                 </div>
@@ -92,7 +98,10 @@
         const questionForm = event.target;
         const timerOut = 800;
 
-        const formData = {pregunta: document.getElementById('preguntaPOST').value };
+        const formData = {
+            pregunta: document.getElementById('preguntaPOST').value,
+            descripcion: document.getElementById('descripcion').value
+        };
 
         fetch(questionForm.action, {
             method: 'POST',
