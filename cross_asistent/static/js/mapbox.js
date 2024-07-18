@@ -254,40 +254,133 @@ fetch(url)
 
         function addRouteLayer() {
             if (currentRoute && currentRoute.features && currentRoute.features.length > 0) {
-                if (map.getSource("directions")) {
-                    map.getSource("directions").setData(currentRoute);
-                } else {
+                if (!map.getSource("directions")) {
                     map.addSource("directions", {
                         type: "geojson",
                         data: currentRoute,
                     });
+                }
 
+                const originFeature = currentRoute.features.find((feature) => feature.properties.id === "origin");
+                const destinationFeature = currentRoute.features.find(
+                    (feature) => feature.properties.id === "destination"
+                );
+                const routeFeature = currentRoute.features.find((feature) => feature.geometry.type === "LineString");
+
+                // Agregar capa de línea de ruta
+                if (!map.getLayer("directions-route-line")) {
                     map.addLayer({
                         id: "directions-route-line",
                         type: "line",
                         source: "directions",
                         layout: {
-                            "line-join": "round",
                             "line-cap": "round",
+                            "line-join": "round",
                         },
                         paint: {
-                            "line-color": "#3b9ddd",
-                            "line-width": 8,
+                            "line-color": "#2d5f99",
+                            "line-width": 12,
                         },
+                        filter: ["==", "$type", "LineString"],
                     });
-                    map.moveLayer("places-label");
                 }
+
+                // Agregar capa de línea de ruta
+                if (!map.getLayer("directions-route-line-alt")) {
+                    map.addLayer({
+                        id: "directions-route-line-alt",
+                        type: "line",
+                        source: "directions",
+                        layout: {
+                            "line-cap": "round",
+                            "line-join": "round",
+                        },
+                        paint: {
+                            "line-color": "#4882c5",
+                            "line-width": 6,
+                        },
+                        filter: ["==", "$type", "LineString"],
+                    });
+                }
+
+                // Agregar capa de punto de origen
+                if (!map.getLayer("directions-origin-point")) {
+                    map.addLayer({
+                        id: "directions-origin-point",
+                        type: "circle",
+                        source: "directions",
+                        paint: {
+                            "circle-color": "#3bb2d0",
+                            "circle-radius": 20,
+                        },
+                        filter: ["==", ["get", "id"], "origin"],
+                    });
+                }
+
+                // Agregar capa de punto de destino
+                if (!map.getLayer("directions-destination-point")) {
+                    map.addLayer({
+                        id: "directions-destination-point",
+                        type: "circle",
+                        source: "directions",
+                        paint: {
+                            "circle-color": "#8a8bc9",
+                            "circle-radius": 20,
+                        },
+                        filter: ["==", ["get", "id"], "destination"],
+                    });
+                }
+
+                // Agregar etiqueta de punto de origen
+                if (!map.getLayer("directions-origin-label")) {
+                    console.log(originFeature.properties["marker-symbol"]);
+                    map.addLayer({
+                        id: "directions-origin-label",
+                        type: "symbol",
+                        source: "directions",
+                        layout: {
+                            "text-field": originFeature.properties["marker-symbol"],
+                            "text-font": ["Open Sans Bold", "Arial Unicode MS Bold"],
+                            "text-size": 18,
+                        },
+                        paint: {
+                            "text-color": "#fff",
+                        },
+                        filter: ["==", ["get", "id"], "origin"],
+                    });
+                }
+
+                // Agregar etiqueta de punto de destino
+                if (!map.getLayer("directions-destination-label")) {
+                    map.addLayer({
+                        id: "directions-destination-label",
+                        type: "symbol",
+                        source: "directions",
+                        layout: {
+                            "text-field": destinationFeature.properties["marker-symbol"],
+                            "text-font": ["Open Sans Bold", "Arial Unicode MS Bold"],
+                            "text-size": 18,
+                        },
+                        paint: {
+                            "text-color": "#fff",
+                        },
+                        filter: ["==", ["get", "id"], "destination"],
+                    });
+                }
+
+                map.moveLayer("places-label");
+            }
+        }
+
+        function saveRouteLayers() {
+            if (map.getSource("directions")) {
+                currentRoute = map.getSource("directions")._data;
             }
         }
 
         map.on("load", function () {
             createEdificios();
         });
-
-        // map.on("style.load", function () {
-        //     createEdificios();
-        //     addRouteLayer();
-        // });
 
         map.on("click", function (e) {
             const lngLat = e.lngLat;
@@ -330,15 +423,15 @@ fetch(url)
                 } else {
                     colorlabels = "#000";
                 }
-                if (map.getLayer("directions-route-line")) {
-                    currentRoute = map.getSource("directions")._data;
-                }
+
+                // Guardar las capas de la ruta antes de cambiar el estilo
+                saveRouteLayers();
 
                 map.setStyle("mapbox://styles/mapbox/" + layerId);
 
                 map.on("style.load", function () {
                     createEdificios();
-                    addRouteLayer();
+                    addRouteLayer(); // Restaurar las capas de la ruta
                 });
             });
         });
@@ -458,3 +551,49 @@ map.on("mouseup", () => {
 map.on("mouseover", () => {
     map.getCanvas().style.cursor = "default";
 });
+
+// features:  Array(3)
+// 0 :
+//     geometry:
+//         coordinates: (2) [-100.93604, 25.556462]
+//         type: "Point"
+//         [[Prototype]]: Object
+//     properties:
+//         id: "origin"
+//         marker-symbol: "A"
+//         [[Prototype]]: Object
+//     type: "Feature"
+//     [[Prototype]]: Object
+// 1:
+//     geometry:
+//         coordinates: (2) [-100.936682, 25.556478]
+//     type: "Point"
+//     [[Prototype]]: Object
+//     properties:
+//         id: "destination"
+//         marker-symbol: "B"
+//         [[Prototype]]: Object
+//     type: "Feature"
+//     [[Prototype]]: Object
+// 2:
+//     geometry:
+//         coordinates: Array(10)
+//             0: (2) [-100.93604, 25.55646]
+//             1: (2) [-100.93596, 25.55656]
+//             2: (2) [-100.936, 25.55658]
+//             3: (2) [-100.93643, 25.55668]
+//             4: (2) [-100.93645, 25.55666]
+//             5: (2) [-100.93648, 25.55665]
+//             6: (2) [-100.93651, 25.55664]
+//             7: (2) [-100.93654, 25.55665]
+//             8: (2) [-100.93655, 25.55665]
+//             9: (2) [-100.93668, 25.55648]
+//             length: 10
+//             [[Prototype]]: Array(0)
+//         type: "LineString"
+//         [[Prototype]]: Object
+//     properties:
+//         route: "selected"
+//         route-index: 0
+//         [[Prototype]]: Object
+//     [[Prototype]]: Object
