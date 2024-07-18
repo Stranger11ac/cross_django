@@ -208,7 +208,9 @@ fetch(url)
 
             if (origen && destino && origen !== destino) {
                 const origenFeature = geojsonEdificios.features.find((feature) => feature.properties.nombre === origen);
-                const destinoFeature = geojsonEdificios.features.find((feature) => feature.properties.nombre === destino);
+                const destinoFeature = geojsonEdificios.features.find(
+                    (feature) => feature.properties.nombre === destino
+                );
 
                 if (origenFeature && destinoFeature) {
                     const origenCoords = origenFeature.properties.door;
@@ -416,10 +418,10 @@ fetch(url)
                 map.removeSource("directions");
             }
 
-            $("#route-info").slideUp("fast");
-            setTimeout(() => {
-                $("#route-info").html("");
-            }, 500);
+            $("#buttons_route").slideUp("slow");
+            $("#route-info").slideUp("slow", () => {
+                $("#route-info").empty();
+            });
         });
     })
     .catch((error) => {
