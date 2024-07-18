@@ -208,9 +208,7 @@ fetch(url)
 
             if (origen && destino && origen !== destino) {
                 const origenFeature = geojsonEdificios.features.find((feature) => feature.properties.nombre === origen);
-                const destinoFeature = geojsonEdificios.features.find(
-                    (feature) => feature.properties.nombre === destino
-                );
+                const destinoFeature = geojsonEdificios.features.find((feature) => feature.properties.nombre === destino);
 
                 if (origenFeature && destinoFeature) {
                     const origenCoords = origenFeature.properties.door;
@@ -218,10 +216,18 @@ fetch(url)
 
                     directions.setOrigin(origenCoords);
                     directions.setDestination(destinoCoords);
-                    $("#buttons_route").slideDown("fast");
+                    $("#buttons_route").slideDown("slow");
 
                     directions.on("route", (e) => {
-                        currentRoute = e.route[0].geometry;
+                        const routeGeoJSON = {
+                            type: "FeatureCollection",
+                            features: e.route.map((r) => ({
+                                type: "Feature",
+                                geometry: r.geometry,
+                                properties: {},
+                            })),
+                        };
+                        currentRoute = routeGeoJSON;
 
                         const distance = e.route[0].distance / 1000;
                         const duration = e.route[0].duration / 60;
@@ -236,6 +242,7 @@ fetch(url)
                             </div>`);
                         $("#route-info").slideDown();
                     });
+
                     map.addControl(directions, "top-left");
                 }
             } else {
@@ -243,32 +250,30 @@ fetch(url)
             }
         }
 
-        function resetRout() {
-            formRoute.querySelectorAll("option").forEach((option) => {
-                option.disabled = false;
-            });
-        }
-
         function addRouteLayer() {
-            map.addSource("directions", {
-                type: "geojson",
-                data: currentRoute,
-            });
+            if (map.getSource("directions")) {
+                map.getSource("directions").setData(currentRoute);
+            } else {
+                map.addSource("directions", {
+                    type: "geojson",
+                    data: currentRoute,
+                });
 
-            map.addLayer({
-                id: "directions-route-line",
-                type: "line",
-                source: "directions",
-                layout: {
-                    "line-join": "round",
-                    "line-cap": "round",
-                },
-                paint: {
-                    "line-color": "#3b9ddd",
-                    "line-width": 8,
-                },
-            });
-            map.moveLayer("places-label");
+                map.addLayer({
+                    id: "directions-route-line",
+                    type: "line",
+                    source: "directions",
+                    layout: {
+                        "line-join": "round",
+                        "line-cap": "round",
+                    },
+                    paint: {
+                        "line-color": "#3b9ddd",
+                        "line-width": 8,
+                    },
+                });
+                map.moveLayer("places-label");
+            }
         }
 
         map.on("load", function () {
@@ -286,6 +291,7 @@ fetch(url)
             // console.log("Nuevo LngLat:", lngLat.lng, lngLat.lat);
         });
 
+        // Abrir camvas / informacion del edificio
         map.on("click", "places-layer", (e) => {
             const feature = e.features[0];
             const { nombre, informacion, imagen_url } = feature.properties;
@@ -294,9 +300,12 @@ fetch(url)
 
             const offcanvasContent = document.getElementById("offcanvasContent");
             offcanvasContent.innerHTML = `<div class="feature-info"><p>${informacion}</p></div>`;
-            offcanvasElement.show();
+            setTimeout(() => {
+                offcanvasElement.show();
+            }, 100);
         });
 
+        // Cambiar estilo del Mapa
         inputs.forEach((input) => {
             input.addEventListener("click", function (layer) {
                 const layerId = layer.target.id;
@@ -345,7 +354,6 @@ fetch(url)
                 }
             });
         });
-
         selectDestiny.addEventListener("change", function () {
             const seleccionDestino = this.value;
             selectOrigin.querySelectorAll("option").forEach((option) => {
@@ -357,19 +365,19 @@ fetch(url)
             });
         });
 
-        // Ejecutar calcularRuta cuando se seleccionen opciones en ambos selectores
+        // Ejecutar calcularRuta
         selectOrigin.addEventListener("change", function () {
             if (document.getElementById("destino").value) {
                 calcularRuta();
             }
         });
-
         selectDestiny.addEventListener("change", function () {
             if (document.getElementById("origen").value) {
                 calcularRuta();
             }
         });
 
+        // Controles de Ruta
         const directions = new MapboxDirections({
             accessToken: mapboxgl.accessToken,
             unit: "metric",
@@ -381,6 +389,37 @@ fetch(url)
             },
             alternatives: true,
             interactive: false,
+        });
+
+        // Resetear ruta
+        document.querySelector("[data-reset_form]").addEventListener("click", function () {
+            formRoute.querySelectorAll("option").forEach((option) => {
+                option.disabled = false;
+            });
+
+            // Verificar si las capas de la ruta existen y removerlas
+            const routeLayers = [
+                "directions-route-line",
+                "directions-route-line-alt",
+                "directions-route-line-casing",
+                "directions-hover-point-casing",
+                "directions-hover-point",
+            ];
+            routeLayers.forEach((layer) => {
+                if (map.getLayer(layer)) {
+                    map.removeLayer(layer);
+                }
+            });
+
+            // Verificar si la fuente de la ruta existe y removerla
+            if (map.getSource("directions")) {
+                map.removeSource("directions");
+            }
+
+            $("#route-info").slideUp("fast");
+            setTimeout(() => {
+                $("#route-info").html("");
+            }, 500);
         });
     })
     .catch((error) => {

@@ -302,13 +302,17 @@ $(document).ready(function () {
             });
         });
 
-
         // Cambiar colores de la Interfaz
-        $('[data-change]').on('click', function() {
-            var color = $(this).data('color');
-            $('body').attr('data-color_prefer', color);
+        $("[data-change]").on("click", function () {
+            var color = $(this).data("color");
+            $("body").attr("data-color_prefer", color);
+            localStorage.setItem("data-color_prefer", color);
         });
 
+        const colorPrefer = localStorage.getItem("data-color_prefer");
+        if (colorPrefer) {
+            $("body").attr("data-color_prefer", colorPrefer);
+        }
 
         // ####################################################
         // ####################################################
