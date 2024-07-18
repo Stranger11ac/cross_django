@@ -1,7 +1,7 @@
 {% extends 'base/widget.html' %}
 {% load static filtros %}
 {% block title %}Subir Banner{% endblock %}
-{% block link_home %}{% url 'vista_programador' %}{% endblock %}
+{% block link_home %}{% url user.is_staff|yesno:'vista_programador,vista_admin' %}{% endblock %}
 {% block link_default %}
 {% include 'base/widget_links-admin.html' %}
 {% endblock %}
@@ -11,192 +11,185 @@
         <h1 class="text-center">Banners <i class="fa-solid fa-image ms-1"></i></h1>
         <hr class="hr_divisor mx-4 mx-md-0" />
     </div>
-    <div>
-        <section class="card mb-4 col-lg-6 col-md-8 text-center">
-            <h3 class="text-center my-4">Subir Banner</h3>
-            <div class="card-body">
-                <form method="POST" enctype="multipart/form-data" action="{% url 'upload_banner' %}">
-                    {% csrf_token %}
-                    <div data-mdb-input-init class="form-outline position-relative mb-4">
-                        <button type="button" class="position-absolute top-0 end-0 btn p-0 fs-12 m-2 mt-1 none"
-                            data-clear="titulo"><i class="fa-solid fa-xmark m-0 p-0"></i></button>
-                        <input type="text" id="titulo" name="titulo" class="form-control form-icon-trailing"
-                            data-init-clear required />
-                        <label class="form-label" for="titulo">Titulo:</label>
+    <div class="row">
+        <section class="col-lg-4">
+            <section class="card mb-4">
+                <div class="card-body">
+                    <h3 class="text-center mb-4">Subir Banner</h3>
+                    <form method="POST" action="{% url 'upload_banner' %}" autocomplete="off">
+                        {% csrf_token %}
+                        <div data-mdb-input-init class="form-outline position-relative mb-4">
+                            <button type="button" class="position-absolute top-0 end-0 btn p-0 fs-12 m-2 mt-1 none" data-clear="titulo"><i
+                                    class="fa-solid fa-xmark m-0 p-0"></i></button>
+                            <input type="text" id="titulo" name="titulo" class="form-control form-icon-trailing" data-init-clear required />
+                            <label class="form-label" for="titulo">Titulo:</label>
+                        </div>
+                        <div data-mdb-input-init class="form-outline position-relative mb-4">
+                            <button type="button" class="position-absolute top-0 end-0 btn p-0 fs-12 m-2 mt-1 none" data-clear="descripcion"><i
+                                    class="fa-solid fa-xmark m-0 p-0"></i></button>
+                            <textarea class="form-control" id="descripcion" name="descripcion" data-init-clear required></textarea>
+                            <label class="form-label" for="descripcion">Descripción:</label>
+                        </div>
+                        <div data-mdb-input-init class="form-outline position-relative mb-4">
+                            <button type="button" class="position-absolute top-0 end-0 btn p-0 fs-12 m-2 mt-1 none" data-clear="articulo"><i
+                                    class="fa-solid fa-xmark m-0 p-0"></i></button>
+                            <input type="url" id="articulo" name="articulo" class="form-control form-icon-trailing" data-init-clear required />
+                            <label class="form-label" for="articulo">Redirigir (liga/url):</label>
+                        </div>
+                        <div class="mb-3">
+                            <label for="imagen" class="form-label">Imagen:</label>
+                            <input type="file" class="form-control" id="imagen" name="imagen" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="expiracion" class="form-label">Fecha de Expiración:</label>
+                            <input type="datetime-local" class="form-control" id="expiracion" name="expiracion">
+                        </div>
+                        <button type="submit" class="btn btn_detail w-100 d-block">Registrar <i class="fa-solid fa-paper-plane ms-1"></i></button>
+                    </form>
+                </div>
+            </section>
+        </section>
+
+        <section class="col-lg-8">
+            <div class="card">
+                <div class="card-body text-center">
+                    <h4 class="mb-3">Lista de banners</h4>
+                    {% if banners %}
+                    <div class="table-responsive" id="table-container">
+                        <table class="table table_odd align-middle m-0">
+                            <thead>
+                                <tr>
+                                    <th>Título</th>
+                                    <th>Descripción</th>
+                                    <th>Imagen</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for banner in banners %}
+                                <tr>
+                                    <td>{% autoescape off %}{{ banner.titulo }}{% endautoescape %}</td>
+                                    <td>{{ banner.descripcion }}</td>
+                                    <td><img src="{{ banner.imagen }}" alt="{{ banner.titulo }}" class="img-thumbnail" style="max-width: 100px;"></td>
+                                    <td>
+                                        <div class="d-flex flex-column align-items-center gap_10">
+                                            <button type="button" class="btn btn-floating btn-info" data-mdb-ripple-init data-mdb-modal-init
+                                                data-mdb-target="#editBannerModal{{ banner.id }}">
+                                                <i class="fa-solid fa-edit fs-12"></i>
+                                            </button>
+                                            {% csrf_token %}
+                                            <button type="button" class="btn btn-floating btn-danger" data-mdb-ripple-init data-mdb-modal-init
+                                                data-mdb-target="#eliminar_modal_{{ banner.id }}">
+                                                <i class="fa-solid fa-trash fs-12"></i>
+                                            </button>
+                                            </form>
+                                        </div>
+                                    </td>
+                                </tr>
+
+                                <!-- Edit Banner Modal -->
+                                <div class="modal fade" id="editBannerModal{{ banner.id }}" tabindex="-1" aria-labelledby="editBannerModalLabel{{ banner.id }}"
+                                    aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="editBannerModalLabel{{ banner.id }}">Editar Banner</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <form method="POST" enctype="multipart/form-data" action="{% url 'edit_banner' banner.id %}" data-submit-form>
+                                                    {% csrf_token %}
+                                                    <div class="mb-3">
+                                                        <label for="editTitulo{{ banner.id }}" class="form-label">Título</label>
+                                                        <input type="text" class="form-control" id="editTitulo{{ banner.id }}" name="titulo"
+                                                            value="{{ banner.titulo }}" required autocomplete="off" autocapitalize="off">
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label for="editDescripcion{{ banner.id }}" class="form-label">Descripción</label>
+                                                        <input type="text" class="form-control" id="editDescripcion{{ banner.id }}" name="descripcion"
+                                                            value="{{ banner.descripcion }}" required autocomplete="off" autocapitalize="off">
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label for="editArticulo{{ banner.id }}" class="form-label">Redirigir a
+                                                            :</label>
+                                                        <input type="text" class="form-control" id="editArticulo{{ banner.id }}" name="articulo"
+                                                            value="{{ banner.articulo }}"" autocomplete=" off" autocapitalize="off"">
+                                                    </div>
+                                                    <div class=" mb-3">
+                                                        <label for="editImagen{{ banner.id }}" class="form-label">Imagen</label>
+                                                        <input type="file" class="form-control" id="editImagen{{ banner.id }}" name="imagen">
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label for="editExpiracion{{ banner.id }}" class="form-label">Expiración</label>
+                                                        <input type="datetime-local" class="form-control" id="editExpiracion{{ banner.id }}" name="expiracion"
+                                                            value="{{ banner.expiracion|date:'Y-m-d\\TH:i' }}">
+                                                    </div>
+                                                    <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="modal fade " id="eliminar_modal_{{ banner.id }}" tabindex="-1" aria-labelledby="labelModal0{{ banner.id }}"
+                                    aria-hidden="true">
+                                    <div class="modal-dialog modal-dialog-centered">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="labelModal0{{ banner.id }}">
+                                                    Eliminar Banner</h5>
+                                                <button type="button" class="btn-close" data-mdb-ripple-init data-mdb-dismiss="modal"
+                                                    aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <h3 class="text-center mb-2">Quieres eliminar el banner <u>{{ banner.titulo }}</u>?
+                                                </h3>
+                                                <h6 class="text-center">"{{ banner.id }} - {{ banner.titulo }}"</h6>
+                                                <p class="text-center">Se eliminara toda la informacion relacionada <br> Esta acción es
+                                                    permanente</p>
+                                                <hr class="my-4">
+                                                <form id="eliminarBannerForm-{{ banner.id }}" action="{% url 'delete_banner' banner.id %}" method="post"
+                                                    data-submit-form>
+                                                    {% csrf_token %}
+                                                    <div class="d-flex justify-content-between">
+                                                        <button type="button" class="btn btn_detail" data-mdb-ripple-init
+                                                            data-mdb-dismiss="modal">Cancelar</button>
+                                                        <button type="submit" class="btn btn-danger">Eliminar</button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {% endfor %}
+                            </tbody>
+                        </table>
                     </div>
-                    <div data-mdb-input-init class="form-outline position-relative mb-4">
-                        <button type="button" class="position-absolute top-0 end-0 btn p-0 fs-12 m-2 mt-1 none"
-                            data-clear="descripcion"><i class="fa-solid fa-xmark m-0 p-0"></i></button>
-                        <textarea class="form-control" id="descripcion" name="descripcion" data-init-clear required ></textarea>
-                        <label class="form-label" for="descripcion">Descripción:</label>
+                    {% else %}
+                    <div class="text-center mt-5 mb-4">
+                        <p class="lead">No hay Banners disponibles en este momento 😯. ¡Vuelve pronto para más actualizaciones!</p>
                     </div>
-                    <div data-mdb-input-init class="form-outline position-relative mb-4">
-                        <button type="button" class="position-absolute top-0 end-0 btn p-0 fs-12 m-2 mt-1 none"
-                            data-clear="articulo"><i class="fa-solid fa-xmark m-0 p-0"></i></button>
-                        <input type="url" id="articulo" name="articulo" class="form-control form-icon-trailing"
-                            data-init-clear required />
-                        <label class="form-label" for="articulo">Redirigir (liga/url):</label>
-                    </div>
-                    <div class="mb-3">
-                        <label for="imagen" class="form-label">Imagen</label>
-                        <input type="file" class="form-control" id="imagen" name="imagen" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="expiracion" class="form-label">Expiración</label>
-                        <input type="datetime-local" class="form-control" id="expiracion" name="expiracion">
-                    </div>
-                    <button type="submit" class="btn btn_detail w-100 d-block">Subir</button>
-                </form>
+                    {% endif %}
+                </div>
             </div>
         </section>
     </div>
-
-    <div>
-        <h3 class="text-center my-4">Banners Subidos</h3>
-        {% if banners %}
-        <table class="table table-bordered">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Título</th>
-                    <th>Descripción</th>
-                    <th>Artículo</th>
-                    <th>Imagen</th>
-                    <th>Expiración</th>
-                    <th>Acciones</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for banner in banners %}
-                <tr>
-                    <td>{{ banner.id }}</td>
-                    <td>{{ banner.titulo }}</td>
-                    <td>{{ banner.descripcion }}</td>
-                    <td>{{ banner.articulo }}</td>
-                    <td><img src="{{ banner.imagen }}" alt="{{ banner.titulo }}" class="img-thumbnail"
-                            style="max-width: 100px;"></td>
-                    <td>{{ banner.expiracion }}</td>
-                    <td>
-                        <button type="button" class="btn btn-floating btn-info" data-mdb-ripple-init data-mdb-modal-init
-                            data-mdb-target="#editBannerModal{{ banner.id }}">
-                            <i class="fa-solid fa-edit"></i>
-                        </button>
-                        {% csrf_token %}
-                        <button type="button" class="btn btn-floating btn-danger" data-mdb-ripple-init
-                            data-mdb-modal-init data-mdb-target="#eliminar_modal_{{ banner.id }}">
-                            <i class="fa-solid fa-trash"></i>
-                        </button>
-                        </form>
-                    </td>
-                </tr>
-
-                <!-- Edit Banner Modal -->
-                <div class="modal fade" id="editBannerModal{{ banner.id }}" tabindex="-1"
-                    aria-labelledby="editBannerModalLabel{{ banner.id }}" aria-hidden="true">
-                    <div class="modal-dialog">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="editBannerModalLabel{{ banner.id }}">Editar Banner</h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                    aria-label="Close"></button>
-                            </div>
-                            <div class="modal-body">
-                                <form method="POST" enctype="multipart/form-data"
-                                    action="{% url 'edit_banner' banner.id %}" data-submit-form>
-                                    {% csrf_token %}
-                                    <div class="mb-3">
-                                        <label for="editTitulo{{ banner.id }}" class="form-label">Título</label>
-                                        <input type="text" class="form-control" id="editTitulo{{ banner.id }}"
-                                            name="titulo" value="{{ banner.titulo }}" required autocomplete="off"
-                                            autocapitalize="off">
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="editDescripcion{{ banner.id }}"
-                                            class="form-label">Descripción</label>
-                                        <input type="text" class="form-control" id="editDescripcion{{ banner.id }}"
-                                            name="descripcion" value="{{ banner.descripcion }}" required
-                                            autocomplete="off" autocapitalize="off">
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="editArticulo{{ banner.id }}" class="form-label">Redirigir a
-                                            :</label>
-                                        <input type="text" class="form-control" id="editArticulo{{ banner.id }}"
-                                            name="articulo" value="{{ banner.articulo }}"" autocomplete=" off"
-                                            autocapitalize="off"">
-                                    </div>
-                                    <div class=" mb-3">
-                                        <label for="editImagen{{ banner.id }}" class="form-label">Imagen</label>
-                                        <input type="file" class="form-control" id="editImagen{{ banner.id }}"
-                                            name="imagen">
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="editExpiracion{{ banner.id }}" class="form-label">Expiración</label>
-                                        <input type="datetime-local" class="form-control"
-                                            id="editExpiracion{{ banner.id }}" name="expiracion"
-                                            value="{{ banner.expiracion|date:'Y-m-d\\TH:i' }}">
-                                    </div>
-                                    <button type="submit" class="btn btn-primary">Guardar Cambios</button>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="modal fade " id="eliminar_modal_{{ banner.id }}" tabindex="-1"
-                    aria-labelledby="labelModal0{{ banner.id }}" aria-hidden="true">
-                    <div class="modal-dialog modal-dialog-centered">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="labelModal0{{ banner.id }}">
-                                    Eliminar Banner</h5>
-                                <button type="button" class="btn-close" data-mdb-ripple-init data-mdb-dismiss="modal"
-                                    aria-label="Close"></button>
-                            </div>
-                            <div class="modal-body">
-                                <h3 class="text-center mb-2">Quieres eliminar el banner <u>{{ banner.titulo }}</u>?
-                                </h3>
-                                <h6 class="text-center">"{{ banner.id }} - {{ banner.titulo }}"</h6>
-                                <p class="text-center">Se eliminara toda la informacion relacionada <br> Esta acción es
-                                    permanente</p>
-                                <hr class="my-4">
-                                <form id="eliminarBannerForm-{{ banner.id }}"
-                                    action="{% url 'delete_banner' banner.id %}" method="post" data-submit-form>
-                                    {% csrf_token %}
-                                    <div class="d-flex justify-content-between">
-                                        <button type="button" class="btn btn_detail" data-mdb-ripple-init
-                                            data-mdb-dismiss="modal">Cancelar</button>
-                                        <button type="submit" class="btn btn-danger">Eliminar</button>
-                                    </div>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                {% endfor %}
-            </tbody>
-        </table>
-        {% else %}
-        <div class="text-center mt-5 mb-4">
-            <p class="lead">No hay Banners disponibles en este momento 😯. ¡Vuelve pronto para más actualizaciones!</p>
-        </div>
-        {% endif %}
-    </div>
 </main>
 {% endblock %}
-{% block scripts_end %} 
+{% block scripts_end %}
 
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function () {
         fetch("{% url 'update_banner_visibility' %}")
-        .then(response => response.json())
-        .then(data => {
-            if (data.status === 'success') {
-                console.log('Visibilidad de los banners actualizada');
-                // Opcional: recargar la página para reflejar los cambios
-            }
-        })
-        .catch(error => console.error('Error al actualizar la visibilidad de los banners:', error));
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    console.log('Visibilidad de los banners actualizada');
+                    // Opcional: recargar la página para reflejar los cambios
+                }
+            })
+            .catch(error => console.error('Error al actualizar la visibilidad de los banners:', error));
     });
 </script>
 

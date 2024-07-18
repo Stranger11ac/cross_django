@@ -17,7 +17,7 @@ const map = new mapboxgl.Map({
     container: "map",
     style: "mapbox://styles/mapbox/streets-v12",
     center: [-100.93655, 25.55701],
-    zoom: 16,
+    zoom: 17,
     maxZoom: 20,
     minZoom: 15,
     maxBounds: [
@@ -337,15 +337,21 @@ map.on("load", function () {
 
                     directions.setOrigin(origenCoords);
                     directions.setDestination(destinoCoords);
-                    $("#buttons_route").slideDown("fast");
+                    $("#buttons_route").slideDown("slow");
 
                     directions.on("route", (e) => {
-                        currentRoute = e.route[0].geometry;
+                        const routeGeoJSON = {
+                            type: "FeatureCollection",
+                            features: e.route.map((r) => ({
+                                type: "Feature",
+                                geometry: r.geometry,
+                                properties: {},
+                            })),
+                        };
+                        currentRoute = routeGeoJSON;
 
-                        // Aquí obtenemos la distancia y la duración de la ruta
-                        const distance = e.route[0].distance / 1000; // distancia en kilómetros
-                        const duration = e.route[0].duration / 60; // duración en minutos
-                        // Puedes mostrar esta información en tu interfaz de usuario según sea necesario
+                        const distance = e.route[0].distance / 1000;
+                        const duration = e.route[0].duration / 60;
                         $("#route-info").html(`
                             <div class="row mb-2">
                                 <div class="col-1"><i class="fa-solid fa-shoe-prints me-1"></i></div>
@@ -357,6 +363,7 @@ map.on("load", function () {
                             </div>`);
                         $("#route-info").slideDown();
                     });
+
                     map.addControl(directions, "top-left");
                 }
             } else {
@@ -364,59 +371,142 @@ map.on("load", function () {
             }
         }
 
-        function resetRout() {
-            formRoute.querySelectorAll("option").forEach((option) => {
-                option.disabled = false;
-            });
-        }
-
         function addRouteLayer() {
-            map.addSource("directions", {
-                type: "geojson",
-                data: currentRoute,
-            });
+            if (currentRoute && currentRoute.features && currentRoute.features.length > 0) {
+                if (!map.getSource("directions")) {
+                    map.addSource("directions", {
+                        type: "geojson",
+                        data: currentRoute,
+                    });
+                }
 
-            map.addLayer({
-                id: "directions-route-line",
-                type: "line",
-                source: "directions",
-                layout: {
-                    "line-join": "round",
-                    "line-cap": "round",
-                },
-                paint: {
-                    "line-color": "#3b9ddd",
-                    "line-width": 8,
-                },
-            });
-            map.moveLayer("places-label");
+                const originFeature = currentRoute.features.find((feature) => feature.properties.id === "origin");
+                const destinationFeature = currentRoute.features.find(
+                    (feature) => feature.properties.id === "destination"
+                );
+                const routeFeature = currentRoute.features.find((feature) => feature.geometry.type === "LineString");
+
+                // Agregar capa de línea de ruta
+                if (!map.getLayer("directions-route-line")) {
+                    map.addLayer({
+                        id: "directions-route-line",
+                        type: "line",
+                        source: "directions",
+                        layout: {
+                            "line-cap": "round",
+                            "line-join": "round",
+                        },
+                        paint: {
+                            "line-color": "#2d5f99",
+                            "line-width": 12,
+                        },
+                        filter: ["==", "$type", "LineString"],
+                    });
+                }
+
+                // Agregar capa de línea de ruta
+                if (!map.getLayer("directions-route-line-alt")) {
+                    map.addLayer({
+                        id: "directions-route-line-alt",
+                        type: "line",
+                        source: "directions",
+                        layout: {
+                            "line-cap": "round",
+                            "line-join": "round",
+                        },
+                        paint: {
+                            "line-color": "#4882c5",
+                            "line-width": 6,
+                        },
+                        filter: ["==", "$type", "LineString"],
+                    });
+                }
+
+                // Agregar capa de punto de origen
+                if (!map.getLayer("directions-origin-point")) {
+                    map.addLayer({
+                        id: "directions-origin-point",
+                        type: "circle",
+                        source: "directions",
+                        paint: {
+                            "circle-color": "#3bb2d0",
+                            "circle-radius": 20,
+                        },
+                        filter: ["==", ["get", "id"], "origin"],
+                    });
+                }
+
+                // Agregar capa de punto de destino
+                if (!map.getLayer("directions-destination-point")) {
+                    map.addLayer({
+                        id: "directions-destination-point",
+                        type: "circle",
+                        source: "directions",
+                        paint: {
+                            "circle-color": "#8a8bc9",
+                            "circle-radius": 20,
+                        },
+                        filter: ["==", ["get", "id"], "destination"],
+                    });
+                }
+
+                // Agregar etiqueta de punto de origen
+                if (!map.getLayer("directions-origin-label")) {
+                    console.log(originFeature.properties["marker-symbol"]);
+                    map.addLayer({
+                        id: "directions-origin-label",
+                        type: "symbol",
+                        source: "directions",
+                        layout: {
+                            "text-field": originFeature.properties["marker-symbol"],
+                            "text-font": ["Open Sans Bold", "Arial Unicode MS Bold"],
+                            "text-size": 18,
+                        },
+                        paint: {
+                            "text-color": "#fff",
+                        },
+                        filter: ["==", ["get", "id"], "origin"],
+                    });
+                }
+
+                // Agregar etiqueta de punto de destino
+                if (!map.getLayer("directions-destination-label")) {
+                    map.addLayer({
+                        id: "directions-destination-label",
+                        type: "symbol",
+                        source: "directions",
+                        layout: {
+                            "text-field": destinationFeature.properties["marker-symbol"],
+                            "text-font": ["Open Sans Bold", "Arial Unicode MS Bold"],
+                            "text-size": 18,
+                        },
+                        paint: {
+                            "text-color": "#fff",
+                        },
+                        filter: ["==", ["get", "id"], "destination"],
+                    });
+                }
+
+                map.moveLayer("places-label");
+            }
         }
 
-        function deleteLabels() {
-            map.getStyle().layers.forEach(function (layer) {
-                if (layer.type === "symbol" && layer.layout["text-field"]) {
-                    map.setLayoutProperty(layer.id, "visibility", "none");
-                }
-            });
+        function saveRouteLayers() {
+            if (map.getSource("directions")) {
+                currentRoute = map.getSource("directions")._data;
+            }
         }
 
         map.on("load", function () {
-            deleteLabels();
             createEdificios();
-        });
-
-        map.on("style.load", function () {
-            deleteLabels();
-            createEdificios();
-            addRouteLayer();
         });
 
         map.on("click", function (e) {
             const lngLat = e.lngLat;
             createMarker(lngLat);
-            // console.log("Nuevo LngLat:", lngLat.lng, lngLat.lat);
         });
 
+        // Abrir camvas / informacion del edificio
         map.on("click", "places-layer", (e) => {
             const feature = e.features[0];
             const { nombre, informacion, imagen_url } = feature.properties;
@@ -425,9 +515,12 @@ map.on("load", function () {
 
             const offcanvasContent = document.getElementById("offcanvasContent");
             offcanvasContent.innerHTML = `<div class="feature-info"><p>${informacion}</p></div>`;
-            offcanvasElement.show();
+            setTimeout(() => {
+                offcanvasElement.show();
+            }, 100);
         });
 
+        // Cambiar estilo del Mapa
         inputs.forEach((input) => {
             input.addEventListener("click", function (layer) {
                 const layerId = layer.target.id;
@@ -449,11 +542,16 @@ map.on("load", function () {
                 } else {
                     colorlabels = "#000";
                 }
-                if (map.getLayer("directions-route-line")) {
-                    currentRoute = map.getSource("directions")._data;
-                }
+
+                // Guardar las capas de la ruta antes de cambiar el estilo
+                saveRouteLayers();
 
                 map.setStyle("mapbox://styles/mapbox/" + layerId);
+
+                map.on("style.load", function () {
+                    createEdificios();
+                    addRouteLayer(); // Restaurar las capas de la ruta
+                });
             });
         });
 
@@ -476,7 +574,6 @@ map.on("load", function () {
                 }
             });
         });
-
         selectDestiny.addEventListener("change", function () {
             const seleccionDestino = this.value;
             selectOrigin.querySelectorAll("option").forEach((option) => {
@@ -488,19 +585,19 @@ map.on("load", function () {
             });
         });
 
-        // Ejecutar calcularRuta cuando se seleccionen opciones en ambos selectores
+        // Ejecutar calcularRuta
         selectOrigin.addEventListener("change", function () {
             if (document.getElementById("destino").value) {
                 calcularRuta();
             }
         });
-
         selectDestiny.addEventListener("change", function () {
             if (document.getElementById("origen").value) {
                 calcularRuta();
             }
         });
 
+        // Controles de Ruta
         const directions = new MapboxDirections({
             accessToken: mapboxgl.accessToken,
             unit: "metric",
@@ -514,19 +611,48 @@ map.on("load", function () {
             interactive: false,
         });
 
-        resetRoutBtn.addEventListener("click", resetRout);
-        delRoutBtn.addEventListener("click", function () {
-            if (map.getLayer("directions-route-line")) {
-                map.removeLayer("directions-route-line");
+        // Resetear ruta
+        document.querySelector("[data-reset_form]").addEventListener("click", function () {
+            formRoute.querySelectorAll("option").forEach((option) => {
+                option.disabled = false;
+            });
+
+            // Verificar si las capas de la ruta existen y removerlas
+            const routeLayers = [
+                "directions-route-line",
+                "directions-route-line-alt",
+                "directions-route-line-casing",
+                "directions-hover-point-casing",
+                "directions-hover-point",
+                "directions-waypoint-point-casing",
+                "directions-waypoint-point",
+                "directions-origin-point",
+                "directions-origin-label",
+                "directions-destination-point",
+                "directions-destination-label",
+            ];
+            routeLayers.forEach((layer) => {
+                if (map.getLayer(layer)) {
+                    map.removeLayer(layer);
+                }
+            });
+
+            // Verificar si la fuente de la ruta existe y removerla
+            if (map.getSource("directions")) {
+                map.removeSource("directions");
             }
-            if (directions) {
-                map.removeControl(directions);
-            }
-            resetRout();
-            addRouteLayer();
+
+            $("#buttons_route").slideUp("slow");
+            $("#route-info").slideUp("slow", () => {
+                $("#route-info").empty();
+            });
         });
     })
-    .catch((error) => console.error("Error al obtener los datos del mapa:", error));
+    .catch((error) => {
+        alertSToast("top", 5000, "error", "Ocurrio un error inesperado. verifica la consola. #403");
+        console.error("Error al obtener los datos del mapa:");
+        console.error(error);
+    });
 
 map.getCanvas().style.cursor = "default";
 map.on("dragstart", () => {
@@ -544,3 +670,49 @@ map.on("mouseup", () => {
 map.on("mouseover", () => {
     map.getCanvas().style.cursor = "default";
 });
+
+// features:  Array(3)
+// 0 :
+//     geometry:
+//         coordinates: (2) [-100.93604, 25.556462]
+//         type: "Point"
+//         [[Prototype]]: Object
+//     properties:
+//         id: "origin"
+//         marker-symbol: "A"
+//         [[Prototype]]: Object
+//     type: "Feature"
+//     [[Prototype]]: Object
+// 1:
+//     geometry:
+//         coordinates: (2) [-100.936682, 25.556478]
+//     type: "Point"
+//     [[Prototype]]: Object
+//     properties:
+//         id: "destination"
+//         marker-symbol: "B"
+//         [[Prototype]]: Object
+//     type: "Feature"
+//     [[Prototype]]: Object
+// 2:
+//     geometry:
+//         coordinates: Array(10)
+//             0: (2) [-100.93604, 25.55646]
+//             1: (2) [-100.93596, 25.55656]
+//             2: (2) [-100.936, 25.55658]
+//             3: (2) [-100.93643, 25.55668]
+//             4: (2) [-100.93645, 25.55666]
+//             5: (2) [-100.93648, 25.55665]
+//             6: (2) [-100.93651, 25.55664]
+//             7: (2) [-100.93654, 25.55665]
+//             8: (2) [-100.93655, 25.55665]
+//             9: (2) [-100.93668, 25.55648]
+//             length: 10
+//             [[Prototype]]: Array(0)
+//         type: "LineString"
+//         [[Prototype]]: Object
+//     properties:
+//         route: "selected"
+//         route-index: 0
+//         [[Prototype]]: Object
+//     [[Prototype]]: Object

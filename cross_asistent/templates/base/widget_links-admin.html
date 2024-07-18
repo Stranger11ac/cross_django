@@ -18,7 +18,7 @@
             <span class="d-inline d-lg-none">{{ user.username }} </span> <i class="fa-solid fa-user ms-1"></i>
         </a>
         <ul class="dropdown-menu mx-100" aria-labelledby="dropdownMenuUser">
-            <li class="dropdown-item text-center d-none d-md-block">
+            <li class="text-center p-3 d-none d-md-block">
                 {{ user.username }}
             </li>
             <li>
@@ -27,9 +27,6 @@
             </li>
             <li>
                 <a class="dropdown-item" aria-current="true" href="{% url 'notificaciones' %}"><i class="fa-solid fa-bell"></i> Notificaciones</a>
-            </li>
-            <li>
-                <a class="dropdown-item" aria-current="true" href="#"><i class="fa-solid fa-gear"></i> Configuración</a>
             </li>
             <li>
                 <hr class="dropdown-divider" />

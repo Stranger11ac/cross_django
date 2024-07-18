@@ -50,25 +50,27 @@ def crear_pregunta(request):
         if request.content_type == 'application/json':
             try:
                 data = json.loads(request.body)
-                tituloPOST = data['pregunta']
+                preguntaPOST = data['pregunta']
+                descripcionPOST = data['descripcion']
                 categoria_preguntas = models.Categorias.objects.get(id=1) 
 
-                pregunta = models.Database(titulo=tituloPOST, categoria=categoria_preguntas)
+                pregunta = models.Preguntas(pregunta=preguntaPOST, descripcion=descripcionPOST)
                 pregunta.save()
+                
                 models.Notificacion.objects.create(
                     usuario=request.user,
                     tipo='Pregunta',
-                    mensaje=f'{request.user.username} ha realizado una nueva pregunta: "{tituloPOST}".',
+                    mensaje=f'{request.user.username} ha realizado una nueva pregunta: "{preguntaPOST}".',
                 )
 
                 return JsonResponse({'success': True, 'message': 'Gracias por tu pregunta ❤️💕😁👍 '}, status=200)
             except Exception as e:
                 print(f'Hay un error en: {e}')
-                return JsonResponse({'success': False, 'message': 'Ups! 😥😯 hubo un error y tu pregunta no se pudo registrar. por favor intente de nuevo mas tarde.'}, status=400)
+                return JsonResponse({'success': False, 'message': 'Ups! 😥😯 hubo un error y tu pregunta no se pudo registrar. Por favor intente de nuevo más tarde.'}, status=400)
         else:
             print('error, no JSON')
             return JsonResponse({'success': False, 'message': 'Error: no se permite este tipo de archivo '}, status=400)
-    return render(request, 'frecuentes.html', {'quest_all': databaseall})
+    return render(request, 'frecuentes.html', {'quest_all': models.Preguntas.objects.all()})
 
 def blogs(request):
     if not request.user.is_staff:
@@ -243,6 +245,17 @@ def ver_perfil(request):
 def ver_notis(request):
     notificaciones = models.Notificacion.objects.all().order_by('-fecha')
     return render(request, 'admin/notificaciones.html', {'notificaciones': notificaciones, 'pages': functions.pages})
+
+def marcar_notificaciones_leidas(request):
+    try:
+        data = json.loads(request.body)
+        ids = data.get('ids', [])
+        models.Notificacion.objects.filter(id__in=ids).update(leida=True)
+        # return JsonResponse({'status': 'success'})
+
+        return JsonResponse({'status': 'success', 'message': f'Notificcacion {ids}, se marco como leida para todos los usuarios', 'icon': 'info'}, status=200)
+    except Exception as e:
+        return JsonResponse({'status': 'error', 'message': f'Ocurrio un error😯😥 <br>{str(e)}', 'icon': 'error'}, status=400)
 
 # Banners ----------------------------------------------------------
 @login_required

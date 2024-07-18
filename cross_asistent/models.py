@@ -102,3 +102,11 @@ class Notificacion(models.Model):
 
     def __str__(self):
         return f'{self.tipo} - {self.mensaje}'
+
+class Preguntas(models.Model):
+    pregunta = models.CharField(max_length=150, blank=False)
+    descripcion = models.TextField(null=False, blank=True)
+    fecha = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.pregunta

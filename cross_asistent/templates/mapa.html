@@ -11,7 +11,7 @@
 {% block content %}
 <main class="full_page" id='map' data-mapa_edif="{% url 'mapa_edificios' %}">
     <!-- Controles de ruta -->
-    <section class="controls_route card m-2" id="controls_route">
+    <section class="controls_route card m-2 show" id="controls_route">
         <div class="card-header d-flex justify-content-between align-items-center p-3">
             <h6 class="m-0"><i class="fa-solid fa-route me-1"></i>Como ir a...</h6>
             <button type="button" class="btn-close" data-btn_closed="controls_route"></button>
@@ -40,7 +40,7 @@
     </section>
 </main>
 
-<!-- Canvas lateral -->
+<!-- Canvas: Informacion del Edificio -->
 <div class="offcanvas offcanvas-start" tabindex="-1" id="infoLateral" aria-labelledby="infoLateralLabel">
     <div class="offcanvas-header position-relative p-0">
         <button type="button" class="btn-close position-absolute top-0 end-0 p-4 m-1 m-md-2" data-bs-dismiss="offcanvas" aria-label="Close"></button>
@@ -60,7 +60,7 @@
     </div>
 </div>
 
-<!-- Canvas Bajo -->
+<!-- Canvas: Cambiar estilo -->
 <div class="offcanvas offcanvas-bottom" tabindex="-1" id="offcanvasBottom" aria-labelledby="offcanvasBottomLabel">
     <div class="offcanvas-header">
         <h5 class="offcanvas-title" id="offcanvasBottomLabel">Cambiar Estilo <i class="fa-solid fa-layer-group ms-1"></i></h5>
@@ -115,7 +115,7 @@
     </div>
 </div>
 
-<!-- Modal Abrir Google Maps -->
+<!-- Modal: Abrir Google Maps -->
 <div class="modal fade" id="beforeSend" tabindex="-1" aria-labelledby="beforeSendLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
@@ -130,9 +130,9 @@
                 </p>
             </div>
             <div class="modal-footer d-flex justify-content-between">
-                <button type="button" class="btn btn_secondary" data-mdb-ripple-init data-mdb-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-secondary" data-mdb-ripple-init data-mdb-dismiss="modal">Cancelar</button>
                 <a target="_blank"
-                    href="https://www.google.com.mx/maps/dir//Universidad+Tecnol%C3%B3gica+de+Coahuila,+Boulevard+del+Parque+Industrial+Francisco+R.+Alanis,+Zona+Industrial,+Ramos+Arizpe,+Coahuila+de+Zaragoza/@25.5584689,-100.9780617,13z/data=!3m1!4b1!4m9!4m8!1m0!1m5!1m1!1s0x868814c0002295ff:0x5c622cc711957b03!2m2!1d-100.9368619!2d25.5583972!3e2?entry=ttu"
+                    href="https://www.google.com.mx/maps/dir/25.5565711,-100.936538/Universidad+Tecnol%C3%B3gica+de+Coahuila,+Boulevard+del+Parque+Industrial+Francisco+R.+Alanis,+Zona+Industrial,+Ramos+Arizpe,+Coahuila+de+Zaragoza/@25.5564822,-100.9417562,16z/data=!3m1!4b1!4m10!4m9!1m1!4e1!1m5!1m1!1s0x868814c0002295ff:0x5c622cc711957b03!2m2!1d-100.9368619!2d25.5583972!3e2?entry=ttu"
                     class="btn btn_detail" data-mdb-ripple-init>Abrir <i class="fa-solid fa-up-right-from-square ms-1"></i></a>
             </div>
         </div>
