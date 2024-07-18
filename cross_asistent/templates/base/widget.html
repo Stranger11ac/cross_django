@@ -1,15 +1,12 @@
 {% load static %}
-
 <!DOCTYPE html>
 <html lang="en" data-mdb-theme="light">
 
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
     <link rel="icon" href="{% static 'img/UTC_icono.ico' %}" />
     <title>{% block title %}TITULO{% endblock %} | Asistente UTC</title>
-
     <link rel="preload" href="{% static 'css/mdb_fontawesome.min.css' %}" as="style" />
 
     {% block extra_head %}{% endblock %}
@@ -18,77 +15,103 @@
     <link rel="stylesheet" href="{% static 'css/styles.css' %}" />
 </head>
 
-<body>
-<!-- <body data-mdb-theme="dark"> -->
+<body data-mdb-theme="light" data-color_prefer="blue">
     <nav class="navbar navbar-expand-lg navbar-light bg-body-tertiary">
         <div class="container container-fluid">
             <a class="navbar-brand" href="{% block link_home %}/{% endblock %}">
                 <img src="{% static 'img/UTC_logo-plano.webp' %}" alt="UTC logo" />
             </a>
-            <button data-mdb-collapse-init class="navbar-toggler" type="button"
-                data-mdb-target="#navbarText" aria-controls="navbarText" aria-expanded="false"
-                aria-label="Toggle navigation"></button>
-            <div class="collapse navbar-collapse position-absolute top-100 navbar-light bg-body-tertiary"
-                id="navbarText">
-                <ul class="navbar-nav ms-auto mb-lg-0 px-2 px-lg-0">
-                    {% block link_start-extra %}{% endblock %}
-                    {% block link_default %}
-                    <li class="nav-item">
-                        <a class="btn {% if active_page == 'inicio' %}btn_secondary{% else %}btn_detail{% endif %} m-1 my-lg-0 d-block"
-                            href="/">Inicio <i class="fa-solid fa-house-chimney ms-1"></i></a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="btn {% if active_page == 'faq' %}btn_secondary{% else %}btn_detail{% endif %} m-1 my-lg-0 d-block"
-                            href="{% url 'faq' %}">Preguntas <i
-                                class="fa-solid fa-clipboard-question ms-1"></i></a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="btn {% if active_page == 'blog' %}btn_secondary{% else %}btn_detail{% endif %} m-1 my-lg-0 d-block"
-                            href="{% url 'blog' %}">Blog <i
-                                class="fa-solid fa-newspaper ms-1"></i></i></a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="btn {% if active_page == 'map' %}btn_secondary{% else %}btn_detail{% endif %} m-1 my-lg-0 d-block"
-                            href="{% url 'map' %}">Mapa <i
-                                class="fa-solid fa-map-location-dot ms-1"></i></a>
-                    </li>
-                    <li class="nav-item">
-                        <div class="dropdown">
-                            <a class="btn btn_detail m-1 my-lg-0 d-block dropdown-toggle" href=""
-                                role="button" id="dropdownMenuLink" data-mdb-dropdown-init
-                                data-mdb-ripple-init aria-expanded="false">
-                                Otros <i class="fa-solid fa-users ms-1"></i>
-                            </a>
+            <div class="flex-grow-1"></div>
+            <div class="m-0 d-flex align-items-center">
+                <div class="me-2 me-md-0 ms-md-2 order-lg-last">
+                    <button type="button" class="btn btn-floating btn_detail" data-mdb-ripple-init data-mdb-modal-init data-mdb-target="#configModal">
+                        <i class="fa-solid fa-gear fs-14"></i>
+                    </button>
+                </div>
+                <button data-mdb-collapse-init class="navbar-toggler" type="button" data-mdb-target="#navbarText" aria-controls="navbarText"
+                    aria-expanded="false" aria-label="Toggle navigation"></button>
+                <div class="collapse navbar-collapse position-absolute top-100 navbar-light bg-body-tertiary flex-grow-0" id="navbarText">
+                    <ul class="navbar-nav mb-lg-0 px-2 px-lg-0">
+                        {% block link_start-extra %}{% endblock %}
+                        {% block link_default %}
+                        <li class="nav-item">
+                            <a class="btn {% if active_page == 'inicio' %}btn_secondary{% else %}btn_detail{% endif %} m-1 my-lg-0 d-block" href="/">Inicio <i
+                                    class="fa-solid fa-house-chimney ms-1"></i></a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="btn {% if active_page == 'faq' %}btn_secondary{% else %}btn_detail{% endif %} m-1 my-lg-0 d-block"
+                                href="{% url 'faq' %}">Preguntas <i class="fa-solid fa-clipboard-question ms-1"></i></a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="btn {% if active_page == 'blog' %}btn_secondary{% else %}btn_detail{% endif %} m-1 my-lg-0 d-block"
+                                href="{% url 'blog' %}">Blog <i class="fa-solid fa-newspaper ms-1"></i></i></a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="btn {% if active_page == 'map' %}btn_secondary{% else %}btn_detail{% endif %} m-1 my-lg-0 d-block"
+                                href="{% url 'map' %}">Mapa
+                                <i class="fa-solid fa-map-location-dot ms-1"></i></a>
+                        </li>
+                        <li class="nav-item">
+                            <div class="dropdown">
+                                <a class="btn btn_detail m-1 my-lg-0 d-block dropdown-toggle" href="" role="button" id="dropdownMenuLink" data-mdb-dropdown-init
+                                    data-mdb-ripple-init aria-expanded="false">
+                                    Otros <i class="fa-solid fa-users ms-1"></i>
+                                </a>
 
-                            <ul class="dropdown-menu mx-100" aria-labelledby="dropdownMenuLink">
-                                <li>
-                                    <a class="dropdown-item {% if active_page|default:'' == 'calendario' %}active{% endif %}"
-                                        aria-current="true">Calendario Escolar</a>
-                                </li>
-                                <li>
-                                    <a href="{% url 'about' %}"
-                                        class="dropdown-item {% if active_page|default:'' == 'about' %}active{% endif %}"
-                                        aria-current="true">Acerca de</a>
-                                </li>
-                                <li>
-                                    <a href="{% url 'singin' %}"
-                                        class="dropdown-item {% if active_page|default:'' == 'singin' %}active{% endif %}"
-                                        aria-current="true">Acceder</a>
-                                </li>
-                            </ul>
-                        </div>
-                    </li>
-                    {% endblock %}
-                    {% block link_end-extra %}{% endblock %}
-                </ul>
+                                <ul class="dropdown-menu mx-100" aria-labelledby="dropdownMenuLink">
+                                    <li>
+                                        <a class="dropdown-item {% if active_page|default:'' == 'calendario' %}active{% endif %}" aria-current="true">Calendario
+                                            Escolar</a>
+                                    </li>
+                                    <li>
+                                        <a href="{% url 'about' %}" class="dropdown-item {% if active_page|default:'' == 'about' %}active{% endif %}"
+                                            aria-current="true">Acerca de</a>
+                                    </li>
+                                    <li>
+                                        <a href="{% url 'singin' %}" class="dropdown-item {% if active_page|default:'' == 'singin' %}active{% endif %}"
+                                            aria-current="true">Acceder</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </li>
+                        {% endblock %}
+                        {% block link_end-extra %}{% endblock %}
+                    </ul>
+                </div>
             </div>
         </div>
     </nav>
-
     {% block content %}{% endblock %}
+
+    <!-- Configuraciones -->
+    <div class="modal fade" id="configModal" tabindex="-1" aria-labelledby="configModalLabel" aria-hidden="true" data-mdb-backdrop="static"
+        data-mdb-keyboard="false">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="configModalLabel">Configuraciones <i class="fa-solid fa-gear ms-1"></i></h5>
+                    <button type="button" class="btn-close" data-mdb-ripple-init data-mdb-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <section>
+                        <h6 class="text-center mb-4">Interfaz</h6>
+                        <div class="d-flex justify-content-center gap_20">
+                            <button type="button" class="btn btn-floating btn-primary" data-change data-color="blue"></button>
+                            <button type="button" class="btn btn-floating btn-success" data-change data-color="green"></button>
+                            <button type="button" class="btn btn-floating btn_purple" data-change data-color="purple"></button>
+                        </div>
+                    </section>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn_detail" data-mdb-ripple-init>Listo <i class="fa-regular fa-circle-check ms-1"></i></button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <script src="{% static 'js/libraries.min.js' %}"></script>
     <script defer src="{% static 'js/settings.js' %}"></script>
+
     {% block scripts_end %} {% endblock %}
 </body>
 

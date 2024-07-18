@@ -19,6 +19,16 @@ function getCSRFToken() {
 
 $(document).ready(function () {
     try {
+        // Detectar cuando se abre cualquier modal
+        $(".modal").on("shown.bs.modal", function (e) {
+            $("body").addClass("body_minus");
+        });
+
+        // Opcional: Detectar cuando se cierra cualquier modal y remover la clase
+        $(".modal").on("hidden.bs.modal", function (e) {
+            $("body").removeClass("body_minus");
+        });
+
         // Filtro de busqueda ###################################################################
         var input = $("#searchInput");
         function filtertable() {
@@ -291,6 +301,14 @@ $(document).ready(function () {
                 },
             });
         });
+
+
+        // Cambiar colores de la Interfaz
+        $('[data-change]').on('click', function() {
+            var color = $(this).data('color');
+            $('body').attr('data-color_prefer', color);
+        });
+
 
         // ####################################################
         // ####################################################
