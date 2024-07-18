@@ -153,7 +153,7 @@ def chatbot(request):
 # Plantilla links programador / administrador ----------------------------------------------------------
 pages = [
         {'name': 'banner', 'url': 'upload_banner', 'display_name': 'Banners', 'icon': 'fa-solid fa-image'},
-        {'name': 'database', 'url': 'upload_banner', 'display_name': 'Database', 'icon': 'fa-solid fa-database'},
+        {'name': 'database', 'url': 'database_page', 'display_name': 'Database', 'icon': 'fa-solid fa-database'},
         {'name': 'blog', 'url': 'create_blog', 'display_name': 'Blogs', 'icon': 'fa-solid fa-newspaper'},
         {'name': 'mapa', 'url': 'consultaMap', 'display_name': 'Mapa', 'icon': 'fa-solid fa-map-location-dot'},
     ]
@@ -282,7 +282,7 @@ def createDatabase(request):
                 tipo='Base de Datos',
                 mensaje=f'{request.user.username} ha creado un nuevo registro de categoría "{categoria}".',
             )
-            return JsonResponse({'success': True, 'message': 'Nuevo registro en la base de datos 🎉🎉🎉'}, status=200)
+            return JsonResponse({'success': True, 'message': 'Nuevo registro en la base de datos 🎉🎉🎉', 'position':'top'}, status=200)
         
         except Exception as e:
             return JsonResponse({'success': False, 'message': f'Ocurrió un error 😯😥 <br>{str(e)}'}, status=400)

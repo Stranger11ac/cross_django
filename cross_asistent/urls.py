@@ -35,6 +35,9 @@ urlpatterns = [
     path('administracion/banners/delete/<int:banner_id>/', views.delete_banner, name='delete_banner'),
     path('administracion/update_banner_visibility/', functions.update_banner_visibility, name='update_banner_visibility'),
 
+    # Database ----------------------------------------------------------
+    path('administracion/Base_datos/', views.database_page, name='database_page'),
+
     # Blog ----------------------------------------------------------
     path('administracion/crear_blog/', views.create_blog, name='create_blog'),
     path('administracion/registrar_img_blog/', views.upload_image, name='send_imgsblog'),

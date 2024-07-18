@@ -3,7 +3,7 @@ var alfanumerico = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz01234567
 var caracteres = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_-%$#@!*&^.";
 var texto3 = /[a-zA-Z0-9]{3}/;
 var formToken = getCSRFToken();
-var timerOut = 6000;
+var timerOut = 4000;
 
 function getCSRFToken() {
     var cookies = document.cookie.split(";");
@@ -377,6 +377,11 @@ function jsonSubmit(e) {
                 if (data.icon) {
                     dataIcon = data.icon;
                 }
+                
+                dataPosition = "center";
+                if (data.position) {
+                    dataPosition = data.position;
+                }
 
                 function dataRedirect(params) {
                     window.location.href = data.redirect_url;
@@ -395,7 +400,7 @@ function jsonSubmit(e) {
                     };
                 }
 
-                alertSToast("center", timerOut + 4000, dataIcon, dataMessage, alertfunction);
+                alertSToast(dataPosition, timerOut, dataIcon, dataMessage, alertfunction);
             } else {
                 console.error(dataMessage);
                 alertSToast("top", timerOut + 2000, "warning", dataMessage);

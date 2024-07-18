@@ -48,8 +48,8 @@ tinymce.init({
     autoresize_min_height: 600,
     min_height: 600,
     promotion: false,
-    skin: window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "oxide",    
-    content_css: window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "",   
+    skin: 'dark',
+    content_css: 'dark',   
 });
 
 tinymce.init({
@@ -103,8 +103,8 @@ tinymce.init({
         "#000000","Black",
         "#ffffff","White",
     ],
-    skin: (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "oxide"),
-    content_css: (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : ""),
+    skin: 'dark',
+    content_css: 'dark',
     image_title: true,
     automatic_uploads: true,
     // file_picker_types: "image",

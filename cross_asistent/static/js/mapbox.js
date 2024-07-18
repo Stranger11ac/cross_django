@@ -106,7 +106,7 @@ fetch(url)
                         [item.polygons[0], item.polygons[1], item.polygons[2], item.polygons[3], item.polygons[0]],
                     ],
                 },
-            })),
+            }))
         };
 
         function createEdificios() {
@@ -180,19 +180,6 @@ fetch(url)
                 });
             }
 
-            // if (!map.getLayer("stairs")) {
-            //     map.addLayer({
-            //         id: "stairs",
-            //         type: "line",
-            //         source: "places",
-            //         filter: ["==", ["get", "type"], "stairs"],
-            //         paint: {
-            //             "line-color": "blue",
-            //             "line-width": 4,
-            //         },
-            //     });
-            // }
-
             if (!map.getLayer("streets")) {
                 map.addLayer({
                     id: "streets",
@@ -226,10 +213,7 @@ fetch(url)
 
             if (origen && destino && origen !== destino) {
                 const origenFeature = geojsonEdificios.features.find((feature) => feature.properties.nombre === origen);
-                const destinoFeature = geojsonEdificios.features.find(
-                    (feature) => feature.properties.nombre === destino
-                );
-                const hasStairs = checkForStairsAlongRoute(e.route[0]);
+                const destinoFeature = geojsonEdificios.features.find((feature) => feature.properties.nombre === destino);
 
                 if (origenFeature && destinoFeature) {
                     const origenCoords = origenFeature.properties.door;
@@ -264,26 +248,11 @@ fetch(url)
                         $("#route-info").slideDown();
                     });
 
-                    // Cambiar color del icono de ruta según la presencia de escaleras
-                    const routeIcon = document.querySelector(".mapboxgl-ctrl-route .fa-solid");
-                    if (hasStairs) {
-                        routeIcon.style.color = "yellow";
-                    } else {
-                        routeIcon.style.color = "";
-                    }
-
                     map.addControl(directions, "top-left");
                 }
             } else {
                 alertSToast("center", 5000, "warning", "Por favor, selecciona tanto origen como destino.");
             }
-        }
-
-        // Función para verificar si hay escaleras a lo largo de la ruta
-        function checkForStairsAlongRoute(route) {
-            // Implementar lógica para verificar si hay escaleras en la ruta
-            // Retornar true si hay escaleras, false si no las hay
-            return false; // Placeholder, implementar según tus datos y lógica
         }
 
         function addRouteLayer() {

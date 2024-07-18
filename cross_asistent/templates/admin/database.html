@@ -1,0 +1,213 @@
+{% extends 'base/widget.html' %}
+{% load static filtros %}
+{% block title %}Base de Datos | Administracion{% endblock %}
+{% block link_home %}{% url user.is_staff|yesno:'vista_programador,vista_admin' %}{% endblock %}
+{% block link_default %}
+{% include 'base/widget_links-admin.html' %}
+{% endblock %}
+{% block content %}
+<main class="container container-fluid py-5 {% if not user.is_authenticated %}main_container{% endif %}">
+    <div class="mb-5">
+        <h1 class="text-center">Base de Datos <i class="fa-solid fa-database ms-1"></i></h1>
+        <hr class="hr_divisor mx-4 mx-md-0" />
+    </div>
+    <div class="row">
+        <section class="col-lg-8">
+            <section class="card mb-4">
+                <div class="card-body">
+                    <h3 class="text-center mb-4">Nuevo Registro</h3>
+                    <form method="post" action="{% url 'create_database' %}" data-submit-form id="databaseForm" autocomplete="off">
+                        {% csrf_token %}
+                        <div class="row pt-2">
+                            <div class="col-md-3">
+                                <div class="form-outline mb-4">
+                                    <select class="form-select" id="categoria" name="categoria" required>
+                                        <option selected disabled hidden>Seleccione una categoría:</option>
+                                        {% for categoria in categorias %}
+                                        <option value="{{ categoria.id }}">{{ categoria.categoria }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="form-outline mb-4" data-mdb-input-init>
+                                    <i class="fa-solid fa-heading trailing"></i>
+                                    <input type="text" id="titulo" name="titulo" class="form-control form-icon-trailing" required />
+                                    <label class="form-label" for="titulo">Título:</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-outline mb-4" data-mdb-input-init>
+                            <i class="fa-solid fa-keyboard trailing"></i>
+                            <textarea class="form-control form-icon-trailing" id="informacion" name="informacion" rows="3" required></textarea>
+                            <label for="informacion" class="form-label">Información:</label>
+                        </div>
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="form-outline mb-4" data-mdb-input-init>
+                                    <i class="fa-solid fa-link trailing"></i>
+                                    <input type="url" id="redirigir" name="redirigir" class="form-control form-icon-trailing" />
+                                    <label class="form-label" for="redirigir">Redirigir: (url / liga)</label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-4">
+                                    <label for="documentos" class="form-label">Documento: (PDF)</label>
+                                    <input type="file" class="form-control" id="documentos" name="documentos" accept="application/pdf">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-4">
+                                    <label for="imagenes" class="form-label">Imágen:</label>
+                                    <input type="file" class="form-control" id="imagenes" name="imagenes" accept="image/jpeg, image/png, image/webp*">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col d-none d-md-block"></div>
+                            <div class="col d-none d-lg-block"></div>
+                            <div class="col">
+                                <button type="button" class="btn btn-secondary btn-block">mas</button>
+                            </div>
+                            <div class="col">
+                                <button type="submit" class="btn btn_detail btn-block">Guardar</button>
+                            </div>
+
+                        </div>
+                    </form>
+                </div>
+            </section>
+        </section>
+
+        <section class="col-12">
+            <div class="card">
+                <div class="card-body text-center">
+                    <h4 class="mb-3">Lista de Registros</h4>
+                    {% if database %}
+                    <div class="table-responsive" id="table-container">
+                        <table class="table table_odd align-middle m-0">
+                            <thead>
+                                <tr>
+                                    <th>Categoria</th>
+                                    <th>Título</th>
+                                    <th>Imagen</th>
+                                    <th>Ultima modificacion</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for dato in database %}
+                                <tr>
+                                    <td>{{ dato.categoria }}</td>
+                                    <td>{% autoescape off %}{{ dato.titulo }}{% endautoescape %}</td>
+                                    <td>
+                                        {% if dato.imagen %}
+                                        <img src="{{ dato.imagen }}" alt="{{ dato.titulo }}" class="img-thumbnail" style="max-width: 100px;">
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ dato.modificacion }}</td>
+                                    <td>
+                                        <div class="d-flex flex-column align-items-center gap_10">
+                                            <button type="button" class="btn btn-floating btn-info" data-mdb-ripple-init data-mdb-modal-init
+                                                data-mdb-target="#editBannerModal{{ dato.id }}">
+                                                <i class="fa-solid fa-edit fs-12"></i>
+                                            </button>
+                                            {% csrf_token %}
+                                            <button type="button" class="btn btn-floating btn-danger" data-mdb-ripple-init data-mdb-modal-init
+                                                data-mdb-target="#eliminar_modal_{{ dato.id }}">
+                                                <i class="fa-solid fa-trash fs-12"></i>
+                                            </button>
+                                            </form>
+                                        </div>
+                                    </td>
+                                </tr>
+
+                                <!-- Edit Banner Modal -->
+                                <div class="modal fade" id="editBannerModal{{ dato.id }}" tabindex="-1" aria-labelledby="editBannerModalLabel{{ dato.id }}"
+                                    aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="editBannerModalLabel{{ dato.id }}">Editar dato</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <form method="POST" enctype="multipart/form-data" data-submit-form>
+                                                    {% csrf_token %}
+                                                    <div class="mb-3">
+                                                        <label for="editTitulo{{ dato.id }}" class="form-label">Título</label>
+                                                        <input type="text" class="form-control" id="editTitulo{{ dato.id }}" name="titulo"
+                                                            value="{{ dato.titulo }}" required autocomplete="off" autocapitalize="off">
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label for="editDescripcion{{ dato.id }}" class="form-label">Descripción</label>
+                                                        <input type="text" class="form-control" id="editDescripcion{{ dato.id }}" name="descripcion"
+                                                            value="{{ dato.descripcion }}" required autocomplete="off" autocapitalize="off">
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label for="editArticulo{{ dato.id }}" class="form-label">Redirigir a
+                                                            :</label>
+                                                        <input type="text" class="form-control" id="editArticulo{{ dato.id }}" name="articulo"
+                                                            value="{{ dato.articulo }}"" autocomplete=" off" autocapitalize="off"">
+                                                    </div>
+                                                    <div class=" mb-3">
+                                                        <label for="editImagen{{ dato.id }}" class="form-label">Imagen</label>
+                                                        <input type="file" class="form-control" id="editImagen{{ dato.id }}" name="imagen">
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label for="editExpiracion{{ dato.id }}" class="form-label">Expiración</label>
+                                                        <input type="datetime-local" class="form-control" id="editExpiracion{{ dato.id }}" name="expiracion"
+                                                            value="{{ dato.expiracion|date:'Y-m-d\\TH:i' }}">
+                                                    </div>
+                                                    <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="modal fade " id="eliminar_modal_{{ dato.id }}" tabindex="-1" aria-labelledby="labelModal0{{ dato.id }}"
+                                    aria-hidden="true">
+                                    <div class="modal-dialog modal-dialog-centered">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="labelModal0{{ dato.id }}">
+                                                    Eliminar dato</h5>
+                                                <button type="button" class="btn-close" data-mdb-ripple-init data-mdb-dismiss="modal"
+                                                    aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <h3 class="text-center mb-2">Quieres eliminar el dato <u>{{ dato.titulo }}</u>?
+                                                </h3>
+                                                <h6 class="text-center">"{{ dato.id }} - {{ dato.titulo }}"</h6>
+                                                <p class="text-center">Se eliminara toda la informacion relacionada <br> Esta acción es permanente</p>
+                                                <hr class="my-4">
+                                                <form id="eliminarBannerForm-{{ dato.id }}" method="post"
+                                                    data-submit-form>
+                                                    {% csrf_token %}
+                                                    <div class="d-flex justify-content-between">
+                                                        <button type="button" class="btn btn_detail" data-mdb-ripple-init
+                                                            data-mdb-dismiss="modal">Cancelar</button>
+                                                        <button type="submit" class="btn btn-danger">Eliminar</button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <div class="text-center mt-5 mb-4">
+                        <p class="lead">No hay Datos disponibles en este momento 😯.</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </section>
+    </div>
+</main>
+{% endblock %}

@@ -14,6 +14,7 @@ import json
 
 databaseall = models.Database.objects.all()
 mapaall = models.Mapa.objects.all()
+categoriasall = models.Categorias.objects.all()
 
 def index(request):
     if not request.user.is_staff:
@@ -202,7 +203,6 @@ def vista_admin(request):
 def vista_programador(request):
     blogs_all = models.Articulos.objects.all()
     banners_all = models.Banners.objects.all()
-    categorias_all = models.Categorias.objects.all()
     users = User.objects.all().order_by('-id')
     contexto = {
         'user': request.user,
@@ -213,7 +213,7 @@ def vista_programador(request):
         'num_blogs': blogs_all.count(),
         'num_preguntas': databaseall.count(),
         'active_page': 'home',
-        'categorias': categorias_all,
+        'categorias': categoriasall,
         'pages': functions.pages
     }
     
@@ -339,6 +339,34 @@ def delete_banner(request, banner_id):
         return JsonResponse({'success': True, 'functions': 'reload', 'message': 'Banner eliminado exitosamente.', 'icon': icon}, status=200)
     return JsonResponse({'success': False, 'message': 'Acción no permitida.'}, status=403)
 
+# Base de Datos ----------------------------------------------------------
+@login_required
+@never_cache
+def database_page(request):
+    datos_modificados = []
+
+    for dato in databaseall:        
+        if dato.imagenes:
+            imagen_url = dato.imagenes.url.replace("/cross_asistent", "")
+        else:
+            imagen_url = ''
+        if dato.documentos:
+            documento_url = dato.documentos.url.replace("/cross_asistent", "")
+        else:
+            documento_url = ''
+        datos_modificados.append({
+            'categoria': dato.categoria,
+            'titulo': dato.titulo,
+            'informacion': dato.informacion,
+            'redirigir': dato.redirigir,
+            'frecuencia': dato.frecuencia,
+            'documento': documento_url,
+            'imagen': imagen_url,
+            'modificacion': dato.fecha_modificacion,
+        })
+    context = { 'database': datos_modificados, 'active_page': 'database','pages': functions.pages, 'categorias': categoriasall }
+    return render(request, 'admin/database.html', context)
+    
 # Blogs ----------------------------------------------------------
 @login_required
 @never_cache
