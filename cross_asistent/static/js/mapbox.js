@@ -116,6 +116,125 @@ fetch(url)
                     data: geojsonEdificios,
                 });
             }
+           // Función para crear los edificios y configurar capas
+function createBuildings(data) {
+    const geojsonEdificios = {
+        type: "FeatureCollection",
+        features: data.map((item) => ({
+            type: "Feature",
+            properties: {
+                color: item.color,
+                imagen_url: item.imagen_url,
+                nombre: item.nombre,
+                informacion: item.informacion,
+                door: item.door_coords,
+                hasStairs: item.hasStairs // Nuevo campo para indicar si tiene escaleras
+            },
+            geometry: {
+                type: "Polygon",
+                coordinates: [
+                    [item.polygons[0], item.polygons[1], item.polygons[2], item.polygons[3], item.polygons[0]],
+                ],
+            },
+        })),
+    };
+
+    // Agregar fuente de datos para edificios
+    if (!map.getSource("places")) {
+        map.addSource("places", {
+            type: "geojson",
+            data: geojsonEdificios,
+        });
+    }
+
+    // Capa para mostrar las escaleras
+    if (!map.getLayer("stairs")) {
+        map.addLayer({
+            id: "stairs",
+            type: "symbol",
+            source: "places",
+            filter: ["==", ["get", "hasStairs"], true], // Mostrar solo edificios con escaleras
+            layout: {
+                "icon-image": "stairs-icon", // Imagen del ícono de escaleras
+                "icon-size": 0.5,
+                "icon-allow-overlap": true,
+            },
+            paint: {
+                "icon-color": "yellow", // Color del ícono de escaleras
+            },
+        });
+    }
+
+    // Resto de capas y configuraciones de estilo aquí...
+}
+
+// Función para calcular la ruta y mostrar información
+function calculateRoute(origin, destination) {
+    const directions = new MapboxDirections({
+        accessToken: mapboxgl.accessToken,
+        unit: "metric",
+        profile: "mapbox/walking",
+        controls: {
+            inputs: false,
+            instructions: false,
+            profileSwitcher: false,
+        },
+        alternatives: true,
+        interactive: false,
+    });
+
+    // Establecer origen y destino para calcular la ruta
+    directions.setOrigin(origin);
+    directions.setDestination(destination);
+
+    // Evento al calcular la ruta
+    directions.on("route", (e) => {
+        const distance = e.route[0].distance / 1000; // Distancia en kilómetros
+        const duration = e.route[0].duration / 60; // Duración en minutos
+        const hasStairs = checkForStairsAlongRoute(e.route[0]); // Verificar si hay escaleras en la ruta
+
+        // Mostrar información de la ruta en el HTML
+        routeInfo.innerHTML = `
+            <div class="row mb-2">
+                <div class="col-1"><i class="fa-solid fa-shoe-prints me-1"></i></div>
+                <div class="col">Distancia: <strong>${distance.toFixed(2)} km</strong></div>
+            </div>
+            <div class="row">
+                <div class="col-1"><i class="fa-solid fa-hourglass-half me-1"></i></div>
+                <div class="col">Duración: <strong>${duration.toFixed(2)} minutos aprox.</strong></div>
+            </div>`;
+
+        // Cambiar color del icono de ruta según la presencia de escaleras
+        const routeIcon = document.querySelector(".mapboxgl-ctrl-route .fa-solid");
+        if (hasStairs) {
+            routeIcon.style.color = "yellow";
+        } else {
+            routeIcon.style.color = "";
+        }
+
+        // Mostrar la capa de direcciones en el mapa
+        map.addControl(directions, "top-left");
+    });
+}
+
+// Función para verificar si hay escaleras a lo largo de la ruta
+function checkForStairsAlongRoute(route) {
+    // Implementar lógica para verificar si hay escaleras en la ruta
+    // Retornar true si hay escaleras, false si no las hay
+    return false; // Placeholder, implementar según tus datos y lógica
+}
+
+// Evento cuando se carga el mapa
+map.on("load", function () {
+    // Aquí cargar datos del mapa y configurar capas
+    const url = document.querySelector("#map").getAttribute("data-mapa_edif");
+    fetch(url)
+        .then((response) => response.json())
+        .then((data) => {
+            createBuildings(data); // Crear edificios y configurar capas
+        })
+        .catch((error) => console.error("Error al obtener los datos del mapa:", error));
+});
 
             if (!map.getLayer("places-layer")) {
                 map.addLayer({
