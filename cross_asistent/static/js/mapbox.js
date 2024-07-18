@@ -253,28 +253,30 @@ fetch(url)
         }
 
         function addRouteLayer() {
-            if (map.getSource("directions")) {
-                map.getSource("directions").setData(currentRoute);
-            } else {
-                map.addSource("directions", {
-                    type: "geojson",
-                    data: currentRoute,
-                });
+            if (currentRoute && currentRoute.features && currentRoute.features.length > 0) {
+                if (map.getSource("directions")) {
+                    map.getSource("directions").setData(currentRoute);
+                } else {
+                    map.addSource("directions", {
+                        type: "geojson",
+                        data: currentRoute,
+                    });
 
-                map.addLayer({
-                    id: "directions-route-line",
-                    type: "line",
-                    source: "directions",
-                    layout: {
-                        "line-join": "round",
-                        "line-cap": "round",
-                    },
-                    paint: {
-                        "line-color": "#3b9ddd",
-                        "line-width": 8,
-                    },
-                });
-                map.moveLayer("places-label");
+                    map.addLayer({
+                        id: "directions-route-line",
+                        type: "line",
+                        source: "directions",
+                        layout: {
+                            "line-join": "round",
+                            "line-cap": "round",
+                        },
+                        paint: {
+                            "line-color": "#3b9ddd",
+                            "line-width": 8,
+                        },
+                    });
+                    map.moveLayer("places-label");
+                }
             }
         }
 
@@ -282,15 +284,14 @@ fetch(url)
             createEdificios();
         });
 
-        map.on("style.load", function () {
-            createEdificios();
-            addRouteLayer();
-        });
+        // map.on("style.load", function () {
+        //     createEdificios();
+        //     addRouteLayer();
+        // });
 
         map.on("click", function (e) {
             const lngLat = e.lngLat;
             createMarker(lngLat);
-            // console.log("Nuevo LngLat:", lngLat.lng, lngLat.lat);
         });
 
         // Abrir camvas / informacion del edificio
@@ -334,6 +335,11 @@ fetch(url)
                 }
 
                 map.setStyle("mapbox://styles/mapbox/" + layerId);
+
+                map.on("style.load", function () {
+                    createEdificios();
+                    addRouteLayer();
+                });
             });
         });
 
@@ -406,6 +412,12 @@ fetch(url)
                 "directions-route-line-casing",
                 "directions-hover-point-casing",
                 "directions-hover-point",
+                "directions-waypoint-point-casing",
+                "directions-waypoint-point",
+                "directions-origin-point",
+                "directions-origin-label",
+                "directions-destination-point",
+                "directions-destination-label",
             ];
             routeLayers.forEach((layer) => {
                 if (map.getLayer(layer)) {
