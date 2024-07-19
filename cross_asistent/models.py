@@ -33,6 +33,8 @@ class Banners(models.Model):
 
 class Categorias(models.Model):
     categoria = models.CharField(max_length=50)
+    descripcion = models.TextField(null=True, blank=True)
+    creacion = models.DateTimeField(auto_now=True)
     
     def __str__(self):
         return self.categoria

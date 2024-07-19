@@ -39,7 +39,7 @@
                         </div>
                         <div class="form-outline mb-4" data-mdb-input-init>
                             <i class="fa-solid fa-keyboard trailing"></i>
-                            <textarea class="form-control form-icon-trailing" id="informacion" name="informacion" rows="3" required></textarea>
+                            <textarea class="form-control form-icon-trailing" id="informacion" name="informacion" rows="6" required></textarea>
                             <label for="informacion" class="form-label">Información:</label>
                         </div>
                         <div class="row">
@@ -66,14 +66,33 @@
                         <div class="row">
                             <div class="col d-none d-md-block"></div>
                             <div class="col d-none d-lg-block"></div>
-                            <div class="col">
-                                <button type="button" class="btn btn-secondary btn-block">mas</button>
-                            </div>
+                            <div class="col d-none d-lg-block"></div>
                             <div class="col">
                                 <button type="submit" class="btn btn_detail btn-block">Guardar</button>
                             </div>
 
                         </div>
+                    </form>
+                </div>
+            </section>
+        </section>
+
+        <section class="col-lg-4">
+            <section class="card mb-4">
+                <div class="card-body">
+                    <h3 class="text-center mb-4">Nueva Categoria</h3>
+                    <form method="post" action="{% url 'create_database' %}" data-submit-form id="databaseForm" autocomplete="off">
+                        {% csrf_token %}
+                        <div class="form-outline mb-4" data-mdb-input-init>
+                            <i class="fa-solid fa-layer-group trailing"></i>
+                            <input type="text" id="titulo" name="titulo" class="form-control form-icon-trailing" required />
+                            <label class="form-label" for="titulo">Nombre:</label>
+                        </div>
+                        <div class="form-outline mb-4" data-mdb-input-init>
+                            <textarea class="form-control" id="informacion" name="informacion" rows="4" required></textarea>
+                            <label for="informacion" class="form-label">Descripcion:</label>
+                        </div>
+                        <button type="submit" class="btn btn_detail btn-block">Registrar</button>
                     </form>
                 </div>
             </section>
@@ -88,21 +107,27 @@
                         <table class="table table_odd align-middle m-0">
                             <thead>
                                 <tr>
-                                    <th>Categoria</th>
-                                    <th>Título</th>
-                                    <th>Imagen</th>
-                                    <th>Ultima modificacion</th>
-                                    <th>Acciones</th>
+                                    <th class="fw-bold text_detail">Categoria</th>
+                                    <th class="fw-bold text_detail">Título</th>
+                                    <th class="fw-bold text_detail">Imagen</th>
+                                    <th class="fw-bold text_detail">Documento</th>
+                                    <th class="fw-bold text_detail">Ultima modificacion</th>
+                                    <th class="fw-bold text_detail">Acciones</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {% for dato in database %}
-                                <tr>
+                                <tr class="table_odd_items">
                                     <td>{{ dato.categoria }}</td>
                                     <td>{% autoescape off %}{{ dato.titulo }}{% endautoescape %}</td>
                                     <td>
                                         {% if dato.imagen %}
-                                        <img src="{{ dato.imagen }}" alt="{{ dato.titulo }}" class="img-thumbnail" style="max-width: 100px;">
+                                        <img src="{{ dato.imagen }}" alt="{{ dato.titulo }}" class="img-fluid rounded hover-shadow" style="max-width: 100px;">
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if dato.documento %}
+                                        {{ dato.documento }}
                                         {% endif %}
                                     </td>
                                     <td>{{ dato.modificacion }}</td>
@@ -182,8 +207,7 @@
                                                 <h6 class="text-center">"{{ dato.id }} - {{ dato.titulo }}"</h6>
                                                 <p class="text-center">Se eliminara toda la informacion relacionada <br> Esta acción es permanente</p>
                                                 <hr class="my-4">
-                                                <form id="eliminarBannerForm-{{ dato.id }}" method="post"
-                                                    data-submit-form>
+                                                <form id="eliminarBannerForm-{{ dato.id }}" method="post" data-submit-form>
                                                     {% csrf_token %}
                                                     <div class="d-flex justify-content-between">
                                                         <button type="button" class="btn btn_detail" data-mdb-ripple-init

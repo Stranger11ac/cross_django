@@ -249,6 +249,7 @@ fetch(url)
                     });
 
                     map.addControl(directions, "top-left");
+                    map.moveLayer("places-label");
                 }
             } else {
                 alertSToast("center", 5000, "warning", "Por favor, selecciona tanto origen como destino.");

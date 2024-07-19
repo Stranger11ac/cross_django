@@ -45,7 +45,7 @@ $(document).ready(function () {
         $(".controls_btn_microphone").click(() => {
             $(".asistent_group").addClass("open open_controls bg-body-tertiary");
             $(".btn_controls").addClass("btn_detail").removeClass("btn_secondary");
-            $("#btn_controls_icon").removeClass("fa-comment").addClass("fa-microphone");
+            $("#btn_controls_icon").removeClass("fa-comment text_detail").addClass("fa-microphone");
         });
 
         $(".toggle_controls").click(() => {
@@ -63,7 +63,7 @@ $(document).ready(function () {
         $(".controls_btn_close").click(() => {
             $(".asistent_group").removeClass("open open_controls close_controls open_keyboard bg-body-tertiary");
             $(".btn_controls").removeClass("btn_detail").addClass("btn_secondary");
-            $("#btn_controls_icon").addClass("fa-comment").removeClass("fa-microphone");
+            $("#btn_controls_icon").addClass("fa-comment text_detail").removeClass("fa-microphone");
         });
 
         // Vista de Programador
@@ -254,18 +254,8 @@ $(document).ready(function () {
             $('[id^="notif_"]').each(function () {
                 notificationIds.push($(this).attr("id"));
             });
-            // Convertir el array a cadena JSON y guardar en localStorage
+            // guardar JSON
             localStorage.setItem("notificationIds", JSON.stringify(notificationIds));
-        });
-
-        // Cargar las IDs desde localStorage
-        var storedIds = JSON.parse(localStorage.getItem("notificationIds")) || [];
-        // Recorrer las IDs cargadas y aplicar la clase 'secondary'
-        storedIds.forEach(function (id) {
-            $("#" + id).removeClass(
-                "list-group-item-warning list-group-item-info list-group-item-success list-group-item-danger list-group-item-primary"
-            );
-            $("#" + id).addClass("list-group-item-secondary");
         });
 
         // Manejar el evento change de los checkboxes
@@ -303,16 +293,27 @@ $(document).ready(function () {
         });
 
         // Cambiar colores de la Interfaz
-        $("[data-change]").on("click", function () {
-            var color = $(this).data("color");
+        $("[data-change-color]").on("click", function () {
+            $("[data-change-color]").each(function (index, item) {
+                $(item).removeClass("active");
+            });
+            var color = $(this).addClass("active").data("change-color");
             $("body").attr("data-color_prefer", color);
             localStorage.setItem("data-color_prefer", color);
         });
 
-        const colorPrefer = localStorage.getItem("data-color_prefer");
-        if (colorPrefer) {
-            $("body").attr("data-color_prefer", colorPrefer);
-        }
+        // Cambiar tema
+        $("#switchTheme").on("click", function () {
+            if ($("#switchTheme").is(":checked")) {
+                $("#switchText").text("Claro");
+                $("body").attr("data-mdb-theme", "light");
+                localStorage.setItem("data-mdb-theme", "light");
+            } else {
+                $("#switchText").text("Oscuro");
+                $("body").attr("data-mdb-theme", "dark");
+                localStorage.setItem("data-mdb-theme", "dark");
+            }
+        });
 
         // ####################################################
         // ####################################################
@@ -377,7 +378,7 @@ function jsonSubmit(e) {
                 if (data.icon) {
                     dataIcon = data.icon;
                 }
-                
+
                 dataPosition = "center";
                 if (data.position) {
                     dataPosition = data.position;
@@ -430,7 +431,7 @@ function chatSubmit(e) {
 
     const htmlBlock = `
         <div class="output_block">
-            <div class="btn_secondary chat_msg user_submit" data-tokeid="${valID}">
+            <div class="btn_detail chat_msg user_submit" data-tokeid="${valID}">
                 ${pregunta}
             </div>
         </div>`;
@@ -473,14 +474,14 @@ function chatSubmit(e) {
                 let btnRedir = "";
 
                 if (dataImage != null) {
-                    viewImage = `<br><br> <img src="${dataImage}" width="350">`;
+                    viewImage = `<br><br> <img src="${dataImage}" class="img-fluid rounded" width="350">`;
                 }
 
                 if (dataRedirigir != null) {
-                    btnRedir = `<br><br> <a class="btn btn_secondary mb-2" style="min-width:300px;" target="_blank" rel="noopener noreferrer" href="${dataRedirigir}" >Ver Mas <i class="fa-solid fa-arrow-up-right-from-square ms-1"></i></a>`;
+                    btnRedir = `<br><br> <a class="btn btn_detail mb-2" style="min-width:300px;" target="_blank" rel="noopener noreferrer" href="${dataRedirigir}" >Ver Mas <i class="fa-solid fa-arrow-up-right-from-square ms-1"></i></a>`;
                 }
                 const htmlBlock = `
-                <div class="btn_detail chat_msg asistent_response" data-tokeid="${valID}">
+                <div class="chat_msg asistent_response" data-tokeid="${valID}">
                     <span>${data.answer.informacion}  ${btnRedir} </span>
                     <span>${viewImage} </span>
                 </div>

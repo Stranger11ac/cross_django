@@ -9,32 +9,17 @@
     font-family: inherit;
 }
 
-[data-color_prefer="blue"] {
-    --var-detail: #3b71ca;
-    --blue_img-filter: hue-rotate(60deg) saturate(120%);
-}
-
-[data-color_prefer="purple"] {
-    --var-detail: #723bca;
-    --blue_img-filter: hue-rotate(120deg) saturate(120%);
-}
-
-[data-color_prefer="green"] {
-    --var-detail: #02913c;
-    --blue_img-filter: hue-rotate(0);
-}
-
 :root {
     /* colors */
-    --var-white: #ffffff;
+    --var-white: #fff;
+    --var-bg-white: #fff;
     --var-secondary: #c2c2c2;
-    --var-dark: #292f38;
-    --var-dark_second: #2f333a;
-    --var-detail: #3b71ca;
-    --var-extra: #02913c;
-    --var-detail-2: #0f2755e6;
-    --blue_img-filter: hue-rotate(60deg) saturate(120%);
-    --original_img-filter: saturate(90%);
+    --img-filter: hue-rotate(60deg) saturate(120%);
+
+    --gradient_blue: linear-gradient(135deg, #3b71ca, #0f2755);
+    --gradient_green: linear-gradient(135deg, #02913c, #04422f);
+    --gradient_purple: linear-gradient(135deg, #723bca, #2a085a);
+    --gradient_orange: linear-gradient(135deg, #d29c15, #dc4817);
 
     /* Color white transparent-> "alpha chanel" */
     /* Colorxd */
@@ -75,57 +60,59 @@
     --full_page: calc(100vh - var(--nav_height));
 }
 
-/*######### Generales #########*/
+[data-color_prefer="blue"] {
+    accent-color: #3b71ca;
+    --var-detail: #3b71ca;
+}
+
+[data-color_prefer="purple"] {
+    accent-color: #723bca;
+    --var-detail: #723bca;
+    --img-filter: hue-rotate(120deg) saturate(120%);
+}
+
+[data-color_prefer="green"] {
+    accent-color: green;
+    --var-detail: #02913c;
+    --img-filter: hue-rotate(0) saturate(130%);
+}
+
+[data-color_prefer="gradient_blue"] {
+    accent-color: #3b71ca;
+    --var-detail: var(--gradient_blue);
+}
+
+[data-color_prefer="gradient_green"] {
+    accent-color: #3b71ca;
+    --var-detail: var(--gradient_green);
+    --img-filter: hue-rotate(0) saturate(130%);
+}
+
+[data-color_prefer="gradient_purple"] {
+    accent-color: #3b71ca;
+    --var-detail: var(--gradient_purple);
+    --img-filter: hue-rotate(120deg) saturate(120%);
+}
+
+[data-color_prefer="gradient_orange"] {
+    accent-color: #3b71ca;
+    --var-detail: var(--gradient_orange);
+    --img-filter: hue-rotate(-100deg) saturate(120%);
+}
+
+
+[data-mdb-theme="dark"][data-color_prefer="gradient_blue"] .text_detail,
+[data-mdb-theme="dark"][data-color_prefer="gradient_green"] .text_detail,
+[data-mdb-theme="dark"][data-color_prefer="gradient_purple"] .text_detail {
+    text-shadow: 0 0 3px var(--darkA1);
+}
+
+/*########################### Generales ###########################*/
 html {
     overflow-x: hidden;
     /* scrollbar-gutter: stable; */
 }
 
-/*######### detail de color #########*/
-.btn_detail {
-    background-color: var(--var-detail) !important;
-    background: var(--var-detail) !important;
-    color: var(--var-white) !important;
-    filter: none;
-    transition: all 0.3s ease;
-}
-
-.btn_secondary {
-    filter: unset;
-    box-shadow: unset;
-    transition: filter 0.3s ease;
-}
-
-.btn_detail:hover {
-    filter: brightness(110%);
-}
-
-.btn_secondary:hover {
-    box-shadow: none !important;
-}
-
-.btn_genpass {
-    transition: transform 0.5s var(--transitionCubicVal);
-}
-
-.btn_genpass:hover {
-    transform: scale(0.9);
-}
-
-.btn_genpass.active {
-    transform: rotate(180deg);
-}
-
-.btn {
-    text-transform: capitalize !important;
-    transition: transform 0.1s ease;
-}
-
-.btn:active {
-    transform: scale(0.95);
-}
-
-/*######### Generales #########*/
 body {
     min-height: 100vh;
     font-family: var(--ft2);
@@ -164,6 +151,137 @@ i.fa-solid {
     min-width: 10px;
 }
 
+
+/*########################### Position sticky ###########################*/
+.sticky-top-4 {
+    top: 1.5rem;
+}
+
+@media (min-width: 768px) {
+    .sticky-md {
+        position: sticky;
+    }
+}
+
+/*########################### Divisor ###########################*/
+.hr_divisor {
+    border: none;
+    height: 5px;
+    border-radius: 5px;
+    background-color: black;
+    background: black;
+}
+
+/*########################### Botones / buttons ###########################*/
+.btn {
+    text-transform: capitalize !important;
+    transition: transform 0.1s ease;
+}
+
+.btn:active {
+    transform: scale(0.95);
+}
+
+.btn_detail {
+    background-color: var(--var-detail) !important;
+    background: var(--var-detail) !important;
+    color: var(--var-white) !important;
+    filter: none;
+    transition: all 0.3s ease;
+}
+
+.btn_secondary {
+    font-weight: bold !important;
+    box-shadow: 0 0 10px 1px var(--darkA2) !important;
+    filter: unset;
+}
+
+.btn_detail:hover {
+    filter: brightness(110%);
+}
+
+.btn_genpass {
+    transition: transform 0.5s var(--transitionCubicVal);
+}
+
+.btn_genpass:hover {
+    transform: scale(0.9);
+}
+
+.btn_genpass.active {
+    transform: rotate(180deg);
+}
+
+.btn_purple,
+.btn_purple:active,
+.btn_purple:hover {
+    background-color: #723bca !important;
+    background: #723bca !important;
+}
+
+.btn_gradient_blue,
+.btn_gradient_blue:active,
+.btn_gradient_blue:hover {
+    background-color: var(--gradient_blue) !important;
+    background: var(--gradient_blue) !important;
+}
+
+.btn_gradient_green,
+.btn_gradient_green:active,
+.btn_gradient_green:hover {
+    background-color: var(--gradient_green) !important;
+    background: var(--gradient_green) !important;
+}
+
+.btn_gradient_purple,
+.btn_gradient_purple:active,
+.btn_gradient_purple:hover {
+    background-color: var(--gradient_purple) !important;
+    background: var(--gradient_purple) !important;
+}
+
+.btn_gradient_orange,
+.btn_gradient_orange:active,
+.btn_gradient_orange:hover {
+    background-color: var(--gradient_orange) !important;
+    background: var(--gradient_orange) !important;
+}
+
+
+.bg_teal {
+    background: #00695C;
+}
+
+.btn.active {
+    box-shadow: 0 0 10px var(--darkA6);
+    border: 5px solid white !important;
+}
+
+@media (min-width: 992px) {
+    .btn_lg-circle {
+        --mdb-btn-width: 2.3125rem;
+        --mdb-btn-height: 2.3125rem;
+        --mdb-btn-icon-width: 2.3125rem;
+        --mdb-btn-icon-line-height: 2.3125rem;
+        --mdb-btn-width-lg: 2.8125rem;
+        --mdb-btn-height-lg: 2.8125rem;
+        --mdb-btn-icon-width-lg: 2.8125rem;
+        --mdb-btn-icon-line-height-lg: 2.8125rem;
+        --mdb-btn-width-sm: 1.8125rem;
+        --mdb-btn-height-sm: 1.8125rem;
+        --mdb-btn-icon-width-sm: 1.8125rem;
+        --mdb-btn-icon-line-height-sm: 1.8125rem;
+        width: var(--mdb-btn-width);
+        height: var(--mdb-btn-height);
+        --mdb-btn-border-radius: 50%;
+        border-radius: var(--mdb-btn-border-radius);
+        padding: 0;
+        position: relative;
+        display: flex;
+        align-content: center;
+    }
+}
+
 /*########################## Navbar ##########################*/
 nav {
     height: var(--nav_height);
@@ -172,7 +290,7 @@ nav {
 
 nav .navbar-brand img {
     height: 45px;
-    filter: var(--blue_img-filter);
+    filter: var(--img-filter);
 }
 
 nav .navbar-toggler {
@@ -301,7 +419,9 @@ nav .navbar-collapse {
 .text_detail,
 .carousel-item em,
 .slide-inner .header-text h2 em {
-    color: var(--var-detail);
+    background: var(--var-detail);
+    background-clip: text;
+    color: transparent;
 }
 
 .slide-inner .buttons {
@@ -335,15 +455,6 @@ nav .navbar-collapse {
     .slide-inner .header-text p {
         display: block;
     }
-}
-
-/* hr divisor */
-.hr_divisor {
-    border: none;
-    height: 5px;
-    border-radius: 5px;
-    background-color: black;
-    background: black;
 }
 
 
@@ -434,7 +545,7 @@ main.main_anchor {
 }
 
 .box_asistent_controls .controls_buttons .btn_controls.controls_btn_microphone {
-    box-shadow: 0 0 5px var(--var-dark);
+    box-shadow: 0 0 5px var(--darkA2);
     transform: scale(1.3);
 }
 
@@ -644,7 +755,7 @@ main.main_anchor {
     }
 }
 
-/*###################### Mask ######################*/
+/*########################### Mascara / mask ###########################*/
 .mask_dark {
     background: linear-gradient(to bottom, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.5) 70%);
 }
@@ -653,6 +764,8 @@ main.main_anchor {
     background: linear-gradient(to top, rgb(255, 255, 255) 40px, rgba(0, 0, 0, 0.4) 30%, transparent 60%);
 }
 
+
+/*########################### Carrusel MDB ###########################*/
 .carousel_container {
     min-height: 210px;
 }
@@ -678,15 +791,7 @@ main.main_anchor {
     padding: 10px !important;
 }
 
-path.leaflet-interactive {
-    stroke-width: 0;
-}
-
-.offcanvas-body #offcanvasImg {
-    border: none;
-    border-radius: var(--border-radius) !important;
-}
-
+/*########################### Tarjetas / cards MDB ###########################*/
 .card {
     box-shadow: 0 0 8px var(--darkA2) !important;
 }
@@ -695,13 +800,73 @@ path.leaflet-interactive {
     min-height: 230px !important;
 }
 
-.leaflet-control-zoom.leaflet-bar.leaflet-control {
-    border: none;
-    border-radius: var(--border-radius) !important;
+/* style de cards de perfil */
+.card_perfil {
+    --size_box: 150px;
+    position: relative;
+    width: 100%;
+    max-width: 540px;
+    margin: auto;
+    box-shadow: 0 0px 8px var(--darkA5);
     overflow: hidden;
-    box-shadow: 0 0 5px var(--darkA5);
 }
 
+.card__img_perfil {
+    height: 120px;
+    width: 100%;
+    position: relative;
+    background: linear-gradient(45deg, var(--color-bg1), var(--color-bg2));
+}
+
+.card__avatar_perfil {
+    position: absolute;
+    width: var(--size_box);
+    height: var(--size_box);
+    display: grid;
+    place-content: center;
+    bottom: calc(var(--size_box)/-2);
+    left: 50%;
+    border-radius: 100%;
+    border: 8px solid var(--mdb-card-bg);
+    transform: translateX(-50%);
+    overflow: hidden;
+}
+
+.card__avatar_perfil::before {
+    content: '';
+    height: auto;
+    min-height: 100%;
+    width: 100%;
+    background-color: var(--var-detail);
+    background: var(--var-img-perfil) center no-repeat;
+    background-size: auto 100%;
+    filter: blur(2px);
+    position: absolute;
+}
+
+.card__avatar_perfil img {
+    width: inherit;
+    height: auto;
+    padding: 0 6px;
+    box-shadow: 0 0 5px var(--darkA4);
+    position: relative;
+    user-select: none;
+}
+
+.card__content_perfil {
+    padding: 20px;
+    margin-top: calc(var(--size_box)/2);
+    text-align: center;
+}
+
+.flex-between-wrap {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+}
+
+
+/*########################### Tabla MDB ###########################*/
 .table-responsive {
     scroll-behavior: smooth;
 }
@@ -715,7 +880,7 @@ path.leaflet-interactive {
     height: 80px;
 }
 
-.table_odd .table_odd_items td .btn i:where(.fa-solid, .fa-regular) {
+.table_odd .table_odd_items.table_users td .btn i:where(.fa-solid, .fa-regular) {
     transform: scale(1.4) translateX(1px);
 }
 
@@ -724,38 +889,38 @@ path.leaflet-interactive {
 } */
 
 .table_odd .table_odd_items:hover {
-    --mdb-table-bg: var(--var-detail);
-    --mdb-table-color: #fff;
-    color: var(--mdb-table-color);
+    --mdb-table-bg: var(--var-detail) !important;
+    --mdb-table-color: --var-white !important;
+    background: var(--var-detail) !important;
+    color: var(--var-white) !important;
 }
 
-.btn_purple,
-.btn_purple:active,
-.btn_purple:hover {
-    background-color: #723bca !important;
-    background: #723bca !important;
-}
 
-.bg_teal {
-    background: #00695C;
-}
-
+/*########################### Modal MDB ###########################*/
 .modal,
 body.modal-open {
     padding: 0 !important;
     padding-right: 0 !important;
 }
 
-.leaflet-top.leaflet-right {
-    display: none !important;
+.modal.fade .modal-dialog {
+    transition: transform 0.2s ease-out, -webkit-transform 0.2s ease-out !important;
 }
 
+.modal.fade.show .modal-dialog {
+    transition: transform 0.2s ease-out, -webkit-transform 0.2s ease-out !important;
+}
+
+
+/*########################### Imagen TinyMCE ###########################*/
 img.img-tiny {
     max-width: 100%;
     border-radius: var(--border-radius);
     margin-block: 0.25rem;
 }
 
+
+/*########################### Formulario / forms ###########################*/
 .form_group-btn {
     position: relative;
 }
@@ -771,7 +936,66 @@ img.img-tiny {
     min-height: 200px;
 }
 
-/* Mapbox */
+/* Checkbox MDB */
+.form-check-input[type=checkbox]:checked {
+    background-image: none;
+    background-color: var(--var-detail) !important;
+}
+
+.form-check-input:checked {
+    border-color: var(--var-detail) !important;
+}
+
+/* SWITCH */
+.switch {
+    --var-height: 40px;
+    position: relative;
+    display: inline-block;
+    width: 70px;
+    height: var(--var-height);
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    --background: #28096b;
+    position: absolute;
+    cursor: pointer;
+    inset: 0;
+    background-color: var(--background);
+    border-radius: var(--var-height);
+    transition: .5s ease;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: calc(var(--var-height) - 15px);
+    width: calc(var(--var-height) - 15px);
+    border-radius: 50%;
+    top: 50%;
+    left: 10px;
+    transform: translateY(-50%);
+    box-shadow: inset 8px -4px 0px 0px #fff000;
+    background: var(--background);
+    transition: .5s ease;
+}
+
+input:checked+.slider {
+    background-color: #12abd1;
+}
+
+input:checked+.slider:before {
+    transform: translateX(100%) translateY(-50%);
+    box-shadow: inset 15px -4px 0px 15px #fff000;
+}
+
+
+/*########################### Mapa - MapBox ###########################*/
 .mapboxgl-canvas-container.mapboxgl-interactive,
 .mapboxgl-ctrl-group button.mapboxgl-ctrl-compass {
     cursor: unset !important;
@@ -816,6 +1040,12 @@ img.img-tiny {
     z-index: 1;
 }
 
+/* offcanvas / panel lateral */
+.offcanvas-body #offcanvasImg {
+    border: none;
+    border-radius: var(--border-radius) !important;
+}
+
 .offcanvas.offcanvas-bottom {
     height: fit-content;
 }
@@ -832,127 +1062,6 @@ img.img-tiny {
 .offcanvas-backdrop.fade,
 .offcanvas-backdrop.show {
     opacity: unset !important;
-}
-
-main#map {
-    cursor: pointer !important;
-}
-
-main#map:active {
-    cursor: move !important;
-}
-
-/* Modal MBD */
-/* Cambia la duración de la animación del modal */
-.modal.fade .modal-dialog {
-    transition: transform 0.2s ease-out, -webkit-transform 0.2s ease-out !important;
-}
-
-.modal.fade.show .modal-dialog {
-    transition: transform 0.2s ease-out, -webkit-transform 0.2s ease-out !important;
-}
-
-
-.sticky-top-4 {
-    top: 1.5rem;
-}
-
-
-/* style de cards de perfil */
-.card_perfil {
-    --size_box: 150px;
-    position: relative;
-    width: 100%;
-    max-width: 540px;
-    margin: auto;
-    box-shadow: 0 0px 8px var(--darkA5);
-    overflow: hidden;
-}
-
-.card__img_perfil {
-    height: 120px;
-    width: 100%;
-    position: relative;
-    background: linear-gradient(45deg, var(--color-bg1), var(--color-bg2));
-}
-
-.card__avatar_perfil {
-    position: absolute;
-    width: var(--size_box);
-    height: var(--size_box);
-    display: grid;
-    place-content: center;
-    bottom: calc(var(--size_box)/-2);
-    left: 50%;
-    border-radius: 100%;
-    border: 8px solid var(--var-white);
-    transform: translateX(-50%);
-    overflow: hidden;
-}
-
-.card__avatar_perfil::before {
-    content: '';
-    height: auto;
-    min-height: 100%;
-    width: 100%;
-    background-color: var(--var-detail);
-    background: var(--var-img-perfil) center no-repeat;
-    background-size: auto 100%;
-    filter: blur(2px);
-    position: absolute;
-}
-
-.card__avatar_perfil img {
-    width: inherit;
-    height: auto;
-    padding: 0 6px;
-    box-shadow: 0 0 5px var(--darkA4);
-    position: relative;
-    user-select: none;
-}
-
-.card__content_perfil {
-    padding: 20px;
-    margin-top: calc(var(--size_box)/2);
-    text-align: center;
-}
-
-.flex-between-wrap {
-    display: flex;
-    justify-content: space-between;
-    flex-wrap: wrap;
-}
-
-/*#################### Template Buttons ####################*/
-@media (min-width: 768px) {
-    .sticky-md {
-        position: sticky;
-    }
-}
-
-@media (min-width: 992px) {
-    .btn_lg-circle {
-        --mdb-btn-width: 2.3125rem;
-        --mdb-btn-height: 2.3125rem;
-        --mdb-btn-icon-width: 2.3125rem;
-        --mdb-btn-icon-line-height: 2.3125rem;
-        --mdb-btn-width-lg: 2.8125rem;
-        --mdb-btn-height-lg: 2.8125rem;
-        --mdb-btn-icon-width-lg: 2.8125rem;
-        --mdb-btn-icon-line-height-lg: 2.8125rem;
-        --mdb-btn-width-sm: 1.8125rem;
-        --mdb-btn-height-sm: 1.8125rem;
-        --mdb-btn-icon-width-sm: 1.8125rem;
-        --mdb-btn-icon-line-height-sm: 1.8125rem;
-        width: var(--mdb-btn-width);
-        height: var(--mdb-btn-height);
-        --mdb-btn-border-radius: 50%;
-        border-radius: var(--mdb-btn-border-radius);
-        padding: 0;
-        position: relative;
-        display: flex;
-        align-content: center;
-    }
 }
 
 /*################ Alerts customClass Sweetalert ################*/
@@ -992,6 +1101,7 @@ main#map:active {
     border: none;
     border-radius: 0 5px 5px 0;
     opacity: 0.8;
+    background: var(--var-detail) !important;
 }
 
 .close_button_alert {
@@ -1005,6 +1115,8 @@ main#map:active {
     transition: all 0.3s ease !important;
 }
 
+
+/*########################### Clases Genericas ###########################*/
 .none {
     display: none;
 }
@@ -1186,7 +1298,7 @@ main#map:active {
     gap: 65px !important;
 }
 
-/* tamaño */
+/* tamaño de fuente */
 .fs-5 {
     font-size: 0.5rem !important;
 }
@@ -1284,6 +1396,8 @@ main#map:active {
     animation-name: fadeInLeft
 }
 
+
+/*########################### Animaciones ###########################*/
 @-webkit-keyframes fadeInLeft {
     0% {
         -webkit-transform: translate3d(-100%, 0, 0);

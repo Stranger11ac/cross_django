@@ -117,7 +117,7 @@
                 </div>
                 <!-- database -->
                 <div class="mb-4">
-                    <a href="#" class="card">
+                    <a href="{% url 'database_page' %}" class="card">
                         <div class="card-body p-3">
                             <h6 class="card-title d-flex justify-content-between align-items-center m-0">
                                 <!-- titulo y total -->
@@ -138,7 +138,7 @@
         <div class="mb-4">
             <div class="card">
                 <div class="card-body">
-                    <h3 class="text-center mb-4">Nuevo Registro</h3>
+                    <h3 class="text-center mb-4"><span class="text_detail">Nuevo</span> Registro</h3>
                     <form method="post" action="{% url 'create_database' %}" data-submit-form id="databaseForm" autocomplete="off">
                         {% csrf_token %}
                         <div class="row pt-2">
@@ -190,12 +190,12 @@
                             <div class="col d-none d-md-block"></div>
                             <div class="col d-none d-lg-block"></div>
                             <div class="col">
-                                <button type="button" class="btn btn-secondary btn-block">mas</button>
+                                <a href="{% url 'database_page' %}" class="btn btn-secondary btn-block">más</a>
                             </div>
                             <div class="col">
                                 <button type="submit" class="btn btn_detail btn-block">Guardar</button>
                             </div>
-                            
+
                         </div>
                     </form>
                 </div>
@@ -282,17 +282,17 @@
                     <table class="table table_odd align-middle m-0">
                         <thead>
                             <tr>
-                                <th>#</th>
-                                <th>Usuario</th>
-                                <th>Nombre</th>
-                                <th>Apellido</th>
-                                <th>Email</th>
-                                <th>Acciones</th>
+                                <th class="fw-bold text_detail">#</th>
+                                <th class="fw-bold text_detail">Usuario</th>
+                                <th class="fw-bold text_detail">Nombre</th>
+                                <th class="fw-bold text_detail">Apellido</th>
+                                <th class="fw-bold text_detail">Email</th>
+                                <th class="fw-bold text_detail">Acciones</th>
                             </tr>
                         </thead>
                         <tbody>
                             {% for oneuser in users %}
-                            <tr class="results_item table_odd_items">
+                            <tr class="results_item table_odd_items table_users">
                                 <td class="{% if not oneuser.is_active %}text-danger{% elif oneuser.is_staff %}text-warning{% endif %}">
                                     <strong>{{ oneuser.id }}</strong>
                                 </td>

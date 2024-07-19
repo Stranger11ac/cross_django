@@ -1,6 +1,6 @@
 {% load static %}
 <!DOCTYPE html>
-<html lang="en" data-mdb-theme="light">
+<html lang="es">
 
 <head>
     <meta charset="UTF-8" />
@@ -8,6 +8,8 @@
     <link rel="icon" href="{% static 'img/UTC_icono.ico' %}" />
     <title>{% block title %}TITULO{% endblock %} | Asistente UTC</title>
     <link rel="preload" href="{% static 'css/mdb_fontawesome.min.css' %}" as="style" />
+    <link rel="preload" href="{% static 'js/libraries.min.js' %}" as="script" />
+    <link rel="preload" href="{% static 'js/config.js' %}" as="script" />
 
     {% block extra_head %}{% endblock %}
 
@@ -15,7 +17,7 @@
     <link rel="stylesheet" href="{% static 'css/styles.css' %}" />
 </head>
 
-<body data-mdb-theme="light" data-color_prefer="blue">
+<body data-mdb-theme data-color_prefer>
     <nav class="navbar navbar-expand-lg navbar-light bg-body-tertiary">
         <div class="container container-fluid">
             <a class="navbar-brand" href="{% block link_home %}/{% endblock %}">
@@ -82,59 +84,7 @@
         </div>
     </nav>
     {% block content %}{% endblock %}
-<style>
-    /* The switch - the box around the slider */
-.switch {
-  font-size: 17px;
-  position: relative;
-  display: inline-block;
-  width: 3.5em;
-  height: 2em;
-}
 
-/* Hide default HTML checkbox */
-.switch input {
-  opacity: 0;
-  width: 0;
-  height: 0;
-}
-
-/* The slider */
-.slider {
-  --background: #28096b;
-  position: absolute;
-  cursor: pointer;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: var(--background);
-  transition: .5s;
-  border-radius: 30px;
-}
-
-.slider:before {
-  position: absolute;
-  content: "";
-  height: 1.4em;
-  width: 1.4em;
-  border-radius: 50%;
-  left: 10%;
-  bottom: 15%;
-  box-shadow: inset 8px -4px 0px 0px #fff000;
-  background: var(--background);
-  transition: .5s;
-}
-
-input:checked + .slider {
-  background-color: #522ba7;
-}
-
-input:checked + .slider:before {
-  transform: translateX(100%);
-  box-shadow: inset 15px -4px 0px 15px #fff000;
-}
-</style>
     <!-- Configuraciones -->
     <div class="modal fade" id="configModal" tabindex="-1" aria-labelledby="configModalLabel" aria-hidden="true" data-mdb-backdrop="static"
         data-mdb-keyboard="false">
@@ -144,28 +94,58 @@ input:checked + .slider:before {
                     <h5 class="modal-title" id="configModalLabel">Configuraciones <i class="fa-solid fa-gear ms-1"></i></h5>
                     <button type="button" class="btn-close" data-mdb-ripple-init data-mdb-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="modal-body">
-                    <section>
-                        <label class="switch">
-                            <input type="checkbox">
-                            <span class="slider"></span>
-                        </label>
-                        <h6 class="text-center mb-4">Color de la Interfaz</h6>
-                        <div class="d-flex justify-content-center gap_20">
-                            <button type="button" class="btn btn-floating btn-primary" data-change data-color="blue"></button>
-                            <button type="button" class="btn btn-floating btn-success" data-change data-color="green"></button>
-                            <button type="button" class="btn btn-floating btn_purple" data-change data-color="purple"></button>
+                <div class="modal-body p-4">
+                    <section class="px-4">
+                        <div class="text-center mb-4">
+                            <h6 class="mb-3">Cambiar Tema</h6>
+                            <div class="d-flex justify-content-between align-items-center gap_10">
+                                <p class="m-0">Tema: <span id="switchText">Claro</span></p>
+                                <div>
+                                    <label class="switch">
+                                        <input type="checkbox" checked id="switchTheme">
+                                        <span class="slider"></span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <h6 class="text-center mb-3">Color de la Interfaz</h6>
+                        <div class="row mb-3">
+                            <div class="col text-center">
+                                <button type="button" class="btn btn-floating btn-success" data-change-color="green"></button>
+                            </div>
+                            <div class="col text-center">
+                                <button type="button" class="btn btn-floating btn-primary" data-change-color="blue"></button>
+                            </div>
+                            <div class="col text-center">
+                                <button type="button" class="btn btn-floating btn_purple" data-change-color="purple"></button>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col text-center">
+                                <button type="button" class="btn btn-floating btn_gradient_green" data-change-color="gradient_green"></button>
+                            </div>
+                            <div class="col text-center">
+                                <button type="button" class="btn btn-floating btn_gradient_blue" data-change-color="gradient_blue"></button>
+                            </div>
+                            <div class="col text-center">
+                                <button type="button" class="btn btn-floating btn_gradient_purple" data-change-color="gradient_purple"></button>
+                            </div>
+                            <div class="col text-center">
+                                <button type="button" class="btn btn-floating btn_gradient_orange" data-change-color="gradient_orange"></button>
+                            </div>
                         </div>
                     </section>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn_detail" data-mdb-ripple-init data-mdb-dismiss="modal">Listo <i class="fa-regular fa-circle-check ms-1"></i></button>
+                    <button type="button" class="btn btn_detail" data-mdb-ripple-init data-mdb-dismiss="modal">Listo <i
+                            class="fa-regular fa-circle-check ms-1"></i></button>
                 </div>
             </div>
         </div>
     </div>
 
     <script src="{% static 'js/libraries.min.js' %}"></script>
+    <script src="{% static 'js/config.js' %}"></script>
     <script defer src="{% static 'js/settings.js' %}"></script>
 
     {% block scripts_end %} {% endblock %}

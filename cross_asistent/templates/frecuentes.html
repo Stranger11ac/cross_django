@@ -2,7 +2,7 @@
 {% load static %}
 {% block title %}Preguntas 💬{% endblock %}
 {% block content %}
-<main class="container container-fluid mb-100">
+<main class="container container-fluid mb-100 my-5">
     <div class="mb-5">
         <h1 class="text-center">Preguntas <i class="fa-solid fa-clipboard-question ms-1"></i></h1>
         <hr class="hr_divisor mx-4 mx-md-0" />
@@ -66,6 +66,9 @@
         <section class="tab-pane fade mt-5" id="pills-create-quest" role="tabpanel" aria-labelledby="pills-create-quest">
             <div class="card col-md-8 mx-auto">
                 <div class="card-body">
+                    <h4 class="text-center mb-4">
+                        ¿No hemos resuelto tus dudas?
+                    </h4>
                     <form method="POST" id="hacerPregunta" action="{% url 'preguntas' %}" class="text-center">
                         {% csrf_token %}
                         <div class="form-outline mb-4" data-mdb-input-init>
@@ -75,8 +78,8 @@
                         <div data-mdb-input-init class="form-outline position-relative mb-4">
                             <button type="button" class="position-absolute top-0 end-0 btn p-0 fs-12 m-2 mt-1 none"
                                 data-clear="descripcion"><i class="fa-solid fa-xmark m-0 p-0"></i></button>
-                            <textarea class="form-control" id="descripcion" name="descripcion" data-init-clear></textarea>
-                            <label class="form-label" for="descripcion">Descripción:</label>
+                            <textarea class="form-control" id="descripcion" rows="4" name="descripcion" data-init-clear></textarea>
+                            <label class="form-label" for="descripcion">Descripción: (OPCIONAL)</label>
                         </div>
                         <button type="submit" class="btn btn_detail btn-block">Enviar <i class="fa-solid fa-paper-plane ms-1"></i></button>
                     </form>
