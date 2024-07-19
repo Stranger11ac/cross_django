@@ -24,10 +24,10 @@ if (colorTheme) {
     if (colorTheme == "light") {
         $("#switchText").text("Claro");
         $("#switchTheme").prop("checked", true);
-        $("body").attr("data-mdb-theme", "light");
+        $("html").attr("data-mdb-theme", "light");
     } else {
         $("#switchText").text("Oscuro");
         $("#switchTheme").prop("checked", false);
-        $("body").attr("data-mdb-theme", "dark");
+        $("html").attr("data-mdb-theme", "dark");
     }
 }

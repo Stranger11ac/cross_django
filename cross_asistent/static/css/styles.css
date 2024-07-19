@@ -121,10 +121,15 @@ body {
     /* font-size: 1.5rem; */
 }
 
-/* body.body_minus {
-    height: 100vh !important;
-    overflow: hidden !important;
-} */
+/* Personaliza el estilo de la barra de scroll */
+::-webkit-scrollbar-track {
+    background: var(--mdb-body-bg);
+}
+
+::-webkit-scrollbar-thumb {
+    border-radius: 6px;
+    border: 2px solid var(--darkA1);
+}
 
 /* Chrome, Safari, Edge, Opera */
 input::-webkit-outer-spin-button,
@@ -150,7 +155,6 @@ a {
 i.fa-solid {
     min-width: 10px;
 }
-
 
 /*########################### Position sticky ###########################*/
 .sticky-top-4 {
@@ -1113,6 +1117,43 @@ input:checked+.slider:before {
     font-size: 3rem !important;
     width: 100%;
     transition: all 0.3s ease !important;
+}
+
+
+/*########################### materialBox ###########################*/
+.materialBoxed:hover:not(.active) {
+    cursor: pointer;
+}
+
+.materialBoxed.active {
+    cursor: default;
+}
+
+#materialbox-overlay {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background-color: #292929;
+    z-index: 1000;
+    will-change: opacity;
+    cursor: pointer;
+}
+
+.materialbox-caption {
+    position: fixed;
+    display: none;
+    color: #fff;
+    line-height: 50px;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    text-align: center;
+    padding: 0% 15%;
+    height: 50px;
+    z-index: 1000;
+    -webkit-font-smoothing: antialiased;
 }
 
 

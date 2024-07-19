@@ -25,7 +25,7 @@
                     {% for oneBanner in banners_all %}
                     <div class="carousel-item" id="bannerid_{{oneBanner.id}}" data-mdb-interval="10000">
                         {% with imagen_url=oneBanner.imagen.url|eliminar_prefijo:'cross_asistent/' %}
-                        <img src="{{imagen_url}}" class="h-100 d-block w-100" alt="Sunset" />
+                        <img src="{{imagen_url}}" class="h-100 d-block w-100 materialboxed" alt="Sunset" />
                         {% endwith %}
                         <div class="carousel-caption">
                             {% autoescape off %}
@@ -539,4 +539,8 @@
         </div>
     </div>
 </div>
+
+<section class="p-5 m-5">
+    <img src="{% static 'img/default_image.webp' %}" class="rounded materialBoxed" alt="Sunset" style="height: 200px;" />
+</section>
 {% endblock %}

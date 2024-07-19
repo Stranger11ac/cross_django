@@ -306,11 +306,11 @@ $(document).ready(function () {
         $("#switchTheme").on("click", function () {
             if ($("#switchTheme").is(":checked")) {
                 $("#switchText").text("Claro");
-                $("body").attr("data-mdb-theme", "light");
+                $("html").attr("data-mdb-theme", "light");
                 localStorage.setItem("data-mdb-theme", "light");
             } else {
                 $("#switchText").text("Oscuro");
-                $("body").attr("data-mdb-theme", "dark");
+                $("html").attr("data-mdb-theme", "dark");
                 localStorage.setItem("data-mdb-theme", "dark");
             }
         });
@@ -416,6 +416,8 @@ function jsonSubmit(e) {
 
 // Funcion de preguntar a chatGPT ######################################################################
 var contOutput = document.querySelector("#output");
+var btnCloseChat = $("#closeChat");
+
 function chatSubmit(e) {
     e.preventDefault();
     const pregunta = txtQuestion.value;
@@ -506,35 +508,30 @@ function chatSubmit(e) {
         });
 }
 
-document.addEventListener("DOMContentLoaded", function () {
-    const btnCloseChat = document.getElementById("closeChat");
-    const contOutput = document.querySelector("#output");
-
-    if (btnCloseChat && contOutput) {
-        btnCloseChat.addEventListener("click", function () {
-            // Crear y mostrar el mensaje de saludo
-            const valID = `uuid${cadenaRandom(5, alfabetico)}`;
-            const saludo = "Hola 👋 ¡Bienvenido! Soy tu asistente virtual ¿En qué puedo ayudarte hoy?";
-            const htmlBlock = `
+if (btnCloseChat && contOutput) {
+    btnCloseChat.on("click", function () {
+        // Crear y mostrar el mensaje de saludo
+        const valID = `uuid${cadenaRandom(5, alfabetico)}`;
+        const saludo = "Hola 👋 ¡Bienvenido! Soy tu asistente virtual ¿En qué puedo ayudarte hoy?";
+        const htmlBlock = `
                     <div class="btn_detail chat_msg asistent_response" data-tokeid="${valID}">
                         <span>${saludo}</span>
                     </div>`;
 
-            contOutput.insertAdjacentHTML("beforeend", htmlBlock);
+        contOutput.insertAdjacentHTML("beforeend", htmlBlock);
 
-            const asistent_response = document.querySelector(`.asistent_response[data-tokeid="${valID}"]`);
-            setTimeout(function () {
-                asistent_response.classList.add("visible");
-                scrollToBottom();
-            }, 20);
-        });
-    }
+        const asistent_response = document.querySelector(`.asistent_response[data-tokeid="${valID}"]`);
+        setTimeout(function () {
+            asistent_response.classList.add("visible");
+            scrollToBottom();
+        }, 20);
+    });
+}
 
-    // Función para hacer scroll hacia abajo
-    function scrollToBottom() {
-        contOutput.scrollTop = contOutput.scrollHeight;
-    }
-});
+// Función para hacer scroll hacia abajo
+function scrollToBottom() {
+    contOutput.scrollTop = contOutput.scrollHeight;
+}
 // Hacer scroll con un nuevo mensaje en el chat ######################################################################
 if (contOutput) {
     function scrollToBottom() {
@@ -582,6 +579,13 @@ copyValInput();
 document.oncontextmenu = function () {
     return false;
 };
+
+// MaterialBox ######################################################################
+var elems = document.querySelectorAll(".materialBoxed");
+var instances = M.Materialbox.init(elems, {
+    inDuration: 500,
+    outDuration: 500,
+});
 
 // Template Alertas switalert ######################################################################
 function alertSToast(posittionS, timerS, iconS, titleS, didDestroyS) {
