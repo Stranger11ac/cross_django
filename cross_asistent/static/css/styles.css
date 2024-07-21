@@ -97,7 +97,7 @@
 [data-color_prefer="gradient_orange"] {
     accent-color: #3b71ca;
     --var-detail: var(--gradient_orange);
-    --img-filter: hue-rotate(-100deg) saturate(120%);
+    --img-filter: hue-rotate(-100deg) saturate(350%);
 }
 
 
@@ -118,7 +118,6 @@ body {
     font-family: var(--ft2);
     scroll-behavior: smooth;
     position: relative;
-    /* font-size: 1.5rem; */
 }
 
 /* Personaliza el estilo de la barra de scroll */
@@ -1136,6 +1135,8 @@ input:checked+.slider:before {
     bottom: 0;
     left: 0;
     background-color: #292929;
+    background: var(--darkA8);
+    backdrop-filter: blur(5px);
     z-index: 1000;
     will-change: opacity;
     cursor: pointer;
@@ -1158,6 +1159,10 @@ input:checked+.slider:before {
 
 
 /*########################### Clases Genericas ###########################*/
+.cursor-not {
+    cursor: not-allowed;
+}
+
 .none {
     display: none;
 }

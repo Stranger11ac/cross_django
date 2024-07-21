@@ -298,8 +298,10 @@ $(document).ready(function () {
                 $(item).removeClass("active");
             });
             var color = $(this).addClass("active").data("change-color");
+            var rgb = $(this).data("rgb");
             $("body").attr("data-color_prefer", color);
             localStorage.setItem("data-color_prefer", color);
+            localStorage.setItem("data-color_rgb", rgb);
         });
 
         // Cambiar tema
@@ -581,11 +583,8 @@ document.oncontextmenu = function () {
 };
 
 // MaterialBox ######################################################################
-var elems = document.querySelectorAll(".materialBoxed");
-var instances = M.Materialbox.init(elems, {
-    inDuration: 500,
-    outDuration: 500,
-});
+var imagesZoom = document.querySelectorAll(".materialBoxed");
+var instances = M.Materialbox.init(imagesZoom);
 
 // Template Alertas switalert ######################################################################
 function alertSToast(posittionS, timerS, iconS, titleS, didDestroyS) {

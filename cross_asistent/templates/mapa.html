@@ -1,7 +1,6 @@
 {% extends 'base/widget.html' %}
 {% load static %}
-{% block title %}Mapa de la UTC 🗺️{% endblock %}
-
+{% block title %}Mapa del Campus 🗺️{% endblock %}
 {% block extra_head %}
 <link href="https://api.mapbox.com/mapbox-gl-js/v3.4.0/mapbox-gl.css" rel="stylesheet">
 <link href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-directions/v4.1.1/mapbox-gl-directions.css" rel="stylesheet">
@@ -16,6 +15,7 @@
             <h6 class="m-0"><i class="fa-solid fa-route me-1"></i>Como ir a...</h6>
             <button type="button" class="btn-close" data-btn_closed="controls_route"></button>
         </div>
+        <!-- Formulario de ruta -->
         <form class="card-body p-3" autocomplete="off" id="form_route">
             <select id="origen" class="form-control mb-3">
                 <option disabled selected hidden>Tu ubicacion</option>
@@ -34,6 +34,7 @@
                 </div>
             </section>
         </form>
+        <!-- Informacion de la ruta -->
         <div class="card-footer">
             <div id="route-info" class="p-0 m-0 none"></div>
         </div>
@@ -77,7 +78,7 @@
             </label>
         </div>
         <div class="col-4 col-md p-2">
-            <label class="card btn_detail text-white" for="streets-v12">
+            <label class="card btn_detail text-white cursor-not" for="streets-v12">
                 <input id="streets-v12" type="radio" name="rtoggle" value="streets" disabled checked class="none">
                 <div class="card-body pb-1 p-3 text-center">
                     <div><i class="fa-solid fa-signs-post"></i></div>

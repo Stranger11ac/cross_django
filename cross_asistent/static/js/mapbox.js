@@ -1,5 +1,8 @@
 var mapToken = "pk.eyJ1Ijoic2FsdmFoZHotMTEiLCJhIjoiY2x3czBoYTJiMDI1OTJqb2VmZzVueG1ocCJ9.dDJweS7MAR5N2U3SF64_Xw";
-const inputs = document.querySelectorAll("#offcanvasbody input[type='radio']");
+const savedTheme = localStorage.getItem("data-mdb-theme");
+const savedLastLayerMap = localStorage.getItem("mapbox-last_layer");
+const inputsLayer = document.querySelectorAll("#offcanvasbody input[type='radio']");
+const labelsLayer = document.querySelectorAll("#offcanvasbody label");
 const formRoute = document.querySelector("#form_route");
 const selectOrigin = formRoute.querySelector("#origen");
 const selectDestiny = formRoute.querySelector("#destino");
@@ -84,6 +87,39 @@ class CustomControl {
 const customControl = new CustomControl();
 map.addControl(customControl, "top-right");
 
+// Estilo guardado ########################################
+function updateLabelsAndInputs(varLayer) {
+    if (varLayer) {
+        const label = document.querySelector(`label[for='${varLayer}']`);
+        label.classList.add("btn_detail", "text-white", "cursor-not");
+        labelsLayer.forEach((label) => {
+            label.classList.remove("btn_detail", "text-white", "cursor-not");
+        });
+
+        const input = document.querySelector(`input#${varLayer}`);
+        input.setAttribute("disabled", "disabled");
+        inputsLayer.forEach((input) => {
+            input.removeAttribute("disabled");
+        });
+
+        if (varLayer === "dark-v11") {
+            colorlabels = "#fff";
+        } else {
+            colorlabels = "#000";
+        }
+        localStorage.setItem("mapbox-last_layer", varLayer);
+    }
+}
+
+function setMapStyle(style) {
+    map.setStyle("mapbox://styles/mapbox/" + style);
+}
+
+if (savedLastLayerMap) {
+    updateLabelsAndInputs(savedLastLayerMap);
+    setMapStyle(savedLastLayerMap);
+}
+
 // Cargar datos ##################################################################
 const url = document.querySelector("#map").getAttribute("data-mapa_edif");
 fetch(url)
@@ -106,7 +142,7 @@ fetch(url)
                         [item.polygons[0], item.polygons[1], item.polygons[2], item.polygons[3], item.polygons[0]],
                     ],
                 },
-            }))
+            })),
         };
 
         function createEdificios() {
@@ -198,10 +234,10 @@ fetch(url)
             if (currentMarker) {
                 currentMarker.remove();
             }
-
+            let savedColor = localStorage.getItem("data-color_rgb");
             currentMarker = new mapboxgl.Marker({
                 draggable: false,
-                color: "#3b71ca",
+                color: savedColor || "#3b71ca",
             })
                 .setLngLat(lngLat)
                 .addTo(map);
@@ -213,7 +249,9 @@ fetch(url)
 
             if (origen && destino && origen !== destino) {
                 const origenFeature = geojsonEdificios.features.find((feature) => feature.properties.nombre === origen);
-                const destinoFeature = geojsonEdificios.features.find((feature) => feature.properties.nombre === destino);
+                const destinoFeature = geojsonEdificios.features.find(
+                    (feature) => feature.properties.nombre === destino
+                );
 
                 if (origenFeature && destinoFeature) {
                     const origenCoords = origenFeature.properties.door;
@@ -386,6 +424,11 @@ fetch(url)
             createEdificios();
         });
 
+        map.on("style.load", function () {
+            createEdificios();
+            addRouteLayer();
+        });
+
         map.on("click", function (e) {
             const lngLat = e.lngLat;
             createMarker(lngLat);
@@ -403,41 +446,6 @@ fetch(url)
             setTimeout(() => {
                 offcanvasElement.show();
             }, 100);
-        });
-
-        // Cambiar estilo del Mapa
-        inputs.forEach((input) => {
-            input.addEventListener("click", function (layer) {
-                const layerId = layer.target.id;
-                const label = document.querySelector(`label[for='${layerId}']`);
-
-                document.querySelectorAll("#offcanvasbody label").forEach((label) => {
-                    label.classList.remove("btn_detail", "text-white");
-                });
-
-                inputs.forEach((input) => {
-                    input.removeAttribute("disabled");
-                });
-
-                label.classList.add("btn_detail", "text-white");
-                this.setAttribute("disabled", "disabled");
-
-                if (layerId === "dark-v11") {
-                    colorlabels = "#fff";
-                } else {
-                    colorlabels = "#000";
-                }
-
-                // Guardar las capas de la ruta antes de cambiar el estilo
-                saveRouteLayers();
-
-                map.setStyle("mapbox://styles/mapbox/" + layerId);
-
-                map.on("style.load", function () {
-                    createEdificios();
-                    addRouteLayer(); // Restaurar las capas de la ruta
-                });
-            });
         });
 
         // Obtener nombres de los edificios y ordenar alfabéticamente
@@ -539,6 +547,7 @@ fetch(url)
         console.error(error);
     });
 
+// Cursor segun el evento ###########################################
 map.getCanvas().style.cursor = "default";
 function setCursor(cursorStyle) {
     map.getCanvas().style.cursor = cursorStyle;
@@ -549,3 +558,27 @@ map.on("dragend", () => setCursor("default"));
 map.on("mousedown", () => setCursor("pointer"));
 map.on("mouseup", () => setCursor("default"));
 map.on("mouseover", () => setCursor("default"));
+
+// Cambiar estilo del Mapa
+inputsLayer.forEach((input) => {
+    input.addEventListener("click", function (layer) {
+        const layerId = layer.target.id;
+        updateLabelsAndInputs(layerId);
+        saveRouteLayers();
+
+        setMapStyle(layerId);
+    });
+});
+
+// Cambiar Estilo segun el tema ######################################
+$("#switchTheme").on("click", function () {
+    if ($("#switchTheme").is(":checked")) {
+        colorlabels = "#000";
+        setMapStyle("streets-v12");
+        updateLabelsAndInputs("streets-v12");
+    } else {
+        colorlabels = "#fff";
+        setMapStyle("dark-v11");
+        updateLabelsAndInputs("dark-v11");
+    }
+});
