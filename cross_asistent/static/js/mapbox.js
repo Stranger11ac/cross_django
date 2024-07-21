@@ -90,17 +90,14 @@ map.addControl(customControl, "top-right");
 // Estilo guardado ########################################
 function updateLabelsAndInputs(varLayer) {
     if (varLayer) {
+        labelsLayer.forEach((label) => label.classList.remove("btn_detail", "text-white", "cursor-not"));
+        inputsLayer.forEach((input) => input.removeAttribute("disabled"));
+
         const label = document.querySelector(`label[for='${varLayer}']`);
         label.classList.add("btn_detail", "text-white", "cursor-not");
-        labelsLayer.forEach((label) => {
-            label.classList.remove("btn_detail", "text-white", "cursor-not");
-        });
 
         const input = document.querySelector(`input#${varLayer}`);
         input.setAttribute("disabled", "disabled");
-        inputsLayer.forEach((input) => {
-            input.removeAttribute("disabled");
-        });
 
         if (varLayer === "dark-v11") {
             colorlabels = "#fff";
@@ -249,13 +246,11 @@ fetch(url)
 
             if (origen && destino && origen !== destino) {
                 const origenFeature = geojsonEdificios.features.find((feature) => feature.properties.nombre === origen);
-                const destinoFeature = geojsonEdificios.features.find(
-                    (feature) => feature.properties.nombre === destino
-                );
+                const destiFeature = geojsonEdificios.features.find((feature) => feature.properties.nombre === destino);
 
-                if (origenFeature && destinoFeature) {
+                if (origenFeature && destiFeature) {
                     const origenCoords = origenFeature.properties.door;
-                    const destinoCoords = destinoFeature.properties.door;
+                    const destinoCoords = destiFeature.properties.door;
 
                     directions.setOrigin(origenCoords);
                     directions.setDestination(destinoCoords);
@@ -285,9 +280,9 @@ fetch(url)
                             </div>`);
                         $("#route-info").slideDown();
                     });
-
                     map.addControl(directions, "top-left");
                     map.moveLayer("places-label");
+                    addRouteLayer();
                 }
             } else {
                 alertSToast("center", 5000, "warning", "Por favor, selecciona tanto origen como destino.");
@@ -304,10 +299,7 @@ fetch(url)
                 }
 
                 const originFeature = currentRoute.features.find((feature) => feature.properties.id === "origin");
-                const destinationFeature = currentRoute.features.find(
-                    (feature) => feature.properties.id === "destination"
-                );
-                const routeFeature = currentRoute.features.find((feature) => feature.geometry.type === "LineString");
+                const destFeature = currentRoute.features.find((feature) => feature.properties.id === "destination");
 
                 // Agregar capa de línea de ruta
                 if (!map.getLayer("directions-route-line")) {
@@ -399,7 +391,7 @@ fetch(url)
                         type: "symbol",
                         source: "directions",
                         layout: {
-                            "text-field": destinationFeature.properties["marker-symbol"],
+                            "text-field": destFeature.properties["marker-symbol"],
                             "text-font": ["Open Sans Bold", "Arial Unicode MS Bold"],
                             "text-size": 18,
                         },
@@ -434,7 +426,7 @@ fetch(url)
             createMarker(lngLat);
         });
 
-        // Abrir camvas / informacion del edificio
+        // Abrir camvas: informacion del edificio
         map.on("click", "places-layer", (e) => {
             const feature = e.features[0];
             const { nombre, informacion, imagen_url } = feature.properties;
@@ -448,6 +440,17 @@ fetch(url)
             }, 100);
         });
 
+        // Cambiar estilo del Mapa ##########################################
+        inputsLayer.forEach((input) => {
+            input.addEventListener("click", function (layer) {
+                const layerId = layer.target.id;
+                updateLabelsAndInputs(layerId);
+                saveRouteLayers();
+
+                setMapStyle(layerId);
+            });
+        });
+
         // Obtener nombres de los edificios y ordenar alfabéticamente
         const nombresEdificios = geojsonEdificios.features.map((feature) => feature.properties.nombre).sort();
         nombresEdificios.forEach((nombre) => {
@@ -456,7 +459,7 @@ fetch(url)
             document.getElementById("destino").add(option.cloneNode(true));
         });
 
-        // Sincronizar opciones entre selectores
+        // Ejecutar calcularRuta
         selectOrigin.addEventListener("change", function () {
             const seleccionOrigen = this.value;
             selectDestiny.querySelectorAll("option").forEach((option) => {
@@ -466,6 +469,10 @@ fetch(url)
                     option.disabled = false;
                 }
             });
+
+            if (document.getElementById("destino").value) {
+                calcularRuta();
+            }
         });
         selectDestiny.addEventListener("change", function () {
             const seleccionDestino = this.value;
@@ -476,15 +483,7 @@ fetch(url)
                     option.disabled = false;
                 }
             });
-        });
 
-        // Ejecutar calcularRuta
-        selectOrigin.addEventListener("change", function () {
-            if (document.getElementById("destino").value) {
-                calcularRuta();
-            }
-        });
-        selectDestiny.addEventListener("change", function () {
             if (document.getElementById("origen").value) {
                 calcularRuta();
             }
@@ -559,18 +558,7 @@ map.on("mousedown", () => setCursor("pointer"));
 map.on("mouseup", () => setCursor("default"));
 map.on("mouseover", () => setCursor("default"));
 
-// Cambiar estilo del Mapa
-inputsLayer.forEach((input) => {
-    input.addEventListener("click", function (layer) {
-        const layerId = layer.target.id;
-        updateLabelsAndInputs(layerId);
-        saveRouteLayers();
-
-        setMapStyle(layerId);
-    });
-});
-
-// Cambiar Estilo segun el tema ######################################
+// Cambiar Estilo con switch de tema ######################################
 $("#switchTheme").on("click", function () {
     if ($("#switchTheme").is(":checked")) {
         colorlabels = "#000";

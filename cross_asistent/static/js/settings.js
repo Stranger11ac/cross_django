@@ -310,24 +310,26 @@ $(document).ready(function () {
                 $("#switchText").text("Claro");
                 $("html").attr("data-mdb-theme", "light");
                 localStorage.setItem("data-mdb-theme", "light");
+                localStorage.setItem("mapbox-last_layer", "light-v11");
             } else {
                 $("#switchText").text("Oscuro");
                 $("html").attr("data-mdb-theme", "dark");
                 localStorage.setItem("data-mdb-theme", "dark");
+                localStorage.setItem("mapbox-last_layer", "dark-v11");
             }
         });
 
-        // ####################################################
-        // ####################################################
+        //
+        //
     } catch (error) {
         console.error("Error Inesperado: ", error);
         alertSToast("center", 8000, "error", `😥 Ah ocurrido un error JQ.`);
     }
 });
 
-// ############################################################################
-// ########################### Funciones JAVASCRIPT ###########################
-// ############################################################################
+// ##############################################################################################
+// #################################### Funciones JAVASCRIPT ####################################
+// ##############################################################################################
 
 // Cerrar la sesion ##########################################################
 if (document.querySelector("main").classList.contains("main_container")) {

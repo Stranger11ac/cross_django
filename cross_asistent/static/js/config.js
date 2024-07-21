@@ -25,9 +25,11 @@ if (colorTheme) {
         $("#switchText").text("Claro");
         $("#switchTheme").prop("checked", true);
         $("html").attr("data-mdb-theme", "light");
+        localStorage.setItem("mapbox-last_layer", "light-v11");
     } else {
         $("#switchText").text("Oscuro");
         $("#switchTheme").prop("checked", false);
         $("html").attr("data-mdb-theme", "dark");
+        localStorage.setItem("mapbox-last_layer", "dark-v11");
     }
 }
