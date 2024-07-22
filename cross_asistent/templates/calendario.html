@@ -1,0 +1,25 @@
+{% extends 'base/widget.html' %}
+{% load static %}
+{% block title %}Calendario de la Universidad 📰{% endblock %}
+{% block content %}
+<main class="container container-fluid py-5">
+    <div class="mb-5">
+        <h1 class="text-center">Calendario UTC <i class="fa-solid fa-calendar-days ms-1"></i></h1>
+        <hr class="hr_divisor mx-4 mx-md-0" />
+    </div>
+    <section id="calendar" class="px-3 px-md-0"></section>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var calendarEl = document.getElementById('calendar');
+            var calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'dayGridMonth',
+                locale: 'es',
+                events: "{% url 'calendario_eventos' %}",
+            });
+            calendar.render();
+        });
+    </script>
+</main>
+{% include 'base/widget_footer.html' %}
+{% endblock %}

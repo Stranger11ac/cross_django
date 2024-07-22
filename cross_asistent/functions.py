@@ -288,6 +288,17 @@ def createDatabase(request):
             return JsonResponse({'success': False, 'message': f'Ocurrió un error 😯😥 <br>{str(e)}'}, status=400)
     return JsonResponse({'error': 'Método no válido'}, status=400)
 
+# Calendario: Eventos ----------------------------------------------------------
+def calendario_eventos(request):
+    eventos = models.Eventos.objects.all()
+    eventos_json = [{
+        'title': evento.titulo,
+        'start': evento.fecha_inicio.isoformat(),
+        'end': evento.fecha_fin.isoformat(),
+        'location': evento.lugar,
+    } for evento in eventos]
+    return JsonResponse(eventos_json, safe=False)
+
 # Mapa ----------------------------------------------------------
 def mapa_data(request):
     mapas = models.Mapa.objects.all()

@@ -102,6 +102,13 @@ def mostrar_blog(request, Articulos_id):
     Articulos = models.Articulos.objects.filter(pk=Articulos_id)
     return render(request, 'mostrar_blogs.html', {'Articulos': Articulos})
 
+def calendario(request):
+    if not request.user.is_staff:
+        logout(request)
+    return render(request, 'calendario.html', {
+        'active_page': 'calendario'
+    })
+
 def map(request):
     if not request.user.is_staff:
         logout(request)

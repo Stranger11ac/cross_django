@@ -61,8 +61,7 @@
 
                                 <ul class="dropdown-menu mx-100" aria-labelledby="dropdownMenuLink">
                                     <li>
-                                        <a class="dropdown-item {% if active_page|default:'' == 'calendario' %}active{% endif %}" aria-current="true">Calendario
-                                            Escolar</a>
+                                        <a href="{% url 'calendario' %}" class="dropdown-item {% if active_page|default:'' == 'calendario' %}active{% endif %}" aria-current="true">Calendario</a>
                                     </li>
                                     <li>
                                         <a href="{% url 'about' %}" class="dropdown-item {% if active_page|default:'' == 'about' %}active{% endif %}"
