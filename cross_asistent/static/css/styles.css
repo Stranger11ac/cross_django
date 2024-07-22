@@ -1001,7 +1001,7 @@ input:checked+.slider:before {
 /*########################### Mapa - MapBox ###########################*/
 .mapboxgl-canvas-container.mapboxgl-interactive,
 .mapboxgl-ctrl-group button.mapboxgl-ctrl-compass {
-    cursor: unset !important;
+    cursor: crosshair !important;
 }
 
 .mapboxgl-ctrl-group button {
@@ -1009,7 +1009,19 @@ input:checked+.slider:before {
     place-items: center;
     width: 42px !important;
     height: 42px !important;
-    color: #292f38 !important;
+    color: #292f38;
+}
+
+.mapboxgl-ctrl-group button i {
+    color: #292f38;
+    transition: 0.3s ease;
+}
+
+.mapboxgl-ctrl-group button:hover i{
+    color: transparent;
+    background-color: var(--var-detail);
+    background: var(--var-detail);
+    background-clip: text;
 }
 
 .mapboxgl-ctrl-group button div,

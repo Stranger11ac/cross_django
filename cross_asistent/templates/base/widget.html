@@ -9,7 +9,6 @@
     <title>{% block title %}TITULO{% endblock %} | Asistente UTC</title>
     <link rel="preload" href="{% static 'css/mdb_fontawesome.min.css' %}" as="style" />
     <link rel="preload" href="{% static 'js/libraries.min.js' %}" as="script" />
-    <link rel="preload" href="{% static 'js/config.js' %}" as="script" />
 
     {% block extra_head %}{% endblock %}
 
@@ -145,7 +144,6 @@
     </div>
 
     <script src="{% static 'js/libraries.min.js' %}"></script>
-    <script src="{% static 'js/config.js' %}"></script>
     <script defer src="{% static 'js/settings.js' %}"></script>
 
     {% block scripts_end %} {% endblock %}

@@ -4,7 +4,8 @@
 {% block extra_head %}
 <link rel="stylesheet" href="{% static 'css/swiper-bundle.min.css' %}" />
 <script type="module" src="{% static 'js/model-viewer.min.js' %}"></script>
-{% endblock %} {% block link_end-extra %}
+{% endblock %}
+{% block link_end-extra %}
 <button type="button" class="btn btn_detail btn-floating p-0 ms-2 d-none d-lg-flex" data-mdb-ripple-init data-mdb-modal-init data-mdb-target="#modalqr">
     <i class="fa-solid fa-qrcode fs-14"></i>
 </button>
@@ -110,5 +111,4 @@
 
 {% block scripts_end %}
 <script src="{% static 'js/owl-carousel.min.js' %}"></script>
-<script src="{% static 'js/custom.min.js' %}"></script>
 {% endblock %}
