@@ -84,8 +84,8 @@ class CustomControl {
         return this._container;
     }
 }
-const customControl = new CustomControl();
-map.addControl(customControl, "top-right");
+
+map.addControl(new CustomControl(), "top-right");
 
 // Estilo guardado ########################################
 function updateLabelsAndInputs(varLayer) {
@@ -116,6 +116,20 @@ if (savedLastLayerMap) {
     updateLabelsAndInputs(savedLastLayerMap);
     setMapStyle(savedLastLayerMap);
 }
+
+// Controles de Ruta
+const directions = new MapboxDirections({
+    accessToken: mapboxgl.accessToken,
+    unit: "metric",
+    profile: "mapbox/walking",
+    controls: {
+        inputs: false,
+        instructions: false,
+        profileSwitcher: false,
+    },
+    alternatives: true,
+    interactive: false,
+});
 
 // Cargar datos ##################################################################
 const url = document.querySelector("#map").getAttribute("data-mapa_edif");
@@ -280,6 +294,11 @@ fetch(url)
                             </div>`);
                         $("#route-info").slideDown();
                     });
+
+                    setTimeout(() => {
+                        $("#controls_route").removeClass("show");
+                    }, 4000);
+
                     map.addControl(directions, "top-left");
                     map.moveLayer("places-label");
                     addRouteLayer();
@@ -487,20 +506,6 @@ fetch(url)
             if (document.getElementById("origen").value) {
                 calcularRuta();
             }
-        });
-
-        // Controles de Ruta
-        const directions = new MapboxDirections({
-            accessToken: mapboxgl.accessToken,
-            unit: "metric",
-            profile: "mapbox/walking",
-            controls: {
-                inputs: false,
-                instructions: false,
-                profileSwitcher: false,
-            },
-            alternatives: true,
-            interactive: false,
         });
 
         // Resetear ruta
