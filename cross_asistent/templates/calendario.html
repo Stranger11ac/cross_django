@@ -3,23 +3,94 @@
 {% block title %}Calendario de la Universidad 📰{% endblock %}
 {% block content %}
 <main class="container container-fluid py-5">
-    <div class="mb-5">
+    <!-- <div class="mb-5">
         <h1 class="text-center">Calendario UTC <i class="fa-solid fa-calendar-days ms-1"></i></h1>
         <hr class="hr_divisor mx-4 mx-md-0" />
-    </div>
-    <section id="calendar" class="px-3 px-md-0"></section>
+    </div> -->
+    <section id="calendar" data-events="{% url 'calendario_eventos' %}"></section>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            var calendarEl = document.getElementById('calendar');
-            var calendar = new FullCalendar.Calendar(calendarEl, {
-                initialView: 'dayGridMonth',
-                locale: 'es',
-                events: "{% url 'calendario_eventos' %}",
-            });
-            calendar.render();
-        });
-    </script>
+    <!-- Modal de MDBootstrap -->
+    <div class="modal fade" id="eventModal" tabindex="-1" aria-labelledby="eventModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="eventModalLabel">Detalle del Evento</h5>
+                    <button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body mx-4">
+                    <p id="eventDesc"></p>
+
+                    <div class="d-flex gap_10 mt-5">
+                        <div>
+                            <p class="m-0" id="eventStartDate"></p>
+                            <small class="fs-7" id="eventStartTime"></small>
+                        </div>
+                        <div id="dateSeparator">-</div>
+                        <div>
+                            <p class="m-0" id="eventEndDate"></p>
+                            <small class="fs-7" id="eventEndTime"></small>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer d-flex justify-content-between align-items-center">
+                    <div>
+                        <small class="fs-6">Ubicacion:</small>
+                        <p class="m-0" id="eventLoc"></p>
+                    </div>
+                    <div class="d-flex">
+                        <div class="me-2">
+                            <a id="eventBtn" class="btn btn-secondary" data-mdb-dismiss="modal">Guardar</a>
+                        </div>
+                        <div id="eventBtnDiv">
+                            <a id="eventBtn" class="btn btn_detail" data-mdb-dismiss="modal">Más <i class="fa-solid fa-up-right-from-square ms-1"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </main>
 {% include 'base/widget_footer.html' %}
 {% endblock %}
+{% block scripts_end %}
+<script src="{% static 'js/settings_fullcalendar.js' %}"></script>
+{% endblock %}
+
+
+
+
+<script>
+    // document.addEventListener('DOMContentLoaded', function () {
+    //     var calendarEl = document.getElementById('calendar');
+    //     var calendar = new FullCalendar.Calendar(calendarEl, {
+    //         headerToolbar: {
+    //             // start: 'prevYear,prev,next,nextYear today',
+    //             start: 'prev,next today',
+    //             center: 'title',
+    //             end: 'dayGridMonth',
+    //             // end: 'timeGridDay,timeGridWeek,dayGridMonth,multiMonthYear',
+    //         },
+    //         initialView: 'dayGridMonth',
+    //         locale: 'es',
+    //         events: "{% url 'calendario_eventos' %}",
+    //         height: 'auto',
+    //         // selectable: true, // seleccionar celdas y crear un nuevo evento en la seleccion
+    //         // selectMirror: true,
+    //         // select: function (arg) {
+    //         //     var title = prompt('Event Title:');
+    //         //     if (title) {
+    //         //         calendar.addEvent({
+    //         //             title: title,
+    //         //             start: arg.start,
+    //         //             end: arg.end,
+    //         //             allDay: arg.allDay
+    //         //         })
+    //         //     }
+    //         //     calendar.unselect()
+    //         // },
+    //         navLinks: true,
+    //         nowIndicator: true,
+    //     });
+    //     calendar.render();
+    // });
+</script>

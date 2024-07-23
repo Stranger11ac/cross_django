@@ -293,9 +293,11 @@ def calendario_eventos(request):
     eventos = models.Eventos.objects.all()
     eventos_json = [{
         'title': evento.titulo,
+        'description': evento.descripcion,
         'start': evento.fecha_inicio.isoformat(),
         'end': evento.fecha_fin.isoformat(),
         'location': evento.lugar,
+        'classNames': 'event_detail',
     } for evento in eventos]
     return JsonResponse(eventos_json, safe=False)
 
