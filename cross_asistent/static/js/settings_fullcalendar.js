@@ -12,13 +12,13 @@ document.addEventListener("DOMContentLoaded", function () {
     var calendarEl = document.getElementById("calendar");
     var dataEvents = calendarEl.getAttribute("data-events");
     var calendar = new FullCalendar.Calendar(calendarEl, {
-        footerToolbar: {
-            start: "timeGridDay,timeGridWeek,dayGridMonth,multiMonthYear",
-            end: "prevYear,nextYear",
-        },
         headerToolbar: {
             start: "title",
             end: "today,prev,next",
+        },
+        footerToolbar: {
+            start: "timeGridDay,timeGridWeek,dayGridMonth,multiMonthYear",
+            end: "prevYear,nextYear",
         },
         events: dataEvents,
         initialView: "dayGridMonth",
@@ -26,6 +26,8 @@ document.addEventListener("DOMContentLoaded", function () {
         height: "auto",
         navLinks: true,
         nowIndicator: true,
+        weekNumbers: true,
+        weekText: '',
         slotLabelFormat: {
             hour: "numeric",
             minute: "2-digit",
@@ -54,7 +56,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 document.getElementById("dateSeparator").classList.add("none");
             }
 
-            document.getElementById("eventLoc").innerText = (eventObj.extendedProps.location || "Campus UTC");
+            document.getElementById("eventLoc").innerText = eventObj.extendedProps.location || "Campus UTC";
 
             var myModal = new mdb.Modal(document.getElementById("eventModal"));
             myModal.show();
