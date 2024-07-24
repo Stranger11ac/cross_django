@@ -1225,14 +1225,15 @@ input:checked+.slider:before {
 }
 
 /*########################### Calendario: fullcalendar ###########################*/
-.fc-toolbar-chunk {text-transform: capitalize;}
-.fc-daygrid-day.fc-day-today {
-    background: none !important;
-}
+.fc-toolbar-chunk {text-transform: capitalize}
+
+.fc-daygrid-day.fc-day-today {background: none !important}
+
 .fc-daygrid-day.fc-day-today .fc-daygrid-day-number {
     background: var(--mdb-surface-color);
     color: var(--mdb-surface-bg);
 }
+
 .fc-daygrid-day-number {
     height: 30px !important;
     width: 30px !important;
@@ -1247,13 +1248,25 @@ input:checked+.slider:before {
     border-radius: 30px;
     transition: 0.1s ease;
 }
+
 .fc-daygrid-day-number:hover {
     background: var(--darkA4);
     color: white;
 }
-.fc-daygrid-event {cursor: pointer !important;}
-.fc-daygrid-week-number {font-size: 0.6rem !important;}
 
+.fc-timegrid-event-harness.fc-timegrid-event-harness-inset,
+.fc-daygrid-event {cursor: pointer !important}
+
+.fc-daygrid-week-number {
+    font-size: 0.6rem !important;
+    background: none !important;
+}
+
+.fc .fc-popover {
+    border-radius: var(--border-radius) !important;
+    overflow: hidden !important;
+    z-index: 2 !important;
+}
 
 
 

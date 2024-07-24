@@ -3,7 +3,6 @@ document.addEventListener("DOMContentLoaded", function () {
         const options = { year: "2-digit", month: "2-digit", day: "2-digit" };
         return date.toLocaleDateString("es-ES", options);
     }
-
     function formatTime(date) {
         const options = { hour: "2-digit", minute: "2-digit", hour12: true };
         return date.toLocaleTimeString("es-ES", options);
@@ -27,7 +26,8 @@ document.addEventListener("DOMContentLoaded", function () {
         navLinks: true,
         nowIndicator: true,
         weekNumbers: true,
-        weekText: '',
+        weekText: "",
+        eventDisplay: "block",
         slotLabelFormat: {
             hour: "numeric",
             minute: "2-digit",
@@ -35,8 +35,24 @@ document.addEventListener("DOMContentLoaded", function () {
         },
         eventTimeFormat: {
             hour: "numeric",
-            minute: "2-digit",
             hour12: true,
+            meridiem: 'narrow',
+        },
+        views: {
+            timeGridDay: {
+                // titleFormat: { year: "numeric", month: "long", day: "numeric" },
+            },
+            timeGridWeek: {
+                // titleFormat: { year: "numeric", month: "long", day: "numeric" },
+            },
+            dayGridMonth: {
+                displayEventTime: false,
+                // eventTimeFormat: false,
+                // titleFormat: { year: "numeric", month: "long" },
+            },
+            multiMonthYear: {
+                // titleFormat: { year: "numeric" },
+            },
         },
         eventClick: function (info) {
             var eventObj = info.event;
