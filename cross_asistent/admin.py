@@ -7,7 +7,6 @@ class PreguntasAdmin(admin.ModelAdmin):
 # Register your models here.
 admin.site.register(models.Mapa)
 admin.site.register(models.Banners)
-admin.site.register(models.Eventos)
 admin.site.register(models.Database)
 admin.site.register(models.Articulos)
 admin.site.register(models.Categorias)

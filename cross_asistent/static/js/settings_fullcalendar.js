@@ -22,8 +22,7 @@ document.addEventListener("DOMContentLoaded", function () {
         firstDay: 0, // Domingo
         // firstDay: 1, // Lunes
         events: dataEvents,
-        initialView: "multiMonthYear",
-        // initialView: "dayGridMonth",
+        initialView: "dayGridMonth",
         locale: "es",
         height: "auto",
         navLinks: true,
@@ -64,9 +63,14 @@ document.addEventListener("DOMContentLoaded", function () {
             var eventObj = info.event;
 
             document.getElementById("eventModalLabel").innerText = eventObj.title;
-            document.getElementById("eventDesc").innerText = eventObj.extendedProps.description || "Sin descripción";
             document.getElementById("eventStartDate").innerText = formatDate(eventObj.start);
             document.getElementById("eventStartTime").innerText = formatTime(eventObj.start);
+
+            if (eventObj.extendedProps.description) {
+                document.getElementById("eventDesc").innerText = eventObj.extendedProps.description;
+            } else {
+                document.getElementById("eventDesc").classList.add("none");
+            }
 
             if (eventObj.end) {
                 document.getElementById("eventEndDate").innerText = formatDate(eventObj.end);
@@ -80,8 +84,27 @@ document.addEventListener("DOMContentLoaded", function () {
 
             document.getElementById("eventLoc").innerText = eventObj.extendedProps.location || "Campus UTC";
 
+            if (eventObj.extendedProps.button == "false") {
+                document.getElementById("eventBtnDiv").classList.add("none");
+                document.getElementById("eventBtn").href = "";
+            } else {
+                document.getElementById("eventBtnDiv").classList.remove("none");
+                document.getElementById("eventBtn").href = eventObj.extendedProps.button;
+            }
+
+            const imgJson = eventObj.extendedProps.imagen;
+            if (imgJson == "false") {
+                document.getElementById("eventImg").classList.add("none");
+            } else {
+                document.getElementById("eventImg").classList.remove("none");
+                imgSrc = imgJson.replace("cross_asistent/", "");
+                document.getElementById("eventImg").src = imgSrc;
+            }
+
             var myModal = new mdb.Modal(document.getElementById("eventModal"));
-            myModal.show();
+            setTimeout(() => {
+                myModal.show();
+            }, 500);
 
             info.jsEvent.preventDefault();
         },

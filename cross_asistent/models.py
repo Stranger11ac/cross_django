@@ -39,25 +39,30 @@ class Categorias(models.Model):
     def __str__(self):
         return self.categoria
 
+def get_image_upload_path(instance, filename):
+    if instance.categoria and instance.categoria.categoria == 'Mapa':
+        return os.path.join('cross_asistent/static/files/imagenes/mapa/', filename)
+    elif instance.categoria and instance.categoria.categoria == 'Calendario':
+        return os.path.join('cross_asistent/static/files/imagenes/calendario/', filename)
+    else:
+        return os.path.join('cross_asistent/static/files/imagenes/', filename)
+
 class Database(models.Model):
     categoria = models.ForeignKey(Categorias, on_delete=models.SET_NULL, null=True)
     titulo = models.CharField(max_length=200, blank=False)
     informacion = models.TextField(blank=True, null=True)
     redirigir = models.URLField(blank=True, null=True)
     frecuencia = models.IntegerField(default=0)
-    documentos = models.FileField(upload_to='cross_asistent/static/files/documentos/', blank=True, null=True)
-    imagenes = models.ImageField(upload_to='cross_asistent/static/files/imagenes/', blank=True, null=True)
+    document = models.FileField(upload_to='cross_asistent/static/files/documentos/', blank=True, null=True)
+    imagen = models.ImageField(upload_to=get_image_upload_path, blank=True, null=True)
+    evento_fecha_inicio = models.DateTimeField(blank=True, null=True)
+    evento_fecha_fin = models.DateTimeField(blank=True, null=True)
+    evento_lugar = models.CharField(max_length=200, blank=True, null=True, default='Campus UTC')
+    evento_className = models.CharField(max_length=100, default='event_detail')
     fecha_modificacion = models.DateTimeField(auto_now=True)
 
-    def save(self, *args, **kwargs):
-        if self.categoria and self.categoria.categoria == 'Mapa':  # Ajusta esto según el campo correcto en tu modelo Categorias
-            self.imagenes.upload_to='cross_asistent/static/files/imagenes/mapa/'
-        else:
-            self.imagenes.upload_to='cross_asistent/static/files/imagenes/'
-        super(Database, self).save(*args, **kwargs)
-    
     def __str__(self):
-        return self.titulo
+        return f'{self.titulo} - C: {self.categoria.categoria}'
 
 class Articulos(models.Model):
     encabezado =  models.ImageField(upload_to='cross_asistent/static/files/imagenes/blogs/', blank=True, null=True)
@@ -112,13 +117,3 @@ class Preguntas(models.Model):
 
     def __str__(self):
         return self.pregunta
-
-class Eventos(models.Model):
-    titulo = models.CharField(max_length=200)
-    descripcion = models.TextField(blank=True, null=True)
-    fecha_inicio = models.DateTimeField()
-    fecha_fin = models.DateTimeField()
-    lugar = models.CharField(max_length=200, blank=True, null=True)
-
-    def __str__(self):
-        return f"Evento: {self.titulo}"

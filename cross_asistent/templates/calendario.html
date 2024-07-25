@@ -17,18 +17,23 @@
                     <h5 class="modal-title" id="eventModalLabel">Detalle del Evento</h5>
                     <button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="modal-body mx-4">
-                    <p id="eventDesc"></p>
+                <div class="modal-body m-3">
+                    <p id="eventDesc" class="mb-4"></p>
 
-                    <div class="d-flex gap_10 mt-5">
+                    <div class="d-flex justify-content-between">
                         <div>
-                            <p class="m-0" id="eventStartDate"></p>
-                            <small class="fs-7" id="eventStartTime"></small>
+                            <img id="eventImg" class="rounded materialBoxed none" style="max-width: 180px;">
                         </div>
-                        <div id="dateSeparator">-</div>
-                        <div>
-                            <p class="m-0" id="eventEndDate"></p>
-                            <small class="fs-7" id="eventEndTime"></small>
+                        <div class="d-flex align-items-center gap_10">
+                            <div>
+                                <p class="m-0" id="eventStartDate"></p>
+                                <small class="fs-7" id="eventStartTime"></small>
+                            </div>
+                            <div id="dateSeparator">-</div>
+                            <div>
+                                <p class="m-0" id="eventEndDate"></p>
+                                <small class="fs-7" id="eventEndTime"></small>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -37,8 +42,8 @@
                         <small class="fs-6">Ubicacion:</small>
                         <p class="m-0" id="eventLoc"></p>
                     </div>
-                    <div id="eventBtnDiv">
-                        <a id="eventBtn" class="btn btn_detail" data-mdb-dismiss="modal">Más <i class="fa-solid fa-up-right-from-square ms-1"></i></a>
+                    <div id="eventBtnDiv" class="none">
+                        <a id="eventBtn" class="btn btn_detail" target="_blank" rel="noopener noreferrer">Ver Más <i class="fa-solid fa-up-right-from-square ms-1"></i></a>
                     </div>
                 </div>
             </div>
@@ -50,42 +55,3 @@
 {% block scripts_end %}
 <script src="{% static 'js/settings_fullcalendar.js' %}"></script>
 {% endblock %}
-
-
-
-
-<script>
-    // document.addEventListener('DOMContentLoaded', function () {
-    //     var calendarEl = document.getElementById('calendar');
-    //     var calendar = new FullCalendar.Calendar(calendarEl, {
-    //         headerToolbar: {
-    //             // start: 'prevYear,prev,next,nextYear today',
-    //             start: 'prev,next today',
-    //             center: 'title',
-    //             end: 'dayGridMonth',
-    //             // end: 'timeGridDay,timeGridWeek,dayGridMonth,multiMonthYear',
-    //         },
-    //         initialView: 'dayGridMonth',
-    //         locale: 'es',
-    //         events: "{% url 'calendario_eventos' %}",
-    //         height: 'auto',
-    //         // selectable: true, // seleccionar celdas y crear un nuevo evento en la seleccion
-    //         // selectMirror: true,
-    //         // select: function (arg) {
-    //         //     var title = prompt('Event Title:');
-    //         //     if (title) {
-    //         //         calendar.addEvent({
-    //         //             title: title,
-    //         //             start: arg.start,
-    //         //             end: arg.end,
-    //         //             allDay: arg.allDay
-    //         //         })
-    //         //     }
-    //         //     calendar.unselect()
-    //         // },
-    //         navLinks: true,
-    //         nowIndicator: true,
-    //     });
-    //     calendar.render();
-    // });
-</script>

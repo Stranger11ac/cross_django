@@ -1226,9 +1226,13 @@ input:checked+.slider:before {
 
 /*########################### Calendario: fullcalendar ###########################*/
 .fc-multimonth-title,
-.fc-toolbar-chunk {text-transform: capitalize}
+.fc-toolbar-chunk {
+    text-transform: capitalize
+}
 
-.fc-daygrid-day.fc-day-today {background: none !important}
+.fc-daygrid-day.fc-day-today {
+    background: none !important
+}
 
 .fc-daygrid-day.fc-day-today .fc-daygrid-day-number {
     background: var(--mdb-surface-color);
@@ -1257,7 +1261,9 @@ input:checked+.slider:before {
 
 .fc-timegrid-event-harness.fc-timegrid-event-harness-inset,
 .fc-multimonth-month,
-.fc-daygrid-event {cursor: pointer !important}
+.fc-daygrid-event {
+    cursor: pointer !important
+}
 
 .fc-daygrid-week-number {
     font-size: 0.6rem !important;
@@ -1270,6 +1276,15 @@ input:checked+.slider:before {
     z-index: 2 !important;
 }
 
+.fc-day-sat,
+.fc-day-sun {
+    background-color: var(--whiteA1);
+}
+
+[data-mdb-theme="light"] .fc-day-sat,
+[data-mdb-theme="light"] .fc-day-sun {
+    background-color: var(--darkA1);
+}
 
 
 /*########################### Clases Genericas ###########################*/

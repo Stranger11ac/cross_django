@@ -290,14 +290,17 @@ def createDatabase(request):
 
 # Calendario: Eventos ----------------------------------------------------------
 def calendario_eventos(request):
-    eventos = models.Eventos.objects.all()
+    categoriaGet = models.Categorias.objects.get(categoria="Calendario")
+    eventos = models.Database.objects.filter(categoria=categoriaGet)
     eventos_json = [{
         'title': evento.titulo,
-        'description': evento.descripcion,
-        'start': evento.fecha_inicio.isoformat(),
-        'end': evento.fecha_fin.isoformat(),
-        'location': evento.lugar,
-        'classNames': 'event_detail',
+        'description': evento.informacion,
+        'classNames': evento.evento_className,
+        'location': evento.evento_lugar,
+        'imagen': evento.imagen.url if evento.imagen else 'false',
+        'button': evento.redirigir if evento.redirigir else 'false',
+        'start': evento.evento_fecha_inicio.isoformat(),
+        'end': evento.evento_fecha_fin.isoformat(),
     } for evento in eventos]
     return JsonResponse(eventos_json, safe=False)
 
