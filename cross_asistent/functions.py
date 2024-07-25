@@ -310,7 +310,7 @@ def mapa_data(request):
     data = []
     for mapa in mapas:
         
-        imagen_qs = models.Database.objects.filter(titulo=mapa.nombre).values_list('imagenes', flat=True)
+        imagen_qs = models.Database.objects.filter(titulo=mapa.nombre).values_list('imagen', flat=True)
         imagen = imagen_qs.first() if imagen_qs.exists() else None
         
         item = {

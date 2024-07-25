@@ -147,11 +147,6 @@
 }
 
 
-[data-mdb-theme="dark"] .text_detail {
-    text-shadow: 0 0 3px var(--darkA1);
-}
-
-
 /*########################### Generales ###########################*/
 html {
     overflow-x: hidden;
@@ -477,9 +472,7 @@ nav .navbar-collapse {
 .text_detail,
 .carousel-item em,
 .slide-inner .header-text h2 em {
-    background: var(--var-detail);
-    background-clip: text;
-    color: transparent;
+    color: var(--var-detail_flat);
 }
 
 .slide-inner .buttons {
@@ -819,7 +812,7 @@ main.main_anchor {
 }
 
 .mask_white {
-    background: linear-gradient(to top, rgb(255, 255, 255) 40px, rgba(0, 0, 0, 0.4) 30%, transparent 60%);
+    background: linear-gradient(to top, var(--mdb-body-bg) 40px, rgba(0, 0, 0, 0.4) 30%, transparent 60%);
 }
 
 
@@ -1068,8 +1061,10 @@ input:checked+.slider:before {
 }
 
 .mapboxgl-ctrl-group button i {
-    color: #292f38;
-    transition: 0.3s ease;
+    color: transparent;
+    background-color: #292f38;
+    background: #292f38;
+    background-clip: text;
 }
 
 .mapboxgl-ctrl-group button:hover i {

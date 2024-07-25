@@ -8,82 +8,28 @@
         <hr class="hr_divisor mx-4 mx-md-0" />
     </div>
     {% if blogs_all %}
-        <div class="row row-cols-1 row-cols-md-3 g-4">
-            {% for blog in blogs_all %}
-                <div class="col">
-                    <a href="{% url 'mostrar_blog' blog.id %}" class="text-decoration-none">
-                        <div class="card">
-                            <div class="card-image" style="background-image: url('{{ blog.imagen }}');"></div>
-                            <div class="card-description">
-                                <p class="text-title">{{ blog.titulo }}</p>
-                                <p class="text-body">Autor: {{ blog.autor }}</p>
-                            </div>
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+        {% for blog in blogs_all %}
+        <div class="col">
+            <a class="card text-white h-100">
+                <img src="https://mdbcdn.b-cdn.net/img/new/standard/city/044.webp" class="card-img" />
+                <div class="card-img-overlay mask mask_dark">
+                    <div class="d-flex flex-column justify-content-end h-100">
+                        <h5 class="card-title">{{blog.titulo}}</h5>
+                        <div class="card-text text-end lead">
+                            <small>{{ blog.creacion }}</small>
                         </div>
-                    </a>
+                    </div>
                 </div>
-            {% endfor %}
+            </a>
         </div>
+        {% endfor %}
+    </div>
     {% else %}
-        <div class="text-center">
-            <p class="lead">No hay blogs disponibles en este momento 😯. ¡Vuelve pronto para más actualizaciones!</p>
-        </div>
+    <div class="text-center">
+        <p class="lead">No hay blogs disponibles en este momento 😯. ¡Vuelve pronto para más actualizaciones!</p>
+    </div>
     {% endif %}
-
-    <style>
-        .card {
-  height: 254px;
-  width: 190px;
-  position: relative;
-  transition: all 0.4s cubic-bezier(0.645, 0.045, 0.355, 1);
-  border-radius: 16px;
-  box-shadow: 0 0 20px 8px #000;
-  overflow: hidden;
-}
-
-/* Image */
-.card-image {
-  height: 100%;
-  width: 100%;
-  position: absolute;
-  transition: all 1s cubic-bezier(0.645, 0.045, 0.355, 1);
-  background-size: cover;
-  background-position: center;
-}
-
-/* Description */
-.card-description {
-  display: flex;
-  position: absolute;
-  gap: 0.5em;
-  flex-direction: column;
-  background-color: #f5f5f5;
-  color: #212121;
-  height: 70%;
-  bottom: 0;
-  border-radius: 16px;
-  transition: all 1s cubic-bezier(0.645, 0.045, 0.355, 1);
-  padding: 1rem;
-  width: 80%;
-}
-
-/* Text */
-.text-title {
-  font-size: 1.3rem;
-  font-weight: 700;
-}
-
-.text-body {
-  font-size: 1rem;
-  line-height: 130%;
-}
-
-/* Hover states */
-.card:hover .card-description {
-  transform: translateY(80%);
-}
-
-    </style>
-
 </main>
 {% include 'base/widget_footer.html' %}
 {% endblock %}

@@ -546,9 +546,9 @@ fetch(url)
         });
     })
     .catch((error) => {
-        alertSToast("top", 5000, "error", "Ocurrio un error inesperado. verifica la consola. #403");
         console.error("Error al obtener los datos del mapa:");
         console.error(error);
+        alertSToast("top", 5000, "error", "Ocurrio un error inesperado. verifica la consola. #403");
     });
 
 // Cursor segun el evento ###########################################

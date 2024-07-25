@@ -53,7 +53,7 @@ class Database(models.Model):
     informacion = models.TextField(blank=True, null=True)
     redirigir = models.URLField(blank=True, null=True)
     frecuencia = models.IntegerField(default=0)
-    document = models.FileField(upload_to='cross_asistent/static/files/documentos/', blank=True, null=True)
+    documento = models.FileField(upload_to='cross_asistent/static/files/documentos/', blank=True, null=True)
     imagen = models.ImageField(upload_to=get_image_upload_path, blank=True, null=True)
     evento_fecha_inicio = models.DateTimeField(blank=True, null=True)
     evento_fecha_fin = models.DateTimeField(blank=True, null=True)

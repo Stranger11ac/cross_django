@@ -16,7 +16,6 @@ def export_database(request):
         response['Content-Disposition'] = f'attachment; filename="UTC_database_{now}.csv"'
         writer = csv.writer(response)
         writer.writerow(['Categoria', 'Titulo', 'Informacion', 'Redirigir', 'Frecuencia', 'Documentos', 'Imagenes', 'Fecha Modificacion'])
-        # Obtener todos los objetos del modelo Database
         
         for info in databaseall:
             writer.writerow([
@@ -25,8 +24,8 @@ def export_database(request):
                 info.informacion,
                 info.redirigir,
                 info.frecuencia,
-                info.documentos.url if info.documentos else '',
-                info.imagenes.url if info.imagenes else '',
+                info.documento.url if info.documentos else '',
+                info.imagen.url if info.imagenes else '',
                 info.fecha_modificacion
             ])
         return response
@@ -50,8 +49,8 @@ def import_database(request):
                     informacion=row[2],
                     redirigir=row[3],
                     frecuencia=int(row[4]),
-                    documentos=row[5],
-                    imagenes=row[6],
+                    documento=row[5],
+                    imagen=row[6],
                     fecha_modificacion=row[7]
                 )
             # Redirigir a la vista programador después de procesar el formulario

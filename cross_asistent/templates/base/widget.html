@@ -48,6 +48,10 @@
                                 href="{% url 'blog' %}">Blog <i class="fa-solid fa-newspaper ms-1"></i></i></a>
                         </li>
                         <li class="nav-item">
+                            <a class="btn {% if active_page == 'calendario' %}btn_secondary{% else %}btn_detail{% endif %} m-1 my-lg-0 d-block"
+                                href="{% url 'calendario' %}">Calendario <i class="fa-solid fa-calendar-days ms-1"></i></i></a>
+                        </li>
+                        <li class="nav-item">
                             <a class="btn {% if active_page == 'map' %}btn_secondary{% else %}btn_detail{% endif %} m-1 my-lg-0 d-block"
                                 href="{% url 'map' %}">Mapa
                                 <i class="fa-solid fa-map-location-dot ms-1"></i></a>
@@ -60,9 +64,6 @@
                                 </a>
 
                                 <ul class="dropdown-menu mx-100" aria-labelledby="dropdownMenuLink">
-                                    <li>
-                                        <a href="{% url 'calendario' %}" class="dropdown-item {% if active_page|default:'' == 'calendario' %}active{% endif %}" aria-current="true">Calendario</a>
-                                    </li>
                                     <li>
                                         <a href="{% url 'about' %}" class="dropdown-item {% if active_page|default:'' == 'about' %}active{% endif %}"
                                             aria-current="true">Acerca de</a>
