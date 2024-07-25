@@ -1225,6 +1225,7 @@ input:checked+.slider:before {
 }
 
 /*########################### Calendario: fullcalendar ###########################*/
+.fc-multimonth-title,
 .fc-toolbar-chunk {text-transform: capitalize}
 
 .fc-daygrid-day.fc-day-today {background: none !important}
@@ -1255,6 +1256,7 @@ input:checked+.slider:before {
 }
 
 .fc-timegrid-event-harness.fc-timegrid-event-harness-inset,
+.fc-multimonth-month,
 .fc-daygrid-event {cursor: pointer !important}
 
 .fc-daygrid-week-number {

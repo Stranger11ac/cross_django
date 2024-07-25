@@ -118,13 +118,13 @@ $(document).ready(function () {
 
         // Quitar clase show #####################################
         $("[data-btn_closed]").on("click", function () {
-            var targetId = $(this).attr("data-btn_closed");
+            var targetId = $(this).data("btn_closed");
             $("#" + targetId).toggleClass("show");
         });
 
         // Resetear formulario / vaciar todo el formulario
         $("[data-reset_form]").on("click", function () {
-            var formId = $(this).attr("data-reset_form");
+            var formId = $(this).data("reset_form");
             var formElement = $("#" + formId)[0];
 
             if (formElement) {

@@ -19,15 +19,17 @@ document.addEventListener("DOMContentLoaded", function () {
             start: "timeGridDay,timeGridWeek,dayGridMonth,multiMonthYear",
             end: "prevYear,nextYear",
         },
+        firstDay: 0, // Domingo
+        // firstDay: 1, // Lunes
         events: dataEvents,
-        initialView: "dayGridMonth",
+        initialView: "multiMonthYear",
+        // initialView: "dayGridMonth",
         locale: "es",
         height: "auto",
         navLinks: true,
         nowIndicator: true,
         weekNumbers: true,
         weekText: "",
-        eventDisplay: "block",
         slotLabelFormat: {
             hour: "numeric",
             minute: "2-digit",
@@ -36,22 +38,26 @@ document.addEventListener("DOMContentLoaded", function () {
         eventTimeFormat: {
             hour: "numeric",
             hour12: true,
-            meridiem: 'narrow',
+            meridiem: "narrow",
         },
         views: {
-            timeGridDay: {
-                // titleFormat: { year: "numeric", month: "long", day: "numeric" },
-            },
-            timeGridWeek: {
-                // titleFormat: { year: "numeric", month: "long", day: "numeric" },
-            },
+            // timeGridDay: {
+            //     // titleFormat: { year: "numeric", month: "long", day: "numeric" },
+            // },
+            // timeGridWeek: {
+            //     // titleFormat: { year: "numeric", month: "long", day: "numeric" },
+            // },
             dayGridMonth: {
                 displayEventTime: false,
-                // eventTimeFormat: false,
-                // titleFormat: { year: "numeric", month: "long" },
             },
             multiMonthYear: {
-                // titleFormat: { year: "numeric" },
+                // dayMaxEventRows: 6,
+                multiMonthMaxColumns: 4,
+                multiMonthMinWidth: 250,
+                dateClick: function (info) {
+                    var clickedDate = new Date(info.dateStr);
+                    calendar.changeView("dayGridMonth", clickedDate);
+                },
             },
         },
         eventClick: function (info) {
@@ -81,4 +87,42 @@ document.addEventListener("DOMContentLoaded", function () {
         },
     });
     calendar.render();
+
+    $(document).on("click", ".fc-multimonth-month", function () {
+        var dataDate = $(this).attr("data-date");
+        calendar.changeView("dayGridMonth", dataDate);
+    });
+
+    // var monthLabels = document.querySelectorAll(".fc-multimonth-month");
+    // monthLabels.forEach(function (monthLabel) {
+    //     monthLabel.addEventListener("click", function () {
+    //         var dataDate = monthLabel.getAttribute("data-date");
+    //         calendar.changeView("dayGridMonth", dataDate);
+    //     });
+    // });
+
+    // $('[data-date]').click(() => {
+    //     // var thisDate = $(this).data("date");
+    //     var thisDate = $(this).attr("class");
+    //     console.log('date: '+ thisDate);
+    // });
+
+    // document.addEventListener("click", function (event) {
+    //     if (calendar.view.type === "multiMonthYear") {
+    //         var target = event.target;
+    //         if (target.classList.contains("fc-multimonth-title")) {
+    //             // var monthYearText = target.innerText.split(" ");
+    //             // var month = monthYearText[0];
+    //             // var year = monthYearText[1];
+
+    //             // // Convertir el nombre del mes al índice del mes
+    //             // var monthIndex = new Date(Date.parse(month + " 1, 2024")).getMonth();
+
+    //             // // Cambiar la vista al mes correspondiente
+    //             // var clickedDate = new Date(year, monthIndex, 1);
+    //             console.table(target);
+    //             calendar.changeView("dayGridMonth", "2025-11");
+    //         }
+    //     }
+    // });
 });
