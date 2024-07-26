@@ -89,7 +89,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 document.getElementById("eventImg").classList.add("none");
             } else {
                 document.getElementById("eventImg").classList.remove("none");
-                imgSrc = imgJson.replace("cross_asistent/", "");
+                imgSrc = imgJson.replace("/cross_asistent", "");
                 document.getElementById("eventImg").src = imgSrc;
             }
 

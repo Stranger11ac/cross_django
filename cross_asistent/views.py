@@ -83,13 +83,17 @@ def blogs(request):
         imagen_url = oneblog.encabezado
         if not imagen_url == '':
             img = oneblog.encabezado.url.replace("/cross_asistent", "")
+            imgClass = 'item_img-url'
         else:
-            img = ''
+            img = '/static/img/default_image.webp'
+            imgClass = 'item_title-full'
+
         blogs_modificados.append({
             'id': oneblog.id,
             'titulo': oneblog.titulo,
             'autor': oneblog.autor,
             'imagen': img,
+            'class': imgClass,
         })
     return render(request, 'blogs.html', {
         'blogs_all': blogs_modificados,
