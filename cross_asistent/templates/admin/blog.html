@@ -24,13 +24,18 @@
                                     <input type="text" id="titulo" name="titulo" class="form-control text-white" required />
                                     <label class="form-label text-white" for="titulo">Titulo / Encabezado:</label>
                                 </div>
-                                <div class="row">
+                                <div class="row text-white">
                                     <div class="col-2 d-flex align-items-center justify-content-end pe-0">
-                                        <label class="form-label text-white m-0" for="autor">Autor:</label>
+                                        <p class="m-0">Autor:</p>
                                     </div>
                                     <div class="col-10">
-                                        <input type="text" id="autor" name="autor" class="form-control" readonly aria-label="readonly input example"
-                                            value="{{user.first_name}} {{user.last_name}}" required />
+                                        <p class="m-0 text-capitalize" id="firmaPerfilTexto">
+                                            {% if firma_perfil.blog_firma %}
+                                            {{firma_perfil.blog_firma}}
+                                            {% else %}
+                                            {{user.first_name}} {{user.last_name}}
+                                            {% endif %}
+                                        </p>
                                     </div>
                                 </div>
                             </div>
@@ -40,6 +45,14 @@
                 <div class="col-12">
                     <div class="card">
                         <div class="card-body">
+                            <input type="text" id="autor" name="autor" class="d-none" readonly aria-label="readonly" value="{{user.username}}" required />
+
+                            <div class="mb-4" data-mdb-input-init>
+                                <label class="form-label text-white" for="new_firma">Personalizar firma de Autor: <span class="fs-8">(opcional)</span></label>
+                                <input type="text" id="new_firma" name="new_firma" class="form-control text-white"
+                                    placeholder="Ej: Ing. / Lic. {{user.first_name}}" />
+                            </div>
+
                             <label class="form-label" for="encabezadoImg">Imagen de Encabezado: <span class="fs-8">(opcional)</span> </label>
                             <input type="file" class="form-control text-right" id="encabezadoImg" name="encabezadoImg" accept="image/*" />
                             <button type="submit" class="btn btn_detail w-100 d-none d-md-block mt-4">Publicar <i

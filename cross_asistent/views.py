@@ -103,8 +103,27 @@ def blogs(request):
 def mostrar_blog(request, Articulos_id):
     if not request.user.is_staff:
         logout(request)
-    Articulos = models.Articulos.objects.filter(pk=Articulos_id)
-    return render(request, 'mostrar_blogs.html', {'Articulos': Articulos})
+    
+    articulo = get_object_or_404(models.Articulos, pk=Articulos_id)
+    autor_username = articulo.autor
+    
+    try:
+        user_profile = models.UserProfile.objects.get(user__username=autor_username)
+        user = User.objects.get(username=autor_username)
+        if user_profile.blog_firma:
+            firma_autor = user_profile.blog_firma
+        else:
+            firma_autor = f'{user.first_name} {user.last_name}'
+    except models.UserProfile.DoesNotExist:
+        firma_autor = autor_username
+    except User.DoesNotExist:
+        firma_autor = autor_username
+
+    return render(request, 'mostrar_blogs.html', {
+        'articulo': articulo,
+        'firma_autor': firma_autor
+    })
+
 
 def calendario(request):
     if not request.user.is_staff:
@@ -249,7 +268,16 @@ def vista_programador(request):
 @never_cache
 def ver_perfil(request):
     perfil_usuario = request.user
-    return render(request, 'admin/perfil.html', {'perfil_usuario': perfil_usuario, 'active_page': 'perfil', 'pages': functions.pages})
+    if request.user.userprofile.profile_picture:
+        user_profile_img = request.user.userprofile.profile_picture.url.replace("/cross_asistent", "")
+    else:
+        user_profile_img = '/static/img/UTC_logo-plano.webp'
+    return render(request, 'admin/perfil.html', {
+        'perfil_usuario': perfil_usuario,
+        'profile_img': user_profile_img,
+        'active_page': 'perfil',
+        'pages': functions.pages
+    })
 
 @login_required
 @never_cache
@@ -257,6 +285,8 @@ def ver_notis(request):
     notificaciones = models.Notificacion.objects.all().order_by('-fecha')
     return render(request, 'admin/notificaciones.html', {'notificaciones': notificaciones, 'pages': functions.pages})
 
+@login_required
+@never_cache
 def marcar_notificaciones_leidas(request):
     try:
         data = json.loads(request.body)
@@ -356,13 +386,13 @@ def delete_banner(request, banner_id):
 def database_page(request):
     datos_modificados = []
 
-    for dato in databaseall:        
-        if dato.imagenes:
-            imagen_url = dato.imagenes.url.replace("/cross_asistent", "")
+    for dato in databaseall:
+        if dato.imagen:
+            imagen_url = dato.imagen.url.replace("/cross_asistent", "")
         else:
             imagen_url = ''
-        if dato.documentos:
-            documento_url = dato.documentos.url.replace("/cross_asistent", "")
+        if dato.documento:
+            documento_url = dato.documento.url.replace("/cross_asistent", "")
         else:
             documento_url = ''
         datos_modificados.append({
@@ -382,6 +412,7 @@ def database_page(request):
 @login_required
 @never_cache
 def create_blog(request):
+    user_perfil = request.user.userprofile
     if request.method == 'POST':
         try:
             tituloPOST = request.POST.get('titulo')
@@ -396,6 +427,10 @@ def create_blog(request):
                 encabezado=encabezadoPOST
             )
             articulo.save()
+            
+            user_perfil.blog_firma = request.POST.get('new_firma')
+            user_perfil.save()
+            
             models.Notificacion.objects.create(
                 usuario=request.user,
                 tipo='Blog',
@@ -405,7 +440,7 @@ def create_blog(request):
             return JsonResponse({'success': True, 'message': 'Excelente 🥳🎈🎉. Tu articulo ya fue publicado. Puedes editarlo cuando gustes. 🧐😊'}, status=200)
         except Exception as e:
             return JsonResponse({'success': False, 'message': f'Ocurrio un error😯😥 <br>{str(e)}'}, status=400)
-    return render(request, 'admin/blog.html', {'active_page': 'blog','pages': functions.pages})
+    return render(request, 'admin/blog.html', {'active_page': 'blog','pages': functions.pages, 'firma_perfil':user_perfil})
 
 @login_required
 @never_cache

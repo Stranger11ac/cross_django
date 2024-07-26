@@ -355,6 +355,19 @@ $(document).ready(function () {
             }
         }
 
+        // Firma del blog ###################################
+        const oldSignature = $.trim($("#firmaPerfilTexto").text()); // obtener texto sin espacios en inicio y final (trim)
+        $("#new_firma").on("input", function () {
+            const inputText = $(this).val();
+
+            // Verificar si el texto está vacío
+            if (inputText.trim() === "") {
+                $("#firmaPerfilTexto").text(oldSignature);
+            } else {
+                $("#firmaPerfilTexto").text(inputText);
+            }
+        });
+
         //
         //
         //

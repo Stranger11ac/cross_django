@@ -25,6 +25,13 @@ respuestas_simples = {
 }
 palabras_clave = ["hola", "servicios", "escolares", "donde", "esta"]  # Ejemplo de palabras clave
 
+# Plantilla links programador / administrador ----------------------------------------------------------
+pages = [
+        {'name': 'banner', 'url': 'upload_banner', 'display_name': 'Banners', 'icon': 'fa-solid fa-image'},
+        {'name': 'database', 'url': 'database_page', 'display_name': 'Database', 'icon': 'fa-solid fa-database'},
+        {'name': 'blog', 'url': 'create_blog', 'display_name': 'Blogs', 'icon': 'fa-solid fa-newspaper'},
+        {'name': 'mapa', 'url': 'consultaMap', 'display_name': 'Mapa', 'icon': 'fa-solid fa-map-location-dot'},
+    ]
 
 def chatgpt(question, instructions):
     client = openai.OpenAI(api_key=settings.OPENAI_API_KEY)
@@ -149,14 +156,6 @@ def chatbot(request):
             return JsonResponse({'success': False, 'message': str(e)})
 
     return JsonResponse({'success': False, 'message': 'Método no permitido.'})
-
-# Plantilla links programador / administrador ----------------------------------------------------------
-pages = [
-        {'name': 'banner', 'url': 'upload_banner', 'display_name': 'Banners', 'icon': 'fa-solid fa-image'},
-        {'name': 'database', 'url': 'database_page', 'display_name': 'Database', 'icon': 'fa-solid fa-database'},
-        {'name': 'blog', 'url': 'create_blog', 'display_name': 'Blogs', 'icon': 'fa-solid fa-newspaper'},
-        {'name': 'mapa', 'url': 'consultaMap', 'display_name': 'Mapa', 'icon': 'fa-solid fa-map-location-dot'},
-    ]
 
 # usuarios (programacion) ----------------------------------------------------------
 def create_newuser(first_name, last_name, username, email, password1, password2=None, is_staff=False, is_active=False):

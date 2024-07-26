@@ -847,13 +847,9 @@ main.main_anchor {
     box-shadow: 0 0 8px var(--darkA2) !important;
 }
 
-.card.card_blog {
-    min-height: 230px !important;
-}
-
 /* style de cards de perfil */
 .card_perfil {
-    --size_box: 150px;
+    --size_box: 200px;
     position: relative;
     width: 100%;
     max-width: 540px;
@@ -863,7 +859,7 @@ main.main_anchor {
 }
 
 .card__img_perfil {
-    height: 120px;
+    height: 150px;
     width: 100%;
     position: relative;
     background: linear-gradient(45deg, var(--color-bg1), var(--color-bg2));
@@ -888,34 +884,26 @@ main.main_anchor {
     height: auto;
     min-height: 100%;
     width: 100%;
-    background-color: var(--var-detail);
     background: var(--var-img-perfil) center no-repeat;
     background-size: auto 100%;
-    filter: blur(2px);
+    filter: blur(1.5px);
     position: absolute;
+    aspect-ratio: 1 / 1;
+    border-radius: 50%;
 }
 
+.card__avatar_perfil div,
 .card__avatar_perfil img {
     width: inherit;
     height: auto;
-    padding: 0 6px;
-    box-shadow: 0 0 5px var(--darkA4);
     position: relative;
     user-select: none;
 }
 
 .card__content_perfil {
-    padding: 20px;
-    margin-top: calc(var(--size_box)/2);
+    margin-top: calc(var(--size_box)/1.6);
     text-align: center;
 }
-
-.flex-between-wrap {
-    display: flex;
-    justify-content: space-between;
-    flex-wrap: wrap;
-}
-
 
 /*########################### Tabla MDB ###########################*/
 .table-responsive {
@@ -1187,6 +1175,7 @@ input:checked+.slider:before {
 }
 
 .materialBoxed.active {
+    filter: drop-shadow(0 0 8px var(--whiteA1));
     cursor: default;
 }
 
@@ -1497,6 +1486,12 @@ input:checked+.slider:before {
 }
 
 /*########################### Clases Genericas ###########################*/
+.flex-between-wrap {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+}
+
 .cursor-not {
     cursor: not-allowed;
 }
