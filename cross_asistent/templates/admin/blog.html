@@ -13,11 +13,11 @@
     </div>
     <form method="post" id="formularioArticulo" data-submit-form class="row pt-2" autocomplete="off">
         {% csrf_token %}
-        <div class="col-12 col-md-6 col-xl-4 mb-4 position-relative">
+        <div class="col-12 col-md-6 col-xl-4 mb-4 mb-md-0 position-relative">
             <div class="row sticky-md sticky-top-4">
                 <div class="col mb-4">
-                    <div class="card h-100">
-                        <img src="{% static 'img/default_image.webp' %}" class="card-img" />
+                    <div class="card card_mxh-450">
+                        <img src="{% static 'img/default_image.webp' %}" id="imgArticle" class="card-img" />
                         <div class="card-img-overlay mask mask_dark">
                             <div class="d-flex flex-column justify-content-end h-100">
                                 <div class="form-outline mb-4" data-mdb-input-init>

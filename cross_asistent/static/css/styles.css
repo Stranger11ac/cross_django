@@ -845,6 +845,15 @@ main.main_anchor {
 /*########################### Tarjetas / cards MDB ###########################*/
 .card {
     box-shadow: 0 0 8px var(--darkA2) !important;
+    overflow: hidden;
+}
+
+.card.card_mxh-450 {
+    max-height: 450px;
+}
+
+.card.card_mxh-500 {
+    max-height: 500px;
 }
 
 /* style de cards de perfil */
@@ -1498,6 +1507,15 @@ input:checked+.slider:before {
 
 .none {
     display: none;
+}
+
+.son_p p {
+    word-break: break-all;
+}
+
+.img_article{
+    overflow: hidden;
+    max-height: 45vh;
 }
 
 /*################# Margenes #################*/

@@ -1,0 +1,26 @@
+{% extends 'base/widget.html' %}
+{% load static %}
+{% block title %}
+{{ articulo.titulo|truncatechars:25 }}
+{% endblock %}
+
+{% block content %}
+<div class="img_article position-relative">
+    <img src="{{encabezado_url}}" alt='Imagen de encabezado del articulo "{{ articulo.titulo }}"' class="img-fluid w-100">
+    <div class="mask mask_white"></div>
+</div>
+<main class="container container-fluid pb-5">
+    <div class="son_p">
+        <h2 class="text-center mb-5 fs-20">{{ articulo.titulo }}</h2>
+        <section class="px-4">
+            {% autoescape off %}{{ articulo.contenido }}{% endautoescape %}
+
+            <div class="w-100 text-end">
+                <p class="mt-5">Autor: {{ firma_autor }}</p>
+                <p>Creado el {{ articulo.creacion }}</p>
+            </div>
+        </section>
+    </div>
+</main>
+{% include 'base/widget_footer.html' %}
+{% endblock %}

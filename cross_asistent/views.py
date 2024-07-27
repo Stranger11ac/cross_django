@@ -3,13 +3,12 @@ from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.decorators import login_required
 from django.core.files.storage import default_storage
 from django.views.decorators.cache import never_cache
-from .forms import BannersForm
 from django.contrib.auth.models import User
 from django.db import models, transaction
 from django.http import JsonResponse
-from django.conf import settings
 from django.urls import reverse
 from . import functions, models
+from .forms import BannersForm
 import json
 
 databaseall = models.Database.objects.all()
@@ -95,7 +94,7 @@ def blogs(request):
             'imagen': img,
             'class': imgClass,
         })
-    return render(request, 'blogs.html', {
+    return render(request, 'blogs_all.html', {
         'blogs_all': blogs_modificados,
         'active_page': 'blog'
     })
@@ -106,6 +105,7 @@ def mostrar_blog(request, Articulos_id):
     
     articulo = get_object_or_404(models.Articulos, pk=Articulos_id)
     autor_username = articulo.autor
+    encabezado_url = articulo.encabezado.url.replace('/cross_asistent', '')
     
     try:
         user_profile = models.UserProfile.objects.get(user__username=autor_username)
@@ -119,11 +119,11 @@ def mostrar_blog(request, Articulos_id):
     except User.DoesNotExist:
         firma_autor = autor_username
 
-    return render(request, 'mostrar_blogs.html', {
+    return render(request, 'blog.html', {
         'articulo': articulo,
-        'firma_autor': firma_autor
+        'firma_autor': firma_autor,
+        'encabezado_url': encabezado_url,
     })
-
 
 def calendario(request):
     if not request.user.is_staff:
