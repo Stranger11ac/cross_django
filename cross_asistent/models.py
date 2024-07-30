@@ -132,6 +132,7 @@ class UserProfile(models.Model):
     profile_picture = models.ImageField(upload_to=image_path_profile, blank=True, null=True)
     tutorial = models.BooleanField(default=True)
     blog_firma = models.TextField(blank=True, null=True)
+    passwoed_update = models.DateField(blank=True, null=True)
     
     def __str__(self):
         return self.user.username

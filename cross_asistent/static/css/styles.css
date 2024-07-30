@@ -149,15 +149,17 @@
 
 /*########################### Generales ###########################*/
 html {
-    overflow-x: hidden;
+    overflow-x: hidden !important;
     /* scrollbar-gutter: stable; */
 }
 
 body {
     min-height: 100vh;
+    width: 100vw;
     font-family: var(--ft2);
     scroll-behavior: smooth;
     position: relative;
+    overflow-x: hidden !important;
 }
 
 /* Personaliza el estilo de la barra de scroll */
@@ -223,6 +225,13 @@ i.fa-solid {
 
 .btn:active {
     transform: scale(0.95);
+}
+
+.btn.btn_press {
+    box-shadow: 0 0 5px 1px var(--darkA6) inset !important;
+}
+.btn.btn_check.btn_press {
+    border: 2px solid white;
 }
 
 .bg_detail,
@@ -301,14 +310,18 @@ i.fa-solid {
     border: 5px solid white !important;
 }
 
-.event_detail {
-    background-color: var(--var-detail_flat) !important;
-    background: var(--var-detail_flat) !important;
-    border-color: var(--var-detail_flat) !important;
-    margin-block: 2px !important;
-    color: white;
-    overflow: hidden;
+.bg_purple-blue {
+    background: linear-gradient(45deg, #ae37cc 10%, #3b71ca 90%);
 }
+
+.bg_blue-green {
+    background: linear-gradient(45deg, #3b71ca 10%, #02913c 90%);
+}
+
+.bg_blue-red {
+    background: linear-gradient(45deg, #3b71ca 10%, #b4330f 90%);
+}
+
 
 @media (min-width: 992px) {
     .btn_lg-circle {
@@ -844,6 +857,7 @@ main.main_anchor {
 
 /*########################### Tarjetas / cards MDB ###########################*/
 .card {
+    position: unset;
     box-shadow: 0 0 8px var(--darkA2) !important;
     overflow: hidden;
 }
@@ -868,27 +882,28 @@ main.main_anchor {
 }
 
 .card__img_perfil {
-    height: 150px;
+    height: 140px;
     width: 100%;
     position: relative;
     background: linear-gradient(45deg, var(--color-bg1), var(--color-bg2));
 }
 
-.card__avatar_perfil {
+.card__img_perfil .card__avatar_perfil {
     position: absolute;
     width: var(--size_box);
     height: var(--size_box);
     display: grid;
     place-content: center;
-    bottom: calc(var(--size_box)/-2);
     left: 50%;
+    bottom: calc(var(--size_box)/-2);
     border-radius: 100%;
     border: 8px solid var(--mdb-card-bg);
     transform: translateX(-50%);
     overflow: hidden;
+    z-index: 5;
 }
 
-.card__avatar_perfil::before {
+.card__img_perfil .card__avatar_perfil::before {
     content: '';
     height: auto;
     min-height: 100%;
@@ -901,15 +916,15 @@ main.main_anchor {
     border-radius: 50%;
 }
 
-.card__avatar_perfil div,
-.card__avatar_perfil img {
+.card__img_perfil .card__avatar_perfil div,
+.card__img_perfil .card__avatar_perfil img {
     width: inherit;
     height: auto;
     position: relative;
     user-select: none;
 }
 
-.card__content_perfil {
+.card_perfil .card__perfil_content {
     margin-top: calc(var(--size_box)/1.6);
     text-align: center;
 }
@@ -969,6 +984,10 @@ img.img-tiny {
 
 
 /*########################### Formulario / forms ###########################*/
+label {
+    text-transform: capitalize;
+}
+
 .form_group-btn {
     position: relative;
 }
@@ -1040,6 +1059,15 @@ input:checked+.slider {
 input:checked+.slider:before {
     transform: translateX(100%) translateY(-50%);
     box-shadow: inset 15px -4px 0px 15px #fff000;
+}
+
+.input_transparent {
+    /* border-top-color: transparent;
+    border-left-color: transparent;
+    border-right-color: transparent; */
+    border-color: transparent;
+    background: transparent;
+    transition: 0.2s ease;
 }
 
 
@@ -1126,57 +1154,6 @@ input:checked+.slider:before {
     opacity: unset !important;
 }
 
-/*################ Alerts customClass Sweetalert ################*/
-.icon_alert {
-    font-size: 1.5rem;
-    margin: 10px 5px !important;
-}
-
-.title_alert {
-    font-size: 1.2rem !important;
-}
-
-.title_alert hr {
-    background: #545454;
-    border: 2px solid #545454;
-    border-radius: 5px;
-    margin: 5px 2px;
-}
-
-.title_alert span {
-    color: var(--mdb-success);
-    font-weight: 700;
-}
-
-.title_alert u {
-    color: var(--mdb-danger);
-    font-weight: 700;
-}
-
-.title_alert strong {
-    font-weight: 900;
-    text-decoration: underline;
-}
-
-.progressbar_alert {
-    min-height: 5px;
-    border: none;
-    border-radius: 0 5px 5px 0;
-    opacity: 0.8;
-    background: var(--var-detail) !important;
-}
-
-.close_button_alert {
-    font-size: 3rem !important;
-    margin: 0px 5px !important;
-}
-
-.btn_alert {
-    font-size: 3rem !important;
-    width: 100%;
-    transition: all 0.3s ease !important;
-}
-
 
 /*########################### materialBox ###########################*/
 .materialBoxed:hover:not(.active) {
@@ -1216,6 +1193,7 @@ input:checked+.slider:before {
     z-index: 1000;
     -webkit-font-smoothing: antialiased;
 }
+
 
 /*########################### Calendario: fullcalendar ###########################*/
 .fc-multimonth-title,
@@ -1279,6 +1257,14 @@ input:checked+.slider:before {
     background-color: var(--darkA1);
 }
 
+.event_detail {
+    background-color: var(--var-detail_flat) !important;
+    background: var(--var-detail_flat) !important;
+    border-color: var(--var-detail_flat) !important;
+    margin-block: 2px !important;
+    color: white;
+    overflow: hidden;
+}
 
 /*########################### Sistema de grid ###########################*/
 .grid-system {
@@ -1513,7 +1499,7 @@ input:checked+.slider:before {
     word-break: break-all;
 }
 
-.img_article{
+.img_article {
     overflow: hidden;
     max-height: 45vh;
 }
@@ -1744,6 +1730,18 @@ input:checked+.slider:before {
     font-size: 2rem !important;
 }
 
+.fs-22 {
+    font-size: 2.2rem !important;
+}
+
+.fs-23 {
+    font-size: 2.3rem !important;
+}
+
+.fs-24 {
+    font-size: 2.4rem !important;
+}
+
 .fs-25 {
     font-size: 2.5rem !important;
 }
@@ -1797,6 +1795,57 @@ input:checked+.slider:before {
     animation-name: fadeInLeft
 }
 
+
+/*################ Alerts customClass Sweetalert ################*/
+.icon_alert {
+    font-size: 1.5rem;
+    margin: 10px 5px !important;
+}
+
+.title_alert {
+    font-size: 1.2rem !important;
+}
+
+.title_alert hr {
+    background: #545454;
+    border: 2px solid #545454;
+    border-radius: 5px;
+    margin: 5px 2px;
+}
+
+.title_alert span {
+    color: var(--mdb-success);
+    font-weight: 700;
+}
+
+.title_alert u {
+    color: var(--mdb-danger);
+    font-weight: 700;
+}
+
+.title_alert strong {
+    font-weight: 900;
+    text-decoration: underline;
+}
+
+.progressbar_alert {
+    min-height: 5px;
+    border: none;
+    border-radius: 0 5px 5px 0;
+    opacity: 0.8;
+    background: var(--var-detail) !important;
+}
+
+.close_button_alert {
+    font-size: 3rem !important;
+    margin: 0px 5px !important;
+}
+
+.btn_alert {
+    font-size: 3rem !important;
+    width: 100%;
+    transition: all 0.3s ease !important;
+}
 
 /*########################### Animaciones ###########################*/
 @-webkit-keyframes fadeInLeft {

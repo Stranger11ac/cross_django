@@ -1,19 +1,20 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from sklearn.feature_extraction.text import TfidfVectorizer
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.hashers import check_password
 from sklearn.metrics.pairwise import cosine_similarity
 from django.views.decorators.cache import never_cache
+from django.db import IntegrityError, transaction
 from django.contrib.auth.models import User
 from django.http import JsonResponse
-from django.db import IntegrityError
 from django.conf import settings
 from django.db.models import Q
 from django.utils import timezone
 from . import models
+import datetime
 import openai
 import spacy
 import json
-
 
 # ChatBot ----------------------------------------------------------
 # Cargar el modelo de lenguaje español
@@ -156,6 +157,67 @@ def chatbot(request):
             return JsonResponse({'success': False, 'message': str(e)})
 
     return JsonResponse({'success': False, 'message': 'Método no permitido.'})
+
+# Editar Perfil ----------------------------------------------------------
+def editar_perfil(request):
+    if request.method == 'POST' and request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        user_auth = request.user
+        user_perfil = request.user.userprofile
+        
+        usernamePOST = request.POST.get('usernameChanged')
+        fNamePOST = request.POST.get('first_nameChanged')
+        lNamePOST = request.POST.get('last_nameChanged')
+        emailPOST = request.POST.get('emailChanged')
+        firmaPOST = request.POST.get('firmaBlogChanged')
+        picturePOST = request.FILES.get('userPictureChanged')
+        delPicturePOST = request.POST.get('deletePicture')
+        PasswordPOST = request.POST.get('passwordSend')
+        newPasswordPOST = request.POST.get('confNewPass')
+        
+        if not user_auth.check_password(PasswordPOST):
+            return JsonResponse({'success': False, 'message': 'La contraseña actual es incorrecta.'}, status=400)
+        
+        if emailPOST and User.objects.filter(email=emailPOST).exclude(id=user_auth.id).exists():
+            return JsonResponse({'success': False, 'message': f'El correo electrónico "{emailPOST}" ya está en uso por otra cuenta. 🤔😯😯🧐'}, status=400)
+        
+        if usernamePOST and usernamePOST != user_auth.username:
+            if User.objects.filter(username=usernamePOST).exists():
+                return JsonResponse({'success': False, 'message': 'El nombre de usuario ya está en uso.'}, status=400)
+            user_auth.username = usernamePOST
+        
+        with transaction.atomic():
+            if fNamePOST:
+                user_auth.first_name = fNamePOST
+            
+            if lNamePOST:
+                user_auth.last_name = lNamePOST
+            
+            if emailPOST:
+                user_auth.email = emailPOST
+            
+            if firmaPOST:
+                user_perfil.blog_firma = firmaPOST
+            
+            if picturePOST:
+                user_perfil.profile_picture = picturePOST
+            
+            if delPicturePOST == 'on':
+                user_perfil.profile_picture.delete()
+                user_perfil.profile_picture = None
+            
+            if newPasswordPOST:
+                if PasswordPOST == newPasswordPOST:
+                    return JsonResponse({'success': False, 'message': 'La nueva contraseña no puede ser igual a la actual.'}, status=403)
+                user_auth.set_password(newPasswordPOST)
+                user_perfil.passwoed_update = datetime.date.today()
+
+            user_auth.save()
+            user_perfil.save()
+        return JsonResponse({'success': True, 'message': 'Tus Datos Se guardaron exitosamente. 🥳😋🤘🎉🎈', 'position': 'top'}, status=200)
+    else:
+        return JsonResponse({'success': False, 'message': 'Acción no permitida.'}, status=403)
+        
+
 
 # usuarios (programacion) ----------------------------------------------------------
 def create_newuser(first_name, last_name, username, email, password1, password2=None, is_staff=False, is_active=False):

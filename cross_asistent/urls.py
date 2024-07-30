@@ -24,6 +24,7 @@ urlpatterns = [
     path('administracion/', views.vista_admin, name='vista_admin'),
     path('administracion/programador/', views.vista_programador, name='vista_programador'),
     path('administracion/perfil/', views.ver_perfil, name='perfil'),
+    path('administracion/perfil/editar_perfil', functions.editar_perfil, name='editprofile'),
     
     # Usuarios ----------------------------------------------------------
     path('administracion/modificar_usuario/', functions.in_active, name='in_active'),

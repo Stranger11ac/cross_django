@@ -45,10 +45,6 @@ document.addEventListener("DOMContentLoaded", function () {
             multiMonthYear: {
                 multiMonthMaxColumns: 4,
                 multiMonthMinWidth: 250,
-                dateClick: function (info) {
-                    var clickedDate = new Date(info.dateStr);
-                    calendar.changeView("dayGridMonth", clickedDate);
-                },
             },
         },
         eventClick: function (info) {

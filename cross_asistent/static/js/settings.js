@@ -3,7 +3,7 @@ var alfanumerico = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz01234567
 var caracteres = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_-%$#@!*&^.";
 var texto3 = /[a-zA-Z0-9]{3}/;
 var formToken = getCSRFToken();
-var timerOut = 4000;
+var timerOut = 5000;
 
 function getCSRFToken() {
     var cookies = document.cookie.split(";");
@@ -368,20 +368,174 @@ $(document).ready(function () {
             }
         });
 
-        // imagen en el blog
+        // Colocar imagen en el DOM ##########################
         function readURL(input) {
             if (input.files && input.files[0]) {
                 var reader = new FileReader();
                 reader.onload = function (e) {
-                    $("#imgArticle").attr("src", e.target.result);
+                    $("[data-img_dom]").attr("src", e.target.result);
                 };
                 reader.readAsDataURL(input.files[0]);
             }
         }
 
-        $("#encabezadoImg").change(function () {
+        $("[data-img_dom-change]").change(function () {
             readURL(this);
         });
+
+        // Inpits del perfil ###################################
+        function toggleTransparent(e) {
+            $(e).toggleClass("input_transparent");
+        }
+
+        $("[data-input_transparent]").on({
+            focus: function () {
+                toggleTransparent(this);
+            },
+            blur: function () {
+                toggleTransparent(this);
+            },
+        });
+
+        var otherChanges = false;
+
+        // Poner visible la seccion de la password
+        $("#updatePassBtn").on("click", function () {
+            let thisBtn = $(this);
+            $("#updatePassText").toggle();
+
+            if ($("#updatePassBtn").hasClass("bg_blue-green")) {
+                $("#profileSaved").slideDown("fast", function () {
+                    $("#updatePassBlock").slideDown("fast", function () {
+                        $("html, body").scrollTop($(document).height());
+                    });
+                });
+            } else {
+                if (otherChanges) {
+                    $("#updatePassBlock").slideUp("fast");
+                } else {
+                    $("#profileSaved").slideUp("fast", function () {
+                        $("#updatePassBlock").slideUp("fast");
+                    });
+                }
+            }
+            if (thisBtn.text() == "Cambiar Contraseña") {
+                thisBtn.toggleClass("bg_blue-green bg_blue-red");
+                thisBtn.text("No Cambiar Contraseña");
+                if (!otherChanges) {
+                    $("#passwordSend").val("");
+                    $("#newPass").val("");
+                    $("#confNewPass").val("");
+                } else {
+                    $("#newPass").val("");
+                    $("#confNewPass").val("");
+                }
+            } else {
+                thisBtn.toggleClass("bg_blue-green bg_blue-red");
+                thisBtn.text("Cambiar Contraseña");
+            }
+        });
+
+        // Detectar cambios en los inputs
+        $("[data-input_change]").each(function () {
+            const thisInput = $(this);
+            var oldValueInput = thisInput.val();
+            const originalNameInput = thisInput.attr("name"); // Guarda el nombre original
+            var oldNameInput = originalNameInput; // Usa el nombre original para cambios temporales
+
+            thisInput.on("input", function () {
+                if (thisInput.val() == oldValueInput) {
+                    thisInput.attr("name", `${originalNameInput}`);
+                    $("#profileSaved").slideUp("fast");
+                    otherChanges = false;
+                } else {
+                    thisInput.attr("name", `${originalNameInput}Changed`);
+                    $("#profileSaved").slideDown("fast");
+                    otherChanges = true;
+
+                    if (thisInput.val() == "") {
+                        // thisInput.blur(() => thisInput.val(oldValueInput));
+                        thisInput.attr("name", `${originalNameInput}`);
+                    }
+                }
+            });
+
+            thisInput.on("click", function () {
+                oldNameInput = originalNameInput; // Restablece el nombre original al hacer clic
+            });
+        });
+
+        // Desplegar boton si se elimina la foto de perfil
+        $("input#deletePicture").change(function () {
+            if ($(this).is(":checked")) {
+                $('[for="deletePicture"]').addClass("btn_press");
+                $("#profileSaved").slideDown("fast");
+                otherChanges = true;
+            } else {
+                $('[for="deletePicture"]').removeClass("btn_press");
+                $("#profileSaved").slideUp("fast");
+                otherChanges = false;
+            }
+        });
+
+        // $("[data-input_change]").on("click", function () {
+        //     const thisInput = $(this);
+        //     var oldValueInput = thisInput.val();
+        //     var oldNameInput = thisInput.attr("name");
+
+        //     $(this).on("input", function () {
+        //         if (thisInput.val() == "") {
+        //             thisInput.blur(() => thisInput.val(oldValueInput));
+        //             thisInput.attr("name", `${oldNameInput}`);
+        //         } else {
+        //             if (thisInput.val() == oldValueInput) {
+        //                 thisInput.attr("name", `${oldNameInput}`);
+        //                 $("#profileSaved").slideUp("fast");
+        //                 otherChanges = false;
+        //             } else {
+        //                 thisInput.attr("name", `${oldNameInput}Changed`);
+        //                 $("#profileSaved").slideDown("fast");
+        //                 otherChanges = true;
+        //             }
+        //         }
+        //     });
+        // });
+
+        // Evitar recargar la pagina si aun no se envia el formulario ###############
+        // var isFormChanged = false;
+
+        // $("[data-unload]").on("input", "input, select, textarea", function () {
+        //     isFormChanged = true;
+        // });
+
+        // $("[data-unload]").on("submit", function () {
+        //     isFormChanged = false;
+        // });
+
+        // window.addEventListener("beforeunload", function (e) {
+        //     var formHasDataUnload = $("[data-unload]").data("unload") !== undefined;
+        //     if (isFormChanged && formHasDataUnload) {
+        //         e.preventDefault();
+
+        //         Swal.fire({
+        //             title: "¿Estás seguro?",
+        //             text: "Tienes cambios sin guardar. ¿Estás seguro de que quieres salir?",
+        //             icon: "warning",
+        //             showCancelButton: true,
+        //             confirmButtonText: "Sí, salir",
+        //             cancelButtonText: "Cancelar",
+        //             reverseButtons: true,
+        //         }).then((result) => {
+        //             if (result.isConfirmed) {
+        //                 isConfirmed = true;
+        //                 window.location.href = e.target.location.href;
+        //             } else {
+        //                 isConfirmed = false;
+        //                 e.preventDefault();
+        //             }
+        //         });
+        //     }
+        // });
 
         //
         //
@@ -442,7 +596,7 @@ function jsonSubmit(e) {
         .then((data) => {
             dataMessage = data.message;
             if (data.success) {
-                thisForm.reset();
+                // thisForm.reset();
                 dataIcon = "success";
                 if (data.icon) {
                     dataIcon = data.icon;
@@ -469,6 +623,8 @@ function jsonSubmit(e) {
                         dataRedirect();
                     };
                 }
+                const passwordInputs = document.querySelectorAll('input[type="password"]');
+                passwordInputs.forEach((input) => (input.value = ""));
 
                 alertSToast(dataPosition, timerOut, dataIcon, dataMessage, alertfunction);
             } else {

@@ -17,7 +17,7 @@
             <div class="row sticky-md sticky-top-4">
                 <div class="col mb-4">
                     <div class="card card_mxh-450">
-                        <img src="{% static 'img/default_image.webp' %}" id="imgArticle" class="card-img" />
+                        <img src="{% static 'img/default_image.webp' %}" id="imgArticle" class="card-img" data-img_dom />
                         <div class="card-img-overlay mask mask_dark">
                             <div class="d-flex flex-column justify-content-end h-100">
                                 <div class="form-outline mb-4" data-mdb-input-init>
@@ -54,7 +54,7 @@
                             </div>
 
                             <label class="form-label" for="encabezadoImg">Imagen de Encabezado: <span class="fs-8">(opcional)</span> </label>
-                            <input type="file" class="form-control text-right" id="encabezadoImg" name="encabezadoImg" accept="image/*" />
+                            <input type="file" class="form-control text-right" id="encabezadoImg" name="encabezadoImg" accept="image/*" data-img_dom-change />
                             <button type="submit" class="btn btn_detail w-100 d-none d-md-block mt-4">Publicar <i
                                     class="fa-regular fa-paper-plane ms-1"></i></button>
                         </div>

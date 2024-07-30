@@ -267,14 +267,23 @@ def vista_programador(request):
 @login_required
 @never_cache
 def ver_perfil(request):
-    perfil_usuario = request.user
-    if request.user.userprofile.profile_picture:
-        user_profile_img = request.user.userprofile.profile_picture.url.replace("/cross_asistent", "")
+    perfil_datos = request.user
+    perfil_extencion = request.user.userprofile
+    if perfil_extencion.profile_picture:
+        user_profile_img = perfil_extencion.profile_picture.url.replace("/cross_asistent", "")
     else:
         user_profile_img = '/static/img/UTC_logo-plano.webp'
+        
+    if perfil_extencion.blog_firma:
+        perfil_firma = perfil_extencion.blog_firma
+    else:
+        perfil_firma = 'Su nombre completo'
+        
     return render(request, 'admin/perfil.html', {
-        'perfil_usuario': perfil_usuario,
+        'perfil_usuario': perfil_datos,
         'profile_img': user_profile_img,
+        'profile_signature': perfil_firma,
+        'profile_pass_update': request.user.userprofile.passwoed_update,
         'active_page': 'perfil',
         'pages': functions.pages
     })
@@ -412,7 +421,6 @@ def database_page(request):
 @login_required
 @never_cache
 def create_blog(request):
-    user_perfil = request.user.userprofile
     if request.method == 'POST':
         try:
             tituloPOST = request.POST.get('titulo')
@@ -428,6 +436,7 @@ def create_blog(request):
             )
             articulo.save()
             
+            user_perfil = request.user.userprofile
             user_perfil.blog_firma = request.POST.get('new_firma')
             user_perfil.save()
             
