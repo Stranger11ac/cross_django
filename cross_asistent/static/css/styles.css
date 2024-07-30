@@ -857,7 +857,6 @@ main.main_anchor {
 
 /*########################### Tarjetas / cards MDB ###########################*/
 .card {
-    position: unset;
     box-shadow: 0 0 8px var(--darkA2) !important;
     overflow: hidden;
 }
