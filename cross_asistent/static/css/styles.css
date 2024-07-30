@@ -983,7 +983,12 @@ img.img-tiny {
 
 
 /*########################### Formulario / forms ###########################*/
+.was-validated .form-control:valid, .form-control.is-valid{
+    margin: 0 !important;
+}
+
 label {
+    /* background: var(--mdb-surface-bg); */
     text-transform: capitalize;
 }
 
@@ -1001,6 +1006,8 @@ label {
 .img_form_map {
     min-height: 200px;
 }
+
+.invalid-feedback {position: unset !important;}
 
 /* Checkbox MDB */
 .form-check-input[type=checkbox]:checked {

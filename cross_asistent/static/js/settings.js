@@ -23,8 +23,6 @@ $(document).ready(function () {
         $(".modal").on("shown.bs.modal", function (e) {
             $("body").addClass("body_minus");
         });
-
-        // Opcional: Detectar cuando se cierra cualquier modal y remover la clase
         $(".modal").on("hidden.bs.modal", function (e) {
             $("body").removeClass("body_minus");
         });
@@ -47,7 +45,6 @@ $(document).ready(function () {
             $(".btn_controls").addClass("btn_detail").removeClass("btn_secondary");
             $("#btn_controls_icon").removeClass("fa-comment text_detail").addClass("fa-microphone");
         });
-
         $(".toggle_controls").click(() => {
             $(".asistent_group.open").toggleClass("close_controls open_keyboard open_controls");
             // Detectar si es un dispositivo móvil
@@ -59,7 +56,6 @@ $(document).ready(function () {
                 }, 1000);
             }
         });
-
         $(".controls_btn_close").click(() => {
             $(".asistent_group").removeClass("open open_controls close_controls open_keyboard bg-body-tertiary");
             $(".btn_controls").removeClass("btn_detail").addClass("btn_secondary");
@@ -103,7 +99,6 @@ $(document).ready(function () {
         // Editar/Crear usuario
         // generar nueva contraseña aleatoria #################################
         $("button[data-editinput]").click(genpass);
-
         function genpass() {
             $(this).addClass("active");
             var newRandomPass = cadenaRandom(8, caracteres);
@@ -132,7 +127,7 @@ $(document).ready(function () {
             }
         });
 
-        // Estilo Texto Google #####################
+        // Estilo Texto Google ####################################
         function colorizeGoogle() {
             const colors = ["#4285F4", "#EA4335", "#FBBC05", "#4285F4", "#34A853", "#EA4335"];
             const googleSpan = $(".style_google");
@@ -152,6 +147,7 @@ $(document).ready(function () {
             }
         });
 
+        // Formulario del mapa en programador ################################
         $("#cancelNewEdif").on("click", function () {
             $("#groupTitleMap").slideToggle("fast");
             $("#cancelNewEdif").slideToggle("fast");
@@ -162,7 +158,6 @@ $(document).ready(function () {
             $("#formTitle").val("");
             $("#textTiny").setContent("");
         });
-
         function obtenerDatosEdificio(infoid, urlConsulta) {
             if (infoid) {
                 $.ajax({
@@ -198,30 +193,24 @@ $(document).ready(function () {
                 });
             }
         }
-
         $("#selectEdif").change(function () {
             var infoid = $(this).val();
             const urlConsulta = $(this).data("second-action");
             obtenerDatosEdificio(infoid, urlConsulta);
         });
-
         $("#color_picker").on("input", function () {
             var color = $(this).val();
             $("#color").val(color);
             $("#colorVal").text(color);
         });
 
-        // js de subir banners inputs
+        // Limpiar valor de input ####################################################
         const inputCleared = $("input[data-init-clear], textarea[data-init-clear]");
-
-        // Itera sobre cada input y textarea seleccionado
         inputCleared.each(function () {
-            // Añade un evento 'input' a cada input y textarea
             $(this).on("input", function () {
                 let idInput = $(this).attr("id");
                 let btnCleared = $(`[data-clear="${idInput}"]`);
 
-                // Muestra u oculta el botón dependiendo del valor del input o textarea
                 if ($(this).val() == "") {
                     btnCleared.hide();
                 } else {
@@ -229,16 +218,14 @@ $(document).ready(function () {
                 }
             });
         });
-
-        // Selecciona todos los elementos con el atributo data-clear
         const btnCleared = $("[data-clear]");
         btnCleared.on("click", function () {
             const dataClear = $(this).attr("data-clear");
-            // Limpia el valor del input o textarea correspondiente y oculta el botón
             $(`#${dataClear}`).val("");
             $(this).slideUp("fast");
         });
 
+        // Notificaciones ######################################
         // Marcar todas las notificaciones como leídas al hacer clic en el botón
         $("#markAsReadButton").on("click", function () {
             $('[id^="notif_"]').each(function () {
@@ -257,7 +244,6 @@ $(document).ready(function () {
             // guardar JSON
             localStorage.setItem("notificationIds", JSON.stringify(notificationIds));
         });
-
         // Manejar el evento change de los checkboxes
         $(".notification-checkbox").on("change", function () {
             var checkbox = $(this);
@@ -291,7 +277,16 @@ $(document).ready(function () {
                 },
             });
         });
+        // Cargar las IDs desde localStorage
+        var storedIds = JSON.parse(localStorage.getItem("notificationIds")) || [];
+        storedIds.forEach(function (id) {
+            $("#" + id).removeClass(
+                "list-group-item-warning list-group-item-info list-group-item-success list-group-item-danger list-group-item-primary"
+            );
+            $("#" + id).addClass("list-group-item-secondary");
+        });
 
+        // Interfaz #########################################################
         // Cambiar colores de la Interfaz
         $("[data-change-color]").on("click", function () {
             $("[data-change-color]").each(function (index, item) {
@@ -303,7 +298,6 @@ $(document).ready(function () {
             localStorage.setItem("data-color_prefer", color);
             localStorage.setItem("data-color_rgb", rgb);
         });
-
         // Cambiar tema
         $("#switchTheme").on("click", function () {
             if ($("#switchTheme").is(":checked")) {
@@ -318,18 +312,7 @@ $(document).ready(function () {
                 localStorage.setItem("mapbox-last_layer", "dark-v11");
             }
         });
-
-        // Notificaciones ######################################
-        // Cargar las IDs desde localStorage
-        var storedIds = JSON.parse(localStorage.getItem("notificationIds")) || [];
-        storedIds.forEach(function (id) {
-            $("#" + id).removeClass(
-                "list-group-item-warning list-group-item-info list-group-item-success list-group-item-danger list-group-item-primary"
-            );
-            $("#" + id).addClass("list-group-item-secondary");
-        });
-
-        // Colores de la Interfaz #################################
+        // Colores de la Interfaz
         const colorPrefer = localStorage.getItem("data-color_prefer");
         if (colorPrefer) {
             $(`[data-change-color="${colorPrefer}"]`).addClass("active");
@@ -338,8 +321,7 @@ $(document).ready(function () {
             $('[data-change-color="blue"]').addClass("active");
             $("body").attr("data-color_prefer", "blue");
         }
-
-        // Color de tema #################################
+        // Color de tema
         const colorTheme = localStorage.getItem("data-mdb-theme");
         if (colorTheme) {
             if (colorTheme == "light") {
@@ -368,7 +350,7 @@ $(document).ready(function () {
             }
         });
 
-        // Colocar imagen en el DOM ##########################
+        // Colocar imagen del input file ##########################
         function readURL(input) {
             if (input.files && input.files[0]) {
                 var reader = new FileReader();
@@ -378,7 +360,6 @@ $(document).ready(function () {
                 reader.readAsDataURL(input.files[0]);
             }
         }
-
         $("[data-img_dom-change]").change(function () {
             readURL(this);
         });
@@ -387,7 +368,6 @@ $(document).ready(function () {
         function toggleTransparent(e) {
             $(e).toggleClass("input_transparent");
         }
-
         $("[data-input_transparent]").on({
             focus: function () {
                 toggleTransparent(this);
@@ -396,9 +376,7 @@ $(document).ready(function () {
                 toggleTransparent(this);
             },
         });
-
         var otherChanges = false;
-
         // Poner visible la seccion de la password
         $("#updatePassBtn").on("click", function () {
             let thisBtn = $(this);
@@ -435,7 +413,6 @@ $(document).ready(function () {
                 thisBtn.text("Cambiar Contraseña");
             }
         });
-
         // Detectar cambios en los inputs
         $("[data-input_change]").each(function () {
             const thisInput = $(this);
@@ -464,7 +441,6 @@ $(document).ready(function () {
                 oldNameInput = originalNameInput; // Restablece el nombre original al hacer clic
             });
         });
-
         // Desplegar boton si se elimina la foto de perfil
         $("input#deletePicture").change(function () {
             if ($(this).is(":checked")) {
@@ -555,6 +531,7 @@ if (document.querySelector("main").classList.contains("main_container")) {
     window.location.href = "/logout";
 }
 
+// Crear cadena de caracteres random ###############################3
 function cadenaRandom(longitud, caracteres) {
     var cadenaAleatoria = "";
     for (var i = 0; i < longitud; i++) {
@@ -564,8 +541,249 @@ function cadenaRandom(longitud, caracteres) {
     return cadenaAleatoria;
 }
 
+// Funcion de preguntar a chatGPT https://platform.openai.com/ #################################
+var contOutput = document.querySelector("#output");
+var btnCloseChat = $("#closeChat");
+function chatSubmit(e) {
+    e.preventDefault();
+    const pregunta = txtQuestion.value;
+    const chatForm = e.target;
+    this.reset();
+
+    if (!texto3.test(pregunta)) {
+        return alertSToast("center", 6000, "warning", "Por favor, escribe una pregunta 🧐😬");
+    }
+
+    var tokendid = cadenaRandom(5, alfabetico);
+    const valID = `uuid${tokendid}`;
+
+    const htmlBlock = `<div class="output_block"><div class="btn_detail chat_msg user_submit" data-tokeid="${valID}">${pregunta}</div></div>`;
+
+    contOutput.insertAdjacentHTML("beforeend", htmlBlock);
+    const user_submit = document.querySelector(`.user_submit[data-tokeid="${valID}"]`);
+    setTimeout(function () {
+        user_submit.classList.add("visible");
+        setTimeout(scrollToBottom, 500);
+    }, 20);
+
+    fetch(chatForm.action, {
+        method: "POST",
+        body: JSON.stringify({ question: pregunta }),
+        headers: {
+            "Content-Type": "application/json",
+            "X-Requested-With": "XMLHttpRequest",
+            "X-CSRFToken": chatForm.querySelector("[name=csrfmiddlewaretoken]").value,
+        },
+    })
+        .then((response) => {
+            if (!response.ok) {
+                return response.json().then((data) => {
+                    throw new Error(data.message || "Error desconocido");
+                });
+            }
+            return response.json();
+        })
+        .then((data) => {
+            if (data.success) {
+                console.table(data.answer);
+
+                const dataImage = data.answer.imagenes;
+                const dataRedirigir = data.answer.redirigir;
+
+                console.log("img:" + typeof dataImage);
+                console.log("url:" + typeof dataRedirigir);
+
+                let viewImage = "";
+                let btnRedir = "";
+
+                if (dataImage != null) {
+                    viewImage = `<br><br> <img src="${dataImage}" class="img-fluid rounded" width="350">`;
+                }
+
+                if (dataRedirigir != null) {
+                    btnRedir = `<br><br> <a class="btn btn_detail mb-2" style="min-width:300px;" target="_blank" rel="noopener noreferrer" href="${dataRedirigir}" >Ver Mas <i class="fa-solid fa-arrow-up-right-from-square ms-1"></i></a>`;
+                }
+                const htmlBlock = `<div class="chat_msg asistent_response" data-tokeid="${valID}"><span>${data.answer.informacion}  ${btnRedir} </span><span>${viewImage} </span></div>`;
+
+                contOutput.insertAdjacentHTML("beforeend", htmlBlock);
+                const asistent_response = document.querySelector(`.asistent_response[data-tokeid="${valID}"]`);
+
+                setTimeout(function () {
+                    setTimeout(function () {
+                        asistent_response.classList.add("visible");
+                        setTimeout(scrollToBottom, 350);
+                    }, 970);
+                }, 20);
+            } else {
+                alertSToast("top", 8000, "error", `Error: ${data.message}`);
+            }
+        })
+        .catch((error) => {
+            console.error("😥 Error:", error);
+            alertSToast("top", 8000, "warning", "Ocurrió un error. Intente nuevamente. 😥");
+        });
+}
+if (btnCloseChat && contOutput) {
+    btnCloseChat.on("click", function () {
+        // Crear y mostrar el mensaje de saludo
+        const valID = `uuid${cadenaRandom(5, alfabetico)}`;
+        const saludo = "Hola 👋 ¡Bienvenido! Soy tu asistente virtual ¿En qué puedo ayudarte hoy?";
+        const htmlBlock = `<div class="btn_detail chat_msg asistent_response" data-tokeid="${valID}"><span>${saludo}</span></div>`;
+
+        contOutput.insertAdjacentHTML("beforeend", htmlBlock);
+
+        const asistent_response = document.querySelector(`.asistent_response[data-tokeid="${valID}"]`);
+        setTimeout(function () {
+            asistent_response.classList.add("visible");
+            scrollToBottom();
+        }, 20);
+    });
+}
+
+// Hacer scroll con un nuevo mensaje en el chat ###############################################
+function scrollToBottom() {
+    contOutput.scrollTop = contOutput.scrollHeight;
+}
+if (contOutput) {
+    function scrollToBottom() {
+        contOutput.scrollTop = contOutput.scrollHeight;
+    }
+    var observer = new MutationObserver(() => {
+        scrollToBottom();
+    });
+    scrollToBottom();
+    observer.observe(contOutput, { childList: true, subtree: true });
+}
+
+// Copiar al portapapeles ######################################################################
+const inputs = document.querySelectorAll("input[data-copy]");
+inputs.forEach((input) => {
+    const copyText = () => {
+        if (!navigator.clipboard) {
+            alertSToast("center", 8000, "info", "Tu navegador no admite copiar al portapapeles 😯😥🤔");
+            return;
+        }
+        const textCopy = input.value;
+        if (textCopy != "") {
+            navigator.clipboard
+                .writeText(textCopy)
+                .then(() => {
+                    alertSToast("top", 5000, "success", "Texto Copiado! 🥳");
+                })
+                .catch((error) => {
+                    const message = "Error al copiar al portapapeles";
+                    console.error(message, ":", error);
+                    alertSToast("top", 8000, "error", `${message} 🤔😥`);
+                });
+        }
+    };
+
+    input.addEventListener("click", copyText);
+    input.addEventListener("focus", copyText);
+});
+
+// context menu disabled ######################################################################
+document.oncontextmenu = function () {
+    return false;
+};
+
+// MaterialBox https://materializecss.com/ ################################################
+var imagesZoom = document.querySelectorAll(".materialBoxed");
+var instances = M.Materialbox.init(imagesZoom);
+
+// Validar Formulario https://jqueryvalidation.org/ #########################################
+$(document).ready(function () {
+    try {
+        $("[data-submit-validate]").validate({
+            rules: {
+                first_name: {required: true,minlength: 5,},
+                last_name: {required: true,minlength: 5,},
+                username: {
+                    required: true,
+                    minlength: 5,
+                    // remote: {
+                    //     url: $("[data-check_username]").data("check_username"),
+                    //     type: "post",
+                    //     data: {
+                    //         username: function () {
+                    //             return $("#usernameUp").val();
+                    //         },
+                    //         csrfmiddlewaretoken: formToken,
+                    //     },
+                    // },
+                },
+                email: {
+                    required: true,
+                    email: true,
+                    // remote: {
+                    //     url: $("[data-check_email]").data("check_email"),
+                    //     type: "post",
+                    //     data: {
+                    //         email: function () {
+                    //             return $("#email").val();
+                    //         },
+                    //         csrfmiddlewaretoken: formToken,
+                    //     },
+                    // },
+                },
+                password1: {required: true,minlength: 8,},
+                password2: {required: true,equalTo: "#password1",},
+            },
+            messages: {
+                first_name: {
+                    required: "Por favor, ingresa tu nombre.",
+                    minlength: "Tu nombre debe tener al menos 5 letras.",
+                },
+                last_name: {
+                    required: "Por favor, ingresa tus apellidos.",
+                    minlength: "Tus apellidos deben tener al menos 5 letras.",
+                },
+                username: {
+                    required: "Por favor, ingresa un nombre de usuario.",
+                    minlength: "El nombre de usuario debe tener al menos 5 caracteres.",
+                    remote: "Este nombre de usuario ya está en uso.",
+                },
+                email: {
+                    required: "Por favor, ingresa tu correo electrónico.",
+                    email: "Por favor, ingresa un correo electrónico válido.",
+                    remote: "Este correo electrónico ya está registrado.",
+                },
+                password1: {
+                    required: "Por favor, ingresa una contraseña.",
+                    minlength: "Tu contraseña debe tener al menos 8 caracteres.",
+                },
+                password2: {
+                    required: "Por favor, confirma tu contraseña.",
+                    equalTo: "Las contraseñas no coinciden.",
+                },
+            },
+            onkeyup: function(element) {$(element).valid();},
+            errorPlacement: function(error, element) {
+                error.addClass('invalid-feedback text-white bg-danger p-2 rounded');
+                error.insertAfter(element.parent());
+            },
+            highlight: function(element) {
+                $(element).addClass('is-invalid').removeClass('is-valid');
+            },
+            unhighlight: function(element) {
+                $(element).addClass('is-valid').removeClass('is-invalid');
+            },
+            submitHandler: function (form) {
+                jsonSubmit({
+                    target: form,
+                    preventDefault: function () {}, // Para que no se cancele el envío en jsonSubmit
+                });
+            },
+        });
+    } catch (error) {
+        console.error("Error Inesperado: ", error);
+        alertSToast("center", 8000, "error", `😥 Ah ocurrido un error #304.`);
+    }
+});
+
 // Enviar formulario JSON ######################################################################
 function jsonSubmit(e) {
+    e.preventDefault = e.preventDefault || function () {};
     e.preventDefault();
     const thisForm = e.target;
     const formData = new FormData(thisForm);
@@ -639,177 +857,7 @@ function jsonSubmit(e) {
         });
 }
 
-// Funcion de preguntar a chatGPT ######################################################################
-var contOutput = document.querySelector("#output");
-var btnCloseChat = $("#closeChat");
-
-function chatSubmit(e) {
-    e.preventDefault();
-    const pregunta = txtQuestion.value;
-    const chatForm = e.target;
-    this.reset();
-
-    if (!texto3.test(pregunta)) {
-        return alertSToast("center", 6000, "warning", "Por favor, escribe una pregunta 🧐😬");
-    }
-
-    var tokendid = cadenaRandom(5, alfabetico);
-    const valID = `uuid${tokendid}`;
-
-    const htmlBlock = `
-        <div class="output_block">
-            <div class="btn_detail chat_msg user_submit" data-tokeid="${valID}">
-                ${pregunta}
-            </div>
-        </div>`;
-
-    contOutput.insertAdjacentHTML("beforeend", htmlBlock);
-    const user_submit = document.querySelector(`.user_submit[data-tokeid="${valID}"]`);
-    setTimeout(function () {
-        user_submit.classList.add("visible");
-        setTimeout(scrollToBottom, 500);
-    }, 20);
-
-    fetch(chatForm.action, {
-        method: "POST",
-        body: JSON.stringify({ question: pregunta }),
-        headers: {
-            "Content-Type": "application/json",
-            "X-Requested-With": "XMLHttpRequest",
-            "X-CSRFToken": chatForm.querySelector("[name=csrfmiddlewaretoken]").value,
-        },
-    })
-        .then((response) => {
-            if (!response.ok) {
-                return response.json().then((data) => {
-                    throw new Error(data.message || "Error desconocido");
-                });
-            }
-            return response.json();
-        })
-        .then((data) => {
-            if (data.success) {
-                console.table(data.answer);
-
-                const dataImage = data.answer.imagenes;
-                const dataRedirigir = data.answer.redirigir;
-
-                console.log("img:" + typeof dataImage);
-                console.log("url:" + typeof dataRedirigir);
-
-                let viewImage = "";
-                let btnRedir = "";
-
-                if (dataImage != null) {
-                    viewImage = `<br><br> <img src="${dataImage}" class="img-fluid rounded" width="350">`;
-                }
-
-                if (dataRedirigir != null) {
-                    btnRedir = `<br><br> <a class="btn btn_detail mb-2" style="min-width:300px;" target="_blank" rel="noopener noreferrer" href="${dataRedirigir}" >Ver Mas <i class="fa-solid fa-arrow-up-right-from-square ms-1"></i></a>`;
-                }
-                const htmlBlock = `
-                <div class="chat_msg asistent_response" data-tokeid="${valID}">
-                    <span>${data.answer.informacion}  ${btnRedir} </span>
-                    <span>${viewImage} </span>
-                </div>
-            `;
-
-                contOutput.insertAdjacentHTML("beforeend", htmlBlock);
-                const asistent_response = document.querySelector(`.asistent_response[data-tokeid="${valID}"]`);
-
-                setTimeout(function () {
-                    setTimeout(function () {
-                        asistent_response.classList.add("visible");
-                        setTimeout(scrollToBottom, 350);
-                    }, 970);
-                }, 20);
-            } else {
-                alertSToast("top", 8000, "error", `Error: ${data.message}`);
-            }
-        })
-        .catch((error) => {
-            console.error("😥 Error:", error);
-            alertSToast("top", 8000, "warning", "Ocurrió un error. Intente nuevamente. 😥");
-        });
-}
-
-if (btnCloseChat && contOutput) {
-    btnCloseChat.on("click", function () {
-        // Crear y mostrar el mensaje de saludo
-        const valID = `uuid${cadenaRandom(5, alfabetico)}`;
-        const saludo = "Hola 👋 ¡Bienvenido! Soy tu asistente virtual ¿En qué puedo ayudarte hoy?";
-        const htmlBlock = `
-                    <div class="btn_detail chat_msg asistent_response" data-tokeid="${valID}">
-                        <span>${saludo}</span>
-                    </div>`;
-
-        contOutput.insertAdjacentHTML("beforeend", htmlBlock);
-
-        const asistent_response = document.querySelector(`.asistent_response[data-tokeid="${valID}"]`);
-        setTimeout(function () {
-            asistent_response.classList.add("visible");
-            scrollToBottom();
-        }, 20);
-    });
-}
-
-// Función para hacer scroll hacia abajo
-function scrollToBottom() {
-    contOutput.scrollTop = contOutput.scrollHeight;
-}
-// Hacer scroll con un nuevo mensaje en el chat ######################################################################
-if (contOutput) {
-    function scrollToBottom() {
-        contOutput.scrollTop = contOutput.scrollHeight;
-    }
-    var observer = new MutationObserver(() => {
-        scrollToBottom();
-    });
-    scrollToBottom();
-    observer.observe(contOutput, { childList: true, subtree: true });
-}
-
-// Copiar al portapapeles ######################################################################
-function copyValInput() {
-    const inputs = document.querySelectorAll("input[data-copy]");
-    inputs.forEach((input) => {
-        const copyText = () => {
-            if (!navigator.clipboard) {
-                alertSToast("center", 8000, "info", "Tu navegador no admite copiar al portapapeles 😯😥🤔");
-                return;
-            }
-            const textCopy = input.value;
-            if (textCopy != "") {
-                navigator.clipboard
-                    .writeText(textCopy)
-                    .then(() => {
-                        alertSToast("top", 5000, "success", "Texto Copiado! 🥳");
-                    })
-                    .catch((error) => {
-                        const message = "Error al copiar al portapapeles";
-                        console.error(message, ":", error);
-                        alertSToast("top", 8000, "error", `${message} 🤔😥`);
-                    });
-            }
-        };
-
-        input.addEventListener("click", copyText);
-        input.addEventListener("focus", copyText);
-    });
-}
-
-copyValInput();
-
-// context menu disabled ######################################################################
-document.oncontextmenu = function () {
-    return false;
-};
-
-// MaterialBox ######################################################################
-var imagesZoom = document.querySelectorAll(".materialBoxed");
-var instances = M.Materialbox.init(imagesZoom);
-
-// Template Alertas switalert ######################################################################
+// Template Alertas switalert ###################################################
 function alertSToast(posittionS, timerS, iconS, titleS, didDestroyS) {
     const Toast = Swal.mixin({
         toast: true,

@@ -19,6 +19,8 @@ urlpatterns = [
     path('logout/', views.singout, name='singout'),
     path('acceder/', views.singinpage, name='singin'),
     path('registro/', views.singup, name='singup'),
+    path('check_username/', functions.check_username, name='check_username'),
+    path('check_email/', functions.check_email, name='check_email'),
     
     # Administracion y programacion ----------------------------------------------------------
     path('administracion/', views.vista_admin, name='vista_admin'),

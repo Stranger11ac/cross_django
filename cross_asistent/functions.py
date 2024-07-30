@@ -1,12 +1,12 @@
-from django.shortcuts import render, redirect, get_object_or_404
 from sklearn.feature_extraction.text import TfidfVectorizer
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.hashers import check_password
 from sklearn.metrics.pairwise import cosine_similarity
 from django.views.decorators.cache import never_cache
+from django.http import JsonResponse, HttpResponse
 from django.db import IntegrityError, transaction
+from django.shortcuts import get_object_or_404
 from django.contrib.auth.models import User
-from django.http import JsonResponse
 from django.conf import settings
 from django.db.models import Q
 from django.utils import timezone
@@ -217,7 +217,7 @@ def editar_perfil(request):
     else:
         return JsonResponse({'success': False, 'message': 'Acción no permitida.'}, status=403)
 
-# usuarios (programacion) ----------------------------------------------------------
+# usuarios ----------------------------------------------------------
 def create_newuser(first_name, last_name, username, email, password1, password2=None, is_staff=False, is_active=False):
     if not (password1 and username and email):
         return {'success': False, 'message': 'Datos incompletos 😅'}
@@ -246,6 +246,21 @@ def create_newuser(first_name, last_name, username, email, password1, password2=
     except IntegrityError:
         return {'success': False, 'message': 'Ocurrió un error durante el registro. Intente nuevamente.'}
 
+def check_username(request):
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        user_exists = User.objects.filter(username=username).exists()
+        return HttpResponse(json.dumps({'valid': not user_exists}).lower(), content_type='application/json')
+
+def check_email(request):
+    email = request.POST.get('email')
+    if User.objects.filter(email=email).exists():
+        print(f'{email} ya existe')
+        return JsonResponse({'valid': False}, status=400)
+    print(f'{email} no existe')
+    return JsonResponse({'valid': True}, status=201)
+
+# (programacion) ----
 @login_required
 @never_cache
 def in_active(request):
