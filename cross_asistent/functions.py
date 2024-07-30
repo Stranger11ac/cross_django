@@ -216,8 +216,6 @@ def editar_perfil(request):
         return JsonResponse({'success': True, 'message': 'Tus Datos Se guardaron exitosamente. 🥳😋🤘🎉🎈', 'position': 'top'}, status=200)
     else:
         return JsonResponse({'success': False, 'message': 'Acción no permitida.'}, status=403)
-        
-
 
 # usuarios (programacion) ----------------------------------------------------------
 def create_newuser(first_name, last_name, username, email, password1, password2=None, is_staff=False, is_active=False):
