@@ -412,7 +412,7 @@ nav .navbar-collapse {
     }
 }
 
-/*########################## Carousel ##########################*/
+/*########################## Carousel / carrusel ##########################*/
 .swiper-container {
     min-height: 400px;
     height: var(--full_page);
@@ -1005,6 +1005,15 @@ label {
 
 .img_form_map {
     min-height: 200px;
+}
+
+
+.form-control.is-valid ~ .trailing {
+    color: green;
+}
+
+.form-control.is-invalid ~ .trailing {
+    color: red;
 }
 
 .invalid-feedback {position: unset !important;}
@@ -1803,20 +1812,16 @@ input:checked+.slider:before {
 
 
 /*################ Alerts customClass Sweetalert ################*/
-.icon_alert {
-    font-size: 1.5rem;
-    margin: 10px 5px !important;
-}
-
 .title_alert {
-    font-size: 1.2rem !important;
+    word-break: break-word;
 }
 
 .title_alert hr {
+    height: 5px;
     background: #545454;
-    border: 2px solid #545454;
+    border: none;
     border-radius: 5px;
-    margin: 5px 2px;
+    margin: 2px;
 }
 
 .title_alert span {
@@ -1835,22 +1840,11 @@ input:checked+.slider:before {
 }
 
 .progressbar_alert {
-    min-height: 5px;
+    min-height: 6px;
+    opacity: 0.9;
     border: none;
-    border-radius: 0 5px 5px 0;
-    opacity: 0.8;
+    border-radius: 0 6px 6px 0;
     background: var(--var-detail) !important;
-}
-
-.close_button_alert {
-    font-size: 3rem !important;
-    margin: 0px 5px !important;
-}
-
-.btn_alert {
-    font-size: 3rem !important;
-    width: 100%;
-    transition: all 0.3s ease !important;
 }
 
 /*########################### Animaciones ###########################*/

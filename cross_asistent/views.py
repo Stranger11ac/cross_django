@@ -1,8 +1,8 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.decorators import login_required
-from django.core.files.storage import default_storage
 from django.views.decorators.cache import never_cache
+from django.core.files.storage import default_storage
 from django.contrib.auth.models import User
 from django.db import models, transaction
 from django.http import JsonResponse
@@ -66,10 +66,10 @@ def crear_pregunta(request):
                 return JsonResponse({'success': True, 'message': 'Gracias por tu pregunta ❤️💕😁👍 '}, status=200)
             except Exception as e:
                 print(f'Hay un error en: {e}')
-                return JsonResponse({'success': False, 'message': 'Ups! 😥😯 hubo un error y tu pregunta no se pudo registrar. Por favor intente de nuevo más tarde.'}, status=400)
+                return JsonResponse({'success': False, 'message': 'Ups! 😥😯 hubo un error y tu pregunta no se pudo registrar. Por favor intente de nuevo más tarde.'}, status=201)
         else:
             print('error, no JSON')
-            return JsonResponse({'success': False, 'message': 'Error: no se permite este tipo de archivo '}, status=400)
+            return JsonResponse({'success': False, 'message': 'Error: no se permite este tipo de archivo '}, status=201)
     return render(request, 'frecuentes.html', {'quest_all': models.Preguntas.objects.all()})
 
 def blogs(request):
@@ -166,7 +166,7 @@ def singup(request):
                 mensaje=f'{user.username} se ha registrado y necesita activación.',
             )
         response['functions'] = 'reload'
-        status = 200 if response['success'] else 400
+        status = 200 if response['success'] else 201
         return JsonResponse(response, status=status)
     else:
         logout(request)
@@ -188,11 +188,11 @@ def singinpage(request):
         
         if user is not None:
             if not user.is_active:
-                return JsonResponse({'success': False, 'functions': 'singin', 'message': '🧐😥😯 UPS! <br> Al parecer tu cuenta esta <u>Inactiva</u>. Tu cuenta será activada si estas autorizado'}, status=400)
+                return JsonResponse({'success': False, 'functions': 'singin', 'message': '🧐😥😯 UPS! <br> Al parecer tu cuenta esta <u>Inactiva</u>. Tu cuenta será activada si estas autorizado'}, status=201)
             
             user = authenticate(request, username=user.username, password=password)
             if user is None:
-                return JsonResponse({'success': False, 'functions': 'singin', 'message': 'Revisa el usuario o contraseña 😅.'}, status=400)
+                return JsonResponse({'success': False, 'functions': 'singin', 'message': 'Revisa el usuario o contraseña 😅.'}, status=201)
             else:
                 login(request, user)
                 pageRedirect = reverse('vista_admin')
@@ -200,7 +200,7 @@ def singinpage(request):
                     pageRedirect = reverse('vista_programador')
                 return JsonResponse({'success': True, 'functions': 'singin', 'redirect_url': pageRedirect}, status=200)
         else:
-            return JsonResponse({'success': False, 'functions': 'singin', 'message': 'Usuario no registrado 😅. Verifica tu nombre de usuario o correo electrónico'}, status=400)
+            return JsonResponse({'success': False, 'functions': 'singin', 'message': 'Usuario no registrado 😅. Verifica tu nombre de usuario o correo electrónico'}, status=201)
     else:
         logout(request)
         return render(request, 'singinup.html', {
@@ -259,7 +259,7 @@ def vista_programador(request):
         )
         response['position'] = 'top'
         response['functions'] = 'reload'
-        status = 200 if response['success'] else 400
+        status = 200 if response['success'] else 201
         return JsonResponse(response, status=status)
 
     return render(request, 'admin/vista_programador.html', contexto)
@@ -305,7 +305,7 @@ def marcar_notificaciones_leidas(request):
 
         return JsonResponse({'status': 'success', 'message': f'Notificcacion {ids}, se marco como leida para todos los usuarios', 'icon': 'info'}, status=200)
     except Exception as e:
-        return JsonResponse({'status': 'error', 'message': f'Ocurrio un error😯😥 <br>{str(e)}', 'icon': 'error'}, status=400)
+        return JsonResponse({'status': 'error', 'message': f'Ocurrio un error😯😥 <br>{str(e)}', 'icon': 'error'}, status=201)
 
 # Banners ----------------------------------------------------------
 @login_required
@@ -448,7 +448,7 @@ def create_blog(request):
 
             return JsonResponse({'success': True, 'message': 'Excelente 🥳🎈🎉. Tu articulo ya fue publicado. Puedes editarlo cuando gustes. 🧐😊'}, status=200)
         except Exception as e:
-            return JsonResponse({'success': False, 'message': f'Ocurrio un error😯😥 <br>{str(e)}'}, status=400)
+            return JsonResponse({'success': False, 'message': f'Ocurrio un error😯😥 <br>{str(e)}'}, status=201)
     return render(request, 'admin/blog.html', {'active_page': 'blog','pages': functions.pages, 'firma_perfil':user_perfil})
 
 @login_required
@@ -463,8 +463,8 @@ def upload_image(request):
 
             return JsonResponse({'location': image_url})
         except Exception as e:
-            return JsonResponse({'error': str(e)}, status=400)
-    return JsonResponse({'error': 'Error al subir la imagen'}, status=400)
+            return JsonResponse({'error': str(e)}, status=201)
+    return JsonResponse({'error': 'Error al subir la imagen'}, status=201)
 
 @login_required
 @never_cache
@@ -501,13 +501,13 @@ def obtenerEdificio(request):
                 'imagen_url': edificio.imagenes.url if edificio.imagenes else None,
             }
             return JsonResponse(data)
-    return JsonResponse({'error': 'Invalid request'}, status=400)
+    return JsonResponse({'error': 'Invalid request'}, status=201)
 
 @login_required
 @never_cache
 def regEdificioMapa(request):
     if request.method != 'POST':
-        return JsonResponse({'error': 'Metodo no valido'}, status=400)
+        return JsonResponse({'error': 'Metodo no valido'}, status=201)
 
     isNewPost = request.POST.get('isNew')
     nombrePost = request.POST.get('titulo')

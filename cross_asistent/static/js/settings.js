@@ -4,6 +4,12 @@ var caracteres = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789
 var texto3 = /[a-zA-Z0-9]{3}/;
 var formToken = getCSRFToken();
 var timerOut = 5000;
+var expressions = {
+    name: /^[a-zA-ZÀ-ÿ\s]+$/,
+    username: /^(?![0-9_-])[a-zA-Z0-9_-]+$/,
+    email: /^([a-zA-Z0-9_\.\-\+])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/,
+    password: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
+};
 
 function getCSRFToken() {
     var cookies = document.cookie.split(";");
@@ -693,88 +699,116 @@ var instances = M.Materialbox.init(imagesZoom);
 
 // Validar Formulario https://jqueryvalidation.org/ #########################################
 $(document).ready(function () {
+    var typingTimer;
+    var doneTypingInterval = 2000;
+
+    function setupDelayedValidation() {
+        $(this)
+            .on("keyup", function () {
+                clearTimeout(typingTimer);
+                var element = this;
+                typingTimer = setTimeout(function () {
+                    $(element).valid();
+                }, doneTypingInterval);
+            })
+            .on("keydown", function () {
+                clearTimeout(typingTimer);
+            });
+    }
+    $.validator.addMethod("validname", function (value, element) {
+        return this.optional(element) || expressions.name.test(value);
+    });
+
+    $.validator.addMethod("validemail", function (value, element) {
+        return this.optional(element) || expressions.email.test(value);
+    });
+
+    $.validator.addMethod("validuser", function (value, element) {
+        return this.optional(element) || expressions.username.test(value);
+    });
+
+    $.validator.addMethod("validpassword", function (value, element) {
+        $("#lockIcon").removeClass("fa-lock").addClass("fa-lock-open");
+        return this.optional(element) || expressions.password.test(value);
+    });
+
     try {
-        $("[data-submit-validate]").validate({
+        $("[data-validate-singup]").validate({
             rules: {
-                first_name: {required: true,minlength: 5,},
-                last_name: {required: true,minlength: 5,},
-                username: {
-                    required: true,
-                    minlength: 5,
-                    // remote: {
-                    //     url: $("[data-check_username]").data("check_username"),
-                    //     type: "post",
-                    //     data: {
-                    //         username: function () {
-                    //             return $("#usernameUp").val();
-                    //         },
-                    //         csrfmiddlewaretoken: formToken,
-                    //     },
-                    // },
-                },
-                email: {
-                    required: true,
-                    email: true,
-                    // remote: {
-                    //     url: $("[data-check_email]").data("check_email"),
-                    //     type: "post",
-                    //     data: {
-                    //         email: function () {
-                    //             return $("#email").val();
-                    //         },
-                    //         csrfmiddlewaretoken: formToken,
-                    //     },
-                    // },
-                },
-                password1: {required: true,minlength: 8,},
-                password2: {required: true,equalTo: "#password1",},
+                first_name: { required: true, minlength: 3, validname: true },
+                last_name: { required: true, minlength: 5, validname: true },
+                username: { required: true, minlength: 5, validuser: true },
+                email: { required: true, validemail: true, email: true },
+                password1: { required: true, minlength: 8, validpassword: true },
+                password2: { required: true, validpassword: true, equalTo: "#password1" },
             },
             messages: {
                 first_name: {
-                    required: "Por favor, ingresa tu nombre.",
-                    minlength: "Tu nombre debe tener al menos 5 letras.",
+                    required: "Ingresa tu nombre.",
+                    validname: "Escribe palabras sin caracteres especiales (!@#$%^&:)",
+                    minlength: "Tu nombre debe tener al menos 3 letras.",
                 },
                 last_name: {
-                    required: "Por favor, ingresa tus apellidos.",
-                    minlength: "Tus apellidos deben tener al menos 5 letras.",
+                    required: "Ingresa tus apellidos.",
+                    validname: "Escribe palabras sin caracteres especiales (!@#$%^&:)",
+                    minlength: "Escribe al menos 5 letras.",
                 },
                 username: {
-                    required: "Por favor, ingresa un nombre de usuario.",
-                    minlength: "El nombre de usuario debe tener al menos 5 caracteres.",
-                    remote: "Este nombre de usuario ya está en uso.",
+                    required: "Ingresa un nombre de usuario.",
+                    validuser: "El nombre debe contener letras y guiones",
+                    minlength: "Escribe al menos 5 letras.",
                 },
                 email: {
-                    required: "Por favor, ingresa tu correo electrónico.",
-                    email: "Por favor, ingresa un correo electrónico válido.",
-                    remote: "Este correo electrónico ya está registrado.",
+                    required: "Ingresa tu correo electrónico.",
+                    validemail: "Ingresa un correo electrónico válido",
+                    email: "Ingresa un correo electrónico válido",
                 },
                 password1: {
-                    required: "Por favor, ingresa una contraseña.",
+                    required: "Ingresa una contraseña.",
+                    validpassword:
+                        "La contraseña debe tener al menos: <ul class='m-0'><li>8 caracteres</li><li>1 letra mayúscula</li><li>1 letra minúscula</li><li>1 número <li>1 carácter especial (!@#$%)</li></ul>",
                     minlength: "Tu contraseña debe tener al menos 8 caracteres.",
                 },
                 password2: {
-                    required: "Por favor, confirma tu contraseña.",
-                    equalTo: "Las contraseñas no coinciden.",
+                    required: "Confirma tu contraseña.",
+                    validpassword: "Completa la contraseña",
+                    equalTo: "Las contraseñas no son iguales. 🧐😬",
                 },
             },
-            onkeyup: function(element) {$(element).valid();},
-            errorPlacement: function(error, element) {
-                error.addClass('invalid-feedback text-white bg-danger p-2 rounded');
+            // onkeyup: function (element) {
+            //     $(element).valid();
+            // },
+            errorPlacement: function (error, element) {
+                // var $div = $("<div>").addClass("text-white bg-danger p-2 rounded").append(error.text());
+                // $div.insertAfter(element.parent());
+                error.addClass("bg-danger text-white p-2 rounded fs-8");
                 error.insertAfter(element.parent());
             },
-            highlight: function(element) {
-                $(element).addClass('is-invalid').removeClass('is-valid');
+            highlight: function (element) {
+                $(element).addClass("is-invalid").removeClass("is-valid");
             },
-            unhighlight: function(element) {
-                $(element).addClass('is-valid').removeClass('is-invalid');
+            unhighlight: function (element) {
+                $(element).addClass("is-valid").removeClass("is-invalid");
+                $("#lockIcon").removeClass("fa-lock-open").addClass("fa-lock");
+            },
+            invalidHandler: function (event, validator) {
+                var errors = validator.numberOfInvalids();
+                if (errors) {
+                    var message =
+                        errors == 1
+                            ? "Llena correctamente el campo resaltado 🧐🤔😬"
+                            : "Llena correctamente los " + errors + " campos resaltados 🧐🤔😬";
+                    alertSToast('center', 10000, 'error', message);
+                }
             },
             submitHandler: function (form) {
                 jsonSubmit({
                     target: form,
-                    preventDefault: function () {}, // Para que no se cancele el envío en jsonSubmit
+                    preventDefault: function () {},
                 });
             },
         });
+        $("[data-validate-singup] input").each(setupDelayedValidation);
     } catch (error) {
         console.error("Error Inesperado: ", error);
         alertSToast("center", 8000, "error", `😥 Ah ocurrido un error #304.`);
@@ -841,13 +875,24 @@ function jsonSubmit(e) {
                         dataRedirect();
                     };
                 }
+
                 const passwordInputs = document.querySelectorAll('input[type="password"]');
                 passwordInputs.forEach((input) => (input.value = ""));
 
                 alertSToast(dataPosition, timerOut, dataIcon, dataMessage, alertfunction);
             } else {
                 console.error(dataMessage);
-                alertSToast("top", timerOut + 2000, "warning", dataMessage);
+
+                if (data.valSelector) {
+                    console.log(data.valSelector);
+                    function addInvalidClass(valueSelector) {
+                        document.querySelector(`[data-selector-input="${valueSelector}"]`).classList.add("is-invalid");
+                        document.querySelector(`[data-selector-input="${valueSelector}"]`).classList.remove("is-valid");
+                    }
+                    addInvalidClass(data.valSelector);
+                }
+
+                alertSToast("top", timerOut + 6000, "warning", dataMessage);
             }
         })
         .catch((error) => {
@@ -866,6 +911,12 @@ function alertSToast(posittionS, timerS, iconS, titleS, didDestroyS) {
         showCloseButton: true,
         timer: timerS,
         timerProgressBar: true,
+        customClass: {
+            icon: "icon_alert",
+            title: "title_alert",
+            timerProgressBar: "progressbar_alert",
+            closeButton: "close_button_alert",
+        },
         didOpen: (toast) => {
             toast.addEventListener("mouseenter", Swal.stopTimer);
             toast.addEventListener("mouseleave", Swal.resumeTimer);
