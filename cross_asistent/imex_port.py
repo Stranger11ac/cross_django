@@ -8,8 +8,8 @@ from .forms import CSVUploadForm
 import csv
 import io
 
+"""Crea una respuesta HTTP con contenido CSV."""
 def create_csv_response(filename, header, rows):
-    """Crea una respuesta HTTP con contenido CSV."""
     response = HttpResponse(content_type='text/csv; charset=utf-8')
     response['Content-Disposition'] = f'attachment; filename="{filename}"'
     response.write('\ufeff'.encode('utf8'))
@@ -122,8 +122,8 @@ def import_mapa(request):
         'p4_polygons': 7,
     }, 'Datos Del Mapa importados correctamente. 🎉😁🫡')
 
+"""Importa datos desde un archivo CSV para un modelo específico."""
 def import_csv_data(request, model, field_map, success_message):
-    """Importa datos desde un archivo CSV para un modelo específico."""
     if request.method == 'POST':
         form = CSVUploadForm(request.POST, request.FILES)
         if form.is_valid():
