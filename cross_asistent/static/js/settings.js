@@ -697,124 +697,6 @@ document.oncontextmenu = function () {
 var imagesZoom = document.querySelectorAll(".materialBoxed");
 var instances = M.Materialbox.init(imagesZoom);
 
-// Validar Formulario https://jqueryvalidation.org/ #########################################
-$(document).ready(function () {
-    var typingTimer;
-    var doneTypingInterval = 2000;
-
-    function setupDelayedValidation() {
-        $(this)
-            .on("keyup", function () {
-                clearTimeout(typingTimer);
-                var element = this;
-                typingTimer = setTimeout(function () {
-                    $(element).valid();
-                }, doneTypingInterval);
-            })
-            .on("keydown", function () {
-                clearTimeout(typingTimer);
-            });
-    }
-    $.validator.addMethod("validname", function (value, element) {
-        return this.optional(element) || expressions.name.test(value);
-    });
-
-    $.validator.addMethod("validemail", function (value, element) {
-        return this.optional(element) || expressions.email.test(value);
-    });
-
-    $.validator.addMethod("validuser", function (value, element) {
-        return this.optional(element) || expressions.username.test(value);
-    });
-
-    $.validator.addMethod("validpassword", function (value, element) {
-        $("#lockIcon").removeClass("fa-lock").addClass("fa-lock-open");
-        return this.optional(element) || expressions.password.test(value);
-    });
-
-    try {
-        $("[data-validate-singup]").validate({
-            rules: {
-                first_name: { required: true, minlength: 3, validname: true },
-                last_name: { required: true, minlength: 5, validname: true },
-                username: { required: true, minlength: 5, validuser: true },
-                email: { required: true, validemail: true, email: true },
-                password1: { required: true, minlength: 8, validpassword: true },
-                password2: { required: true, validpassword: true, equalTo: "#password1" },
-            },
-            messages: {
-                first_name: {
-                    required: "Ingresa tu nombre.",
-                    validname: "Escribe palabras sin caracteres especiales (!@#$%^&:)",
-                    minlength: "Tu nombre debe tener al menos 3 letras.",
-                },
-                last_name: {
-                    required: "Ingresa tus apellidos.",
-                    validname: "Escribe palabras sin caracteres especiales (!@#$%^&:)",
-                    minlength: "Escribe al menos 5 letras.",
-                },
-                username: {
-                    required: "Ingresa un nombre de usuario.",
-                    validuser: "El nombre debe contener letras y guiones",
-                    minlength: "Escribe al menos 5 letras.",
-                },
-                email: {
-                    required: "Ingresa tu correo electrónico.",
-                    validemail: "Ingresa un correo electrónico válido",
-                    email: "Ingresa un correo electrónico válido",
-                },
-                password1: {
-                    required: "Ingresa una contraseña.",
-                    validpassword:
-                        "La contraseña debe tener al menos: <ul class='m-0'><li>8 caracteres</li><li>1 letra mayúscula</li><li>1 letra minúscula</li><li>1 número <li>1 carácter especial (!@#$%)</li></ul>",
-                    minlength: "Tu contraseña debe tener al menos 8 caracteres.",
-                },
-                password2: {
-                    required: "Confirma tu contraseña.",
-                    validpassword: "Completa la contraseña",
-                    equalTo: "Las contraseñas no son iguales. 🧐😬",
-                },
-            },
-            // onkeyup: function (element) {
-            //     $(element).valid();
-            // },
-            errorPlacement: function (error, element) {
-                // var $div = $("<div>").addClass("text-white bg-danger p-2 rounded").append(error.text());
-                // $div.insertAfter(element.parent());
-                error.addClass("bg-danger text-white p-2 rounded fs-8");
-                error.insertAfter(element.parent());
-            },
-            highlight: function (element) {
-                $(element).addClass("is-invalid").removeClass("is-valid");
-            },
-            unhighlight: function (element) {
-                $(element).addClass("is-valid").removeClass("is-invalid");
-                $("#lockIcon").removeClass("fa-lock-open").addClass("fa-lock");
-            },
-            invalidHandler: function (event, validator) {
-                var errors = validator.numberOfInvalids();
-                if (errors) {
-                    var message =
-                        errors == 1
-                            ? "Llena correctamente el campo resaltado 🧐🤔😬"
-                            : "Llena correctamente los " + errors + " campos resaltados 🧐🤔😬";
-                    alertSToast('center', 10000, 'error', message);
-                }
-            },
-            submitHandler: function (form) {
-                jsonSubmit({
-                    target: form,
-                    preventDefault: function () {},
-                });
-            },
-        });
-        $("[data-validate-singup] input").each(setupDelayedValidation);
-    } catch (error) {
-        console.error("Error Inesperado: ", error);
-        alertSToast("center", 8000, "error", `😥 Ah ocurrido un error #304.`);
-    }
-});
-
 // Enviar formulario JSON ######################################################################
 function jsonSubmit(e) {
     e.preventDefault = e.preventDefault || function () {};
@@ -898,7 +780,7 @@ function jsonSubmit(e) {
         .catch((error) => {
             console.error("😥 Error:", error);
             errorMessage = error.message || "Ocurrió un error. Intente nuevamente. 😥";
-            alertSToast("center", timerOut + 3000, "error", errorMessage);
+            alertSToast("center", timerOut + 8000, "error", errorMessage);
         });
 }
 
@@ -930,3 +812,24 @@ function alertSToast(posittionS, timerS, iconS, titleS, didDestroyS) {
 }
 
 // alertSToast('top', 8000, 'success', '<br>lo normal');
+
+// Verificar existencia en la base de datos
+// $("[data-valid-db]").each(function () {
+//     $(this).on("input", function () {
+//         console.log($(this).data("check_db"));
+//         console.log($(this).data("selector-input"));
+
+//         if (!$(this).data("label-created")) {
+//             var newLabel = $("<label>", {
+//                 for: $(this).attr("id"),
+//                 text: $(this).attr("name"),
+//                 id: "Label-" + $(this).attr("id"),
+//                 class: "bg_detail text-white pt-2 pb-1 px-2 mt-1 rounded",
+//             });
+
+//             $(this).parent().after(newLabel);
+
+//             $(this).data("label-created", true);
+//         }
+//     });
+// });

@@ -224,9 +224,9 @@ def create_newuser(first_name, last_name, username, email, password1, password2=
     if password2 is not None and password1 != password2:
         return {'success':False, 'message':'Las contraseñas no coinciden 😬'}
     if User.objects.filter(username=username).exists():
-        return {'success':False, 'message':f'El usuario <u>{username}</u> ya existe 😯🤔', 'valSelector':'username'}
+        return {'success':False, 'message':f'El usuario <u>{username}</u> ya existe. 😯🤔 <br>Te recomiendo utilizar uno distinto', 'valSelector':'usernameSelect'}
     if User.objects.filter(email=email).exists():
-        return {'success':False, 'message':f'El correo electrónico <u>{email}</u> ya está registrado 😯', 'valSelector':'email'}
+        return {'success':False, 'message':f'El correo electrónico <u>{email}</u> ya está registrado 😯<br>Te recomiendo utilizar uno distinto', 'valSelector':'emailSelect'}
 
     try:
         new_user = User.objects.create_user(
@@ -241,7 +241,7 @@ def create_newuser(first_name, last_name, username, email, password1, password2=
         new_user.save()
         aviso=''
         if password2 is not None:
-            aviso = '<br>Tu cuenta está <u>Inactiva</u> 😯😬'
+            aviso = '<br>Tu cuenta está <u>Inhabilitada</u> 😯😬'
         return {'success': True, 'message': f'Usuario creado exitosamente 🥳🎈 {aviso}'}
     except IntegrityError:
         return {'success': False, 'message': 'Ocurrió un error durante el registro. Intente nuevamente.'}
