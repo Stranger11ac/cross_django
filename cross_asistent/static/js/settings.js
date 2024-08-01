@@ -383,39 +383,44 @@ $(document).ready(function () {
             },
         });
         var otherChanges = false;
-        // Poner visible la seccion de la password
+
+        // Función para alternar visibilidad de elementos y desplazar la página
+        function toggleVisibility(elementToToggle, show, callback) {
+            if (show) {
+                elementToToggle.slideDown("fast", callback);
+            } else {
+                elementToToggle.slideUp("fast", callback);
+            }
+        }
+        // Función para manejar el botón de cambiar contraseña
         $("#updatePassBtn").on("click", function () {
             let thisBtn = $(this);
-            $("#updatePassText").toggle();
+            let updatePassText = $("#updatePassText");
+            let profileSaved = $("#profileSaved");
+            let updatePassBlock = $("#updatePassBlock");
 
-            if ($("#updatePassBtn").hasClass("bg_blue-green")) {
-                $("#profileSaved").slideDown("fast", function () {
-                    $("#updatePassBlock").slideDown("fast", function () {
+            updatePassText.toggle();
+
+            if (thisBtn.hasClass("bg_blue-green")) {
+                toggleVisibility(profileSaved, true, function () {
+                    toggleVisibility(updatePassBlock, true, function () {
                         $("html, body").scrollTop($(document).height());
                     });
                 });
             } else {
-                if (otherChanges) {
-                    $("#updatePassBlock").slideUp("fast");
-                } else {
-                    $("#profileSaved").slideUp("fast", function () {
-                        $("#updatePassBlock").slideUp("fast");
-                    });
-                }
+                toggleVisibility(updatePassBlock, !otherChanges, function () {
+                    toggleVisibility(profileSaved, !otherChanges);
+                });
             }
+
+            thisBtn.toggleClass("bg_blue-green bg_blue-red");
             if (thisBtn.text() == "Cambiar Contraseña") {
-                thisBtn.toggleClass("bg_blue-green bg_blue-red");
                 thisBtn.text("No Cambiar Contraseña");
                 if (!otherChanges) {
                     $("#passwordSend").val("");
-                    $("#newPass").val("");
-                    $("#confNewPass").val("");
-                } else {
-                    $("#newPass").val("");
-                    $("#confNewPass").val("");
                 }
+                $("#newPass, #confNewPass").val("");
             } else {
-                thisBtn.toggleClass("bg_blue-green bg_blue-red");
                 thisBtn.text("Cambiar Contraseña");
             }
         });
@@ -423,99 +428,131 @@ $(document).ready(function () {
         $("[data-input_change]").each(function () {
             const thisInput = $(this);
             var oldValueInput = thisInput.val();
-            const originalNameInput = thisInput.attr("name"); // Guarda el nombre original
-            var oldNameInput = originalNameInput; // Usa el nombre original para cambios temporales
+            const originalNameInput = thisInput.attr("name");
 
             thisInput.on("input", function () {
                 if (thisInput.val() == oldValueInput) {
-                    thisInput.attr("name", `${originalNameInput}`);
-                    $("#profileSaved").slideUp("fast");
+                    thisInput.attr("name", originalNameInput);
+                    toggleVisibility($("#updatePassBlock"), false, function () {
+                        toggleVisibility($("#profileSaved"), false);
+                    });
                     otherChanges = false;
                 } else {
                     thisInput.attr("name", `${originalNameInput}Changed`);
-                    $("#profileSaved").slideDown("fast");
+                    toggleVisibility($("#profileSaved"), true);
                     otherChanges = true;
 
                     if (thisInput.val() == "") {
-                        // thisInput.blur(() => thisInput.val(oldValueInput));
-                        thisInput.attr("name", `${originalNameInput}`);
+                        thisInput.attr("name", originalNameInput);
                     }
                 }
             });
 
             thisInput.on("click", function () {
-                oldNameInput = originalNameInput; // Restablece el nombre original al hacer clic
+                thisInput.attr("name", originalNameInput);
             });
         });
-        // Desplegar boton si se elimina la foto de perfil
+        // Desplegar botón si se elimina la foto de perfil
         $("input#deletePicture").change(function () {
             if ($(this).is(":checked")) {
                 $('[for="deletePicture"]').addClass("btn_press");
-                $("#profileSaved").slideDown("fast");
+                toggleVisibility($("#profileSaved"), true);
                 otherChanges = true;
             } else {
                 $('[for="deletePicture"]').removeClass("btn_press");
-                $("#profileSaved").slideUp("fast");
+                toggleVisibility($("#updatePassBlock"), !otherChanges, function () {
+                    toggleVisibility($("#profileSaved"), !otherChanges);
+                });
                 otherChanges = false;
             }
         });
 
-        // $("[data-input_change]").on("click", function () {
+        // var otherChanges = false;
+        // // Poner visible la seccion de la password
+        // $("#updatePassBtn").on("click", function () {
+        //     let thisBtn = $(this);
+        //     $("#updatePassText").toggle();
+
+        //     if ($("#updatePassBtn").hasClass("bg_blue-green")) {
+        //         $("#profileSaved").slideDown("fast", function () {
+        //             $("#updatePassBlock").slideDown("fast", function () {
+        //                 $("html, body").scrollTop($(document).height());
+        //             });
+        //         });
+        //     } else {
+        //         if (otherChanges) {
+        //             $("#updatePassBlock").slideUp("fast");
+        //         } else {
+        //             $("#profileSaved").slideUp("fast", function () {
+        //                 $("#updatePassBlock").slideUp("fast");
+        //             });
+        //         }
+        //     }
+        //     if (thisBtn.text() == "Cambiar Contraseña") {
+        //         thisBtn.toggleClass("bg_blue-green bg_blue-red");
+        //         thisBtn.text("No Cambiar Contraseña");
+        //         if (!otherChanges) {
+        //             $("#passwordSend").val("");
+        //         }
+        //         $("#newPass").val("");
+        //         $("#confNewPass").val("");
+        //     } else {
+        //         thisBtn.toggleClass("bg_blue-green bg_blue-red");
+        //         thisBtn.text("Cambiar Contraseña");
+        //     }
+        // });
+        // // Detectar cambios en los inputs
+        // $("[data-input_change]").each(function () {
         //     const thisInput = $(this);
         //     var oldValueInput = thisInput.val();
-        //     var oldNameInput = thisInput.attr("name");
+        //     const originalNameInput = thisInput.attr("name"); // Guarda el nombre original
+        //     var oldNameInput = originalNameInput; // Usa el nombre original para cambios temporales
 
-        //     $(this).on("input", function () {
-        //         if (thisInput.val() == "") {
-        //             thisInput.blur(() => thisInput.val(oldValueInput));
-        //             thisInput.attr("name", `${oldNameInput}`);
-        //         } else {
-        //             if (thisInput.val() == oldValueInput) {
-        //                 thisInput.attr("name", `${oldNameInput}`);
-        //                 $("#profileSaved").slideUp("fast");
-        //                 otherChanges = false;
+        //     thisInput.on("input", function () {
+        //         if (thisInput.val() == oldValueInput) {
+        //             thisInput.attr("name", `${originalNameInput}`);
+        //             if (otherChanges) {
+        //                 $("#updatePassBlock").slideUp("fast");
         //             } else {
-        //                 thisInput.attr("name", `${oldNameInput}Changed`);
-        //                 $("#profileSaved").slideDown("fast");
-        //                 otherChanges = true;
+        //                 $("#profileSaved").slideUp("fast", function () {
+        //                     $("#updatePassBlock").slideUp("fast");
+        //                 });
+        //             }
+        //             // $("#profileSaved").slideUp("fast");
+        //             otherChanges = false;
+        //         } else {
+        //             thisInput.attr("name", `${originalNameInput}Changed`);
+        //             $("#profileSaved").slideDown("fast");
+        //             otherChanges = true;
+
+        //             if (thisInput.val() == "") {
+        //                 // thisInput.blur(() => thisInput.val(oldValueInput));
+        //                 thisInput.attr("name", `${originalNameInput}`);
         //             }
         //         }
         //     });
+
+        //     thisInput.on("click", function () {
+        //         oldNameInput = originalNameInput; // Restablece el nombre original al hacer clic
+        //     });
         // });
-
-        // Evitar recargar la pagina si aun no se envia el formulario ###############
-        // var isFormChanged = false;
-
-        // $("[data-unload]").on("input", "input, select, textarea", function () {
-        //     isFormChanged = true;
-        // });
-
-        // $("[data-unload]").on("submit", function () {
-        //     isFormChanged = false;
-        // });
-
-        // window.addEventListener("beforeunload", function (e) {
-        //     var formHasDataUnload = $("[data-unload]").data("unload") !== undefined;
-        //     if (isFormChanged && formHasDataUnload) {
-        //         e.preventDefault();
-
-        //         Swal.fire({
-        //             title: "¿Estás seguro?",
-        //             text: "Tienes cambios sin guardar. ¿Estás seguro de que quieres salir?",
-        //             icon: "warning",
-        //             showCancelButton: true,
-        //             confirmButtonText: "Sí, salir",
-        //             cancelButtonText: "Cancelar",
-        //             reverseButtons: true,
-        //         }).then((result) => {
-        //             if (result.isConfirmed) {
-        //                 isConfirmed = true;
-        //                 window.location.href = e.target.location.href;
-        //             } else {
-        //                 isConfirmed = false;
-        //                 e.preventDefault();
-        //             }
-        //         });
+        // // Desplegar boton si se elimina la foto de perfil
+        // $("input#deletePicture").change(function () {
+        //     if ($(this).is(":checked")) {
+        //         $('[for="deletePicture"]').addClass("btn_press");
+        //         $("#profileSaved").slideDown("fast");
+        //         otherChanges = true;
+        //     } else {
+        //         $('[for="deletePicture"]').removeClass("btn_press");
+        //         if (otherChanges) {
+        //             $("#updatePassBlock").slideUp("fast");
+        //         } else {
+        //             $("#profileSaved").slideUp("fast", function () {
+        //                 $("#updatePassBlock").slideUp("fast");
+        //             });
+        //         }
+        //         // $("#profileSaved").slideUp("fast");
+        //         otherChanges = false;
         //     }
         // });
 

@@ -19,15 +19,16 @@
 
                 <div class="card__perfil_content p-4 pt-0">
                     <!-- <h3 class="text-center">{{ perfil_usuario.username }}</h3> -->
-                    <h3 class="w-100 text-center"><input type="text" name="username" id="username" class="w-100 text-center input_transparent" value="{{ perfil_usuario.username }}" data-input_transparent data-input_change></h3>
+                    <h3 class="w-100 text-center"><input type="text" name="username" id="username" class="w-100 text-center input_transparent"
+                            value="{{ perfil_usuario.username }}" data-input_transparent data-input_change></h3>
                     <div class="my-4">
                         <p class="mb-5">
                             <strong class="fs-8">Nombre:</strong>
                             <br>
-                            <input type="text" name="first_name" id="first_name" class="text-center fs-12 input_transparent" value="{{ perfil_usuario.first_name }}"
-                                data-input_transparent data-input_change>
-                            <input type="text" name="last_name" id="last_name" class="text-center fs-12 input_transparent" value="{{ perfil_usuario.last_name }}"
-                                data-input_transparent data-input_change>
+                            <input type="text" name="first_name" id="first_name" class="text-center fs-12 input_transparent"
+                                value="{{ perfil_usuario.first_name }}" data-input_transparent data-input_change>
+                            <input type="text" name="last_name" id="last_name" class="text-center fs-12 input_transparent"
+                                value="{{ perfil_usuario.last_name }}" data-input_transparent data-input_change>
                         </p>
                         <div class="flex-between-wrap align-items-center mb-3">
                             <strong class="me-3"><label for="email">Email:</label></strong>
@@ -44,8 +45,8 @@
                             <div class="flex-fill text-end"><small class="fs-7">( Ultima Modificacion )</small><br>{{ profile_pass_update }}</div>
                         </div>
                         <!-- <div class="flex-between-wrap">
-                    <small class="flex-fill text-end">Usuario desde: {{ perfil_usuario.date_joined.date }}</small>
-                </div> -->
+                            <small class="flex-fill text-end">Usuario desde: {{ perfil_usuario.date_joined.date }}</small>
+                        </div> -->
                     </div>
 
                     <div class="row">
@@ -57,7 +58,8 @@
                         {% if not profile_img == '/static/img/UTC_logo-plano.webp' %}
                         <div class="col-12 col-md-6 mt-3 mt-md-0">
                             <input type="checkbox" class="btn-check" id="deletePicture" name="deletePicture" autocomplete="off" />
-                            <label class="btn bg_blue-red btn_check btn-block" for="deletePicture">Borrar foto Actual <i class="fa-regular fa-trash-can ms-1"></i></label>
+                            <label class="btn bg_blue-red btn_check btn-block" for="deletePicture">Borrar foto Actual <i
+                                    class="fa-regular fa-trash-can ms-1"></i></label>
                         </div>
                         {% endif %}
                         <div class="col-12 col-md-6 mt-3 mt-md-0">
@@ -71,16 +73,16 @@
             <div class="card mt-4 mt-lg-0">
                 <div class="card-body">
                     <div class="form-outline mb-4" data-mdb-input-init>
-                        <input type="password" id="passwordSend" name="passwordSend" class="form-control text-end" autocapitalize="off" required />
-                        <label class="form-label" for="passwordSend">Contraseña <span id="updatePassText" class="none">actual</span>:</label>
+                        <input type="password" id="passwordSend" name="passwordSend" class="form-control text-end" required />
+                        <label class="form-label" for="passwordSend">Contraseña<span id="updatePassText" class="none"> actual</span>:</label>
                     </div>
                     <div id="updatePassBlock" class="none">
                         <div class="form-outline mb-4" data-mdb-input-init>
-                            <input type="password" id="newPass" name="newPass" class="form-control text-end" autocapitalize="off" />
+                            <input type="password" id="newPass" name="newPass" class="form-control text-end" />
                             <label class="form-label" for="newPass">Nueva Contraseña:</label>
                         </div>
                         <div class="form-outline mb-4" data-mdb-input-init>
-                            <input type="password" id="confNewPass" name="confNewPass" class="form-control text-end" autocapitalize="off" />
+                            <input type="password" id="confNewPass" name="confNewPass" class="form-control text-end" />
                             <label class="form-label" for="confNewPass">Confirmar Nueva Contraseña:</label>
                         </div>
                     </div>
