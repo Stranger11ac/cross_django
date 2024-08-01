@@ -8,7 +8,6 @@ import random
 import string
 import os
 
-
 """Generar una cadena aleatoria de longitud especificada"""
 def generate_random_string(length):
     characters = string.ascii_letters + string.digits
@@ -96,6 +95,9 @@ class Categorias(models.Model):
     categoria = models.CharField(max_length=50)
     descripcion = models.TextField(null=True, blank=True)
     creacion = models.DateTimeField(auto_now=True)
+    
+    def __str__(self):
+        return self.categoria    
 
 """Ruta de la imagen de Database segun la categoria"""
 def get_image_upload_path(instance, filename):
