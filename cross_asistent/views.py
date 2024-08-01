@@ -27,7 +27,7 @@ def index(request):
             'id': banner.id,
             'titulo': banner.titulo,
             'descripcion': banner.descripcion,
-            'articulo': banner.articulo,
+            'redirigir': banner.redirigir,
             'imagen': imagen_url,
         })
 
@@ -239,15 +239,15 @@ def vista_programador(request):
     questions_all = models.Preguntas.objects.all().order_by('-id')
     categorias = models.Categorias.objects.filter(categoria__in=['Preguntas', 'Informacion', 'Personal'])
     contexto = {
-        'user': request.user,
         'users': users,
-        'banners_all': banners_all,
-        'num_blogs': models.Articulos.objects.all().count(),
-        'num_preguntas': databaseall.count(),
-        'preguntas_sending': questions_all,
-        'categorias': categorias,
+        'user': request.user,
         'active_page': 'home',
-        'pages': functions.pages
+        'pages': functions.pages,
+        'categorias': categorias,
+        'banners_all': banners_all,
+        'preguntas_sending': questions_all,
+        'num_preguntas': databaseall.count(),
+        'num_blogs': models.Articulos.objects.all().count(),
     }
      
     if request.method == 'POST':
@@ -340,7 +340,7 @@ def upload_banner(request):
             'id': banner.id,
             'titulo': banner.titulo,
             'descripcion': banner.descripcion,
-            'articulo': banner.articulo,
+            'redirigir': banner.redirigir,
             'imagen': imagen_url,
             'expiracion': banner.expiracion,
         })
@@ -352,26 +352,19 @@ def upload_banner(request):
 def edit_banner(request, banner_id):
     banner = get_object_or_404(models.Banners, id=banner_id)
     if request.method == 'POST':
-        # Obtener la nueva imagen del formulario si se proporciona
         new_image = request.FILES.get('imagen')
-        
-        # Guardar la nueva imagen si se proporciona
+
         if new_image:
-            # Eliminar la imagen anterior si existe
             if banner.imagen:
                 if default_storage.exists(banner.imagen.name):
                     default_storage.delete(banner.imagen.name)
             
-            # Guardar la nueva imagen en el modelo
             banner.imagen = new_image
         
-        # Actualizar otros campos del banner si es necesario
         banner.titulo = request.POST.get('titulo')
         banner.descripcion = request.POST.get('descripcion')
-        banner.articulo = request.POST.get('articulo')
+        banner.redirigir = request.POST.get('redirigir')
         banner.expiracion = request.POST.get('expiracion')
-        
-        # Guardar el banner actualizado
         banner.save()
         
         return JsonResponse({

@@ -3,10 +3,6 @@
 {% block title %}Calendario de la Universidad 📰{% endblock %}
 {% block content %}
 <main class="container container-fluid py-5">
-    <!-- <div class="mb-5">
-        <h1 class="text-center">Calendario UTC <i class="fa-solid fa-calendar-days ms-1"></i></h1>
-        <hr class="hr_divisor mx-4 mx-md-0" />
-    </div> -->
     <section id="calendar" data-events="{% url 'calendario_eventos' %}"></section>
 
     <!-- Modal de MDBootstrap -->

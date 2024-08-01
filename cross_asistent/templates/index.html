@@ -28,8 +28,8 @@
                                     <!-- <div class="div-dec"></div> -->
                                     <p>{% autoescape off %} {{ banner.descripcion }} {% endautoescape %}</p>
                                     <div class="buttons">
-                                        {% if banner.articulo %}
-                                        <a href="{{banner.articulo}}" class="btn_slide btn btn_detail btn-lg">
+                                        {% if banner.redirigir %}
+                                        <a href="{{banner.redirigir}}" class="btn_slide btn btn_detail btn-lg">
                                             Ver más <i class="fa-solid fa-up-right-from-square ms-1"></i>
                                         </a>
                                         {% endif %}

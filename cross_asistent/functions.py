@@ -351,18 +351,19 @@ def createDatabase(request):
 
 # Calendario: Eventos ----------------------------------------------------------
 def calendario_eventos(request):
-    categoriaGet = models.Categorias.objects.get(categoria="Calendario")
-    eventos = models.Database.objects.filter(categoria=categoriaGet)
+    categoriaGet = get_object_or_404(models.Categorias, categoria="Calendario")
+    eventos = models.Database.objects.filter(categoria=categoriaGet).select_related('categoria')
     eventos_json = [{
         'title': evento.titulo,
         'description': evento.informacion,
         'classNames': evento.evento_className,
         'location': evento.evento_lugar,
-        'imagen': evento.imagen.url if evento.imagen else 'false',
-        'button': evento.redirigir if evento.redirigir else 'false',
-        'start': evento.evento_fecha_inicio.isoformat(),
-        'end': evento.evento_fecha_fin.isoformat(),
+        'imagen': evento.imagen.url if evento.imagen else '',
+        'button': evento.redirigir if evento.redirigir else '',
+        'start': evento.evento_fecha_inicio.isoformat() if evento.evento_fecha_inicio else '',
+        'end': evento.evento_fecha_fin.isoformat() if evento.evento_fecha_fin else '',
     } for evento in eventos]
+    
     return JsonResponse(eventos_json, safe=False)
 
 # Mapa ----------------------------------------------------------

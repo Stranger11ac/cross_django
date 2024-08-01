@@ -17,7 +17,7 @@ class PreguntaForm(forms.ModelForm):
 class BannersForm(forms.ModelForm):
     class Meta:
         model = Banners
-        fields = ['titulo', 'descripcion', 'articulo', 'imagen', 'expiracion']
+        fields = ['titulo', 'descripcion', 'redirigir', 'imagen', 'expiracion']
 
 class CSVUploadForm(forms.Form):
     file = forms.FileField()

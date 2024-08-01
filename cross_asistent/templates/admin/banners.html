@@ -31,10 +31,10 @@
                             <label class="form-label" for="descripcion">Descripción:</label>
                         </div>
                         <div data-mdb-input-init class="form-outline position-relative mb-4">
-                            <button type="button" class="position-absolute top-0 end-0 btn p-0 fs-12 m-2 mt-1 none" data-clear="articulo"><i
+                            <button type="button" class="position-absolute top-0 end-0 btn p-0 fs-12 m-2 mt-1 none" data-clear="redirigir"><i
                                     class="fa-solid fa-xmark m-0 p-0"></i></button>
-                            <input type="url" id="articulo" name="articulo" class="form-control form-icon-trailing" data-init-clear required />
-                            <label class="form-label" for="articulo">Redirigir (liga/url):</label>
+                            <input type="url" id="redirigir" name="redirigir" class="form-control form-icon-trailing" data-init-clear required />
+                            <label class="form-label" for="redirigir">Redirigir (liga/url):</label>
                         </div>
                         <div class="mb-3">
                             <label for="imagen" class="form-label">Imagen:</label>
@@ -110,10 +110,10 @@
                                                             value="{{ banner.descripcion }}" required autocomplete="off" autocapitalize="off">
                                                     </div>
                                                     <div class="mb-3">
-                                                        <label for="editArticulo{{ banner.id }}" class="form-label">Redirigir a
+                                                        <label for="editRedirigir{{ banner.id }}" class="form-label">Redirigir a
                                                             :</label>
-                                                        <input type="text" class="form-control" id="editArticulo{{ banner.id }}" name="articulo"
-                                                            value="{{ banner.articulo }}"" autocomplete=" off" autocapitalize="off"">
+                                                        <input type="text" class="form-control" id="editRedirigir{{ banner.id }}" name="redirigir"
+                                                            value="{{ banner.redirigir }}" autocomplete=" off" autocapitalize="off">
                                                     </div>
                                                     <div class=" mb-3">
                                                         <label for="editImagen{{ banner.id }}" class="form-label">Imagen</label>

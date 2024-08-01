@@ -8,7 +8,7 @@ import random
 import string
 import os
 
-"""Generar una cadena aleatoria de longitud especificada"""
+"""Generar una cadena aleatoria"""
 def generate_random_string(length):
     characters = string.ascii_letters + string.digits
     return ''.join(random.choice(characters) for _ in range(length))
@@ -16,23 +16,18 @@ def generate_random_string(length):
 """Ruta imagen del Banner"""
 def set_imgBanner_path(instance, filename):
     ext = filename.split('.')[-1]
-    titleSpace = instance.titulo.strip().replace(' ', '')
-    if len(titleSpace) > 15:
-        newTitle = titleSpace[:15]
-    else:
-        newTitle = titleSpace
-    filename = f"banner_{slugify(newTitle)}.{ext}"
+    newName = instance.titulo.strip().replace(' ', '')
+    newName = newName[:15] if len(newName) > 15 else newName
+    filename = f"banner_{slugify(newName)}.{ext}"
     return os.path.join('cross_asistent/static/files/imagenes/banners/', filename)
 
 """Ruta imagen de Database segun categoria"""
 def set_imgDB_path(instance, filename):
     ext = filename.split('.')[-1]
-    titleSpace = instance.titulo.strip().replace(' ', '')
-    if len(titleSpace) > 20:
-        newTitle = titleSpace[:20]
-    else:
-        newTitle = titleSpace
-    filename = f"db_{slugify(newTitle)}.{ext}"
+    newName = instance.titulo.strip().replace(' ', '')
+    newName = newName[:20] if len(newName) > 20 else newName
+    filename = f"db_{slugify(newName)}.{ext}"
+    
     if instance.categoria and instance.categoria.categoria == 'Mapa':
         return os.path.join('cross_asistent/static/files/imagenes/mapa/', filename)
     elif instance.categoria and instance.categoria.categoria == 'Calendario':
@@ -43,12 +38,10 @@ def set_imgDB_path(instance, filename):
 """Ruta imagen de Articulos"""
 def set_imgBlog_path(instance, filename):
     ext = filename.split('.')[-1]
-    nameSpace = instance.titulo.strip().replace(' ', '')
-    if len(nameSpace) > 25:
-        newName = nameSpace[:25]
-    else:
-        newName = nameSpace
-    filename = f"profile_{slugify(newName)}.{ext}"
+    newName = instance.titulo.strip().replace(' ', '')
+    newName = newName[:18] if len(newName) > 18 else newName
+    random_string = generate_random_string(8)
+    filename = f"blog_{slugify(newName)}_uid-{random_string}.{ext}"
     return os.path.join('cross_asistent/static/files/imagenes/blogs/', filename)
 
 """Ruta imagenes"""
@@ -67,21 +60,26 @@ def set_imgProfile_path(instance, filename):
     filename = f"profile_{slugify(newName)}_uid-{random_string}.{ext}"
     return os.path.join('cross_asistent/static/files/imagenes/personal', filename)
 
-"""Ruta de la imagen del Banner"""
-def get_image_path(instance, filename):
-    return os.path.join('cross_asistent/static/files/banners/', filename)
+"""Ruta Documento de Database"""
+def set_pdfDB_path(instance, filename):
+    ext = filename.split('.')[-1]
+    newName = instance.titulo.strip().replace(' ', '')
+    newName = newName[:18] if len(newName) > 18 else newName
+    random_string = generate_random_string(8)
+    filename = f"db_pdf_{slugify(newName)}_uid-{random_string}.{ext}"
+    return os.path.join('cross_asistent/static/files/documentos/', filename)
 
 class Banners(models.Model):
     titulo = models.CharField(max_length=60, blank=False)
     descripcion = models.CharField(max_length=350, blank=False)
-    articulo = models.CharField(max_length=200, null=True, blank=True)
-    imagen = models.ImageField(upload_to=get_image_path, blank=True, null=True)
+    redirigir = models.CharField(max_length=200, null=True, blank=True)
+    imagen = models.ImageField(upload_to=set_imgBanner_path, blank=True, null=True)
     expiracion = models.DateTimeField(blank=True, null=True)
     visible = models.BooleanField(default=True)
     
     def save(self, *args, **kwargs):
         if not self.imagen:
-            self.imagen = 'static/img/default_image.webp'
+            self.imagen = '/static/img/default_image.webp'
         else:
             if self.id:
                 existing_banner = Banners.objects.get(id=self.id)
@@ -99,23 +97,14 @@ class Categorias(models.Model):
     def __str__(self):
         return self.categoria    
 
-"""Ruta de la imagen de Database segun la categoria"""
-def get_image_upload_path(instance, filename):
-    if instance.categoria and instance.categoria.categoria == 'Mapa':
-        return os.path.join('cross_asistent/static/files/imagenes/mapa/', filename)
-    elif instance.categoria and instance.categoria.categoria == 'Calendario':
-        return os.path.join('cross_asistent/static/files/imagenes/calendario/', filename)
-    else:
-        return os.path.join('cross_asistent/static/files/imagenes/', filename)
-
 class Database(models.Model):
     categoria = models.ForeignKey(Categorias, on_delete=models.SET_NULL, null=True)
     titulo = models.CharField(max_length=200, blank=False)
     informacion = models.TextField(blank=True, null=True)
     redirigir = models.URLField(blank=True, null=True)
     frecuencia = models.IntegerField(default=0)
-    documento = models.FileField(upload_to='cross_asistent/static/files/documentos/', blank=True, null=True)
-    imagen = models.ImageField(upload_to=get_image_upload_path, blank=True, null=True)
+    documento = models.FileField(upload_to=set_pdfDB_path, blank=True, null=True)
+    imagen = models.ImageField(upload_to=set_imgDB_path, blank=True, null=True)
     evento_fecha_inicio = models.DateTimeField(blank=True, null=True)
     evento_fecha_fin = models.DateTimeField(blank=True, null=True)
     evento_lugar = models.CharField(max_length=200, blank=True, null=True, default='Campus UTC')
@@ -123,7 +112,7 @@ class Database(models.Model):
     fecha_modificacion = models.DateTimeField(auto_now=True)
 
 class Articulos(models.Model):
-    encabezado =  models.ImageField(upload_to='cross_asistent/static/files/imagenes/blogs/', blank=True, null=True)
+    encabezado =  models.ImageField(upload_to=set_imgBlog_path, blank=True, null=True)
     titulo = models.CharField(max_length=200, blank=False)
     contenido = models.TextField(blank=False)
     autor = models.CharField(max_length=100, blank=False)
@@ -141,7 +130,7 @@ class Mapa(models.Model):
     p4_polygons = models.CharField(max_length=100, blank=True, null=True)
 
 class Imagenes(models.Model):
-    imagen = models.ImageField(upload_to='cross_asistent/static/files/imagenes/blogs/imgs_blogs/', blank=True, null=True)
+    imagen = models.ImageField(upload_to=set_imgs_path, blank=True, null=True)
     
     def delete(self, *args, **kwargs):
         # Eliminar la imagen del sistema de archivos al eliminar un registro
@@ -163,16 +152,9 @@ class Preguntas(models.Model):
     descripcion = models.TextField(null=False, blank=True)
     fecha = models.DateTimeField(auto_now_add=True)
 
-
-"""Ruta de la imagen de los usuarios"""
-def image_path_profile(instance, filename):
-    ext = filename.split('.')[-1]
-    filename = f"{slugify(instance.user.username)}_perfil.{ext}"
-    return os.path.join('cross_asistent/static/files/imagenes/personal', filename)
-
 class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    profile_picture = models.ImageField(upload_to=image_path_profile, blank=True, null=True)
+    profile_picture = models.ImageField(upload_to=set_imgProfile_path, blank=True, null=True)
     tutorial = models.BooleanField(default=True)
     blog_firma = models.TextField(blank=True, null=True)
     passwoed_update = models.DateField(blank=True, null=True)
