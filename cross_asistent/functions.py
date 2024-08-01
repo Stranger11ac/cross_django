@@ -333,7 +333,9 @@ def createDatabase(request):
                 redirigir=redirigirPOST,
                 frecuencia=frecuenciaPOST,
                 documentos=documentosPOST,
-                imagenes=imagenesPOST
+                imagenes=imagenesPOST,
+                evento_lugar='',
+                evento_className='',
             )
             
             models.Notificacion.objects.create(

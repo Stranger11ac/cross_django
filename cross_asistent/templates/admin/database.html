@@ -111,9 +111,7 @@
                                     <th class="fw-bold text_detail">Categoria</th>
                                     <th class="fw-bold text_detail">Título</th>
                                     <th class="fw-bold text_detail">Imagen</th>
-                                    {% if dato.documento %}
                                     <th class="fw-bold text_detail">Documento</th>
-                                    {% endif %}
                                     <th class="fw-bold text_detail">Ultima modificacion</th>
                                     <th class="fw-bold text_detail">Acciones</th>
                                 </tr>
@@ -129,11 +127,7 @@
                                         <img src="{{ dato.imagen }}" alt="{{ dato.titulo }}" class="rounded materialBoxed hover-shadow" style="width: 150px;">
                                         {% endif %}
                                     </td>
-                                    {% if dato.documento %}
-                                    <td>
-                                        {{ dato.documento }}
-                                    </td>
-                                    {% endif %}
+                                    <td>{{ dato.documento }}</td>
                                     <td>{{ dato.modificacion }}</td>
                                     <td>
                                         <div class="d-flex flex-column align-items-center gap_10">
@@ -196,6 +190,7 @@
                                     </div>
                                 </div>
 
+                                <!-- Modal: Eliminar Banner -->
                                 <div class="modal fade " id="eliminar_modal_{{ dato.id }}" tabindex="-1" aria-labelledby="labelModal0{{ dato.id }}"
                                     aria-hidden="true">
                                     <div class="modal-dialog modal-dialog-centered">
@@ -224,7 +219,6 @@
                                         </div>
                                     </div>
                                 </div>
-
                                 {% endfor %}
                             </tbody>
                         </table>

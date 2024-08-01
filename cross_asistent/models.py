@@ -4,7 +4,69 @@ from django.utils.text import slugify
 from django.dispatch import receiver
 from django.conf import settings
 from django.db import models
+import random
+import string
 import os
+
+
+"""Generar una cadena aleatoria de longitud especificada"""
+def generate_random_string(length):
+    characters = string.ascii_letters + string.digits
+    return ''.join(random.choice(characters) for _ in range(length))
+
+"""Ruta imagen del Banner"""
+def set_imgBanner_path(instance, filename):
+    ext = filename.split('.')[-1]
+    titleSpace = instance.titulo.strip().replace(' ', '')
+    if len(titleSpace) > 15:
+        newTitle = titleSpace[:15]
+    else:
+        newTitle = titleSpace
+    filename = f"banner_{slugify(newTitle)}.{ext}"
+    return os.path.join('cross_asistent/static/files/imagenes/banners/', filename)
+
+"""Ruta imagen de Database segun categoria"""
+def set_imgDB_path(instance, filename):
+    ext = filename.split('.')[-1]
+    titleSpace = instance.titulo.strip().replace(' ', '')
+    if len(titleSpace) > 20:
+        newTitle = titleSpace[:20]
+    else:
+        newTitle = titleSpace
+    filename = f"db_{slugify(newTitle)}.{ext}"
+    if instance.categoria and instance.categoria.categoria == 'Mapa':
+        return os.path.join('cross_asistent/static/files/imagenes/mapa/', filename)
+    elif instance.categoria and instance.categoria.categoria == 'Calendario':
+        return os.path.join('cross_asistent/static/files/imagenes/calendario/', filename)
+    else:
+        return os.path.join('cross_asistent/static/files/imagenes/', filename)
+
+"""Ruta imagen de Articulos"""
+def set_imgBlog_path(instance, filename):
+    ext = filename.split('.')[-1]
+    nameSpace = instance.titulo.strip().replace(' ', '')
+    if len(nameSpace) > 25:
+        newName = nameSpace[:25]
+    else:
+        newName = nameSpace
+    filename = f"profile_{slugify(newName)}.{ext}"
+    return os.path.join('cross_asistent/static/files/imagenes/blogs/', filename)
+
+"""Ruta imagenes"""
+def set_imgs_path(instance, filename):
+    ext = filename.split('.')[-1]
+    random_string = generate_random_string(12)
+    filename = f"cross_{random_string}_img.{ext}"
+    return os.path.join('cross_asistent/static/files/imagenes/', filename)
+
+"""Ruta imagen de perfiles"""
+def set_imgProfile_path(instance, filename):
+    ext = filename.split('.')[-1]
+    newName = instance.user.username.strip().replace(' ', '')
+    newName = newName[:20] if len(newName) > 20 else newName
+    random_string = generate_random_string(8)
+    filename = f"profile_{slugify(newName)}_uid-{random_string}.{ext}"
+    return os.path.join('cross_asistent/static/files/imagenes/personal', filename)
 
 """Ruta de la imagen del Banner"""
 def get_image_path(instance, filename):
@@ -55,7 +117,7 @@ class Database(models.Model):
     evento_fecha_inicio = models.DateTimeField(blank=True, null=True)
     evento_fecha_fin = models.DateTimeField(blank=True, null=True)
     evento_lugar = models.CharField(max_length=200, blank=True, null=True, default='Campus UTC')
-    evento_className = models.CharField(max_length=100, default='event_detail')
+    evento_className = models.CharField(max_length=100, blank=True, null=True, default='event_detail')
     fecha_modificacion = models.DateTimeField(auto_now=True)
 
 class Articulos(models.Model):
@@ -76,7 +138,7 @@ class Mapa(models.Model):
     p3_polygons = models.CharField(max_length=100, blank=True, null=True)
     p4_polygons = models.CharField(max_length=100, blank=True, null=True)
 
-class ImagenArticulo(models.Model):
+class Imagenes(models.Model):
     imagen = models.ImageField(upload_to='cross_asistent/static/files/imagenes/blogs/imgs_blogs/', blank=True, null=True)
     
     def delete(self, *args, **kwargs):

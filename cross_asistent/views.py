@@ -13,6 +13,7 @@ import json
 
 databaseall = models.Database.objects.all()
 mapaall = models.Mapa.objects.all()
+categoriasall = models.Categorias.objects.all()
 
 def index(request):
     if not request.user.is_staff:
@@ -395,7 +396,6 @@ def delete_banner(request, banner_id):
 @login_required
 @never_cache
 def database_page(request):
-    categoriasall = models.Categorias.objects.all()
     datos_modificados = []
 
     for dato in databaseall:
@@ -408,6 +408,7 @@ def database_page(request):
         else:
             documento_url = ''
         datos_modificados.append({
+            'id': dato.id,
             'categoria': dato.categoria,
             'titulo': dato.titulo,
             'informacion': dato.informacion,
@@ -415,7 +416,7 @@ def database_page(request):
             'frecuencia': dato.frecuencia,
             'documento': documento_url,
             'imagen': imagen_url,
-            'modificacion': dato.fecha_modificacion,
+            'fecha_modificacion': dato.fecha_modificacion,
         })
     context = { 'database': datos_modificados, 'active_page': 'database','pages': functions.pages, 'categorias': categoriasall }
     return render(request, 'admin/database.html', context)
@@ -460,7 +461,7 @@ def upload_image(request):
     if request.method == 'POST':
         try:
             image_file = request.FILES['file']
-            imagen_articulo = models.ImagenArticulo(imagen=image_file)
+            imagen_articulo = models.Imagenes(imagen=image_file)
             imagen_articulo.save()
             image_url = imagen_articulo.imagen.url.replace("/cross_asistent", "")
 
@@ -472,7 +473,7 @@ def upload_image(request):
 @login_required
 @never_cache
 def lista_imagenes(request):
-    imagenes = models.ImagenArticulo.objects.all()
+    imagenes = models.Imagenes.objects.all()
     imagenes_modificadas = []
 
     for imagen in imagenes:
@@ -573,7 +574,9 @@ def regEdificioMapa(request):
             categoria=models.Categorias.objects.get(categoria="Mapa"),
             nombre=nombrePost,
             informacion=informacionText,
-            imagenes=imagenPost
+            imagenes=imagenPost,
+            evento_lugar='',
+            evento_className='',
         )
 
         return JsonResponse({'success': True, 'message': 'Se creo un nuevo edificio en el mapa y en la base de datos de forma exitosa 🎉🎉🎉'}, status=200)

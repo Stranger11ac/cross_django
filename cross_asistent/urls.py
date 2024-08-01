@@ -51,16 +51,18 @@ urlpatterns = [
     path('administracion/obtener_edificio/', views.obtenerEdificio, name='obtenerEdificio'),
     path('administracion/regEdificio_mapa/', views.regEdificioMapa, name='regEdificio'),
     
-    # Importar y Exportar ----------------------------------------------------------
-    path('administracion/export/database/', imex_port.export_database, name='export_database'),
-    path('administracion/importar/database/', imex_port.import_database, name='import_database'),
-    path('administracion/export/mapa/', imex_port.export_mapa, name='export_mapa'),
-    path('administracion/importar/mapa/', imex_port.import_mapa, name='import_mapa'),
-    
     # Notificaciones ----------------------------------------------------------
     path('administracion/notificaciones/', views.ver_notis, name='notificaciones'),
     path('administracion/notificacion_leida/', views.marcar_notificaciones_leidas, name='marcar_notificaciones_leidas'),
 
     # Preguntas ----------------------------------------------------------
     path('administracion/pregunta_eliminar/', functions.preguntas_deleted, name='question_deleted'),
+    
+    # Importar y Exportar ----------------------------------------------------------
+    path('administracion/export/categorias/', imex_port.export_categorias, name='export_categorias'),
+    path('administracion/importar/categorias/', imex_port.import_categorias, name='import_categorias'),
+    path('administracion/export/database/', imex_port.export_database, name='export_database'),
+    path('administracion/importar/database/', imex_port.import_database, name='import_database'),
+    path('administracion/export/mapa/', imex_port.export_mapa, name='export_mapa'),
+    path('administracion/importar/mapa/', imex_port.import_mapa, name='import_mapa'),
 ]
