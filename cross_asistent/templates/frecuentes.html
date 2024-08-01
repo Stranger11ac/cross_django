@@ -27,37 +27,37 @@
         <section class="tab-pane fade show active" id="pills-search-quest" role="tabpanel" aria-labelledby="pills-search-quest">
             <div class="card">
                 <div class="card-body">
-                <div class="form-outline mb-5" data-mdb-input-init>
-                    <input type="text" id="searchInput" class="form-control form-control-lg" />
-                    <label class="form-label" for="searchInput">Buscar:</label>
-                </div>
-                {% if quest_all %}
+                    {% if quest_all %}
+                    <div class="form-outline mb-5" data-mdb-input-init>
+                        <input type="text" id="searchInput" class="form-control form-control-lg" />
+                        <label class="form-label" for="searchInput">Buscar:</label>
+                    </div>
                     <div class="accordion" id="accordionExampleY">
                         {% for quest in quest_all %}
-                            {% if quest.categoria.categoria == "Preguntas" %}
-                                <div class="accordion-item results_item">
-                                    <h2 class="accordion-header" id="heading{{ quest.id }}">
-                                        <button data-mdb-collapse-init class="accordion-button" type="button" data-mdb-toggle="collapse" data-mdb-target="#quest-{{ quest.id }}" aria-expanded="true" aria-controls="quest-{{ quest.id }}">
-                                            <i class="fas fa-question-circle fa-sm me-2 opacity-70"></i>{{ quest.titulo }}
-                                        </button>
-                                    </h2>
-                                    <div id="quest-{{ quest.id }}" class="accordion-collapse collapse {% if quest.id == 1 %}show{% endif %}" aria-labelledby="heading{{ quest.id }}" data-mdb-parent="#accordionExampleY">
-                                        <div class="accordion-body">
-                                            {{ quest.informacion|truncatechars:150 }}
-                                            <div>
-                                                <a href class="btn btn_detail">Saber más <i class="fa-solid fa-up-right-from-square ms-1"></i></a>
-                                            </div>
-                                        </div>
+                        <div class="accordion-item results_item">
+                            <h2 class="accordion-header" id="heading{{ quest.id }}">
+                                <button data-mdb-collapse-init class="accordion-button" type="button" data-mdb-toggle="collapse"
+                                    data-mdb-target="#quest-{{ quest.id }}" aria-expanded="true" aria-controls="quest-{{ quest.id }}">
+                                    <i class="fas fa-question-circle fa-sm me-2 opacity-70"></i>{{ quest.titulo }}
+                                </button>
+                            </h2>
+                            <div id="quest-{{ quest.id }}" class="accordion-collapse collapse {% if quest.id == 1 %}show{% endif %}"
+                                aria-labelledby="heading{{ quest.id }}" data-mdb-parent="#accordionExampleY">
+                                <div class="accordion-body">
+                                    {{ quest.informacion|truncatechars:150 }}
+                                    <div>
+                                        <a href class="btn btn_detail">Saber más <i class="fa-solid fa-up-right-from-square ms-1"></i></a>
                                     </div>
                                 </div>
-                            {% endif %}
+                            </div>
+                        </div>
                         {% endfor %}
                     </div>
-                {% else %}
+                    {% else %}
                     <div class="text-center">
-                        <p class="lead">No hay preguntas frecuentes disponibles en este momento. ¡Vuelve pronto para más actualizaciones!</p>
+                        <p class="lead m-0">No hay preguntas frecuentes disponibles en este momento. ¡Vuelve pronto para más actualizaciones!</p>
                     </div>
-                {% endif %}
+                    {% endif %}
                 </div>
             </div>
         </section>
@@ -69,17 +69,17 @@
                     <h4 class="text-center mb-4">
                         ¿No hemos resuelto tus dudas?
                     </h4>
-                    <form method="POST" id="hacerPregunta" action="{% url 'preguntas' %}" class="text-center">
+                    <form method="POST" id="hacerPregunta" action="{% url 'enviar_preguntas' %}" class="text-center" autocomplete="off">
                         {% csrf_token %}
                         <div class="form-outline mb-4" data-mdb-input-init>
-                            <input type="text" id="preguntaPOST" name="pregunta" class="form-control mx-auto"/>
+                            <input type="text" id="preguntaPOST" name="pregunta" class="form-control mx-auto" required />
                             <label class="form-label" for="preguntaPOST">Escribe tu Pregunta:</label>
                         </div>
                         <div data-mdb-input-init class="form-outline position-relative mb-4">
-                            <button type="button" class="position-absolute top-0 end-0 btn p-0 fs-12 m-2 mt-1 none"
-                                data-clear="descripcion"><i class="fa-solid fa-xmark m-0 p-0"></i></button>
+                            <button type="button" class="position-absolute top-0 end-0 btn p-0 fs-12 m-2 mt-1 none" data-clear="descripcion"><i
+                                    class="fa-solid fa-xmark m-0 p-0"></i></button>
                             <textarea class="form-control" id="descripcion" rows="4" name="descripcion" data-init-clear></textarea>
-                            <label class="form-label" for="descripcion">Descripción: (OPCIONAL)</label>
+                            <label class="form-label" for="descripcion">Escribe más detalles: <small>( OPCIONAL )</small></label>
                         </div>
                         <button type="submit" class="btn btn_detail btn-block">Enviar <i class="fa-solid fa-paper-plane ms-1"></i></button>
                     </form>
@@ -115,25 +115,25 @@
             },
             body: JSON.stringify(formData)
         })
-        .then(response => response.json())
-        .then(data => {
-            if (data.message) {
-                questionForm.reset();
-                alertSToast('center', timerOut + 4000, 'success', data.message, () => {
-                    if (data.shouldReload) {
-                        location.reload();
-                    }
-                });
-                console.log(data.message);
-            } else if (data.errors) {
-                handleErrors(data.errors); 
-                console.error(data.errors);
-            }
-        })
-        .catch(error => {
-            alert(error); 
-            console.error(error); 
-        });
+            .then(response => response.json())
+            .then(data => {
+                if (data.message) {
+                    questionForm.reset();
+                    alertSToast('center', timerOut + 4000, 'success', data.message, () => {
+                        if (data.shouldReload) {
+                            location.reload();
+                        }
+                    });
+                    console.log(data.message);
+                } else if (data.errors) {
+                    handleErrors(data.errors);
+                    console.error(data.errors);
+                }
+            })
+            .catch(error => {
+                alert(error);
+                console.error(error);
+            });
     });
 </script>
 {% endblock %}

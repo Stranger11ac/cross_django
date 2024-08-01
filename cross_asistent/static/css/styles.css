@@ -63,52 +63,51 @@
 [data-color_prefer="blue"] {
     --var-detail: #3b71ca;
     --var-detail_flat: var(--var-detail);
-    accent-color: var(--var-detail);
     --fc-button-bg-color: var(--var-detail);
     --fc-button-border-color: var(--var-detail);
     --fc-button-hover-bg-color: #274b85;
     --fc-button-active-bg-color: #274b85;
     --fc-button-active-border-color: #274b85;
+    accent-color: var(--var-detail_flat);
 }
 
 [data-color_prefer="purple"] {
     --var-detail: #723bca;
     --var-detail_flat: var(--var-detail);
-    accent-color: var(--var-detail);
     --fc-button-bg-color: var(--var-detail);
     --fc-button-border-color: var(--var-detail);
     --fc-button-hover-bg-color: #502792;
     --fc-button-active-bg-color: #502792;
     --fc-button-active-border-color: #502792;
     --img-filter: hue-rotate(120deg) saturate(120%);
+    accent-color: var(--var-detail_flat);
 }
 
 [data-color_prefer="green"] {
     --var-detail: #02913c;
     --var-detail_flat: var(--var-detail);
-    accent-color: var(--var-detail);
     --fc-button-bg-color: var(--var-detail);
     --fc-button-border-color: var(--var-detail);
     --fc-button-hover-bg-color: #04632a;
     --fc-button-active-bg-color: #04632a;
     --fc-button-active-border-color: #04632a;
     --img-filter: hue-rotate(0) saturate(130%);
+    accent-color: var(--var-detail_flat);
 }
 
 [data-color_prefer="gradient_blue"] {
     --var-detail_flat: #3b71ca;
-    accent-color: var(--var-detail_flat);
     --var-detail: var(--gradient_blue);
     --fc-button-bg-color: var(--var-detail_flat);
     --fc-button-border-color: var(--var-detail_flat);
     --fc-button-hover-bg-color: #274b85;
     --fc-button-active-bg-color: #274b85;
     --fc-button-active-border-color: #274b85;
+    accent-color: var(--var-detail_flat);
 }
 
 [data-color_prefer="gradient_purple"] {
     --var-detail_flat: #723bca;
-    accent-color: var(--var-detail_flat);
     --var-detail: var(--gradient_purple);
     --fc-button-bg-color: var(--var-detail_flat);
     --fc-button-border-color: var(--var-detail_flat);
@@ -116,11 +115,11 @@
     --fc-button-active-bg-color: #502792;
     --fc-button-active-border-color: #502792;
     --img-filter: hue-rotate(120deg) saturate(120%);
+    accent-color: var(--var-detail_flat);
 }
 
 [data-color_prefer="gradient_green"] {
     --var-detail_flat: #02913c;
-    accent-color: var(--var-detail_flat);
     --var-detail: var(--gradient_green);
     --fc-button-bg-color: var(--var-detail_flat);
     --fc-button-border-color: var(--var-detail_flat);
@@ -128,11 +127,11 @@
     --fc-button-active-bg-color: #04632a;
     --fc-button-active-border-color: #04632a;
     --img-filter: hue-rotate(0) saturate(130%);
+    accent-color: var(--var-detail_flat);
 }
 
 [data-color_prefer="gradient_orange"] {
     --var-detail_flat: #d29c15;
-    accent-color: var(--var-detail_flat);
     --var-detail: var(--gradient_orange);
     --fc-button-bg-color: var(--var-detail_flat);
     --fc-button-border-color: var(--var-detail_flat);
@@ -140,6 +139,7 @@
     --fc-button-active-bg-color: #9f7710;
     --fc-button-active-border-color: #9f7710;
     --img-filter: hue-rotate(-100deg) saturate(350%);
+    accent-color: var(--var-detail_flat);
 }
 
 [data-mdb-theme="dark"] {
@@ -1021,11 +1021,11 @@ label {
 /* Checkbox MDB */
 .form-check-input[type=checkbox]:checked {
     background-image: none;
-    background-color: var(--var-detail) !important;
+    background-color: var(--var-detail_flat) !important;
 }
 
 .form-check-input:checked {
-    border-color: var(--var-detail) !important;
+    border-color: var(--var-detail_flat) !important;
 }
 
 /* SWITCH */
@@ -1084,7 +1084,6 @@ input:checked+.slider:before {
     background: transparent;
     transition: 0.2s ease;
 }
-
 
 /*########################### Mapa - MapBox ###########################*/
 .mapboxgl-canvas-container.mapboxgl-interactive,

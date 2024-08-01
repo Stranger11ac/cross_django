@@ -6,7 +6,7 @@ urlpatterns = [
     path('', views.index, name='home'),
     path('chatbot/', functions.chatbot, name='chatbot'),
     path('preguntas_frecuentes/', views.faq, name='faq'),
-    path('preguntar/', views.crear_pregunta, name='preguntas'),
+    path('preguntar/', views.crear_pregunta, name='enviar_preguntas'),
     path('blogs/', views.blogs, name='blog'),
     path('blogs/<int:Articulos_id>/', views.mostrar_blog, name='mostrar_blog'),
     path('calendario/', views.calendario, name='calendario'),
@@ -19,8 +19,6 @@ urlpatterns = [
     path('logout/', views.singout, name='singout'),
     path('acceder/', views.singinpage, name='singin'),
     path('registro/', views.singup, name='singup'),
-    path('check_username/', functions.check_username, name='check_username'),
-    path('check_email/', functions.check_email, name='check_email'),
     
     # Administracion y programacion ----------------------------------------------------------
     path('administracion/', views.vista_admin, name='vista_admin'),
@@ -41,7 +39,7 @@ urlpatterns = [
     path('administracion/update_banner_visibility/', functions.update_banner_visibility, name='update_banner_visibility'),
 
     # Database ----------------------------------------------------------
-    path('administracion/Base_datos/', views.database_page, name='database_page'),
+    path('administracion/Base_de_datos/', views.database_page, name='database_page'),
 
     # Blog ----------------------------------------------------------
     path('administracion/crear_blog/', views.create_blog, name='create_blog'),
@@ -63,4 +61,6 @@ urlpatterns = [
     path('administracion/notificaciones/', views.ver_notis, name='notificaciones'),
     path('administracion/notificacion_leida/', views.marcar_notificaciones_leidas, name='marcar_notificaciones_leidas'),
 
+    # Preguntas ----------------------------------------------------------
+    path('administracion/pregunta_eliminar/', functions.preguntas_deleted, name='question_deleted'),
 ]

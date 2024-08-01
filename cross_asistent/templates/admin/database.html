@@ -107,10 +107,13 @@
                         <table class="table table_odd align-middle m-0">
                             <thead>
                                 <tr>
+                                    <th class="fw-bold text_detail">id</th>
                                     <th class="fw-bold text_detail">Categoria</th>
                                     <th class="fw-bold text_detail">Título</th>
                                     <th class="fw-bold text_detail">Imagen</th>
+                                    {% if dato.documento %}
                                     <th class="fw-bold text_detail">Documento</th>
+                                    {% endif %}
                                     <th class="fw-bold text_detail">Ultima modificacion</th>
                                     <th class="fw-bold text_detail">Acciones</th>
                                 </tr>
@@ -118,18 +121,19 @@
                             <tbody>
                                 {% for dato in database %}
                                 <tr class="table_odd_items">
-                                    <td>{{ dato.categoria }}</td>
+                                    <td>{{ dato.id }}</td>
+                                    <td>{{ dato.categoria.categoria }}</td>
                                     <td>{% autoescape off %}{{ dato.titulo }}{% endautoescape %}</td>
                                     <td>
                                         {% if dato.imagen %}
-                                        <img src="{{ dato.imagen }}" alt="{{ dato.titulo }}" class="img-fluid rounded materialBoxed hover-shadow" style="max-width: 100px;">
+                                        <img src="{{ dato.imagen }}" alt="{{ dato.titulo }}" class="rounded materialBoxed hover-shadow" style="width: 150px;">
                                         {% endif %}
                                     </td>
+                                    {% if dato.documento %}
                                     <td>
-                                        {% if dato.documento %}
                                         {{ dato.documento }}
-                                        {% endif %}
                                     </td>
+                                    {% endif %}
                                     <td>{{ dato.modificacion }}</td>
                                     <td>
                                         <div class="d-flex flex-column align-items-center gap_10">
@@ -147,16 +151,17 @@
                                     </td>
                                 </tr>
 
-                                <!-- Edit Banner Modal -->
+                                <!-- Modal: Edit Banner -->
                                 <div class="modal fade" id="editBannerModal{{ dato.id }}" tabindex="-1" aria-labelledby="editBannerModalLabel{{ dato.id }}"
                                     aria-hidden="true">
-                                    <div class="modal-dialog">
+                                    <div class="modal-dialog modal-dialog-centered">
                                         <div class="modal-content">
                                             <div class="modal-header">
                                                 <h5 class="modal-title" id="editBannerModalLabel{{ dato.id }}">Editar dato</h5>
-                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                <button type="button" class="btn-close" data-mdb-ripple-init data-mdb-dismiss="modal"
+                                                    aria-label="Close"></button>
                                             </div>
-                                            <div class="modal-body">
+                                            <div class="modal-body text-start">
                                                 <form method="POST" enctype="multipart/form-data" data-submit-form>
                                                     {% csrf_token %}
                                                     <div class="mb-3">

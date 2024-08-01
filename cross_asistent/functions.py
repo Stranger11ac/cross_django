@@ -175,14 +175,14 @@ def editar_perfil(request):
         newPasswordPOST = request.POST.get('confNewPass')
         
         if not user_auth.check_password(PasswordPOST):
-            return JsonResponse({'success': False, 'message': 'La contraseña actual es incorrecta.'}, status=201)
+            return JsonResponse({'success': False, 'message': 'La contraseña actual es incorrecta.'}, status=400)
         
         if emailPOST and User.objects.filter(email=emailPOST).exclude(id=user_auth.id).exists():
-            return JsonResponse({'success': False, 'message': f'El correo electrónico "{emailPOST}" ya está en uso por otra cuenta. 🤔😯😯🧐'}, status=201)
+            return JsonResponse({'success': False, 'message': f'El correo electrónico "{emailPOST}" ya está en uso por otra cuenta. 🤔😯😯🧐'}, status=400)
         
         if usernamePOST and usernamePOST != user_auth.username:
             if User.objects.filter(username=usernamePOST).exists():
-                return JsonResponse({'success': False, 'message': 'El nombre de usuario ya está en uso.'}, status=201)
+                return JsonResponse({'success': False, 'message': 'El nombre de usuario ya está en uso.'}, status=400)
             user_auth.username = usernamePOST
         
         with transaction.atomic():
@@ -207,7 +207,7 @@ def editar_perfil(request):
             
             if newPasswordPOST:
                 if PasswordPOST == newPasswordPOST:
-                    return JsonResponse({'success': False, 'message': 'La nueva contraseña no puede ser igual a la actual.'}, status=201)
+                    return JsonResponse({'success': False, 'message': 'La nueva contraseña no puede ser igual a la actual.'}, status=400)
                 user_auth.set_password(newPasswordPOST)
                 user_perfil.passwoed_update = datetime.date.today()
 
@@ -215,7 +215,7 @@ def editar_perfil(request):
             user_perfil.save()
         return JsonResponse({'success': True, 'message': 'Tus Datos Se guardaron exitosamente. 🥳😋🤘🎉🎈', 'position': 'top'}, status=200)
     else:
-        return JsonResponse({'success': False, 'message': 'Acción no permitida.'}, status=201)
+        return JsonResponse({'success': False, 'message': 'Acción no permitida.'}, status=400)
 
 # usuarios ----------------------------------------------------------
 def create_newuser(first_name, last_name, username, email, password1, password2=None, is_staff=False, is_active=False):
@@ -246,20 +246,6 @@ def create_newuser(first_name, last_name, username, email, password1, password2=
     except IntegrityError:
         return {'success': False, 'message': 'Ocurrió un error durante el registro. Intente nuevamente.'}
 
-def check_username(request):
-    if request.method == 'POST':
-        username = request.POST.get('username')
-        user_exists = User.objects.filter(username=username).exists()
-        return HttpResponse(json.dumps({'valid': not user_exists}).lower(), content_type='application/json')
-
-def check_email(request):
-    email = request.POST.get('email')
-    if User.objects.filter(email=email).exists():
-        print(f'{email} ya existe')
-        return JsonResponse({'valid': False}, status=201)
-    print(f'{email} no existe')
-    return JsonResponse({'valid': True}, status=200)
-
 # (programacion) ----
 @login_required
 @never_cache
@@ -278,7 +264,7 @@ def in_active(request):
             message = f'Usuario "{userChange.username}" <strong><u>desactivado</u></strong> exitosamente. 😯🧐😬'
             icon = 'warning'
         else:
-            return JsonResponse({'success': False, 'message': 'Acción no válida.'}, status=201)
+            return JsonResponse({'success': False, 'message': 'Acción no válida.'}, status=400)
 
         userChange.save()
         return JsonResponse({'success': True, 'functions': 'reload', 'message': message, 'icon':icon}, status=200)
@@ -288,10 +274,9 @@ def in_active(request):
 @never_cache
 def eliminar_usuario(request, user_id):
     if request.method == 'POST':
-        icon = 'warning'
         user = get_object_or_404(User, id=user_id)
         user.delete()
-        return JsonResponse({'success': True, 'functions': 'reload', 'message': 'Usuario eliminado exitosamente.', 'icon': icon}, status=200)
+        return JsonResponse({'success': True, 'functions': 'reload', 'message': 'Usuario eliminado exitosamente.', 'icon': 'warning'}, status=200)
     return JsonResponse({'success': False, 'message': 'Acción no permitida.'}, status=403)
 
 @login_required
@@ -359,8 +344,8 @@ def createDatabase(request):
             return JsonResponse({'success': True, 'message': 'Nuevo registro en la base de datos 🎉🎉🎉', 'position':'top'}, status=200)
         
         except Exception as e:
-            return JsonResponse({'success': False, 'message': f'Ocurrió un error 😯😥 <br>{str(e)}'}, status=201)
-    return JsonResponse({'error': 'Método no válido'}, status=201)
+            return JsonResponse({'success': False, 'message': f'Ocurrió un error 😯😥 <br>{str(e)}'}, status=400)
+    return JsonResponse({'error': 'Método no válido'}, status=400)
 
 # Calendario: Eventos ----------------------------------------------------------
 def calendario_eventos(request):
@@ -404,3 +389,16 @@ def mapa_data(request):
 
     return JsonResponse(data, safe=False)
 
+# Preguntas ----------------------------------------------------------
+@login_required
+@never_cache
+def preguntas_deleted(request):
+    if request.method == 'POST':
+        try:
+            quest_id = request.POST.get('question_id')
+            pregunta = get_object_or_404(models.Preguntas, id=quest_id)
+            pregunta.delete()
+            return JsonResponse({'success': True, 'message': f'Pregunta #.{quest_id} eliminada permanentemente. 😯🫡', 'icon': 'warning'}, status=200)
+        except Exception as e:
+            return JsonResponse({'success': False, 'message': f'Pregunta #{quest_id} no encontrada.'}, status=404)
+    return JsonResponse({'success': False, 'message': 'Acción no permitida.'}, status=400)

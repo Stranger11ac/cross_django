@@ -13,7 +13,6 @@ import json
 
 databaseall = models.Database.objects.all()
 mapaall = models.Mapa.objects.all()
-categoriasall = models.Categorias.objects.all()
 
 def index(request):
     if not request.user.is_staff:
@@ -39,7 +38,9 @@ def index(request):
 def faq(request):
     if not request.user.is_staff:
         logout(request)
-    questall = models.Database.objects.filter(frecuencia__gt=0).order_by('-frecuencia')
+    
+    categoria_Preguntas = models.Categorias.objects.get(categoria="Preguntas")
+    questall = models.Database.objects.filter(frecuencia__gt=0, categoria=categoria_Preguntas).order_by('-frecuencia')
     return render(request, 'frecuentes.html', {
         'quest_all': questall,
         'active_page': 'faq'
@@ -52,24 +53,25 @@ def crear_pregunta(request):
                 data = json.loads(request.body)
                 preguntaPOST = data['pregunta']
                 descripcionPOST = data['descripcion']
-                categoria_preguntas = models.Categorias.objects.get(id=1) 
 
                 pregunta = models.Preguntas(pregunta=preguntaPOST, descripcion=descripcionPOST)
                 pregunta.save()
                 
-                models.Notificacion.objects.create(
-                    usuario=request.user,
-                    tipo='Pregunta',
-                    mensaje=f'{request.user.username} ha realizado una nueva pregunta: "{preguntaPOST}".',
-                )
+                # # Hay un error en: Cannot assign "'"Persona"'": "Notificacion.usuario" must be a "User" instance.
+                # No se puede registrar el usuario Anonimo ya que requiere una instancia de un usuario existente en la DB
+                # models.Notificacion.objects.create(
+                #     usuario=request.user,
+                #     tipo='Pregunta',
+                #     mensaje=f'{request.user.username} ha realizado una nueva pregunta: "{preguntaPOST}".',
+                # )
 
-                return JsonResponse({'success': True, 'message': 'Gracias por tu pregunta ❤️💕😁👍 '}, status=200)
+                return JsonResponse({'success': True, 'message': 'Gracias por tu pregunta. ❤️💕😁👍 <br>La responderemos lo mas pronto posible. 😁😊🫡'}, status=200)
             except Exception as e:
                 print(f'Hay un error en: {e}')
-                return JsonResponse({'success': False, 'message': 'Ups! 😥😯 hubo un error y tu pregunta no se pudo registrar. Por favor intente de nuevo más tarde.'}, status=201)
+                return JsonResponse({'error':True, 'success': False, 'message': 'Ups! 😥😯 hubo un error y tu pregunta no se pudo registrar. Por favor intente de nuevo más tarde.'}, status=400)
         else:
             print('error, no JSON')
-            return JsonResponse({'success': False, 'message': 'Error: no se permite este tipo de archivo '}, status=201)
+            return JsonResponse({'error':True, 'success': False, 'message': 'Error: no se permite este tipo de archivo '}, status=400)
     return render(request, 'frecuentes.html', {'quest_all': models.Preguntas.objects.all()})
 
 def blogs(request):
@@ -166,7 +168,7 @@ def singup(request):
                 mensaje=f'{user.username} se ha registrado y necesita activación.',
             )
         response['functions'] = 'reload'
-        status = 200 if response['success'] else 201
+        status = 200 if response['success'] else 400
         return JsonResponse(response, status=status)
     else:
         logout(request)
@@ -188,11 +190,11 @@ def singinpage(request):
         
         if user is not None:
             if not user.is_active:
-                return JsonResponse({'success': False, 'functions': 'singin', 'message': '🧐😥😯 UPS! <br> Al parecer tu cuenta esta <u>Inactiva</u>. Tu cuenta será activada si estas autorizado'}, status=201)
+                return JsonResponse({'success': False, 'functions': 'singin', 'message': '🧐😥😯 UPS! <br> Al parecer tu cuenta esta <u>Inactiva</u>. Tu cuenta será activada si estas autorizado'}, status=400)
             
             user = authenticate(request, username=user.username, password=password)
             if user is None:
-                return JsonResponse({'success': False, 'functions': 'singin', 'message': 'Revisa el usuario o contraseña 😅.'}, status=201)
+                return JsonResponse({'success': False, 'functions': 'singin', 'message': 'Revisa el usuario o contraseña 😅.'}, status=400)
             else:
                 login(request, user)
                 pageRedirect = reverse('vista_admin')
@@ -200,7 +202,7 @@ def singinpage(request):
                     pageRedirect = reverse('vista_programador')
                 return JsonResponse({'success': True, 'functions': 'singin', 'redirect_url': pageRedirect}, status=200)
         else:
-            return JsonResponse({'success': False, 'functions': 'singin', 'message': 'Usuario no registrado 😅. Verifica tu nombre de usuario o correo electrónico'}, status=201)
+            return JsonResponse({'success': False, 'functions': 'singin', 'message': 'Usuario no registrado 😅. Verifica tu nombre de usuario o correo electrónico'}, status=400)
     else:
         logout(request)
         return render(request, 'singinup.html', {
@@ -231,22 +233,22 @@ def vista_admin(request):
 @login_required
 @never_cache
 def vista_programador(request):
-    blogs_all = models.Articulos.objects.all()
     banners_all = models.Banners.objects.all()
     users = User.objects.all().order_by('-id')
+    questions_all = models.Preguntas.objects.all().order_by('-id')
+    categorias = models.Categorias.objects.filter(categoria__in=['Preguntas', 'Informacion', 'Personal'])
     contexto = {
         'user': request.user,
         'users': users,
-        'total_usuarios': users.count(),
         'banners_all': banners_all,
-        'total_banners': banners_all.count(),
-        'num_blogs': blogs_all.count(),
+        'num_blogs': models.Articulos.objects.all().count(),
         'num_preguntas': databaseall.count(),
+        'preguntas_sending': questions_all,
+        'categorias': categorias,
         'active_page': 'home',
-        'categorias': categoriasall,
         'pages': functions.pages
     }
-    
+     
     if request.method == 'POST':
         response = functions.create_newuser(
             first_name=request.POST.get('first_name'),
@@ -259,7 +261,7 @@ def vista_programador(request):
         )
         response['position'] = 'top'
         response['functions'] = 'reload'
-        status = 200 if response['success'] else 201
+        status = 200 if response['success'] else 400
         return JsonResponse(response, status=status)
 
     return render(request, 'admin/vista_programador.html', contexto)
@@ -305,7 +307,7 @@ def marcar_notificaciones_leidas(request):
 
         return JsonResponse({'status': 'success', 'message': f'Notificcacion {ids}, se marco como leida para todos los usuarios', 'icon': 'info'}, status=200)
     except Exception as e:
-        return JsonResponse({'status': 'error', 'message': f'Ocurrio un error😯😥 <br>{str(e)}', 'icon': 'error'}, status=201)
+        return JsonResponse({'status': 'error', 'message': f'Ocurrio un error😯😥 <br>{str(e)}', 'icon': 'error'}, status=400)
 
 # Banners ----------------------------------------------------------
 @login_required
@@ -393,6 +395,7 @@ def delete_banner(request, banner_id):
 @login_required
 @never_cache
 def database_page(request):
+    categoriasall = models.Categorias.objects.all()
     datos_modificados = []
 
     for dato in databaseall:
@@ -448,7 +451,7 @@ def create_blog(request):
 
             return JsonResponse({'success': True, 'message': 'Excelente 🥳🎈🎉. Tu articulo ya fue publicado. Puedes editarlo cuando gustes. 🧐😊'}, status=200)
         except Exception as e:
-            return JsonResponse({'success': False, 'message': f'Ocurrio un error😯😥 <br>{str(e)}'}, status=201)
+            return JsonResponse({'success': False, 'message': f'Ocurrio un error😯😥 <br>{str(e)}'}, status=400)
     return render(request, 'admin/blog.html', {'active_page': 'blog','pages': functions.pages, 'firma_perfil':user_perfil})
 
 @login_required
@@ -463,8 +466,8 @@ def upload_image(request):
 
             return JsonResponse({'location': image_url})
         except Exception as e:
-            return JsonResponse({'error': str(e)}, status=201)
-    return JsonResponse({'error': 'Error al subir la imagen'}, status=201)
+            return JsonResponse({'error': str(e)}, status=400)
+    return JsonResponse({'error': 'Error al subir la imagen'}, status=400)
 
 @login_required
 @never_cache
@@ -501,13 +504,13 @@ def obtenerEdificio(request):
                 'imagen_url': edificio.imagenes.url if edificio.imagenes else None,
             }
             return JsonResponse(data)
-    return JsonResponse({'error': 'Invalid request'}, status=201)
+    return JsonResponse({'error': 'Invalid request'}, status=400)
 
 @login_required
 @never_cache
 def regEdificioMapa(request):
     if request.method != 'POST':
-        return JsonResponse({'error': 'Metodo no valido'}, status=201)
+        return JsonResponse({'error': 'Metodo no valido'}, status=400)
 
     isNewPost = request.POST.get('isNew')
     nombrePost = request.POST.get('titulo')

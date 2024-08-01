@@ -18,9 +18,6 @@ class Banners(models.Model):
     expiracion = models.DateTimeField(blank=True, null=True)
     visible = models.BooleanField(default=True)
     
-    def __str__(self):
-        return self.titulo
-    
     def save(self, *args, **kwargs):
         if not self.imagen:
             self.imagen = 'static/img/default_image.webp'
@@ -37,9 +34,6 @@ class Categorias(models.Model):
     categoria = models.CharField(max_length=50)
     descripcion = models.TextField(null=True, blank=True)
     creacion = models.DateTimeField(auto_now=True)
-    
-    def __str__(self):
-        return self.categoria
 
 """Ruta de la imagen de Database segun la categoria"""
 def get_image_upload_path(instance, filename):
@@ -64,9 +58,6 @@ class Database(models.Model):
     evento_className = models.CharField(max_length=100, default='event_detail')
     fecha_modificacion = models.DateTimeField(auto_now=True)
 
-    def __str__(self):
-        return f'{self.titulo} - C: {self.categoria.categoria}'
-
 class Articulos(models.Model):
     encabezado =  models.ImageField(upload_to='cross_asistent/static/files/imagenes/blogs/', blank=True, null=True)
     titulo = models.CharField(max_length=200, blank=False)
@@ -74,9 +65,6 @@ class Articulos(models.Model):
     autor = models.CharField(max_length=100, blank=False)
     creacion = models.DateField(auto_now_add=True, blank=False)
     actualizacion = models.DateField(auto_now=True, blank=True, null=True)
-    
-    def __str__(self):
-        return f"{self.titulo} - {self.autor}"
 
 class Mapa(models.Model):
     nombre = models.CharField(max_length=200, blank=False)
@@ -87,9 +75,6 @@ class Mapa(models.Model):
     p2_polygons = models.CharField(max_length=100, blank=True, null=True)
     p3_polygons = models.CharField(max_length=100, blank=True, null=True)
     p4_polygons = models.CharField(max_length=100, blank=True, null=True)
-
-    def __str__(self):
-        return self.nombre
 
 class ImagenArticulo(models.Model):
     imagen = models.ImageField(upload_to='cross_asistent/static/files/imagenes/blogs/imgs_blogs/', blank=True, null=True)
@@ -109,16 +94,10 @@ class Notificacion(models.Model):
     fecha = models.DateTimeField(auto_now_add=True)
     leida = models.BooleanField(default=False)
 
-    def __str__(self):
-        return f'{self.tipo} - {self.mensaje}'
-
 class Preguntas(models.Model):
     pregunta = models.CharField(max_length=150, blank=False)
     descripcion = models.TextField(null=False, blank=True)
     fecha = models.DateTimeField(auto_now_add=True)
-
-    def __str__(self):
-        return self.pregunta
 
 
 """Ruta de la imagen de los usuarios"""
@@ -133,9 +112,6 @@ class UserProfile(models.Model):
     tutorial = models.BooleanField(default=True)
     blog_firma = models.TextField(blank=True, null=True)
     passwoed_update = models.DateField(blank=True, null=True)
-    
-    def __str__(self):
-        return self.user.username
     
     def save(self, *args, **kwargs):
         # Si se está actualizando la instancia y hay un cambio en la imagen de perfil

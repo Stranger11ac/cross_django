@@ -15,17 +15,18 @@ def export_database(request):
         response = HttpResponse(content_type='text/csv')
         response['Content-Disposition'] = f'attachment; filename="UTC_database_{now}.csv"'
         writer = csv.writer(response)
-        writer.writerow(['Categoria', 'Titulo', 'Informacion', 'Redirigir', 'Frecuencia', 'Documentos', 'Imagenes', 'Fecha Modificacion'])
+        writer.writerow(['ID','Categoria', 'Titulo', 'Informacion', 'Redirigir', 'Frecuencia', 'Documentos', 'Imagenes', 'Fecha Modificacion'])
         
         for info in databaseall:
             writer.writerow([
+                info.id,
                 info.categoria if info.categoria else '',
                 info.titulo,
                 info.informacion,
                 info.redirigir,
                 info.frecuencia,
-                info.documento.url if info.documentos else '',
-                info.imagen.url if info.imagenes else '',
+                info.documento.url if info.documento else '',
+                info.imagen.url if info.imagen else '',
                 info.fecha_modificacion
             ])
         return response
@@ -41,17 +42,18 @@ def import_database(request):
             reader = csv.reader(csv_file)
             next(reader)  # Omitir la fila de encabezado
             for row in reader:
-                categoria, _ = Categorias.objects.get_or_create(categoria=row[0])
+                categoria, _ = Categorias.objects.get_or_create(categoria=row[1])
                 # Crear la instancia del modelo
                 Database.objects.create(
+                    id=row[0],
                     categoria=categoria,
-                    titulo=row[1],
-                    informacion=row[2],
-                    redirigir=row[3],
-                    frecuencia=int(row[4]),
-                    documento=row[5],
-                    imagen=row[6],
-                    fecha_modificacion=row[7]
+                    titulo=row[2],
+                    informacion=row[3],
+                    redirigir=row[4],
+                    frecuencia=int(row[5]),
+                    documento=row[6],
+                    imagen=row[7],
+                    fecha_modificacion=row[8]
                 )
             # Redirigir a la vista programador después de procesar el formulario
         return JsonResponse({'success': True, 'message': 'Base de datos importada correctamente ✔'}, status=200)
