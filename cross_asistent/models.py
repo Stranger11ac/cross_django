@@ -1,77 +1,52 @@
+from django.db import models
 from django.db.models.signals import pre_save, post_delete
 from django.contrib.auth.models import User
 from django.utils.text import slugify
 from django.dispatch import receiver
 from django.conf import settings
-from django.db import models
 import random
 import string
 import os
 
-"""Generar una cadena aleatoria"""
-def generate_random_string(length):
-    characters = string.ascii_letters + string.digits
-    return ''.join(random.choice(characters) for _ in range(length))
+def generate_random_string(length=8):
+    return ''.join(random.choices(string.ascii_letters + string.digits, k=length))
 
-"""Ruta imagen del Banner"""
+def get_filename_with_slug(instance, filename, prefix, length=20):
+    ext = filename.split('.')[-1]
+    new_name = slugify(instance.titulo.strip().replace(' ', '')[:length])
+    return f"{prefix}_{new_name}.{ext}"
+
+def set_img_path(instance, filename, prefix, path):
+    return os.path.join(path, get_filename_with_slug(instance, filename, prefix))
+
 def set_imgBanner_path(instance, filename):
-    ext = filename.split('.')[-1]
-    newName = instance.titulo.strip().replace(' ', '')
-    newName = newName[:15] if len(newName) > 15 else newName
-    filename = f"banner_{slugify(newName)}.{ext}"
-    return os.path.join('cross_asistent/static/files/imagenes/banners/', filename)
+    return set_img_path(instance, filename, "banner", 'cross_asistent/static/files/imagenes/banners/')
 
-"""Ruta imagen de Database segun categoria"""
 def set_imgDB_path(instance, filename):
-    ext = filename.split('.')[-1]
-    newName = instance.titulo.strip().replace(' ', '')
-    newName = newName[:20] if len(newName) > 20 else newName
-    filename = f"db_{slugify(newName)}.{ext}"
-    
-    if instance.categoria and instance.categoria.categoria == 'Mapa':
-        return os.path.join('cross_asistent/static/files/imagenes/mapa/', filename)
-    elif instance.categoria and instance.categoria.categoria == 'Calendario':
-        return os.path.join('cross_asistent/static/files/imagenes/calendario/', filename)
-    else:
-        return os.path.join('cross_asistent/static/files/imagenes/', filename)
+    path = 'cross_asistent/static/files/imagenes/'
+    if instance.categoria:
+        if instance.categoria.categoria == 'Mapa':
+            path += 'mapa/'
+        elif instance.categoria.categoria == 'Calendario':
+            path += 'calendario/'
+    return set_img_path(instance, filename, "db", path)
 
-"""Ruta imagen de Articulos"""
 def set_imgBlog_path(instance, filename):
-    ext = filename.split('.')[-1]
-    newName = instance.titulo.strip().replace(' ', '')
-    newName = newName[:18] if len(newName) > 18 else newName
-    random_string = generate_random_string(8)
-    filename = f"blog_{slugify(newName)}_uid-{random_string}.{ext}"
-    return os.path.join('cross_asistent/static/files/imagenes/blogs/', filename)
+    return set_img_path(instance, filename, "blog", 'cross_asistent/static/files/imagenes/blogs/') + f"_uid-{generate_random_string(8)}"
 
-"""Ruta imagenes"""
 def set_imgs_path(instance, filename):
-    ext = filename.split('.')[-1]
-    random_string = generate_random_string(12)
-    filename = f"cross_{random_string}_img.{ext}"
-    return os.path.join('cross_asistent/static/files/imagenes/', filename)
+    return os.path.join('cross_asistent/static/files/imagenes/', f"cross_{generate_random_string(12)}_img.{filename.split('.')[-1]}")
 
-"""Ruta imagen de perfiles"""
 def set_imgProfile_path(instance, filename):
-    ext = filename.split('.')[-1]
-    newName = instance.user.username.strip().replace(' ', '')
-    newName = newName[:20] if len(newName) > 20 else newName
-    random_string = generate_random_string(8)
-    filename = f"profile_{slugify(newName)}_uid-{random_string}.{ext}"
-    return os.path.join('cross_asistent/static/files/imagenes/personal', filename)
+    return os.path.join('cross_asistent/static/files/imagenes/personal', f"profile_{slugify(instance.user.username.strip().replace(' ', '')[:20])}_uid-{generate_random_string(8)}.{filename.split('.')[-1]}")
 
-"""Ruta Documento de Database"""
 def set_pdfDB_path(instance, filename):
-    ext = filename.split('.')[-1]
-    newName = instance.titulo.strip().replace(' ', '')
-    newName = newName[:18] if len(newName) > 18 else newName
-    random_string = generate_random_string(8)
-    filename = f"db_pdf_{slugify(newName)}_uid-{random_string}.{ext}"
-    return os.path.join('cross_asistent/static/files/documentos/', filename)
+    return os.path.join('cross_asistent/static/files/documentos/', get_filename_with_slug(instance, filename, "db_pdf") + f"_uid-{generate_random_string(8)}")
+
 
 class Banners(models.Model):
-    titulo = models.CharField(max_length=60, blank=False)
-    descripcion = models.CharField(max_length=350, blank=False)
+    titulo = models.CharField(max_length=60)
+    descripcion = models.CharField(max_length=350)
     redirigir = models.CharField(max_length=200, null=True, blank=True)
     imagen = models.ImageField(upload_to=set_imgBanner_path, blank=True, null=True)
     expiracion = models.DateTimeField(blank=True, null=True)
@@ -83,11 +58,9 @@ class Banners(models.Model):
         else:
             if self.id:
                 existing_banner = Banners.objects.get(id=self.id)
-                # Eliminar la imagen anterior si se actualiza
                 if self.imagen != existing_banner.imagen:
                     existing_banner.imagen.delete(save=False)
-        
-        super(Banners, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
 
 class Categorias(models.Model):
     categoria = models.CharField(max_length=50)
@@ -99,7 +72,7 @@ class Categorias(models.Model):
 
 class Database(models.Model):
     categoria = models.ForeignKey(Categorias, on_delete=models.SET_NULL, null=True)
-    titulo = models.CharField(max_length=200, blank=False)
+    titulo = models.CharField(max_length=200)
     informacion = models.TextField(blank=True, null=True)
     redirigir = models.URLField(blank=True, null=True)
     frecuencia = models.IntegerField(default=0)
@@ -112,17 +85,17 @@ class Database(models.Model):
     fecha_modificacion = models.DateTimeField(auto_now=True)
 
 class Articulos(models.Model):
-    encabezado =  models.ImageField(upload_to=set_imgBlog_path, blank=True, null=True)
-    titulo = models.CharField(max_length=200, blank=False)
-    contenido = models.TextField(blank=False)
-    autor = models.CharField(max_length=100, blank=False)
-    creacion = models.DateField(auto_now_add=True, blank=False)
+    encabezado = models.ImageField(upload_to=set_imgBlog_path, blank=True, null=True)
+    titulo = models.CharField(max_length=200)
+    contenido = models.TextField()
+    autor = models.CharField(max_length=100)
+    creacion = models.DateField(auto_now_add=True)
     actualizacion = models.DateField(auto_now=True, blank=True, null=True)
 
 class Mapa(models.Model):
-    nombre = models.CharField(max_length=200, blank=False)
-    informacion = models.TextField(null=False)
-    color = models.CharField(max_length=50, null=False)
+    nombre = models.CharField(max_length=200)
+    informacion = models.TextField()
+    color = models.CharField(max_length=50)
     door_cords = models.CharField(max_length=100, null=True)
     p1_polygons = models.CharField(max_length=100, blank=True, null=True)
     p2_polygons = models.CharField(max_length=100, blank=True, null=True)
@@ -133,12 +106,11 @@ class Imagenes(models.Model):
     imagen = models.ImageField(upload_to=set_imgs_path, blank=True, null=True)
     
     def delete(self, *args, **kwargs):
-        # Eliminar la imagen del sistema de archivos al eliminar un registro
         if self.imagen:
             image_path = os.path.join(settings.MEDIA_ROOT, self.imagen.path)
             if os.path.isfile(image_path):
                 os.remove(image_path)
-        super(Banners, self).delete(*args, **kwargs)
+        super().delete(*args, **kwargs)
 
 class Notificacion(models.Model):
     usuario = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -148,8 +120,8 @@ class Notificacion(models.Model):
     leida = models.BooleanField(default=False)
 
 class Preguntas(models.Model):
-    pregunta = models.CharField(max_length=150, blank=False)
-    descripcion = models.TextField(null=False, blank=True)
+    pregunta = models.CharField(max_length=150)
+    descripcion = models.TextField(blank=True)
     fecha = models.DateTimeField(auto_now_add=True)
 
 class UserProfile(models.Model):
@@ -157,15 +129,14 @@ class UserProfile(models.Model):
     profile_picture = models.ImageField(upload_to=set_imgProfile_path, blank=True, null=True)
     tutorial = models.BooleanField(default=True)
     blog_firma = models.TextField(blank=True, null=True)
-    passwoed_update = models.DateField(blank=True, null=True)
+    password_update = models.DateField(blank=True, null=True)
     
     def save(self, *args, **kwargs):
-        # Si se está actualizando la instancia y hay un cambio en la imagen de perfil
         if self.pk:
             old_profile = UserProfile.objects.get(pk=self.pk)
             if old_profile.profile_picture and old_profile.profile_picture != self.profile_picture:
                 old_profile.profile_picture.delete(save=False)
-        super(UserProfile, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
 
 @receiver(post_delete, sender=UserProfile)
 def delete_profile_picture_on_delete(sender, instance, **kwargs):
