@@ -272,14 +272,12 @@ def vista_programador(request):
 def ver_perfil(request):
     perfil_extencion = request.user.userprofile
     if perfil_extencion.profile_picture:
-        perfil_extencion.profile_picture = perfil_extencion.profile_picture.url.replace("/cross_asistent", "")
+        request.user.userprofile.profile_picture = request.user.userprofile.profile_picture.url.replace("/cross_asistent", "")
     else:
-        perfil_extencion.profile_picture = '/static/img/UTC_logo-plano.webp'
+        request.user.userprofile.profile_picture = '/static/img/UTC_logo-plano.webp'
         
     return render(request, 'admin/perfil.html', {
-        'profile_img': perfil_extencion.profile_picture,
-        'profile_signature': perfil_extencion.blog_firma,
-        'profile_pass_update': perfil_extencion.password_update,
+        'user_profile': perfil_extencion,
         'active_page': 'perfil',
         'pages': functions.pages
     })

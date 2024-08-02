@@ -896,7 +896,7 @@ main.main_anchor {
     left: 50%;
     bottom: calc(var(--size_box)/-2);
     border-radius: 100%;
-    border: 8px solid var(--mdb-card-bg);
+    border: 10px solid var(--mdb-card-bg);
     transform: translateX(-50%);
     overflow: hidden;
     z-index: 5;
