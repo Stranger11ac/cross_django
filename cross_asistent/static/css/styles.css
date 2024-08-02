@@ -1368,8 +1368,6 @@ input:checked+.slider:before {
     padding: 15px;
     background: var(--mdb-surface-bg);
     color: var(--mdb-surface-color);
-    /* color: #444;
-    background: #fff; */
     text-transform: capitalize;
     letter-spacing: 1px;
     transition: all 0.3s ease-in-out;

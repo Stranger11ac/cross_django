@@ -16,7 +16,7 @@
             <section class="card mb-4">
                 <div class="card-body">
                     <h3 class="text-center mb-4">Subir Banner</h3>
-                    <form method="POST" action="{% url 'upload_banner' %}" autocomplete="off">
+                    <form method="POST" action="{% url 'upload_banner' %}" data-submit-form autocomplete="off">
                         {% csrf_token %}
                         <div data-mdb-input-init class="form-outline position-relative mb-4">
                             <button type="button" class="position-absolute top-0 end-0 btn p-0 fs-12 m-2 mt-1 none" data-clear="titulo"><i
@@ -27,21 +27,21 @@
                         <div data-mdb-input-init class="form-outline position-relative mb-4">
                             <button type="button" class="position-absolute top-0 end-0 btn p-0 fs-12 m-2 mt-1 none" data-clear="descripcion"><i
                                     class="fa-solid fa-xmark m-0 p-0"></i></button>
-                            <textarea class="form-control" id="descripcion" name="descripcion" data-init-clear required></textarea>
+                            <textarea class="form-control" id="descripcion" name="descripcion" rows="3" data-init-clear required></textarea>
                             <label class="form-label" for="descripcion">Descripción:</label>
                         </div>
                         <div data-mdb-input-init class="form-outline position-relative mb-4">
                             <button type="button" class="position-absolute top-0 end-0 btn p-0 fs-12 m-2 mt-1 none" data-clear="redirigir"><i
                                     class="fa-solid fa-xmark m-0 p-0"></i></button>
-                            <input type="url" id="redirigir" name="redirigir" class="form-control form-icon-trailing" data-init-clear required />
-                            <label class="form-label" for="redirigir">Redirigir (liga/url):</label>
+                            <input type="url" id="redirigir" name="redirigir" class="form-control form-icon-trailing" data-init-clear />
+                            <label class="form-label" for="redirigir">Redirigir: (liga/url) (opcional)</label>
                         </div>
                         <div class="mb-3">
                             <label for="imagen" class="form-label">Imagen:</label>
-                            <input type="file" class="form-control" id="imagen" name="imagen" required>
+                            <input type="file" class="form-control" id="imagen" name="imagen" accept="image/*" required>
                         </div>
                         <div class="mb-3">
-                            <label for="expiracion" class="form-label">Fecha de Expiración:</label>
+                            <label for="expiracion" class="form-label">Fecha de Expiración: (Opcional)</label>
                             <input type="datetime-local" class="form-control" id="expiracion" name="expiracion">
                         </div>
                         <button type="submit" class="btn btn_detail w-100 d-block">Registrar <i class="fa-solid fa-paper-plane ms-1"></i></button>
@@ -70,7 +70,8 @@
                                 <tr>
                                     <td>{% autoescape off %}{{ banner.titulo }}{% endautoescape %}</td>
                                     <td>{{ banner.descripcion }}</td>
-                                    <td><img src="{{ banner.imagen }}" alt="{{ banner.titulo }}" class="img-fluid rounded materialBoxed" style="max-width: 150px;"></td>
+                                    <td><img src="{{ banner.imagen }}" alt="{{ banner.titulo }}" class="img-fluid rounded materialBoxed"
+                                            style="max-width: 150px;"></td>
                                     <td>
                                         <div class="d-flex flex-column align-items-center gap_10">
                                             <button type="button" class="btn btn-floating btn-info" data-mdb-ripple-init data-mdb-modal-init

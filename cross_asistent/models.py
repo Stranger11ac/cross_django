@@ -8,41 +8,68 @@ import random
 import string
 import os
 
-def generate_random_string(length=8):
-    return ''.join(random.choices(string.ascii_letters + string.digits, k=length))
 
-def get_filename_with_slug(instance, filename, prefix, length=20):
-    ext = filename.split('.')[-1]
-    new_name = slugify(instance.titulo.strip().replace(' ', '')[:length])
-    return f"{prefix}_{new_name}.{ext}"
+"""Generar una cadena aleatoria"""
+def generate_random_string(length):
+    characters = string.ascii_letters + string.digits
+    return ''.join(random.choice(characters) for _ in range(length))
 
-def set_img_path(instance, filename, prefix, path):
-    return os.path.join(path, get_filename_with_slug(instance, filename, prefix))
 
+"""Ruta imagen del Banner"""
 def set_imgBanner_path(instance, filename):
-    return set_img_path(instance, filename, "banner", 'cross_asistent/static/files/imagenes/banners/')
+    ext = filename.split('.')[-1]
+    newName = instance.titulo.strip().replace(' ', '')
+    newName = newName[:15] if len(newName) > 15 else newName
+    filename = f"banner_{slugify(newName)}.{ext}"
+    return os.path.join('cross_asistent/static/files/imagenes/banners/', filename)
 
+"""Ruta imagen de Database segun categoria"""
 def set_imgDB_path(instance, filename):
-    path = 'cross_asistent/static/files/imagenes/'
-    if instance.categoria:
-        if instance.categoria.categoria == 'Mapa':
-            path += 'mapa/'
-        elif instance.categoria.categoria == 'Calendario':
-            path += 'calendario/'
-    return set_img_path(instance, filename, "db", path)
+    ext = filename.split('.')[-1]
+    newName = instance.titulo.strip().replace(' ', '')
+    newName = newName[:20] if len(newName) > 20 else newName
+    filename = f"db_{slugify(newName)}.{ext}"
+    
+    if instance.categoria and instance.categoria.categoria == 'Mapa':
+        return os.path.join('cross_asistent/static/files/imagenes/mapa/', filename)
+    elif instance.categoria and instance.categoria.categoria == 'Calendario':
+        return os.path.join('cross_asistent/static/files/imagenes/calendario/', filename)
+    else:
+        return os.path.join('cross_asistent/static/files/imagenes/', filename)
 
+"""Ruta imagen de Articulos"""
 def set_imgBlog_path(instance, filename):
-    return set_img_path(instance, filename, "blog", 'cross_asistent/static/files/imagenes/blogs/') + f"_uid-{generate_random_string(8)}"
+    ext = filename.split('.')[-1]
+    newName = instance.titulo.strip().replace(' ', '')
+    newName = newName[:18] if len(newName) > 18 else newName
+    random_string = generate_random_string(8)
+    filename = f"blog_{slugify(newName)}_uid-{random_string}.{ext}"
+    return os.path.join('cross_asistent/static/files/imagenes/blogs/', filename)
 
+"""Ruta imagenes"""
 def set_imgs_path(instance, filename):
-    return os.path.join('cross_asistent/static/files/imagenes/', f"cross_{generate_random_string(12)}_img.{filename.split('.')[-1]}")
+    ext = filename.split('.')[-1]
+    random_string = generate_random_string(12)
+    filename = f"cross_{random_string}_img.{ext}"
+    return os.path.join('cross_asistent/static/files/imagenes/', filename)
 
+"""Ruta imagen de perfiles"""
 def set_imgProfile_path(instance, filename):
-    return os.path.join('cross_asistent/static/files/imagenes/personal', f"profile_{slugify(instance.user.username.strip().replace(' ', '')[:20])}_uid-{generate_random_string(8)}.{filename.split('.')[-1]}")
+    ext = filename.split('.')[-1]
+    newName = instance.user.username.strip().replace(' ', '')
+    newName = newName[:20] if len(newName) > 20 else newName
+    random_string = generate_random_string(8)
+    filename = f"profile_{slugify(newName)}_uid-{random_string}.{ext}"
+    return os.path.join('cross_asistent/static/files/imagenes/personal', filename)
 
+"""Ruta Documento de Database"""
 def set_pdfDB_path(instance, filename):
-    return os.path.join('cross_asistent/static/files/documentos/', get_filename_with_slug(instance, filename, "db_pdf") + f"_uid-{generate_random_string(8)}")
-
+    ext = filename.split('.')[-1]
+    newName = instance.titulo.strip().replace(' ', '')
+    newName = newName[:18] if len(newName) > 18 else newName
+    random_string = generate_random_string(8)
+    filename = f"db_pdf_{slugify(newName)}_uid-{random_string}.{ext}"
+    return os.path.join('cross_asistent/static/files/documentos/', filename)
 
 class Banners(models.Model):
     titulo = models.CharField(max_length=60)

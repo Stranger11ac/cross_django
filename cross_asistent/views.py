@@ -306,21 +306,26 @@ def marcar_notificaciones_leidas(request):
 @never_cache
 def upload_banner(request):
     if request.method == 'POST':
-        form = BannersForm(request.POST, request.FILES)
-        if form.is_valid():
-            banner = form.save(commit=False)  
-            if not request.FILES.get('imagen'):  
-                banner.imagen = 'static/img/default_image.webp'  # Asegúrate de que esta ruta sea correcta y la imagen exista
-            banner.save()  
-
-            models.Notificacion.objects.create(
-                usuario=request.user,
-                tipo='Banner',
-                mensaje=f'{request.user.username} ha subido un nuevo banner titulado "{banner.titulo}".',
-            )
-            return redirect('upload_banner')
-    else:
-        form = BannersForm()
+        expiracionPOST = request.POST.get('expiracion')
+        if expiracionPOST:
+            expiracionPOST = expiracionPOST
+        else:
+            expiracionPOST = None
+            
+        banner = models.Banners(
+            titulo = request.POST.get('titulo'),
+            descripcion = request.POST.get('descripcion'),
+            redirigir = request.POST.get('redirigir'),
+            imagen = request.FILES.get('imagen'),     
+            expiracion = expiracionPOST
+        )
+        banner.save()
+        
+        return JsonResponse({
+            'success': True,
+            'functions': 'reload',
+            'message': f'El banner <u>{banner.titulo}</u> fue modificado exitosamente 🥳🎉🎈.'
+        }, status=200)
     
     banners_all = models.Banners.objects.all()
     banners_modificados = []
@@ -355,7 +360,8 @@ def edit_banner(request, banner_id):
         banner.titulo = request.POST.get('titulo')
         banner.descripcion = request.POST.get('descripcion')
         banner.redirigir = request.POST.get('redirigir')
-        banner.expiracion = request.POST.get('expiracion')
+        if banner.expiracion:
+            banner.expiracion = request.POST.get('expiracion')
         banner.save()
         
         return JsonResponse({
@@ -411,22 +417,18 @@ def database_page(request):
 def create_blog(request):
     if request.method == 'POST':
         try:
-            tituloPOST = request.POST.get('titulo')
-            autorPOST = request.POST.get('autor')
-            contenidoPOST = request.POST.get('contenidoWord')
-            encabezadoPOST = request.FILES.get('encabezadoImg')
-
             articulo = models.Articulos(
-                titulo=tituloPOST,
-                contenido=contenidoPOST,
-                autor=autorPOST,
-                encabezado=encabezadoPOST
+                titulo=request.POST.get('titulo'),
+                contenido=request.POST.get('contenidoWord'),
+                autor=request.POST.get('autor'),
+                encabezado=request.FILES.get('encabezadoImg')
             )
             articulo.save()
             
             user_perfil = request.user.userprofile
-            user_perfil.blog_firma = request.POST.get('new_firma')
-            user_perfil.save()
+            if request.POST.get('new_firma'):
+                user_perfil.blog_firma = request.POST.get('new_firma')
+                user_perfil.save()
             
             models.Notificacion.objects.create(
                 usuario=request.user,
@@ -437,7 +439,7 @@ def create_blog(request):
             return JsonResponse({'success': True, 'message': 'Excelente 🥳🎈🎉. Tu articulo ya fue publicado. Puedes editarlo cuando gustes. 🧐😊'}, status=200)
         except Exception as e:
             return JsonResponse({'success': False, 'message': f'Ocurrio un error😯😥 <br>{str(e)}'}, status=400)
-    return render(request, 'admin/blog.html', {'active_page': 'blog','pages': functions.pages, 'firma_perfil':user_perfil})
+    return render(request, 'admin/blog.html', {'active_page': 'blog','pages': functions.pages})
 
 @login_required
 @never_cache

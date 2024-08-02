@@ -30,8 +30,8 @@
                                     </div>
                                     <div class="col-10">
                                         <p class="m-0 text-capitalize" id="firmaPerfilTexto">
-                                            {% if firma_perfil.blog_firma %}
-                                            {{firma_perfil.blog_firma}}
+                                            {% if user.userprofile.blog_firma %}
+                                            {{user.userprofile.blog_firma}}
                                             {% else %}
                                             {{user.first_name}} {{user.last_name}}
                                             {% endif %}
@@ -48,7 +48,14 @@
                             <input type="text" id="autor" name="autor" class="d-none" readonly aria-label="readonly" value="{{user.username}}" required />
 
                             <div class="mb-4" data-mdb-input-init>
-                                <label class="form-label text-white" for="new_firma">Personalizar firma de Autor: <span class="fs-8">(opcional)</span></label>
+                                <label class="form-label text-white" for="new_firma">
+                                    {% if user.userprofile.blog_firma %}
+                                    Cambiar 
+                                    {% else %}
+                                    Personalizar 
+                                    {% endif %}
+                                    firma de Autor:<span class="fs-8"> (opcional)</span>
+                                </label>
                                 <input type="text" id="new_firma" name="new_firma" class="form-control text-white"
                                     placeholder="Ej: Ing. / Lic. {{user.first_name}}" />
                             </div>
