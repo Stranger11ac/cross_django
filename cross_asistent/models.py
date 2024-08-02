@@ -14,62 +14,57 @@ def generate_random_string(length):
     characters = string.ascii_letters + string.digits
     return ''.join(random.choice(characters) for _ in range(length))
 
+"""Ruta imagen"""
+def create_filename_path(filename, setname, sufix,length, lenghtrandom, strpath):
+    ext = filename.split('.')[-1]
+    setname = setname[:length] if len(setname) > length else setname
+    random_string = generate_random_string(lenghtrandom)
+    filename = f"{sufix}_{slugify(setname)}_uid-{random_string}.{ext}"
+    return os.path.join(strpath, filename)
 
 """Ruta imagen del Banner"""
 def set_imgBanner_path(instance, filename):
-    ext = filename.split('.')[-1]
     newName = instance.titulo.strip().replace(' ', '')
-    newName = newName[:15] if len(newName) > 15 else newName
-    filename = f"banner_{slugify(newName)}.{ext}"
-    return os.path.join('cross_asistent/static/files/imagenes/banners/', filename)
+    thispath = 'cross_asistent/static/files/imagenes/banners/'
+    return create_filename_path(filename, newName, 'banner', 15, 5, thispath)
 
 """Ruta imagen de Database segun categoria"""
 def set_imgDB_path(instance, filename):
-    ext = filename.split('.')[-1]
     newName = instance.titulo.strip().replace(' ', '')
-    newName = newName[:20] if len(newName) > 20 else newName
-    filename = f"db_{slugify(newName)}.{ext}"
+    thispath = 'cross_asistent/static/files/imagenes/'
+    if instance.categoria:
+        categoria = instance.categoria.categoria
+        if categoria == 'Mapa':
+            thispath += 'mapa/'
+        elif categoria == 'Calendario':
+            thispath += 'calendario/'
     
-    if instance.categoria and instance.categoria.categoria == 'Mapa':
-        return os.path.join('cross_asistent/static/files/imagenes/mapa/', filename)
-    elif instance.categoria and instance.categoria.categoria == 'Calendario':
-        return os.path.join('cross_asistent/static/files/imagenes/calendario/', filename)
-    else:
-        return os.path.join('cross_asistent/static/files/imagenes/', filename)
+    return create_filename_path(filename, newName, 'db', 20, 6, thispath)
 
 """Ruta imagen de Articulos"""
 def set_imgBlog_path(instance, filename):
-    ext = filename.split('.')[-1]
     newName = instance.titulo.strip().replace(' ', '')
-    newName = newName[:18] if len(newName) > 18 else newName
-    random_string = generate_random_string(8)
-    filename = f"blog_{slugify(newName)}_uid-{random_string}.{ext}"
-    return os.path.join('cross_asistent/static/files/imagenes/blogs/', filename)
+    thispath = 'cross_asistent/static/files/imagenes/blogs/'
+    return create_filename_path(filename, newName, 'blog', 18, 8, thispath)
 
 """Ruta imagenes"""
 def set_imgs_path(instance, filename):
-    ext = filename.split('.')[-1]
-    random_string = generate_random_string(12)
-    filename = f"cross_{random_string}_img.{ext}"
-    return os.path.join('cross_asistent/static/files/imagenes/', filename)
+    newName = filename.strip().replace(' ', '')
+    thispath = 'cross_asistent/static/files/imagenes/'
+    return create_filename_path(filename, newName, 'cross_image', 20, 11, thispath)
 
 """Ruta imagen de perfiles"""
 def set_imgProfile_path(instance, filename):
-    ext = filename.split('.')[-1]
     newName = instance.user.username.strip().replace(' ', '')
-    newName = newName[:20] if len(newName) > 20 else newName
-    random_string = generate_random_string(8)
-    filename = f"profile_{slugify(newName)}_uid-{random_string}.{ext}"
-    return os.path.join('cross_asistent/static/files/imagenes/personal', filename)
+    thispath = 'cross_asistent/static/files/imagenes/personal/'
+    return create_filename_path(filename, newName, 'profile', 20, 8, thispath)
 
 """Ruta Documento de Database"""
 def set_pdfDB_path(instance, filename):
-    ext = filename.split('.')[-1]
     newName = instance.titulo.strip().replace(' ', '')
-    newName = newName[:18] if len(newName) > 18 else newName
-    random_string = generate_random_string(8)
-    filename = f"db_pdf_{slugify(newName)}_uid-{random_string}.{ext}"
-    return os.path.join('cross_asistent/static/files/documentos/', filename)
+    thispath = 'cross_asistent/static/files/documentos/'
+    return create_filename_path(filename, newName, 'db_doc', 18, 8, thispath)
+
 
 class Banners(models.Model):
     titulo = models.CharField(max_length=60)
