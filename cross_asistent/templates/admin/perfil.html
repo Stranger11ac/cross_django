@@ -7,7 +7,7 @@
 {% endblock %}
 {% block content %}
 <main class="container container-fluid py-4 px-4 {% if not user.is_authenticated %}main_container{% endif %}">
-    <form action="{% url 'editprofile' %}" method="post" class="row" autocomplete="off" data-submit-form>
+    <form action="{% url 'editprofile' %}" method="post" class="row" autocomplete="off" data-validate-profile>
         {% csrf_token %}
         <div class="col-12 col-lg-7 mx-auto">
             <div class="card card_perfil">
@@ -18,51 +18,51 @@
                 </div>
 
                 <div class="card__perfil_content p-4 pt-0">
-                    <!-- <h3 class="text-center">{{ perfil_usuario.username }}</h3> -->
-                    <h3 class="w-100 text-center"><input type="text" name="username" id="username" class="w-100 text-center input_transparent"
-                            value="{{ perfil_usuario.username }}" data-input_transparent data-input_change></h3>
+                    <h2 class="w-100 text-center">
+                        <input type="text" name="username" id="username" class="w-100 text-center input_transparent" value="{{ user.username }}"
+                            data-input_transparent data-input_change placeholder="Ingresa tu Nombre de Usuario">
+                    </h2>
                     <div class="my-4">
-                        <p class="mb-5">
+                        <section>
                             <strong class="fs-8">Nombre:</strong>
-                            <br>
-                            <input type="text" name="first_name" id="first_name" class="text-center fs-12 input_transparent"
-                                value="{{ perfil_usuario.first_name }}" data-input_transparent data-input_change>
-                            <input type="text" name="last_name" id="last_name" class="text-center fs-12 input_transparent"
-                                value="{{ perfil_usuario.last_name }}" data-input_transparent data-input_change>
-                        </p>
-                        <div class="flex-between-wrap align-items-center mb-3">
+                            <div class="my-1">
+                                <input type="text" name="first_name" id="first_name" class="text-center fs-12 input_transparent"
+                                    value="{{ user.first_name }}" data-input_transparent data-input_change placeholder="Ingresa tu Nombre">
+                            </div>
+                            <div class="my-1">
+                                <input type="text" name="last_name" id="last_name" class="text-center fs-12 input_transparent"
+                                    value="{{ user.last_name }}" data-input_transparent data-input_change placeholder="Ingresa tu Apellidos">
+                            </div>
+                        </section>
+                        <div class="mt-3"></div>
+                        <div class="flex-between-wrap align-items-center mt-3 mb-1">
                             <strong class="me-3"><label for="email">Email:</label></strong>
-                            <input type="text" name="email" id="email" class="input_transparent flex-fill text-end" value="{{ perfil_usuario.email }}"
-                                data-input_transparent data-input_change>
+                            <input type="text" name="email" id="email" class="input_transparent flex-fill text-end" value="{{ user.email }}"
+                                data-input_transparent data-input_change placeholder="Ingresa tu Email">
                         </div>
-                        <div class="flex-between-wrap align-items-center mb-3">
-                            <strong class="me-3"><label for="firmaBlog">Firma:</label></strong>
-                            <input type="text" name="firmaBlog" id="firmaBlog" class="input_transparent flex-fill text-end" value="{{ profile_signature }}"
-                                data-input_transparent data-input_change>
+                        <div class="flex-between-wrap align-items-center mt-3 mb-1">
+                            <strong class="me-3"><label for="firmaBlog" title="Firma del autor para tus Blogs">Firma:</label></strong>
+                            <input type="text" name="firmaBlog" id="firmaBlog" class="input_transparent flex-fill text-end"
+                                value="{{ profile_signature }}" data-input_transparent placeholder="Firma para tus Blogs">
                         </div>
-                        <div class="flex-between-wrap align-items-center mb-3">
+                        <div class="flex-between-wrap align-items-center mt-3">
                             <strong>Contraseña:</strong>
                             <div class="flex-fill text-end"><small class="fs-7">( Ultima Modificacion )</small><br>{{ profile_pass_update }}</div>
                         </div>
-                        <!-- <div class="flex-between-wrap">
-                            <small class="flex-fill text-end">Usuario desde: {{ perfil_usuario.date_joined.date }}</small>
-                        </div> -->
                     </div>
 
                     <div class="row">
-                        <div class="col-12 col-md-6">
+                        <div class="col-12 col-md-6 mt-4">
                             <label class="btn btn-block bg_purple-blue" for="userPicture">Cambiar Foto de Perfil <i
                                     class="fa-solid fa-camera-rotate ms-1"></i></label>
                             <input type="file" class="none" id="userPicture" name="userPicture" accept="image/*" data-img_dom-change data-input_change />
                         </div>
-                        {% if not profile_img == '/static/img/UTC_logo-plano.webp' %}
-                        <div class="col-12 col-md-6 mt-3 mt-md-0">
+                        <div class="col-12 col-md-6 mt-4 {% if profile_img == '/static/img/UTC_logo-plano.webp' %}d-none{% endif %}">
                             <input type="checkbox" class="btn-check" id="deletePicture" name="deletePicture" autocomplete="off" />
                             <label class="btn bg_blue-red btn_check btn-block" for="deletePicture">Borrar foto Actual <i
                                     class="fa-regular fa-trash-can ms-1"></i></label>
                         </div>
-                        {% endif %}
-                        <div class="col-12 col-md-6 mt-3 mt-md-0">
+                        <div class="col-12 col-md-6 mt-4">
                             <button type="button" id="updatePassBtn" class="btn btn-block bg_blue-green">Cambiar Contraseña</button>
                         </div>
                     </div>
@@ -72,25 +72,30 @@
         <div id="profileSaved" class="col col-lg-5 mx-auto none">
             <div class="card mt-4 mt-lg-0">
                 <div class="card-body">
-                    <div class="form-outline mb-4" data-mdb-input-init>
+                    <div class="form-outline" data-mdb-input-init>
                         <input type="password" id="passwordSend" name="passwordSend" class="form-control text-end" required />
                         <label class="form-label" for="passwordSend">Contraseña<span id="updatePassText" class="none"> actual</span>:</label>
                     </div>
                     <div id="updatePassBlock" class="none">
-                        <div class="form-outline mb-4" data-mdb-input-init>
+                        <div class="form-outline mt-4" data-mdb-input-init>
                             <input type="password" id="newPass" name="newPass" class="form-control text-end" />
                             <label class="form-label" for="newPass">Nueva Contraseña:</label>
                         </div>
-                        <div class="form-outline mb-4" data-mdb-input-init>
+                        <div class="form-outline mt-4" data-mdb-input-init>
                             <input type="password" id="confNewPass" name="confNewPass" class="form-control text-end" />
                             <label class="form-label" for="confNewPass">Confirmar Nueva Contraseña:</label>
                         </div>
                     </div>
-                    <button type="submit" class="btn btn_detail btn-block">Guardar Cambios <i class="fa-solid fa-paper-plane ms-1"></i></button>
+                    <button type="submit" class="btn btn_detail btn-block mt-4">Guardar Cambios <i class="fa-solid fa-paper-plane ms-1"></i></button>
                 </div>
             </div>
         </div>
     </form>
 </main>
 
+{% endblock %}
+
+{% block scripts_end %}
+<script src="{% static 'js/jquery.validate.min.js' %}"></script>
+<script src="{% static 'js/settings_validation.js' %}"></script>
 {% endblock %}

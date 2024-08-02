@@ -987,6 +987,10 @@ img.img-tiny {
     margin: 0 !important;
 }
 
+input.is-invalid {
+    border-color: #dc4c64;
+}
+
 label {
     /* background: var(--mdb-surface-bg); */
     text-transform: capitalize;
@@ -1080,6 +1084,7 @@ input:checked+.slider:before {
     /* border-top-color: transparent;
     border-left-color: transparent;
     border-right-color: transparent; */
+    border-radius: var(--mdb-border-radius) !important;
     border-color: transparent;
     background: transparent;
     transition: 0.2s ease;

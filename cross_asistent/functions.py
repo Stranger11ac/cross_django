@@ -168,7 +168,7 @@ def editar_perfil(request):
         lNamePOST = request.POST.get('last_nameChanged')
         usernamePOST = request.POST.get('usernameChanged')
         emailPOST = request.POST.get('emailChanged')
-        firmaPOST = request.POST.get('firmaBlogChanged')
+        firmaPOST = request.POST.get('firmaBlog')
         picturePOST = request.FILES.get('userPictureChanged')
         delPicturePOST = request.POST.get('deletePicture')
         PasswordPOST = request.POST.get('passwordSend')

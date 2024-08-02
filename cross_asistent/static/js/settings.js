@@ -23,6 +23,9 @@ function getCSRFToken() {
     return csrfCookie;
 }
 
+// ##############################################################################################
+// ###################################### Funciones Jquery ######################################
+// ##############################################################################################
 $(document).ready(function () {
     try {
         // Detectar cuando se abre cualquier modal
@@ -371,15 +374,12 @@ $(document).ready(function () {
         });
 
         // Inpits del perfil ###################################
-        function toggleTransparent(e) {
-            $(e).toggleClass("input_transparent");
-        }
         $("[data-input_transparent]").on({
             focus: function () {
-                toggleTransparent(this);
+                $(this).toggleClass("input_transparent");
             },
             blur: function () {
-                toggleTransparent(this);
+                $(this).toggleClass("input_transparent");
             },
         });
 
@@ -430,7 +430,7 @@ $(document).ready(function () {
             thisInput.on("input", function () {
                 if (thisInput.val() == oldValueInput) {
                     thisInput.attr("name", `${originalNameInput}`);
-                    togglePassBlock()
+                    togglePassBlock();
                     otherChanges = false;
                 } else {
                     thisInput.attr("name", `${originalNameInput}Changed`);
@@ -440,6 +440,14 @@ $(document).ready(function () {
                     if (thisInput.val() == "") {
                         thisInput.attr("name", `${originalNameInput}`);
                     }
+                }
+            });
+
+            thisInput.on("blur", function () {
+                if (thisInput.val() == "") {
+                    thisInput.attr("name", `${originalNameInput}`);
+                    togglePassBlock();
+                    otherChanges = false;
                 }
             });
 
@@ -455,7 +463,7 @@ $(document).ready(function () {
                 otherChanges = true;
             } else {
                 $('[for="deletePicture"]').removeClass("btn_press");
-                togglePassBlock()
+                togglePassBlock();
                 otherChanges = false;
             }
         });
@@ -629,11 +637,6 @@ inputs.forEach((input) => {
     input.addEventListener("focus", copyText);
 });
 
-// context menu disabled ######################################################################
-document.oncontextmenu = function () {
-    return false;
-};
-
 // MaterialBox https://materializecss.com/ ################################################
 var imagesZoom = document.querySelectorAll(".materialBoxed");
 var instances = M.Materialbox.init(imagesZoom);
@@ -754,23 +757,7 @@ function alertSToast(posittionS, timerS, iconS, titleS, didDestroyS) {
 
 // alertSToast('top', 8000, 'success', '<br>lo normal');
 
-// Verificar existencia en la base de datos
-// $("[data-valid-db]").each(function () {
-//     $(this).on("input", function () {
-//         console.log($(this).data("check_db"));
-//         console.log($(this).data("selector-input"));
-
-//         if (!$(this).data("label-created")) {
-//             var newLabel = $("<label>", {
-//                 for: $(this).attr("id"),
-//                 text: $(this).attr("name"),
-//                 id: "Label-" + $(this).attr("id"),
-//                 class: "bg_detail text-white pt-2 pb-1 px-2 mt-1 rounded",
-//             });
-
-//             $(this).parent().after(newLabel);
-
-//             $(this).data("label-created", true);
-//         }
-//     });
-// });
+// context menu disabled ######################################################################
+// document.oncontextmenu = function () {
+//     return false;
+// };

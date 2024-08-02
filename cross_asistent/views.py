@@ -270,23 +270,16 @@ def vista_programador(request):
 @login_required
 @never_cache
 def ver_perfil(request):
-    perfil_datos = request.user
     perfil_extencion = request.user.userprofile
     if perfil_extencion.profile_picture:
-        user_profile_img = perfil_extencion.profile_picture.url.replace("/cross_asistent", "")
+        perfil_extencion.profile_picture = perfil_extencion.profile_picture.url.replace("/cross_asistent", "")
     else:
-        user_profile_img = '/static/img/UTC_logo-plano.webp'
-        
-    if perfil_extencion.blog_firma:
-        perfil_firma = perfil_extencion.blog_firma
-    else:
-        perfil_firma = 'Su nombre completo'
+        perfil_extencion.profile_picture = '/static/img/UTC_logo-plano.webp'
         
     return render(request, 'admin/perfil.html', {
-        'perfil_usuario': perfil_datos,
-        'profile_img': user_profile_img,
-        'profile_signature': perfil_firma,
-        'profile_pass_update': request.user.userprofile.passwoed_update,
+        'profile_img': perfil_extencion.profile_picture,
+        'profile_signature': perfil_extencion.blog_firma,
+        'profile_pass_update': perfil_extencion.password_update,
         'active_page': 'perfil',
         'pages': functions.pages
     })
