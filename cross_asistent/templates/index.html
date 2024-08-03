@@ -29,7 +29,7 @@
                                     <p>{% autoescape off %} {{ banner.descripcion }} {% endautoescape %}</p>
                                     <div class="buttons">
                                         {% if banner.redirigir %}
-                                        <a href="{{banner.redirigir}}" class="btn_slide btn btn_detail btn-lg">
+                                        <a href="{{banner.redirigir}}" target="_blank" rel="noopener noreferrer" class="btn_slide btn btn_detail btn-lg">
                                             Ver más <i class="fa-solid fa-up-right-from-square ms-1"></i>
                                         </a>
                                         {% endif %}

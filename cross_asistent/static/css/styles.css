@@ -148,11 +148,7 @@
 
 
 /*########################### Generales ###########################*/
-html {
-    overflow-x: hidden !important;
-    /* scrollbar-gutter: stable; */
-}
-
+html,
 body {
     min-height: 100vh;
     width: 100vw;
@@ -160,16 +156,6 @@ body {
     scroll-behavior: smooth;
     position: relative;
     overflow-x: hidden !important;
-}
-
-/* Personaliza el estilo de la barra de scroll */
-::-webkit-scrollbar-track {
-    background: var(--mdb-body-bg);
-}
-
-::-webkit-scrollbar-thumb {
-    border-radius: 6px;
-    border: 2px solid var(--darkA1);
 }
 
 /* Chrome, Safari, Edge, Opera */
@@ -230,6 +216,7 @@ i.fa-solid {
 .btn.btn_press {
     box-shadow: 0 0 5px 1px var(--darkA6) inset !important;
 }
+
 .btn.btn_check.btn_press {
     border: 2px solid white;
 }
@@ -983,7 +970,8 @@ img.img-tiny {
 
 
 /*########################### Formulario / forms ###########################*/
-.was-validated .form-control:valid, .form-control.is-valid{
+.was-validated .form-control:valid,
+.form-control.is-valid {
     margin: 0 !important;
 }
 
@@ -1012,15 +1000,17 @@ label {
 }
 
 
-.form-control.is-valid ~ .trailing {
+.form-control.is-valid~.trailing {
     color: green;
 }
 
-.form-control.is-invalid ~ .trailing {
+.form-control.is-invalid~.trailing {
     color: red;
 }
 
-.invalid-feedback {position: unset !important;}
+.invalid-feedback {
+    position: unset !important;
+}
 
 /* Checkbox MDB */
 .form-check-input[type=checkbox]:checked {
@@ -1295,7 +1285,7 @@ input:checked+.slider:before {
 }
 
 .grid-item {
-    border-radius: 10px;
+    position: relative;
     overflow: hidden;
     display: flex;
     flex-direction: column;
@@ -1303,9 +1293,10 @@ input:checked+.slider:before {
     grid-column-start: auto;
     grid-row-start: auto;
     background-size: cover;
-    background-repeat: no-repeat;
-    background-position: center;
     box-sizing: border-box;
+    background-position: center;
+    background-repeat: no-repeat;
+    border-radius: 10px;
     box-shadow: -2px 2px 10px 0px rgba(68, 68, 68, 0.4);
     transition: all 0.3s ease-in-out;
     counter-increment: grid-item-counter;
@@ -1361,16 +1352,18 @@ input:checked+.slider:before {
 
 .grid-item .item__details,
 .grid-item .item__details-count {
-    position: relative;
+    /* position: absolute;
+    bottom: 0; */
     display: flex;
     align-items: center;
     height: auto;
     padding: 15px;
+    width: 100%;
     background: var(--mdb-surface-bg);
     color: var(--mdb-surface-color);
     text-transform: capitalize;
     letter-spacing: 1px;
-    transition: all 0.3s ease-in-out;
+    transition: all 0.2s ease-in-out;
 }
 
 
@@ -1414,8 +1407,18 @@ input:checked+.slider:before {
     padding-block: inherit !important;
 }
 
+.grid-item.item_title-full img {
+    display: none;
+}
+
 .grid-item.item_img-url {
     background-image: var(--item_img);
+}
+
+.grid-item.item_img-url img {
+    object-fit: cover;
+    width: auto;
+    height: 100%;
 }
 
 .grid-item.item_img-example:nth-of-type(3n) {
@@ -1516,9 +1519,33 @@ input:checked+.slider:before {
     word-break: break-all;
 }
 
+.img-rounded {
+    border-radius: var(--border-radius);
+}
+
 .img_article {
     overflow: hidden;
     max-height: 45vh;
+}
+
+.img_w100 {
+    max-width: 100px;
+}
+
+.img_w200 {
+    max-width: 200px;
+}
+
+.img_w250 {
+    max-width: 250px;
+}
+
+.img_w300 {
+    max-width: 300px;
+}
+
+.img_w350 {
+    max-width: 350px;
 }
 
 /*################# Margenes #################*/

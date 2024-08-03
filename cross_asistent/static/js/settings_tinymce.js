@@ -1,5 +1,21 @@
 // Functionamiento de TinyMCE #################################################################
-const useDarkMode = window.matchMedia("(prefers-color-scheme: dark)").matches;
+let tinyTheme = "oxide";
+$("#switchTheme").on("click", function () {
+    if ($("#switchTheme").is(":checked")) {
+        tinyTheme = "oxide";
+    } else {
+        tinyTheme = "dark";
+    }
+});
+const colorTheme = localStorage.getItem("data-mdb-theme");
+if (colorTheme) {
+    if (colorTheme == "light") {
+        tinyTheme = "oxide";
+    } else {
+        tinyTheme = "dark";
+    }
+}
+
 const uploadImageTiny = async (blobInfo, progress) => {
     try {
         const formData = new FormData();
@@ -48,8 +64,8 @@ tinymce.init({
     autoresize_min_height: 600,
     min_height: 600,
     promotion: false,
-    skin: 'dark',
-    content_css: 'dark',   
+    skin: tinyTheme,
+    content_css: tinyTheme,
 });
 
 tinymce.init({
@@ -80,31 +96,53 @@ tinymce.init({
     quickbars_selection_toolbar: "bold italic underline | blocks forecolor backcolor | quicklink blockquote",
     quickbars_image_toolbar: "image|alignleft aligncenter alignright | rotateleft rotateright | imageoptions",
     color_map: [
-        "#ECCAFA","Light Purple",
-        "#C2E0F4","Light Blue",
-        "#BFEDD2","Light Green",
-        "#FBEEB8","Light Yellow",
-        "#F8CAC6","Light Red",
-        "#B96AD9","Purple",
-        "#3598DB","Blue",
-        "#2DC26B","Green",
-        "#F1C40F","Yellow",
-        "#E03E2D","Red",
-        "#843FA1","Dark Purple",
-        "#3B71CA","Dark Blue",
-        "#169179","Dark Turquoise",
-        "#E67E23","Orange",
-        "#BA372A","Dark Red",
-        "#ECF0F1","Light Gray",
-        "#CED4D9","Medium Gray",
-        "#95A5A6","Gray",
-        "#7E8C8D","Dark Gray",
-        "#34495E","Navy Blue",
-        "#000000","Black",
-        "#ffffff","White",
+        "#ECCAFA",
+        "Light Purple",
+        "#C2E0F4",
+        "Light Blue",
+        "#BFEDD2",
+        "Light Green",
+        "#FBEEB8",
+        "Light Yellow",
+        "#F8CAC6",
+        "Light Red",
+        "#B96AD9",
+        "Purple",
+        "#3598DB",
+        "Blue",
+        "#2DC26B",
+        "Green",
+        "#F1C40F",
+        "Yellow",
+        "#E03E2D",
+        "Red",
+        "#843FA1",
+        "Dark Purple",
+        "#3B71CA",
+        "Dark Blue",
+        "#169179",
+        "Dark Turquoise",
+        "#E67E23",
+        "Orange",
+        "#BA372A",
+        "Dark Red",
+        "#ECF0F1",
+        "Light Gray",
+        "#CED4D9",
+        "Medium Gray",
+        "#95A5A6",
+        "Gray",
+        "#7E8C8D",
+        "Dark Gray",
+        "#34495E",
+        "Navy Blue",
+        "#000000",
+        "Black",
+        "#ffffff",
+        "White",
     ],
-    skin: 'dark',
-    content_css: 'dark',
+    skin: tinyTheme,
+    content_css: tinyTheme,
     image_title: true,
     automatic_uploads: true,
     // file_picker_types: "image",

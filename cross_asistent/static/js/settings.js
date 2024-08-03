@@ -307,6 +307,14 @@ $(document).ready(function () {
             localStorage.setItem("data-color_prefer", color);
             localStorage.setItem("data-color_rgb", rgb);
         });
+        const colorPrefer = localStorage.getItem("data-color_prefer");
+        if (colorPrefer) {
+            $(`[data-change-color="${colorPrefer}"]`).addClass("active");
+            $("body").attr("data-color_prefer", colorPrefer);
+        } else {
+            $('[data-change-color="blue"]').addClass("active");
+            $("body").attr("data-color_prefer", "blue");
+        }
         // Cambiar tema
         $("#switchTheme").on("click", function () {
             if ($("#switchTheme").is(":checked")) {
@@ -321,16 +329,6 @@ $(document).ready(function () {
                 localStorage.setItem("mapbox-last_layer", "dark-v11");
             }
         });
-        // Colores de la Interfaz
-        const colorPrefer = localStorage.getItem("data-color_prefer");
-        if (colorPrefer) {
-            $(`[data-change-color="${colorPrefer}"]`).addClass("active");
-            $("body").attr("data-color_prefer", colorPrefer);
-        } else {
-            $('[data-change-color="blue"]').addClass("active");
-            $("body").attr("data-color_prefer", "blue");
-        }
-        // Color de tema
         const colorTheme = localStorage.getItem("data-mdb-theme");
         if (colorTheme) {
             if (colorTheme == "light") {
@@ -758,6 +756,6 @@ function alertSToast(posittionS, timerS, iconS, titleS, didDestroyS) {
 // alertSToast('top', 8000, 'success', '<br>lo normal');
 
 // context menu disabled ######################################################################
-// document.oncontextmenu = function () {
-//     return false;
-// };
+document.oncontextmenu = function () {
+    return false;
+};

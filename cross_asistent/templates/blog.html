@@ -5,19 +5,29 @@
 {% endblock %}
 
 {% block content %}
+{% if not encabezado_url == '' %}
 <div class="img_article position-relative">
     <img src="{{encabezado_url}}" alt='Imagen de encabezado del articulo "{{ articulo.titulo }}"' class="img-fluid w-100">
     <div class="mask mask_white"></div>
 </div>
-<main class="container container-fluid pb-5">
+{% endif %}
+<main class="container container-fluid mb-5 {% if encabezado_url == '' %}mt-5{% endif %}">
     <div class="son_p">
         <h2 class="text-center mb-5 fs-20">{{ articulo.titulo }}</h2>
         <section class="px-4">
             {% autoescape off %}{{ articulo.contenido }}{% endautoescape %}
 
-            <div class="w-100 text-end">
-                <p class="mt-5">Autor: {{ firma_autor }}</p>
-                <p>Creado el {{ articulo.creacion }}</p>
+            <div class="mt-5 d-flex flex-wrap align-items-center gap_40 ">
+                {% if not encabezado_url == '' %}
+                <div>
+                    <img src="{{encabezado_url}}" alt='Imagen de encabezado del articulo "{{ articulo.titulo }}"'
+                        class="img-fluid img-rounded img_w250 materialBoxed">
+                </div>
+                {% endif %}
+                <div>
+                    <p>Escrito por: {{ firma_autor }}</p>
+                    <p class="m-0">{{ articulo.creacion }}</p>
+                </div>
             </div>
         </section>
     </div>

@@ -78,7 +78,7 @@ def crear_pregunta(request):
 def blogs(request):
     if not request.user.is_staff:
         logout(request)
-    blogs = models.Articulos.objects.all()
+    blogs = models.Articulos.objects.all().order_by('-id')
     blogs_modificados = []
 
     for oneblog in blogs:
@@ -108,7 +108,10 @@ def mostrar_blog(request, Articulos_id):
     
     articulo = get_object_or_404(models.Articulos, pk=Articulos_id)
     autor_username = articulo.autor
-    encabezado_url = articulo.encabezado.url.replace('/cross_asistent', '')
+    if articulo.encabezado:
+        encabezado_url = articulo.encabezado.url.replace('/cross_asistent', '')
+    else:
+        encabezado_url = ''
     
     try:
         user_profile = models.UserProfile.objects.get(user__username=autor_username)

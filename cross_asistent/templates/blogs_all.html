@@ -11,7 +11,8 @@
     {% if blogs_all %}
     <div class="grid-system grid-auto_size">
         {% for blog in blogs_all %}
-        <a href="{% url 'mostrar_blog' blog.id %}" class="grid-item {{blog.class}}" style="--item_img: url('{{ blog.imagen }}');">
+        <a href="{% url 'mostrar_blog' blog.id %}" class="grid-item {{blog.class}}">
+            <img src="{{blog.imagen}}" alt="{{blog.titulo}}" loading="lazy">
             <div class="item__details">
                 <div class="w-100">
                     <h5 class="m-0">{{blog.titulo}}</h5>
