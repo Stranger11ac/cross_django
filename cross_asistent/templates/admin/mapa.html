@@ -5,124 +5,262 @@
 {% block link_default %}
 {% include 'base/widget_links-admin.html' %}
 {% endblock %}
+{% block extra_head %}
+<link href="https://api.mapbox.com/mapbox-gl-js/v3.4.0/mapbox-gl.css" rel="stylesheet">
+<link href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-directions/v4.1.1/mapbox-gl-directions.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+{% endblock %}
 {% block content %}
-
-<main class="container container-fluid pb-5 {% if not user.is_authenticated %}main_container{% endif %}">
-    <div class="my-5">
-        <h1 class="text-center">Mapa <i class="fa-solid fa-map-location-dot ms-1"></i></h1>
-        <hr class="hr_divisor mx-4 mx-md-0" />
-    </div>
-    <div class="card mb-4 mx-auto col-12 col-md-8">
-        <div class="card-body">
-            <h5 class="text-center mb-3">Selecciona un Edificio para Editar su Info<span class="d-none d-md-inline">rmacion</span> :</h5>
-            <form method="post" id="filtroEdificio" action="{% url 'consultaMap' %}">
-                {% csrf_token %}
-                <select id="selectEdif" name="selectEdif" class="form-select" data-second-action="{% url 'obtenerEdificio' %}">
-                    <option disabled selected hidden>Edificio...</option>
-                    {% for edificio in map_inDB %}
-                    <option value="{{ edificio.id }}">{{ edificio.titulo }}</option>
-                    {% endfor %}
+<main class="full_page map_editing" id='map' data-mapa_edif="{% url 'mapa_edificios' %}">
+    <!-- Controles de ruta -->
+    <section class="controls_route card m-2" id="controls_route">
+        <div class="card-header d-flex justify-content-between align-items-center p-3">
+            <h6 class="m-0"><i class="fa-solid fa-route me-1"></i>Como ir a...</h6>
+            <button type="button" class="btn-close" data-btn_closed="controls_route"></button>
+        </div>
+        <div class="card-body p-3">
+            <!-- Formulario de ruta -->
+            <form autocomplete="off" id="form_route">
+                <select id="origen" class="form-control mb-3">
+                    <option disabled selected hidden>Tu ubicacion</option>
+                </select>
+                <select id="destino" class="form-control">
+                    <option disabled selected hidden>Seleccionar destino</option>
                 </select>
             </form>
-        </div>
-    </div>
-
-    <div class="card mb-4 mx-auto col-12 col-md-8">
-        <!-- Imagen actual del edificio -->
-        <div class="bg-image none img_form_map">
-            <img src="{% static 'img/default_image.webp' %}" id="imagen_actual" class="img-fluid"/>
-            <div class="mask mask_white">
-                <div class="d-flex align-items-end h-100 px-4 px-md-3 px-xl-5">
-                    <h5 class="fw-bold mb-0">Modificar info<span class="none d-lg-inline">romacion</span> de "<span id="mapTitle">Edificio</span>"</h5>
+            <div class="none mt-3" id="buttons_route">
+                <div class="d-flex justify-content-between">
+                    <button title="Borrar Formulario" type="button" class="btn btn_detail btn-sm p-2 px-3 fs-10" data-reset_form="form_route">
+                        <i class="fa-solid fa-rotate-left"></i>
+                    </button>
+                    <button title="Borrar Ruta" type="button" class="none btn btn-danger p-2 px-3 fs-13" data-reset_form="form_route" data-del_route>
+                        <i class="fa-regular fa-trash-can"></i>
+                    </button>
                 </div>
             </div>
         </div>
-        <div class="card-body">
-            <!-- formulario -->
-            <section id="formMap">
-                <form method="POST" id="edificioForm" action="{% url 'regEdificio' %}" data-submit-form autocomplete="off">
-                    {% csrf_token %}
-                    <input type="checkbox" name="isNew" id="isNewEdif" class="d-none" checked>
+        <!-- Informacion de la ruta -->
+        <div class="card-footer">
+            <div id="route-info" class="p-0 m-0 none"></div>
+        </div>
+    </section>
+</main>
 
-                    <div id="groupTitleMap">
-                        <h5 class="text-center mb-4">Crear nuevo Edificio</h5>
-                        <div class="form-outline mb-4" data-mdb-input-init>
-                            <input type="text" id="formTitle" name="titulo" class="form-control" required />
-                            <label class="form-label" for="formTitle">Nombre del Edificio:</label>
-                        </div>
+<!-- OffCanvas: Editar/Crear informacion -->
+<form class="offcanvas offcanvas-start" data-bs-scroll="true" data-bs-backdrop="false" tabindex="-1" id="infoLateral" aria-labelledby="infoLateralLabel"
+    method="post" action="{% url 'regEdificio' %}" data-submit-form autocomplete="off">
+    <div class="offcanvas-header position-relative p-0">
+        <button type="button" class="btn-close position-absolute top-0 end-0 p-4 m-1 m-md-2" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        <!-- <section class="header-image">
+            <img src="{% static 'img/default_image.webp' %}" id="imagen_actual" data-img_dom />
+            <div class="mask mask_white">
+                <div class="d-flex align-items-end h-100 px-3">
+                    <div class="form-outline" data-mdb-input-init>
+                        <input type="text" id="nombreEdificio" id="nombreEdificio" class="form-control" />
+                        <label class="form-label" for="nombreEdificio">Nombre del Lugar:</label>
                     </div>
-
-                    <div class="mb-5">
-                        <textarea id="textTiny" class="form-control" name="contenidoWord"
-                            placeholder="Escribe a detalle sobre el edificio, puedes hacer listas, encabezados, parrafos y tablas"></textarea>
+                </div>
+            </div>
+        </section> -->
+    </div>
+    <div class="offcanvas-body p-0" id="offcanvasContent">
+        <div class="position-relative min_h100">
+            <img src="{% static 'img/default_image.webp' %}" id="imagen_actual" class="img-fluid" data-img_dom />
+            <div class="mask mask_white">
+                <div class="d-flex align-items-end h-100 px-3">
+                    <div class="form-outline" data-mdb-input-init>
+                        <input type="text" id="nombreEdificio" name="nombreEdificio" class="form-control" required />
+                        <label class="form-label" for="nombreEdificio">Nombre del Lugar:</label>
                     </div>
-
-                    <h5>Cuadro en el Mapa</h5>
-                    <div class="mb-4" data-mdb-input-init>
-                        <label for="color_picker" class="form-label">Color:</label>
-                        <div class="d-flex gap_15 align-items-center">
-                            <input type="color" class="form-control form-control-color p-1" id="color_picker" value="#563d7c" title="Choose your color">
-                            <p class="m-0">valor <br>del color: <span id="colorVal">#563d7c</span></p>
-                        </div>
+                </div>
+            </div>
+        </div>
+        <div class="p-3 mt-3">
+            {% csrf_token %}
+            <input type="checkbox" name="isNew" id="isNewEdif" class="d-none">
+            <input type="text" name="muid" id="muid" class="d-none" data-new-uid="{{UID}}" required>
+            <!-- Color del poligono -->
+            <section class="row">
+                <div class="col-10">
+                    <div class="form-outline" data-mdb-input-init>
+                        <input type="text" class="form-control" id="colorEdificio" name="colorEdificio" autocapitalize="off" required />
+                        <label class="form-label" for="colorEdificio">Color: (nombre / HEX)</label>
                     </div>
-                    <input id="color" name="color" value="#563d7c" class="form-control p-0" type="hidden">
-
-                    <h6 class="mb-3">Coordenadas:</h6>
-                    
-                    <div class="form-outline mb-4" data-mdb-input-init>
-                        <input type="text" id="door_cords" name="door_cords" class="form-control" />
-                        <label class="form-label" for="door_cords">Puerta:</label>
-                    </div>
-
-                    <div class="row">
-                        <div class="col">
-                            <div class="form-outline mb-4" data-mdb-input-init>
-                                <input type="text" id="p1_polygons" name="p1_polygons" class="form-control" />
-                                <label class="form-label" for="p1_polygons">Esquina 1</label>
-                            </div>
-                        </div>
-                        <div class="col">
-                            <div class="form-outline mb-4" data-mdb-input-init>
-                                <input type="text" id="p2_polygons" name="p2_polygons" class="form-control" />
-                                <label class="form-label" for="p2_polygons">Esquina 2</label>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="row">
-                        <div class="col">
-                            <div class="form-outline mb-4" data-mdb-input-init>
-                                <input type="text" id="p3_polygons" name="p3_polygons" class="form-control" />
-                                <label class="form-label" for="p3_polygons">Esquina 3</label>
-                            </div>
-                        </div>
-                        <div class="col">
-                            <div class="form-outline mb-4" data-mdb-input-init>
-                                <input type="text" id="p4_polygons" name="p4_polygons" class="form-control" />
-                                <label class="form-label" for="p4_polygons">Esquina 4</label>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="mb-4">
-                        <label for="imagenes">Foto del Edificio <span id="suggestImgText">(fachada)</span>:</label>
-                        <input type="file" id="imagenes" name="imagenes" class="form-control">
-                        <small id="suggestImg" class="form-helper text-danger none">El Edificio no tiene foto, te recomiendo subir una de la fachada
-                            🧐😬</small>
-                    </div>
-
-                    <div class="d-flex justify-content-between">
-                        <button type="button" class="btn btn-warning none" id="cancelNewEdif">Crear Nuevo</button>
-                        <button type="submit" class="btn btn_detail">Guardar</button>
-                    </div>
-                </form>
+                </div>
+                <div class="col-2 ps-1">
+                    <input type="color" class="form-control form-control-color p-1 rounded border border-secondary" id="colorPicker" value="#808080">
+                </div>
             </section>
+            <!-- Poligonos, boton e inputs -->
+            <button type="button" id="btnPoligon" class="btn btn_detail btn-block mt-4" data-mdb-ripple-init data-mdb-ripple-color="white">
+                Dibujar Poligono <i class="fa-solid fa-draw-polygon ms-1"></i>
+            </button>
+            <section class="" id="esquinasPoligono">
+                <div class="row">
+                    <div class="col-6">
+                        <div class="input-group form-outline mt-4" data-mdb-input-init>
+                            <input type="text" id="esquina1" name="esquina1" class="form-control pe-2" readonly aria-describedby="inputBtnE1" required />
+                            <label class="form-label" for="esquina1">Esquina 01:</label>
+                            <!-- <button class="btn btn_detail px-3 rounded-end" type="button" id="inputBtnE1" data-mdb-ripple-init data-mdb-ripple-color="white"> -->
+                            <!-- <i class="fa-solid fa-location-dot fs-10"></i> -->
+                            <!-- </button> -->
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="input-group form-outline mt-4" data-mdb-input-init>
+                            <input type="text" id="esquina2" name="esquina2" class="form-control pe-2" readonly aria-describedby="inputBtnE2" required />
+                            <label class="form-label" for="esquina2">Esquina 02:</label>
+                            <!-- <button class="btn btn_detail px-3 rounded-end" type="button" id="inputBtnE2" data-mdb-ripple-init data-mdb-ripple-color="white"> -->
+                            <!-- <i class="fa-solid fa-location-dot fs-10"></i> -->
+                            <!-- </button> -->
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="input-group form-outline mt-4" data-mdb-input-init>
+                            <input type="text" id="esquina3" name="esquina3" class="form-control pe-2" readonly aria-describedby="inputBtnE3" required />
+                            <label class="form-label" for="esquina3">Esquina 03:</label>
+                            <!-- <button class="btn btn_detail px-3 rounded-end" type="button" id="inputBtnE3" data-mdb-ripple-init data-mdb-ripple-color="white"> -->
+                            <!-- <i class="fa-solid fa-location-dot fs-10"></i> -->
+                            <!-- </button> -->
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="input-group form-outline mt-4" data-mdb-input-init>
+                            <input type="text" id="esquina4" name="esquina4" class="form-control pe-2" readonly aria-describedby="inputBtnE4" required />
+                            <label class="form-label" for="esquina4">Esquina 04:</label>
+                            <!-- <button class="btn btn_detail px-3 rounded-end" type="button" id="inputBtnE4" data-mdb-ripple-init data-mdb-ripple-color="white"> -->
+                            <!-- <i class="fa-solid fa-location-dot fs-10"></i> -->
+                            <!-- </button> -->
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <!-- Coordenadas de la puerta -->
+            <div class="input-group form-outline mt-4" data-mdb-input-init>
+                <input type="text" id="puertaCordsEdificio" name="puertaCordsEdificio" class="form-control pe-4" aria-describedby="inputBtnDoor" readonly
+                    required />
+                <label class="form-label" for="puertaCordsEdificio">Puerta:</label>
+                <button class="btn btn_detail px-3 rounded-end" type="button" id="inputBtnDoor" data-mdb-ripple-init data-mdb-ripple-color="white"><i class="fa-solid
+                     fa-location-dot fs-10"></i>
+                </button>
+            </div>
+            <!-- TinyMCE: Contenido de texto -->
+            <div class="mt-4">
+                <textarea id="textTiny" class="form-control" name="contenidoWord"
+                    placeholder="Escribe a detalle sobre el lugar, puedes hacer listas, encabezados, parrafos y tablas"></textarea>
+            </div>
+            <!-- Foto del Lugar -->
+            <div class="mt-4">
+                <input type="file" class="none" id="fotoEdificio" name="fotoEdificio" accept="image/*" data-img_dom-change required />
+                <label class="btn bg_blue-green btn-block" for="fotoEdificio" data-mdb-ripple-init data-mdb-ripple-color="white">Cambiar foto <i
+                        class="fa-regular fa-image ms-1"></i></label>
+            </div>
+            <div id="submitEdificio" class="offcanvas-footer mt-4 row">
+                <div class="col-2">
+                    <button title="Cerrar" type="button" class="btn btn-danger btn-block px-1" data-mdb-ripple-init data-mdb-ripple-color="white"
+                        data-bs-dismiss="offcanvas">
+                        <i class="fa-solid fa-xmark fs-10"></i>
+                    </button>
+                </div>
+                <div class="col-10">
+                    <button type="submit" class="btn btn_detail btn-block" data-mdb-ripple-init data-mdb-ripple-color="white">
+                        Guardar Cambios <i class="fa-regular fa-floppy-disk ms-1"></i>
+                    </button>
+                </div>
+            </div>
         </div>
     </div>
+</form>
 
-</main>
+<!-- OffCanvas: Cambiar estilo -->
+<div class="offcanvas offcanvas-bottom" tabindex="-1" id="offcanvasBottom" aria-labelledby="offcanvasBottomLabel">
+    <div class="offcanvas-header">
+        <h5 class="offcanvas-title" id="offcanvasBottomLabel">Cambiar Estilo <i class="fa-solid fa-layer-group ms-1"></i></h5>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body row" id="offcanvasbody">
+        <div class="col-4 col-md p-2">
+            <label class="card" for="satellite-streets-v12">
+                <input id="satellite-streets-v12" type="radio" name="rtoggle" value="satellite" class="none">
+                <div class="card-body pb-1 p-3 text-center">
+                    <div><i class="fa-solid fa-satellite"></i></div>
+                    <div>Satelital</div>
+                </div>
+            </label>
+        </div>
+        <div class="col-4 col-md p-2">
+            <label class="card btn_detail text-white cursor-not" for="streets-v12">
+                <input id="streets-v12" type="radio" name="rtoggle" value="streets" disabled checked class="none">
+                <div class="card-body pb-1 p-3 text-center">
+                    <div><i class="fa-solid fa-signs-post"></i></div>
+                    <div>Caminos</div>
+                </div>
+            </label>
+        </div>
+        <div class="col-4 col-md p-2">
+            <label class="card" for="outdoors-v12">
+                <input id="outdoors-v12" type="radio" name="rtoggle" value="outdoors" class="none">
+                <div class="card-body pb-1 p-3 text-center">
+                    <div><i class="fa-solid fa-road"></i></div>
+                    <div>Calles</div>
+                </div>
+            </label>
+        </div>
+        <div class="col-6 col-md p-2">
+            <label class="card" for="light-v11">
+                <input id="light-v11" type="radio" name="rtoggle" value="light" class="none">
+                <div class="card-body pb-1 p-3 text-center">
+                    <div><i class="fa-regular fa-map"></i></div>
+                    <div>Claro</div>
+                </div>
+            </label>
+        </div>
+        <div class="col-6 col-md p-2">
+            <label class="card" for="dark-v11">
+                <input id="dark-v11" type="radio" name="rtoggle" value="dark" class="none">
+                <div class="card-body pb-1 p-3 text-center">
+                    <div><i class="fa-solid fa-map"></i></div>
+                    <div>Obscuro</div>
+                </div>
+            </label>
+        </div>
+    </div>
+</div>
+
+<!-- Modal: Abrir Google Maps -->
+<div class="modal fade" id="beforeSend" tabindex="-1" aria-labelledby="beforeSendLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="beforeSendLabel">Abrir Google Maps <i class="fa-solid fa-map-location-dot ms-1"></i></h5>
+                <button type="button" class="btn-close" data-mdb-ripple-init data-mdb-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <h4 class="col-8 col-md-12 mx-auto text-center">¿Quieres saber como llegar a la UTC?</h4>
+                <p class="p-3">Con esta opcion te enviaremos a <span class="fw-bold style_google">Google</span> Maps, para que puedas ir desde tu ubicacion
+                    hasta la UTC
+                </p>
+            </div>
+            <div class="modal-footer d-flex justify-content-between">
+                <button type="button" class="btn btn-secondary" data-mdb-ripple-init data-mdb-dismiss="modal">Cancelar</button>
+                <a target="_blank"
+                    href="https://www.google.com.mx/maps/dir/25.5565711,-100.936538/Universidad+Tecnol%C3%B3gica+de+Coahuila,+Boulevard+del+Parque+Industrial+Francisco+R.+Alanis,+Zona+Industrial,+Ramos+Arizpe,+Coahuila+de+Zaragoza/@25.5564822,-100.9417562,16z/data=!3m1!4b1!4m10!4m9!1m1!4e1!1m5!1m1!1s0x868814c0002295ff:0x5c622cc711957b03!2m2!1d-100.9368619!2d25.5583972!3e2?entry=ttu"
+                    class="btn btn_detail" data-mdb-ripple-init>Abrir <i class="fa-solid fa-up-right-from-square ms-1"></i></a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- <main class="container container-fluid my-5 {% if not user.is_authenticated %}main_container{% endif %}"></main> -->
 {% endblock %}
 {% block scripts_end %}
 <script src="{% static 'tinymce/tinymce.min.js' %}"></script>
 <script src="{% static 'js/settings_tinymce.js' %}"></script>
+
+<script src="https://api.mapbox.com/mapbox-gl-js/v3.4.0/mapbox-gl.js"></script>
+<script src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-directions/v4.1.1/mapbox-gl-directions.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+<script src="{% static 'js/settings_mapbox.js' %}"></script>
 {% endblock %}

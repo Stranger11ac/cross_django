@@ -1,6 +1,5 @@
 from django import forms
-from django.forms import ModelForm
-from .models import Database, Categorias, Banners
+from .models import Database, Categorias
 
 class PreguntaForm(forms.ModelForm):
     class Meta:
@@ -13,11 +12,6 @@ class PreguntaForm(forms.ModelForm):
         if commit:
             pregunta.save()
         return pregunta
-
-class BannersForm(forms.ModelForm):
-    class Meta:
-        model = Banners
-        fields = ['titulo', 'descripcion', 'redirigir', 'imagen', 'expiracion']
 
 class CSVUploadForm(forms.Form):
     file = forms.FileField()

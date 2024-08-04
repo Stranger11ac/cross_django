@@ -14,7 +14,7 @@ class ArticulosAdmin(admin.ModelAdmin):
     list_display = ('titulo', 'autor', 'creacion')
 
 class MapaAdmin(admin.ModelAdmin):
-    list_display = ('nombre', 'door_cords')
+    list_display = ('nombre', 'color', 'door_cords')
 
 class NotifAdmin(admin.ModelAdmin):
     list_display = ('usuario', 'tipo', 'leida')

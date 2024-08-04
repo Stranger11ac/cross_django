@@ -31,7 +31,7 @@ pages = [
         {'name': 'banner', 'url': 'upload_banner', 'display_name': 'Banners', 'icon': 'fa-solid fa-image'},
         {'name': 'database', 'url': 'database_page', 'display_name': 'Database', 'icon': 'fa-solid fa-database'},
         {'name': 'blog', 'url': 'create_blog', 'display_name': 'Blogs', 'icon': 'fa-solid fa-newspaper'},
-        {'name': 'mapa', 'url': 'consultaMap', 'display_name': 'Mapa', 'icon': 'fa-solid fa-map-location-dot'},
+        {'name': 'mapa', 'url': 'update_mapa', 'display_name': 'Mapa', 'icon': 'fa-solid fa-map-location-dot'},
     ]
 
 def chatgpt(question, instructions):
@@ -371,11 +371,14 @@ def mapa_data(request):
     mapas = models.Mapa.objects.all()
     data = []
     for mapa in mapas:
-        
         imagen_qs = models.Database.objects.filter(titulo=mapa.nombre).values_list('imagen', flat=True)
         imagen = imagen_qs.first() if imagen_qs.exists() else None
         
+        if imagen:
+            imagen = imagen.replace("cross_asistent", "")
+
         item = {
+            "muid": mapa.muid,
             "color": mapa.color,
             "imagen_url": imagen,
             "nombre": mapa.nombre,

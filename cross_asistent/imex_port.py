@@ -64,7 +64,7 @@ def export_database(request):
             for info in databaseall
         ]
         return create_csv_response(f"UTC_database_{now}.csv", 
-            ['ID', 'Categoria', 'Titulo', 'Informacion', 'Redirigir', 'Frecuencia', 'Documentos', 'Imagenes', 'Evento:fecha de inicio', 'Evento:fecha de fin', 'Evento:lugar', 'Evento:className (CSS)', 'Fecha Modificacion'], 
+            ['ID', 'Categoria', 'Titulo', 'Informacion', 'Redirigir', 'Frecuencia', 'Documento', 'Imagen', 'Evento:fecha de inicio', 'Evento:fecha de fin', 'Evento:lugar', 'Evento:className (CSS)', 'Fecha Modificacion'], 
             rows
         )
     return JsonResponse({'success': False, 'message': 'Acción no permitida. 🧐😠🤥'}, status=400)

@@ -100,11 +100,15 @@ class Database(models.Model):
     frecuencia = models.IntegerField(default=0)
     documento = models.FileField(upload_to=set_pdfDB_path, blank=True, null=True)
     imagen = models.ImageField(upload_to=set_imgDB_path, blank=True, null=True)
+    muid = models.CharField(max_length=23)
     evento_fecha_inicio = models.DateTimeField(blank=True, null=True)
     evento_fecha_fin = models.DateTimeField(blank=True, null=True)
     evento_lugar = models.CharField(max_length=200, blank=True, null=True, default='Campus UTC')
     evento_className = models.CharField(max_length=100, blank=True, null=True, default='event_detail')
     fecha_modificacion = models.DateTimeField(auto_now=True)
+    
+    def __str__(self):
+        return self.titulo
 
 class Articulos(models.Model):
     encabezado = models.ImageField(upload_to=set_imgBlog_path, blank=True, null=True)
@@ -115,6 +119,7 @@ class Articulos(models.Model):
     actualizacion = models.DateField(auto_now=True, blank=True, null=True)
 
 class Mapa(models.Model):
+    muid = models.CharField(max_length=23)
     nombre = models.CharField(max_length=200)
     informacion = models.TextField()
     color = models.CharField(max_length=50)
@@ -123,9 +128,15 @@ class Mapa(models.Model):
     p2_polygons = models.CharField(max_length=100, blank=True, null=True)
     p3_polygons = models.CharField(max_length=100, blank=True, null=True)
     p4_polygons = models.CharField(max_length=100, blank=True, null=True)
+    
+    def __str__(self):
+        return self.nombre
 
 class Imagenes(models.Model):
     imagen = models.ImageField(upload_to=set_imgs_path, blank=True, null=True)
+    
+    def __str__(self):
+        return self.imagen.name
     
     def delete(self, *args, **kwargs):
         if self.imagen:

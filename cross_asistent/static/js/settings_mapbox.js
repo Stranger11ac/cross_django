@@ -1,4 +1,5 @@
 var mapToken = "pk.eyJ1Ijoic2FsdmFoZHotMTEiLCJhIjoiY2x3czBoYTJiMDI1OTJqb2VmZzVueG1ocCJ9.dDJweS7MAR5N2U3SF64_Xw";
+var mapElement = document.getElementById("map");
 const savedTheme = localStorage.getItem("data-mdb-theme");
 const savedLastLayerMap = localStorage.getItem("mapbox-last_layer");
 const inputsLayer = document.querySelectorAll("#offcanvasbody input[type='radio']");
@@ -8,8 +9,6 @@ const selectOrigin = formRoute.querySelector("#origen");
 const selectDestiny = formRoute.querySelector("#destino");
 const resetRoutBtn = formRoute.querySelector("[data-reset_form]");
 const delRoutBtn = formRoute.querySelector("[data-del_route]");
-var offcanvas = document.getElementById("infoLateral");
-var offcanvasElement = new bootstrap.Offcanvas(offcanvas);
 let colorlabels = "#000";
 var currentMarker;
 let currentRoute;
@@ -28,6 +27,11 @@ const map = new mapboxgl.Map({
         [-100.9117, 25.5735],
     ],
 });
+
+// Desactivar zoom con scroll para el programador ################################
+// if (mapElement.classList.contains("map_editing")) {
+//     map.scrollZoom.disable();
+// }
 
 // Crear nuevo menu de botones personalizados ########################################
 map.addControl(new mapboxgl.NavigationControl());
@@ -55,6 +59,12 @@ class CustomControl {
             `<div class="mapboxgl-ctrl-icon"><i class="fa-solid fa-map-location-dot"></i></div>`,
             "Google Maps",
             () => {
+                document.querySelectorAll(".offcanvas.show").forEach((openOffcanvasElement) => {
+                    const openOffcanvasInstance = bootstrap.Offcanvas.getInstance(openOffcanvasElement);
+                    if (openOffcanvasInstance) {
+                        openOffcanvasInstance.hide();
+                    }
+                });
                 var myModal = new mdb.Modal(document.getElementById("beforeSend"));
                 myModal.show();
             }
@@ -65,6 +75,12 @@ class CustomControl {
         });
 
         const layers = createButton("styles", '<i class="fa-solid fa-layer-group"></i>', "Cambiar Aspecto", () => {
+            document.querySelectorAll(".offcanvas.show").forEach((openOffcanvasElement) => {
+                const openOffcanvasInstance = bootstrap.Offcanvas.getInstance(openOffcanvasElement);
+                if (openOffcanvasInstance) {
+                    openOffcanvasInstance.hide();
+                }
+            });
             const offcanvasElement = new bootstrap.Offcanvas(document.querySelector("#offcanvasBottom"));
             offcanvasElement.show();
         });
@@ -77,9 +93,57 @@ class CustomControl {
 
         // Agregar botones al contenedor personalizado
         this._container.appendChild(linkmaps);
-        this._container.appendChild(btn3d);
+
+        if (mapElement.classList.contains("map_user")) {
+            this._container.appendChild(btn3d);
+        }
         this._container.appendChild(layers);
         this._container.appendChild(btnroute);
+
+        if (mapElement.classList.contains("map_editing")) {
+            const newBuild = createButton(
+                "newBuild",
+                `<i class="fa-solid fa-building-flag"></i>`,
+                "Crear Nuevo Edificio",
+                () => {
+                    document.querySelectorAll(".offcanvas.show").forEach((openOffcanvasElement) => {
+                        const openOffcanvasInstance = bootstrap.Offcanvas.getInstance(openOffcanvasElement);
+                        if (openOffcanvasInstance) {
+                            openOffcanvasInstance.hide();
+                        }
+                    });
+
+                    const offcanvasContent = document.getElementById("offcanvasContent");
+                    document.getElementById("imagen_actual").src = "/static/img/default_image.webp";
+                    offcanvasContent.querySelector("#isNewEdif").checked = true;
+
+                    const newUID = $("#muid").data("new-uid");
+                    $("#muid").removeClass("active").val(newUID);
+                    $("#nombreEdificio").removeClass("active").val("");
+                    $("#colorEdificio").removeClass("active").val("");
+                    $("#puertaCordsEdificio").removeClass("active").val("");
+
+                    $("#esquina1").removeClass("active").val("");
+                    $("#esquina2").removeClass("active").val("");
+                    $("#esquina3").removeClass("active").val("");
+                    $("#esquina4").removeClass("active").val("");
+
+                    tinymce.get("textTiny").setContent("");
+
+                    const offcanvasElement = document.querySelector("#infoLateral");
+                    const offcanvasInstance =
+                        bootstrap.Offcanvas.getInstance(offcanvasElement) || new bootstrap.Offcanvas(offcanvasElement);
+
+                    if (offcanvasElement.classList.contains("show")) {
+                        offcanvasInstance.hide();
+                    } else {
+                        offcanvasInstance.show();
+                    }
+                }
+            );
+
+            this._container.appendChild(newBuild);
+        }
 
         return this._container;
     }
@@ -141,6 +205,7 @@ fetch(url)
             features: data.map((item) => ({
                 type: "Feature",
                 properties: {
+                    muid: item.muid,
                     color: item.color,
                     imagen_url: item.imagen_url,
                     nombre: item.nombre,
@@ -440,23 +505,57 @@ fetch(url)
             addRouteLayer();
         });
 
-        map.on("click", function (e) {
-            const lngLat = e.lngLat;
-            createMarker(lngLat);
-        });
+        if (mapElement.classList.contains("map_user")) {
+            map.on("contextmenu", function (e) {
+                const lngLat = e.lngLat;
+                createMarker(lngLat);
+            });
+        }
 
-        // Abrir camvas: informacion del edificio
+        // Abrir offcanvas: Informacion del edificio
         map.on("click", "places-layer", (e) => {
+            document.querySelectorAll(".offcanvas.show").forEach((openOffcanvasElement) => {
+                const openOffcanvasInstance = bootstrap.Offcanvas.getInstance(openOffcanvasElement);
+                if (openOffcanvasInstance) {
+                    openOffcanvasInstance.hide();
+                }
+            });
+
             const feature = e.features[0];
-            const { nombre, informacion, imagen_url } = feature.properties;
-            document.getElementById("lateralTitle").innerText = nombre;
-            document.getElementById("imagen_actual").src = imagen_url;
+            const { nombre, informacion, imagen_url, color, door, muid } = feature.properties;
+            const { coordinates } = feature.geometry;
 
             const offcanvasContent = document.getElementById("offcanvasContent");
-            offcanvasContent.innerHTML = `<div class="feature-info"><p>${informacion}</p></div>`;
-            setTimeout(() => {
-                offcanvasElement.show();
-            }, 100);
+            document.getElementById("imagen_actual").src = imagen_url;
+
+            if (mapElement.classList.contains("map_user")) {
+                document.getElementById("lateralTitle").innerText = nombre;
+                offcanvasContent.innerHTML = `<div class="feature-info"><p>${informacion}</p></div>`;
+            }
+
+            if (mapElement.classList.contains("map_editing")) {
+                offcanvasContent.querySelector("#isNewEdif").checked = false;
+
+                $("#muid").addClass("active").val(muid);
+                $("#nombreEdificio").addClass("active").val(nombre);
+                $("#colorEdificio").addClass("active").val(color);
+
+                const numeros = door.slice(1, -1).split(",");
+                $("#puertaCordsEdificio").addClass("active").val(`${numeros[0]},${numeros[1]}`);
+
+                $("#esquina1").addClass("active").val(coordinates[0][0]);
+                $("#esquina2").addClass("active").val(coordinates[0][1]);
+                $("#esquina3").addClass("active").val(coordinates[0][2]);
+                $("#esquina4").addClass("active").val(coordinates[0][3]);
+
+                tinymce.get("textTiny").setContent(informacion);
+            }
+
+            const offcanvasElement = document.getElementById("infoLateral");
+            const offcanvasInstance =
+                bootstrap.Offcanvas.getInstance(offcanvasElement) || new bootstrap.Offcanvas(offcanvasElement);
+
+            offcanvasInstance.show();
         });
 
         // Cambiar estilo del Mapa ##########################################
@@ -575,3 +674,163 @@ $("#switchTheme").on("click", function () {
         updateLabelsAndInputs("dark-v11");
     }
 });
+
+if (mapElement.classList.contains("map_editing")) {
+    // Hacer visible los campos de las esquinas
+    // $("#btnPoligon").on("click", function () {
+    //     $(this).hide();
+    //     $("#esquinasPoligono").slideDown("slow");
+    // });
+
+    const drawPolygonButton = document.getElementById("btnPoligon");
+    const coordInputs = ["esquina1", "esquina2", "esquina3", "esquina4"];
+    const colors = ["red", "#3b71ca", "lime", "#d29c15"];
+    let markers = [];
+    let coords = [];
+    let polygonLayer = null;
+    let createNew = true;
+
+    drawPolygonButton.addEventListener("click", () => {
+        if (createNew) {
+            map.on("click", addMarker);
+            drawPolygonButton.classList.remove("btn_detail");
+            drawPolygonButton.classList.add("bg_purple-blue", "text-white");
+            drawPolygonButton.innerHTML = 'Comenzar de nuevo <i class="fa-solid fa-trash-can ms-1"></i>';
+            createNew = false;
+        } else {
+            resetPolygonDrawing();
+            map.on("click", addMarker);
+            createNew = true;
+        }
+
+        function addMarker(e) {
+            // Solo eliminar capas y fuentes si existen
+            if (map.getLayer("polygon_label")) {
+                map.removeLayer("polygon_label");
+            }
+            if (map.getLayer("polygon")) {
+                map.removeLayer("polygon");
+            }
+            if (map.getSource("polygon")) {
+                map.removeSource("polygon");
+            }
+
+            if (coords.length < 4) {
+                const color = colors[coords.length];
+                const marker = new mapboxgl.Marker({ color: color, draggable: true })
+                    .setLngLat(e.lngLat)
+                    .addTo(map)
+                    .on("dragend", updatePolygon);
+
+                markers.push(marker);
+                coords.push(e.lngLat);
+
+                document.getElementById(coordInputs[coords.length - 1]).classList.add("active");
+                document.getElementById(coordInputs[coords.length - 1]).value = `${e.lngLat.lng}, ${e.lngLat.lat}`;
+            }
+
+            if (coords.length === 4) {
+                map.off("click", addMarker);
+                drawPolygon();
+                drawPolygonButton.classList.add("btn_detail");
+                drawPolygonButton.classList.remove("bg_purple-blue", "text-white");
+                drawPolygonButton.innerHTML = 'Dibujar Polígono <i class="fa-solid fa-draw-polygon ms-1"></i>';
+            }
+        }
+    });
+
+    function resetPolygonDrawing() {
+        markers.forEach((marker) => marker.remove());
+        markers = [];
+        coords = [];
+
+        // Solo eliminar capas y fuentes si existen
+        if (map.getLayer("polygon_label")) {
+            map.removeLayer("polygon_label");
+        }
+        if (map.getLayer("polygon")) {
+            map.removeLayer("polygon");
+        }
+        if (map.getSource("polygon")) {
+            map.removeSource("polygon");
+        }
+
+        coordInputs.forEach((id) => {
+            document.getElementById(id).classList.remove("active");
+            document.getElementById(id).value = "";
+        });
+    }
+
+    function drawPolygon() {
+        const polygonText = document.getElementById("nombreEdificio").value || "Nuevo Lugar";
+        const polygonColor = document.getElementById("colorEdificio").value || "#808080";
+
+        const coordinates = [
+            coords[0].toArray(),
+            coords[1].toArray(),
+            coords[2].toArray(),
+            coords[3].toArray(),
+            coords[0].toArray(),
+        ];
+
+        // Solo eliminar capas y fuentes si existen
+        if (map.getLayer("polygon_label")) {
+            map.removeLayer("polygon_label");
+        }
+        if (map.getLayer("polygon")) {
+            map.removeLayer("polygon");
+        }
+        if (map.getSource("polygon")) {
+            map.removeSource("polygon");
+        }
+
+        const polygonId = "polygon";
+
+        map.addSource(polygonId, {
+            type: "geojson",
+            data: {
+                type: "Feature",
+                geometry: {
+                    type: "Polygon",
+                    coordinates: [coordinates],
+                },
+            },
+        });
+
+        map.addLayer({
+            id: polygonId,
+            type: "fill",
+            source: polygonId,
+            layout: {},
+            paint: {
+                "fill-color": polygonColor,
+                "fill-opacity": 0.5,
+            },
+        });
+
+        map.addLayer({
+            id: polygonId + "_label",
+            type: "symbol",
+            source: polygonId,
+            layout: {
+                "text-field": polygonText,
+                "text-size": 14,
+                "text-anchor": "center",
+            },
+            paint: {
+                "text-color": "#000000",
+            },
+        });
+
+        polygonLayer = { id: polygonId };
+    }
+
+    function updatePolygon() {
+        coords = markers.map((marker) => marker.getLngLat());
+        coordInputs.forEach((id, index) => {
+            document.getElementById(id).value = `${coords[index].lng}, ${coords[index].lat}`;
+        });
+
+        drawPolygon();
+    }
+}

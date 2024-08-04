@@ -8,7 +8,7 @@
     integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
 {% endblock %}
 {% block content %}
-<main class="full_page" id='map' data-mapa_edif="{% url 'mapa_edificios' %}">
+<main class="full_page map_user" id='map' data-mapa_edif="{% url 'mapa_edificios' %}">
     <!-- Controles de ruta -->
     <section class="controls_route card m-2" id="controls_route">
         <div class="card-header d-flex justify-content-between align-items-center p-3">
@@ -43,27 +43,25 @@
     </section>
 </main>
 
-<!-- Canvas: Informacion del Edificio -->
+<!-- OffCanvas: Informacion del Edificio -->
 <div class="offcanvas offcanvas-start" tabindex="-1" id="infoLateral" aria-labelledby="infoLateralLabel">
     <div class="offcanvas-header position-relative p-0">
         <button type="button" class="btn-close position-absolute top-0 end-0 p-4 m-1 m-md-2" data-bs-dismiss="offcanvas" aria-label="Close"></button>
         <div class="bg-image">
             <img src="{% static 'img/default_image.webp' %}" id="imagen_actual" class="img-fluid" />
             <div class="mask mask_white">
-                <div class="d-flex align-items-end h-100 px-4 px-md-3 px-xl-5">
+                <div class="d-flex align-items-end h-100 px-3">
                     <h5 class="fw-bold mb-0" id="lateralTitle"></h5>
                 </div>
             </div>
         </div>
     </div>
-    <div class="offcanvas-body">
-        <div id="offcanvasContent">
-            <!-- Aquí se insertará dinámicamente el contenido -->
-        </div>
+    <div class="offcanvas-body pt-4" id="offcanvasContent">
+        <!-- Aquí se insertará dinámicamente el contenido -->
     </div>
 </div>
 
-<!-- Canvas: Cambiar estilo -->
+<!-- OffCanvas: Cambiar estilo -->
 <div class="offcanvas offcanvas-bottom" tabindex="-1" id="offcanvasBottom" aria-labelledby="offcanvasBottomLabel">
     <div class="offcanvas-header">
         <h5 class="offcanvas-title" id="offcanvasBottomLabel">Cambiar Estilo <i class="fa-solid fa-layer-group ms-1"></i></h5>
@@ -141,7 +139,6 @@
         </div>
     </div>
 </div>
-
 {% endblock %}
 {% block scripts_end %}
 <script src="https://api.mapbox.com/mapbox-gl-js/v3.4.0/mapbox-gl.js"></script>

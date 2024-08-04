@@ -8,7 +8,6 @@ from django.db import models, transaction
 from django.http import JsonResponse
 from django.urls import reverse
 from . import functions, models
-from .forms import BannersForm
 import json
 
 databaseall = models.Database.objects.all()
@@ -109,7 +108,7 @@ def mostrar_blog(request, Articulos_id):
     articulo = get_object_or_404(models.Articulos, pk=Articulos_id)
     autor_username = articulo.autor
     if articulo.encabezado:
-        encabezado_url = articulo.encabezado.url.replace('/cross_asistent', '')
+        encabezado_url = articulo.encabezado.url.replace('cross_asistent', '')
     else:
         encabezado_url = ''
     
@@ -390,8 +389,7 @@ def delete_banner(request, banner_id):
 @never_cache
 def database_page(request):
     datos_modificados = []
-
-    for dato in databaseall:
+    for dato in databaseall.order_by('-id'):
         if dato.imagen:
             imagen_url = dato.imagen.url.replace("/cross_asistent", "")
         else:
@@ -479,7 +477,8 @@ def lista_imagenes(request):
 def update_mapa(request):
     categoria_mapa = models.Categorias.objects.get(categoria="Mapa")
     map_inDB = models.Database.objects.filter(categoria=categoria_mapa)
-    return render(request, 'admin/mapa.html', {'map_inDB': map_inDB, 'active_page': 'mapa','pages': functions.pages})
+    UID = f'mapa-pleace_{models.generate_random_string(11)}'
+    return render(request, 'admin/mapa.html', {'map_inDB': map_inDB, 'active_page': 'mapa', 'UID':UID,'pages': functions.pages})
 
 @login_required
 @never_cache
@@ -498,25 +497,25 @@ def obtenerEdificio(request):
 
 @login_required
 @never_cache
-def regEdificioMapa(request):
+def update_create_pleace_map(request):
     if request.method != 'POST':
         return JsonResponse({'error': 'Metodo no valido'}, status=400)
 
     isNewPost = request.POST.get('isNew')
-    nombrePost = request.POST.get('titulo')
-    colorPost = request.POST.get('color')
-    p1Post = request.POST.get('p1_polygons')
-    p2Post = request.POST.get('p2_polygons')
-    p3Post = request.POST.get('p3_polygons')
-    p4Post = request.POST.get('p4_polygons')
+    muidPost = request.POST.get('isNew')
+    nombrePost = request.POST.get('nombreEdificio')
+    colorPost = request.POST.get('colorEdificio')
+    p1Post = request.POST.get('esquina1')
+    p2Post = request.POST.get('esquina2')
+    p3Post = request.POST.get('esquina3')
+    p4Post = request.POST.get('esquina4')
     informacionText = request.POST.get('textTiny')
     informacionPost = request.POST.get('contenidoWord')
-    door_cordsPost = request.POST.get('door_cords')
-    imagenPost = request.FILES.get('imagenes')
+    door_cordsPost = request.POST.get('puertaCordsEdificio')
+    imagenPost = request.FILES.get('fotoEdificio')
 
     with transaction.atomic():
         if isNewPost is None:
-            # Update existing Mapa
             if models.Mapa.objects.filter(nombre=nombrePost).exists():
                 edificio = get_object_or_404(models.Mapa, nombre=nombrePost)
                 edificio.color = colorPost
@@ -526,46 +525,40 @@ def regEdificioMapa(request):
                 edificio.p4_polygons = p4Post
                 edificio.door_cords = door_cordsPost
                 edificio.informacion = informacionPost
+                edificio.muid=muidPost,
                 edificio.save()
-                success_message = f'Se Actualizo el "{nombrePost}", los cambios se reflejaran en el mapa 🧐😊🎈'
-            else:
-                models.Mapa.objects.create(
-                    nombre=nombrePost,
-                    color=colorPost,
-                    p1_polygons=p1Post,
-                    p2_polygons=p2Post,
-                    p3_polygons=p3Post,
-                    p4_polygons=p4Post,
-                    door_cords=door_cordsPost,
-                    informacion=informacionPost,
-                )
-                success_message = f'El "{nombrePost}" se creo exitosamente en el Mapa 🎉🎈🥳'
+                success_message = f'Se Actualizaron los datos de <span>"{nombrePost}"</span> en el mapa de forma exitosa 🧐😁🎈'
 
             if imagenPost:
-                mapIndb = get_object_or_404(models.Database, nombre=nombrePost)
-                mapIndb.imagenes = imagenPost
-                mapIndb.save()
+                map_database = get_object_or_404(models.Database, titulo=nombrePost)
+                map_database.imagen = imagenPost
+                map_database.save()
+                success_message += '<br>Se actualizo su imagen en la Base de datos 😁🎉🎈'
             return JsonResponse({'success': True, 'message': success_message}, status=200)
+        else:
+            models.Mapa.objects.create(
+                nombre=nombrePost,
+                color=colorPost,
+                p1_polygons=p1Post,
+                p2_polygons=p2Post,
+                p3_polygons=p3Post,
+                p4_polygons=p4Post,
+                door_cords=door_cordsPost,
+                informacion=informacionPost,
+                muid=muidPost,
+            )
+            
+            # Se deberia solamente editar en base de datos y se registra desde el mapa
+            # En datadabes hay informacion del edificio que quizas no se muestra en el mapa, y es porque esa informacion es mas que nada para el chatbot, al guardar la informacion de nuevo se esta reemplazando lo cual esta mal, porque si se modifica en database, en mapa no porque el mapa puede tener un formato html en el contenido
+            # Cuando el lugar en el mapa es nuevo, entonces tambien se registra en la base de datos, pero se deberia verificar si es que este lugar no se ha registrado antes en la base de datos
+            models.Database.objects.create(
+                categoria=models.Categorias.objects.get(categoria="Mapa"),
+                titulo=nombrePost,
+                informacion=informacionText,
+                imagen=imagenPost,
+                muid=muidPost,
+                evento_lugar='',
+                evento_className='',
+            )
 
-        # Create new Mapa and Database
-        models.Mapa.objects.create(
-            nombre=nombrePost,
-            color=colorPost,
-            p1_polygons=p1Post,
-            p2_polygons=p2Post,
-            p3_polygons=p3Post,
-            p4_polygons=p4Post,
-            door_cords=door_cordsPost,
-            informacion=informacionPost,
-        )
-        
-        models.Database.objects.create(
-            categoria=models.Categorias.objects.get(categoria="Mapa"),
-            nombre=nombrePost,
-            informacion=informacionText,
-            imagenes=imagenPost,
-            evento_lugar='',
-            evento_className='',
-        )
-
-        return JsonResponse({'success': True, 'message': 'Se creo un nuevo edificio en el mapa y en la base de datos de forma exitosa 🎉🎉🎉'}, status=200)
+            return JsonResponse({'success': True, 'message': 'Se creo un nuevo edificio en el mapa y en la base de datos de forma exitosa 🎉🎉🎉'}, status=200)
