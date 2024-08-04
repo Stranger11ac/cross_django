@@ -106,6 +106,7 @@ class CustomControl {
                 `<i class="fa-solid fa-building-flag"></i>`,
                 "Crear Nuevo Edificio",
                 () => {
+                    resetPolygonDrawing();
                     document.querySelectorAll(".offcanvas.show").forEach((openOffcanvasElement) => {
                         const openOffcanvasInstance = bootstrap.Offcanvas.getInstance(openOffcanvasElement);
                         if (openOffcanvasInstance) {
@@ -690,75 +691,98 @@ if (mapElement.classList.contains("map_editing")) {
     let polygonLayer = null;
     let createNew = true;
 
+    console.log('markers:');
+    console.log(markers);
+    console.log('coords: '+coords);
+    console.log('polygonLayer: '+polygonLayer);
+    console.log('createNew: '+createNew);
+
     drawPolygonButton.addEventListener("click", () => {
         if (createNew) {
             map.on("click", addMarker);
+            resetPolygonDrawing();
             drawPolygonButton.classList.remove("btn_detail");
             drawPolygonButton.classList.add("bg_purple-blue", "text-white");
             drawPolygonButton.innerHTML = 'Comenzar de nuevo <i class="fa-solid fa-trash-can ms-1"></i>';
             createNew = false;
+
+            console.log("");
+            console.log("Click en el boton");
+            console.log('markers:');
+            console.log(markers);
+            console.log('coords: '+coords);
+            console.log('polygonLayer: '+polygonLayer);
+            console.log('createNew: '+createNew);
         } else {
             resetPolygonDrawing();
             map.on("click", addMarker);
-            createNew = true;
-        }
-
-        function addMarker(e) {
-            // Solo eliminar capas y fuentes si existen
-            if (map.getLayer("polygon_label")) {
-                map.removeLayer("polygon_label");
-            }
-            if (map.getLayer("polygon")) {
-                map.removeLayer("polygon");
-            }
-            if (map.getSource("polygon")) {
-                map.removeSource("polygon");
-            }
-
-            if (coords.length < 4) {
-                const color = colors[coords.length];
-                const marker = new mapboxgl.Marker({ color: color, draggable: true })
-                    .setLngLat(e.lngLat)
-                    .addTo(map)
-                    .on("dragend", updatePolygon);
-
-                markers.push(marker);
-                coords.push(e.lngLat);
-
-                document.getElementById(coordInputs[coords.length - 1]).classList.add("active");
-                document.getElementById(coordInputs[coords.length - 1]).value = `${e.lngLat.lng}, ${e.lngLat.lat}`;
-            }
-
-            if (coords.length === 4) {
-                map.off("click", addMarker);
-                drawPolygon();
-                drawPolygonButton.classList.add("btn_detail");
-                drawPolygonButton.classList.remove("bg_purple-blue", "text-white");
-                drawPolygonButton.innerHTML = 'Dibujar Polígono <i class="fa-solid fa-draw-polygon ms-1"></i>';
-            }
+            
+            console.log("");
+            console.log("Segundo click en el boton");
+            console.log('markers:');
+            console.log(markers);
+            console.log('coords: '+coords);
+            console.log('polygonLayer: '+polygonLayer);
+            console.log('createNew: '+createNew);
         }
     });
+
+    function addMarker(e) {
+        if (coords.length < 4) {
+            const color = colors[coords.length];
+            const marker = new mapboxgl.Marker({ color: color, draggable: true })
+                .setLngLat(e.lngLat)
+                .addTo(map)
+                .on("dragend", updatePolygon);
+
+            markers.push(marker);
+            coords.push(e.lngLat);
+
+            document.getElementById(coordInputs[coords.length - 1]).classList.add("active");
+            document.getElementById(coordInputs[coords.length - 1]).value = `${e.lngLat.lng}, ${e.lngLat.lat}`;
+        }
+
+        if (coords.length === 4) {
+            map.off("click", addMarker);
+            drawPolygon();
+            drawPolygonButton.classList.add("btn_detail");
+            drawPolygonButton.classList.remove("bg_purple-blue", "text-white");
+            drawPolygonButton.innerHTML = 'Dibujar de Nuevo <i class="fa-solid fa-rotate-left ms-1"></i>';
+            createNew = true;
+        }
+        
+        console.log("");
+        console.log("nuevo marcador");
+        console.log('markers:');
+        console.log(markers);
+        console.log('coords: '+coords);
+        console.log('polygonLayer: '+polygonLayer);
+        console.log('createNew: '+createNew);
+    }
 
     function resetPolygonDrawing() {
         markers.forEach((marker) => marker.remove());
         markers = [];
         coords = [];
 
-        // Solo eliminar capas y fuentes si existen
-        if (map.getLayer("polygon_label")) {
-            map.removeLayer("polygon_label");
-        }
-        if (map.getLayer("polygon")) {
-            map.removeLayer("polygon");
-        }
-        if (map.getSource("polygon")) {
-            map.removeSource("polygon");
+        if (polygonLayer) {
+            if (map.getLayer(polygonLayer.id + "_label")) {
+                map.removeLayer(polygonLayer.id + "_label");
+            }
+            if (map.getLayer(polygonLayer.id)) {
+                map.removeLayer(polygonLayer.id);
+            }
+            if (map.getSource(polygonLayer.id)) {
+                map.removeSource(polygonLayer.id);
+            }
         }
 
         coordInputs.forEach((id) => {
             document.getElementById(id).classList.remove("active");
             document.getElementById(id).value = "";
         });
+
+        // createNew = true;
     }
 
     function drawPolygon() {
@@ -773,7 +797,6 @@ if (mapElement.classList.contains("map_editing")) {
             coords[0].toArray(),
         ];
 
-        // Solo eliminar capas y fuentes si existen
         if (map.getLayer("polygon_label")) {
             map.removeLayer("polygon_label");
         }
@@ -818,7 +841,7 @@ if (mapElement.classList.contains("map_editing")) {
                 "text-anchor": "center",
             },
             paint: {
-                "text-color": "#000000",
+                "text-color": colorlabels,
             },
         });
 
