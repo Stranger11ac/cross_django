@@ -494,6 +494,10 @@ main.main_anchor {
     background: linear-gradient(45deg, #3b71ca 10%, #02913c 90%);
 }
 
+.bg_red-blue {
+    background: linear-gradient(45deg, #b4330f 10%, #3b71ca 90%);
+}
+
 .bg_blue-red {
     background: linear-gradient(45deg, #3b71ca 10%, #b4330f 90%);
 }

@@ -106,7 +106,7 @@ class CustomControl {
                 `<i class="fa-solid fa-building-flag"></i>`,
                 "Crear Nuevo Edificio",
                 () => {
-                    resetPolygonDrawing();
+                    initPolygonDrawing();
                     document.querySelectorAll(".offcanvas.show").forEach((openOffcanvasElement) => {
                         const openOffcanvasInstance = bootstrap.Offcanvas.getInstance(openOffcanvasElement);
                         if (openOffcanvasInstance) {
@@ -689,42 +689,12 @@ if (mapElement.classList.contains("map_editing")) {
     let markers = [];
     let coords = [];
     let polygonLayer = null;
-    let createNew = true;
-
-    console.log('markers:');
-    console.log(markers);
-    console.log('coords: '+coords);
-    console.log('polygonLayer: '+polygonLayer);
-    console.log('createNew: '+createNew);
+    let createNew = false;
 
     drawPolygonButton.addEventListener("click", () => {
-        if (createNew) {
-            map.on("click", addMarker);
-            resetPolygonDrawing();
-            drawPolygonButton.classList.remove("btn_detail");
-            drawPolygonButton.classList.add("bg_purple-blue", "text-white");
-            drawPolygonButton.innerHTML = 'Comenzar de nuevo <i class="fa-solid fa-trash-can ms-1"></i>';
-            createNew = false;
-
-            console.log("");
-            console.log("Click en el boton");
-            console.log('markers:');
-            console.log(markers);
-            console.log('coords: '+coords);
-            console.log('polygonLayer: '+polygonLayer);
-            console.log('createNew: '+createNew);
-        } else {
-            resetPolygonDrawing();
-            map.on("click", addMarker);
-            
-            console.log("");
-            console.log("Segundo click en el boton");
-            console.log('markers:');
-            console.log(markers);
-            console.log('coords: '+coords);
-            console.log('polygonLayer: '+polygonLayer);
-            console.log('createNew: '+createNew);
-        }
+        createNew = true;
+        initPolygonDrawing();
+        map.on("click", addMarker);
     });
 
     function addMarker(e) {
@@ -745,25 +715,23 @@ if (mapElement.classList.contains("map_editing")) {
         if (coords.length === 4) {
             map.off("click", addMarker);
             drawPolygon();
-            drawPolygonButton.classList.add("btn_detail");
-            drawPolygonButton.classList.remove("bg_purple-blue", "text-white");
-            drawPolygonButton.innerHTML = 'Dibujar de Nuevo <i class="fa-solid fa-rotate-left ms-1"></i>';
+            drawPolygonButton.classList.add("bg_red-blue");
+            drawPolygonButton.classList.remove("bg_purple-blue");
+            drawPolygonButton.innerHTML = 'Borrar Poligono <i class="fa-solid fa-trash-can ms-1"></i>';
             createNew = true;
         }
-        
-        console.log("");
-        console.log("nuevo marcador");
-        console.log('markers:');
-        console.log(markers);
-        console.log('coords: '+coords);
-        console.log('polygonLayer: '+polygonLayer);
-        console.log('createNew: '+createNew);
     }
 
-    function resetPolygonDrawing() {
+    function initPolygonDrawing() {
         markers.forEach((marker) => marker.remove());
         markers = [];
         coords = [];
+        if (createNew) {
+            drawPolygonButton.classList.remove("btn_detail", "bg_red-blue");
+            drawPolygonButton.classList.add("bg_purple-blue", "text-white");
+            drawPolygonButton.innerHTML = 'Borrar marcadores <i class="fa-solid fa-trash-can ms-1"></i>';
+            createNew = false;
+        }
 
         if (polygonLayer) {
             if (map.getLayer(polygonLayer.id + "_label")) {
