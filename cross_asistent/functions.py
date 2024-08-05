@@ -395,6 +395,28 @@ def mapa_data(request):
 
     return JsonResponse(data, safe=False)
 
+@login_required
+@never_cache
+def delete_pleaceMap(request):
+    if request.method == 'POST':
+        sendUid = request.POST.get('muid')
+        pleace = get_object_or_404(models.Mapa, muid=sendUid)
+        pleace.delete()
+        return JsonResponse({'success': True, 'functions': 'reload', 'message': f'Se elimino <u>"{pleace.nombre}"</u> del Mapa exitosamente. 😯😬🎉', 'icon': 'warning'}, status=200)
+    return JsonResponse({'success': False, 'message': 'Acción no permitida.'}, status=403)
+
+@login_required
+@never_cache
+def delete_pleaceMap_DB(request):
+    if request.method == 'POST':
+        sendUid = request.POST.get('muid')
+        pleace = get_object_or_404(models.Mapa, muid=sendUid)
+        pleace.delete()
+        pleaceDB = get_object_or_404(models.Database, muid=sendUid)
+        pleaceDB.delete()
+        return JsonResponse({'success': True, 'functions': 'reload', 'message': f'Se elimino <u>"{pleace.nombre}"</u> del Mapa y de la Base de Datos exitosamente. ⚠️😯😬🎉', 'icon': 'warning'}, status=200)
+    return JsonResponse({'success': False, 'message': 'Acción no permitida.'}, status=403)
+
 # Preguntas ----------------------------------------------------------
 @login_required
 @never_cache

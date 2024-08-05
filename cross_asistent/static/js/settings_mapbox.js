@@ -16,7 +16,6 @@ let currentRoute;
 var currentMarker;
 var doorMarker;
 
-
 const offcanvasElement = document.querySelector("#infoLateral");
 const offcanvasInstance =
     bootstrap.Offcanvas.getInstance(offcanvasElement) || new bootstrap.Offcanvas(offcanvasElement);
@@ -51,6 +50,145 @@ $("#switchTheme").on("click", function () {
 
 if (mapElement.classList.contains("map_editing")) {
     formChanges = true;
+
+    // Traducir nombre a color
+    var colorMap = {
+        black: "#000000",
+        negro: "#000000",
+        white: "#FFFFFF",
+        blanco: "#FFFFFF",
+        red: "#FF0000",
+        rojo: "#FF0000",
+        green: "#008000",
+        verde: "#008000",
+        blue: "#0000FF",
+        azul: "#0000FF",
+        yellow: "#FFFF00",
+        amarillo: "#FFFF00",
+        cyan: "#00FFFF",
+        cian: "#00FFFF",
+        magenta: "#FF00FF",
+        magenta: "#FF00FF",
+        gray: "#808080",
+        gris: "#808080",
+        darkgray: "#A9A9A9",
+        "gris oscuro": "#A9A9A9",
+        lightgray: "#D3D3D3",
+        "gris claro": "#D3D3D3",
+        dimgray: "#696969",
+        "gris tenue": "#696969",
+        slategray: "#708090",
+        "gris pizarra": "#708090",
+        cornflowerblue: "#6495ED",
+        "azul aciano": "#6495ED",
+        darkred: "#8B0000",
+        "rojo oscuro": "#8B0000",
+        lightgreen: "#90EE90",
+        "verde claro": "#90EE90",
+        darkblue: "#00008B",
+        "azul oscuro": "#00008B",
+        gold: "#FFD700",
+        oro: "#FFD700",
+        silver: "#C0C0C0",
+        plata: "#C0C0C0",
+        pink: "#FFC0CB",
+        rosa: "#FFC0CB",
+        orange: "#FFA500",
+        naranja: "#FFA500",
+        purple: "#800080",
+        morado: "#800080",
+        brown: "#A52A2A",
+        marrón: "#A52A2A",
+        violet: "#EE82EE",
+        violeta: "#EE82EE",
+        turquoise: "#40E0D0",
+        turquesa: "#40E0D0",
+        indigo: "#4B0082",
+        índigo: "#4B0082",
+        khaki: "#F0E68C",
+        caqui: "#F0E68C",
+        maroon: "#800000",
+        granate: "#800000",
+        olive: "#808000",
+        oliva: "#808000",
+        navy: "#000080",
+        "azul marino": "#000080",
+        teal: "#008080",
+        "verde azulado": "#008080",
+        salmon: "#FA8072",
+        salmón: "#FA8072",
+        goldenrod: "#DAA520",
+        "vara de oro": "#DAA520",
+        chocolate: "#D2691E",
+        chocolate: "#D2691E",
+        coral: "#FF7F50",
+        coral: "#FF7F50",
+        aquamarine: "#7FFFD4",
+        aguamarina: "#7FFFD4",
+        fuchsia: "#FF00FF",
+        fucsia: "#FF00FF",
+        lavender: "#E6E6FA",
+        lavanda: "#E6E6FA",
+        beige: "#F5F5DC",
+        beis: "#F5F5DC",
+        azure: "#F0FFFF",
+        "cian claro": "#F0FFFF",
+        ivory: "#FFFFF0",
+        marfil: "#FFFFF0",
+        linen: "#FAF0E6",
+        lino: "#FAF0E6",
+        plum: "#DDA0DD",
+        ciruela: "#DDA0DD",
+        orchid: "#DA70D6",
+        orquídea: "#DA70D6",
+        mintcream: "#F5FFFA",
+        "crema de menta": "#F5FFFA",
+        seashell: "#FFF5EE",
+        concha: "#FFF5EE",
+        honeydew: "#F0FFF0",
+        "rocío de miel": "#F0FFF0",
+        snow: "#FFFAFA",
+        nieve: "#FFFAFA",
+        blanchedalmond: "#FFEBCD",
+        "almendra blanqueada": "#FFEBCD",
+        antiquewhite: "#FAEBD7",
+        "blanco antiguo": "#FAEBD7",
+        skyblue: "#87CEEB",
+        "cielo azul": "#87CEEB",
+        peachpuff: "#FFDAB9",
+        durazno: "#FFDAB9",
+        navajowhite: "#FFDEAD",
+        "blanco navajo": "#FFDEAD",
+        wheat: "#F5DEB3",
+        trigo: "#F5DEB3",
+        peru: "#CD853F",
+        perú: "#CD853F",
+        tomato: "#FF6347",
+        tomate: "#FF6347",
+        lightblue: "#ADD8E6",
+        "azul claro": "#ADD8E6",
+        lime: "#00FF00",
+        lima: "#00FF00",
+    };
+    const colorsList = $("#colorsList");
+    for (let colorName in colorMap) {
+        colorsList.append(`<option value="${colorName}">`);
+    }
+    function getHexColor(colorName) {
+        return colorMap[colorName.toLowerCase()] || colorName;
+    }
+    function setColorInput() {
+        const colorName = $("[data-colorName]").val();
+        const hexColor = getHexColor(colorName);
+        $("#colorHex").val(hexColor);
+        $("[data-colorPicker]").val(hexColor);
+    }
+    $("[data-colorName]").on("input", setColorInput);
+    $("[data-colorPicker]").on("input", function () {
+        const colorPicker = $("[data-colorPicker]").val();
+        $("[data-colorName]").addClass("active").val(colorPicker);
+        $("#colorHex").val(colorPicker);
+    });
     // Hacer visible los campos de las esquinas
     $("#btnPoligon").on("click", function () {
         $("#esquinasPoligono").slideDown("slow");
@@ -70,7 +208,7 @@ if (mapElement.classList.contains("map_editing")) {
         createNew = true;
         formChanges = false;
         initPolygonDrawing();
-        map.on("click", addMarker);
+        map.on("contextmenu", addMarker);
         $("#btnPoligonCancel").slideDown();
         if (window.innerWidth <= 800) {
             setTimeout(() => {
@@ -82,9 +220,8 @@ if (mapElement.classList.contains("map_editing")) {
     });
     drawPolygonCancel.addEventListener("click", () => {
         createNew = "";
-        formChanges = false;
         initPolygonDrawing();
-        map.off("click", addMarker);
+        map.off("contextmenu", addMarker);
         $("#btnPoligonCancel").slideUp();
         $("#esquinasPoligono").slideUp("fast");
     });
@@ -95,24 +232,21 @@ if (mapElement.classList.contains("map_editing")) {
                 .setLngLat(e.lngLat)
                 .addTo(map)
                 .on("dragend", updatePolygon);
-
             markers.push(marker);
             coords.push(e.lngLat);
 
             document.getElementById(coordInputs[coords.length - 1]).classList.add("active");
             document.getElementById(coordInputs[coords.length - 1]).value = `${e.lngLat.lng}, ${e.lngLat.lat}`;
-            // document
-            //     .getElementById(coordInputs[coords.length - 1])
-            //     .setAttribute("data-polygon", `${e.lngLat.lng}, ${e.lngLat.lat}`);
         }
 
         if (coords.length === 4) {
-            map.off("click", addMarker);
+            map.off("contextmenu", addMarker);
             drawPolygon();
             drawPolygonButton.classList.add("bg_red-blue");
             drawPolygonButton.classList.remove("bg_purple-blue");
             drawPolygonButton.innerHTML = 'Dibujar de nuevo <i class="fa-solid fa-trash-can ms-1"></i>';
             createNew = true;
+            $("#btnPoligonCancel").slideUp();
         }
     }
     function initPolygonDrawing() {
@@ -123,11 +257,7 @@ if (mapElement.classList.contains("map_editing")) {
             drawPolygonButton.classList.remove("btn_detail", "bg_red-blue");
             drawPolygonButton.classList.add("bg_purple-blue");
             drawPolygonButton.innerHTML = 'Borrar marcadores <i class="fa-solid fa-trash-can ms-1"></i>';
-            // createNew = false;
-            // coordInputs.forEach((id) => {
-            //     document.getElementById(id).classList.remove("active");
-            //     document.getElementById(id).value = "";
-            // });
+
         } else if (createNew === "") {
             drawPolygonButton.classList.remove("bg_purple-blue", "bg_red-blue");
             drawPolygonButton.classList.add("btn_detail");
@@ -232,7 +362,7 @@ if (mapElement.classList.contains("map_editing")) {
         if (addDoorMarker) {
             btnDoor.classList.add("bg_purple-blue");
             btnDoor.classList.remove("btn_detail");
-            map.on("click", addMarkerDoor);
+            map.on("contextmenu", addMarkerDoor);
         }
         addDoorMarker = false;
         if (window.innerWidth <= 800) {
@@ -256,8 +386,9 @@ if (mapElement.classList.contains("map_editing")) {
         puertaCordsEdificio.value = `${e.lngLat.lng}, ${e.lngLat.lat}`;
         btnDoor.classList.remove("bg_purple-blue");
         btnDoor.classList.add("btn_detail");
+        addDoorMarker = true;
 
-        map.off("click", addMarkerDoor);
+        map.off("contextmenu", addMarkerDoor);
     }
     function updateDoorCords(e) {
         const lngLat = doorMarker.getLngLat();
@@ -269,7 +400,11 @@ if (mapElement.classList.contains("map_editing")) {
 offcanvasElement.addEventListener("hidden.bs.offcanvas", function () {
     offcanvasOpen = false;
 });
-
+// Cuando se cierra el model de eliminar
+$("#deletePleace").on("hidden.bs.modal", function (e) {
+    $("#btnDeletedPleace").hide();
+    $("[data-namePleace]").text("");
+});
 // Crear nuevo menu de botones personalizados ########################################
 map.addControl(new mapboxgl.NavigationControl());
 class CustomControl {
@@ -290,7 +425,6 @@ class CustomControl {
             button.onclick = onClick;
             return button;
         };
-
         const linkmaps = createButton(
             "gmaps",
             `<div class="mapboxgl-ctrl-icon"><i class="fa-solid fa-map-location-dot"></i></div>`,
@@ -306,11 +440,9 @@ class CustomControl {
                 myModal.show();
             }
         );
-
         const btn3d = createButton("virtual", '<i class="fa-solid fa-cube"></i>', "Recorrido Virtual", () => {
             console.log("Alerta 1 activada");
         });
-
         const layers = createButton("styles", '<i class="fa-solid fa-layer-group"></i>', "Cambiar Aspecto", () => {
             document.querySelectorAll(".offcanvas.show").forEach((openOffcanvasElement) => {
                 const openOffcanvasInstance = bootstrap.Offcanvas.getInstance(openOffcanvasElement);
@@ -321,7 +453,6 @@ class CustomControl {
             const offcanvasElement = new bootstrap.Offcanvas(document.querySelector("#offcanvasBottom"));
             offcanvasElement.show();
         });
-
         const btnroute = createButton(
             "route",
             '<div class="mapboxgl-ctrl-icon" data-btn_closed="controls_route"><i class="fa-solid fa-route"></i></div>',
@@ -342,6 +473,8 @@ class CustomControl {
                 `<i class="fa-solid fa-building-flag"></i>`,
                 "Crear Nuevo Edificio",
                 () => {
+                    $("#btnDeletedPleace").hide();
+                    $("[data-namePleace]").text("");
                     const offcanvasContent = document.getElementById("offcanvasContent");
                     if (formChanges) {
                         document.getElementById("imagen_actual").src = "/static/img/default_image.webp";
@@ -360,6 +493,7 @@ class CustomControl {
                         $("#esquina3").removeClass("active").val("");
                         $("#esquina4").removeClass("active").val("");
 
+                        $('[for="fotoEdificio"]').html('Subir foto <i class="fa-regular fa-image ms-1"></i>')
                         $("#fotoEdificio").attr("required", true);
                         tinymce.get("textTiny").setContent("");
                     }
@@ -373,7 +507,6 @@ class CustomControl {
                     }
                 }
             );
-
             const OSMgo = createButton(
                 "OSMgo",
                 `<i class="fa-solid fa-book-atlas"></i>`,
@@ -745,7 +878,7 @@ fetch(url)
         });
 
         if (mapElement.classList.contains("map_user")) {
-            map.on("contextmenu", function (e) {
+            map.on("click", function (e) {
                 const lngLat = e.lngLat;
                 createMarker(lngLat);
             });
@@ -753,12 +886,13 @@ fetch(url)
 
         // Abrir offcanvas: Informacion del edificio
         map.on("click", "places-layer", (e) => {
-            document.querySelectorAll(".offcanvas.show").forEach((openOffcanvasElement) => {
-                const openOffcanvasInstance = bootstrap.Offcanvas.getInstance(openOffcanvasElement);
-                if (openOffcanvasInstance) {
-                    openOffcanvasInstance.hide();
-                }
-            });
+            // Funcion para cerrar todo los offcanvas
+            // document.querySelectorAll(".offcanvas.show").forEach((openOffcanvasElement) => {
+            //     const openOffcanvasInstance = bootstrap.Offcanvas.getInstance(openOffcanvasElement);
+            //     if (openOffcanvasInstance) {
+            //         openOffcanvasInstance.hide();
+            //     }
+            // });
 
             const feature = e.features[0];
             const { nombre, informacion, imagen_url, color, door, muid } = feature.properties;
@@ -773,9 +907,12 @@ fetch(url)
             }
 
             if (mapElement.classList.contains("map_editing")) {
+                $("#btnDeletedPleace").show();
+                $("[data-namePleace]").text(nombre);
+
                 offcanvasContent.querySelector("#isNewEdif").checked = false;
 
-                $("#muid").addClass("active").val(muid);
+                $("[data-muid]").addClass("active").val(muid);
                 $("#nombreEdificio").addClass("active").val(nombre);
                 $("#namecolor").addClass("active").val(color);
 
@@ -787,8 +924,10 @@ fetch(url)
                 $("#esquina3").addClass("active").val(coordinates[0][2]);
                 $("#esquina4").addClass("active").val(coordinates[0][3]);
 
+                $('[for="fotoEdificio"]').html('Cambiar foto <i class="fa-regular fa-image ms-1"></i>')
                 $("#fotoEdificio").attr("required", false);
                 tinymce.get("textTiny").setContent(informacion);
+                setColorInput();
             }
 
             offcanvasInstance.show();

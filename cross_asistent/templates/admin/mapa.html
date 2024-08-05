@@ -49,9 +49,9 @@
 
 <!-- OffCanvas: Editar/Crear informacion -->
 <form class="offcanvas offcanvas-start" data-bs-scroll="true" data-bs-backdrop="false" tabindex="-1" id="infoLateral" aria-labelledby="infoLateralLabel"
-    method="post" action="{% url 'regEdificio' %}" data-submit-form autocomplete="off">
+    method="post" action="{% url 'upload_map' %}" data-submit-form autocomplete="off">
     <div class="offcanvas-header position-relative p-0">
-        <button type="button" class="btn-close position-absolute top-0 end-0 p-4 m-1 m-md-2" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        <button type="button" class="btn-close p-3 m-1 m-md-2 me-3" data-bs-dismiss="offcanvas" aria-label="Close"></button>
         <!-- <section class="header-image">
             <img src="{% static 'img/default_image.webp' %}" id="imagen_actual" data-img_dom />
             <div class="mask mask_white">
@@ -79,13 +79,13 @@
         <div class="p-3 mt-3">
             {% csrf_token %}
             <input type="checkbox" name="isNew" id="isNewEdif" class="d-none">
-            <input type="text" name="muid" id="muid" class="d-none" data-new-uid="{{UID}}" required>
+            <input type="text" name="muid" id="muid" class="d-none" data-muid data-new-uid="{{UID}}" required>
             <!-- Color del poligono -->
             <section class="row">
                 <div class="col-10">
                     <div class="form-outline" data-mdb-input-init>
-                        <input type="text" class="form-control" id="namecolor" name="namecolor" autocapitalize="off" data-colorName list="colorsList"/>
-                        <label class="form-label" for="namecolor">Nombre del Color:</label>
+                        <input type="text" class="form-control" id="namecolor" name="namecolor" autocapitalize="off" data-colorName list="colorsList" />
+                        <label class="form-label" for="namecolor">Color:</label>
                     </div>
                     <datalist id="colorsList"></datalist>
                 </div>
@@ -148,17 +148,17 @@
             <!-- Foto del Lugar -->
             <div class="mt-4">
                 <input type="file" class="none" id="fotoEdificio" name="fotoEdificio" accept="image/*" data-img_dom-change />
-                <label class="btn bg_blue-green btn-block" for="fotoEdificio" data-mdb-ripple-init data-mdb-ripple-color="white">Cambiar foto <i
-                        class="fa-regular fa-image ms-1"></i></label>
+                <label class="btn bg_blue-green btn-block text-white" for="fotoEdificio" data-mdb-ripple-init data-mdb-ripple-color="white">
+                    Cambiar foto <i class="fa-regular fa-image ms-1"></i></label>
             </div>
             <div id="submitEdificio" class="offcanvas-footer mt-4 row">
-                <div class="col-2">
-                    <button title="Cerrar" type="button" class="btn btn-danger btn-block px-1" data-mdb-ripple-init data-mdb-ripple-color="white"
-                        data-bs-dismiss="offcanvas">
-                        <i class="fa-solid fa-xmark fs-10"></i>
+                <div class="col-2 none" id="btnDeletedPleace">
+                    <button title="Borrar" type="button" class="btn btn-danger btn-block px-1" data-mdb-ripple-init data-mdb-ripple-color="white"
+                        data-bs-dismiss="offcanvas" data-mdb-ripple-init data-mdb-modal-init data-mdb-target="#deletePleace">
+                        <i class="fa-regular fa-trash-can tscale-1-4"></i>
                     </button>
                 </div>
-                <div class="col-10">
+                <div class="col">
                     <button type="submit" class="btn btn_detail btn-block" data-mdb-ripple-init data-mdb-ripple-color="white">
                         Guardar Cambios <i class="fa-regular fa-floppy-disk ms-1"></i>
                     </button>
@@ -167,7 +167,7 @@
             <div class="mt-4 accordion accordion-borderless" id="noteAccordion">
                 <div class="accordion-item">
                     <h2 class="accordion-header" id="flush-headingTwoX">
-                        <button data-mdb-collapse-init class="accordion-button p-3 collapsed" type="button" data-mdb-toggle="collapse"
+                        <button data-mdb-collapse-init class="accordion-button btn collapsed bg_purple-blue text-white" type="button" data-mdb-toggle="collapse"
                             data-mdb-target="#flush-collapseTwoX" aria-expanded="false" aria-controls="flush-collapseTwoX">
                             Nota: ...
                         </button>
@@ -263,6 +263,45 @@
                 <a target="_blank"
                     href="https://www.google.com.mx/maps/dir/25.5565711,-100.936538/Universidad+Tecnol%C3%B3gica+de+Coahuila,+Boulevard+del+Parque+Industrial+Francisco+R.+Alanis,+Zona+Industrial,+Ramos+Arizpe,+Coahuila+de+Zaragoza/@25.5564822,-100.9417562,16z/data=!3m1!4b1!4m10!4m9!1m1!4e1!1m5!1m1!1s0x868814c0002295ff:0x5c622cc711957b03!2m2!1d-100.9368619!2d25.5583972!3e2?entry=ttu"
                     class="btn btn_detail" data-mdb-ripple-init>Abrir <i class="fa-solid fa-up-right-from-square ms-1"></i></a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal: Borrar elemento -->
+<div class="modal fade" id="deletePleace" tabindex="-1" aria-labelledby="deletePleaceLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deletePleaceLabel">Eliminar Lugar <i class="fa-solid fa-map-location-dot ms-1"></i></h5>
+                <button type="button" class="btn-close" data-mdb-ripple-init data-mdb-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <h4 class="text-center">¿Quiere eliminar "<span class="text-danger" data-namePleace></span>"? 😯🧐😬</h4>
+                <br>
+                <h4 class="text-center">Esta accion es permanente y puede afectar varios sistemas</h4>
+                <p class="p-3 mb-0">
+                    "<span class="text-danger" data-namePleace></span>" está ligado a informacion en la base de datos global y del Mapa, puede eliminar ambos o
+                    solamente la
+                    informacion en el mapa.
+                </p>
+                <div class="d-flex justify-content-between">
+                    <form id="formDeleteMap" data-submit-form action="{% url 'del_pleace_map' %}" method="post">
+                        <input type="text" class="d-none" required name="muid" data-muid>
+                        <button type="submit" class="btn btn-danger" data-mdb-ripple-init data-mdb-dismiss="modal">
+                            Eliiminar en Mapa
+                        </button>
+                    </form>
+                    <form id="formDeleteMap" data-submit-form action="{% url 'del_pleace_mapdb' %}" method="post">
+                        <input type="text" class="d-none" required name="muid" data-muid>
+                        <button type="submit" class="btn btn-danger" data-mdb-ripple-init data-mdb-dismiss="modal">
+                            Eliiminar en Ambos
+                        </button>
+                    </form>
+                </div>
+            </div>
+            <div class="modal-footer d-flex justify-content-end">
+                <button type="button" class="btn btn-secondary" data-mdb-ripple-init data-mdb-dismiss="modal">Cancelar</button>
             </div>
         </div>
     </div>

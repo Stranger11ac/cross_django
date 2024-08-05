@@ -48,7 +48,9 @@ urlpatterns = [
     
     # Mapa ----------------------------------------------------------
     path('administracion/mapa/', views.update_mapa, name='update_mapa'),
-    path('administracion/subir_mapa/', views.update_create_pleace_map, name='regEdificio'),
+    path('administracion/subir_mapa/', views.update_create_pleace_map, name='upload_map'),
+    path('administracion/editar_lugar_del_mapa/', functions.delete_pleaceMap, name='del_pleace_map'),
+    path('administracion/editar_lugar_BaseDatos/', functions.delete_pleaceMap_DB, name='del_pleace_mapdb'),
     
     # Notificaciones ----------------------------------------------------------
     path('administracion/notificaciones/', views.ver_notis, name='notificaciones'),

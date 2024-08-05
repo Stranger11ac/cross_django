@@ -1013,6 +1013,10 @@ label {
     position: unset !important;
 }
 
+.form-control-color {
+    height: 35.83px;
+}
+
 /* Checkbox MDB */
 .form-check-input[type=checkbox]:checked {
     background-image: none;
@@ -1141,6 +1145,13 @@ input:checked+.slider:before {
 }
 
 /* offcanvas / panel lateral */
+.offcanvas-header .btn-close {
+    position: absolute;
+    top: 0;
+    right: 0;
+    z-index: 3;
+}
+
 .offcanvas-header .header-image {
     max-height: 350px;
     overflow: hidden !important;
@@ -1592,6 +1603,22 @@ img.img-rounded {
 
 .min_h200 {
     min-height: 200px;
+}
+
+.tscale-1-4 {
+    transform: scale(1.4);
+}
+
+.tscale-1-4 {
+    transform: scale(1.4);
+}
+
+.tscale-1-6 {
+    transform: scale(1.6);
+}
+
+.tscale-2 {
+    transform: scale(2);
 }
 
 /*################# Margenes #################*/

@@ -502,8 +502,9 @@ def update_create_pleace_map(request):
 
     with transaction.atomic():
         if isNewPost is None:
-            if models.Mapa.objects.filter(nombre=nombrePost).exists():
-                edificio = get_object_or_404(models.Mapa, nombre=nombrePost)
+            if models.Mapa.objects.filter(muid=muidPost).exists():
+                edificio = get_object_or_404(models.Mapa, muid=muidPost)
+                edificio.nombre = nombrePost
                 edificio.color = colorPost
                 edificio.p1_polygons = p1Post
                 edificio.p2_polygons = p2Post
@@ -516,7 +517,7 @@ def update_create_pleace_map(request):
                 success_message = f'Se Actualizaron los datos de <span>"{nombrePost}"</span> en el mapa de forma exitosa 🧐😁🎈'
 
             if imagenPost:
-                map_database = get_object_or_404(models.Database, titulo=nombrePost)
+                map_database = get_object_or_404(models.Database, muid=muidPost)
                 map_database.imagen = imagenPost
                 map_database.save()
                 success_message += '<br>Se actualizo su imagen en la Base de datos 😁🎉🎈'
