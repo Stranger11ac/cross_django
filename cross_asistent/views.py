@@ -482,24 +482,10 @@ def update_mapa(request):
 
 @login_required
 @never_cache
-def obtenerEdificio(request):
-    if request.method == 'GET':
-        edificio_id = request.GET.get('id')
-        if (edificio_id):
-            edificio = get_object_or_404(models.Database, id=edificio_id)
-            data = {
-                'titulo': edificio.titulo,
-                'informacion': edificio.informacion,
-                'imagen_url': edificio.imagenes.url if edificio.imagenes else None,
-            }
-            return JsonResponse(data)
-    return JsonResponse({'error': 'Invalid request'}, status=400)
-
-@login_required
-@never_cache
 def update_create_pleace_map(request):
     if request.method != 'POST':
-        return JsonResponse({'error': 'Metodo no valido'}, status=400)
+        # return JsonResponse({'error': 'Metodo no valido'}, status=400)
+        return redirect('update_mapa')
 
     isNewPost = request.POST.get('isNew')
     muidPost = request.POST.get('isNew')
@@ -548,9 +534,7 @@ def update_create_pleace_map(request):
                 muid=muidPost,
             )
             
-            # Se deberia solamente editar en base de datos y se registra desde el mapa
-            # En datadabes hay informacion del edificio que quizas no se muestra en el mapa, y es porque esa informacion es mas que nada para el chatbot, al guardar la informacion de nuevo se esta reemplazando lo cual esta mal, porque si se modifica en database, en mapa no porque el mapa puede tener un formato html en el contenido
-            # Cuando el lugar en el mapa es nuevo, entonces tambien se registra en la base de datos, pero se deberia verificar si es que este lugar no se ha registrado antes en la base de datos
+            # Verificar notas ToDo
             models.Database.objects.create(
                 categoria=models.Categorias.objects.get(categoria="Mapa"),
                 titulo=nombrePost,

@@ -93,45 +93,36 @@
                 </div>
             </section>
             <!-- Poligonos, boton e inputs -->
-            <button type="button" id="btnPoligon" class="btn btn_detail btn-block mt-4" data-mdb-ripple-init data-mdb-ripple-color="white">
+            <button type="button" id="btnPoligon" class="btn btn_detail btn-block text-white mt-4" data-mdb-ripple-init data-mdb-ripple-color="white">
                 Dibujar Poligono <i class="fa-solid fa-draw-polygon ms-1"></i>
             </button>
-            <section class="" id="esquinasPoligono">
+            <button type="button" id="btnPoligonCancel" class="btn btn-danger btn-block mt-4 none" data-mdb-ripple-init data-mdb-ripple-color="white">
+                Cancelar <i class="fa-solid fa-power-off ms-1"></i>
+            </button>
+            <section class="none" id="esquinasPoligono">
                 <div class="row">
                     <div class="col-6">
                         <div class="input-group form-outline mt-4" data-mdb-input-init>
                             <input type="text" id="esquina1" name="esquina1" class="form-control pe-2" readonly aria-describedby="inputBtnE1" required />
                             <label class="form-label" for="esquina1">Esquina 01:</label>
-                            <!-- <button class="btn btn_detail px-3 rounded-end" type="button" id="inputBtnE1" data-mdb-ripple-init data-mdb-ripple-color="white"> -->
-                            <!-- <i class="fa-solid fa-location-dot fs-10"></i> -->
-                            <!-- </button> -->
                         </div>
                     </div>
                     <div class="col-6">
                         <div class="input-group form-outline mt-4" data-mdb-input-init>
                             <input type="text" id="esquina2" name="esquina2" class="form-control pe-2" readonly aria-describedby="inputBtnE2" required />
                             <label class="form-label" for="esquina2">Esquina 02:</label>
-                            <!-- <button class="btn btn_detail px-3 rounded-end" type="button" id="inputBtnE2" data-mdb-ripple-init data-mdb-ripple-color="white"> -->
-                            <!-- <i class="fa-solid fa-location-dot fs-10"></i> -->
-                            <!-- </button> -->
                         </div>
                     </div>
                     <div class="col-6">
                         <div class="input-group form-outline mt-4" data-mdb-input-init>
                             <input type="text" id="esquina3" name="esquina3" class="form-control pe-2" readonly aria-describedby="inputBtnE3" required />
                             <label class="form-label" for="esquina3">Esquina 03:</label>
-                            <!-- <button class="btn btn_detail px-3 rounded-end" type="button" id="inputBtnE3" data-mdb-ripple-init data-mdb-ripple-color="white"> -->
-                            <!-- <i class="fa-solid fa-location-dot fs-10"></i> -->
-                            <!-- </button> -->
                         </div>
                     </div>
                     <div class="col-6">
                         <div class="input-group form-outline mt-4" data-mdb-input-init>
                             <input type="text" id="esquina4" name="esquina4" class="form-control pe-2" readonly aria-describedby="inputBtnE4" required />
                             <label class="form-label" for="esquina4">Esquina 04:</label>
-                            <!-- <button class="btn btn_detail px-3 rounded-end" type="button" id="inputBtnE4" data-mdb-ripple-init data-mdb-ripple-color="white"> -->
-                            <!-- <i class="fa-solid fa-location-dot fs-10"></i> -->
-                            <!-- </button> -->
                         </div>
                     </div>
                 </div>
@@ -141,8 +132,8 @@
                 <input type="text" id="puertaCordsEdificio" name="puertaCordsEdificio" class="form-control pe-4" aria-describedby="inputBtnDoor" readonly
                     required />
                 <label class="form-label" for="puertaCordsEdificio">Puerta:</label>
-                <button class="btn btn_detail px-3 rounded-end" type="button" id="inputBtnDoor" data-mdb-ripple-init data-mdb-ripple-color="white"><i class="fa-solid
-                     fa-location-dot fs-10"></i>
+                <button class="btn btn_detail px-3 rounded-end text-white" type="button" id="inputBtnDoor" data-mdb-ripple-init data-mdb-ripple-color="white" title="Colocar Marcador de la Entrada">
+                    <i class="fa-solid fa-location-dot fs-10"></i>
                 </button>
             </div>
             <!-- TinyMCE: Contenido de texto -->
@@ -152,7 +143,7 @@
             </div>
             <!-- Foto del Lugar -->
             <div class="mt-4">
-                <input type="file" class="none" id="fotoEdificio" name="fotoEdificio" accept="image/*" data-img_dom-change required />
+                <input type="file" class="none" id="fotoEdificio" name="fotoEdificio" accept="image/*" data-img_dom-change />
                 <label class="btn bg_blue-green btn-block" for="fotoEdificio" data-mdb-ripple-init data-mdb-ripple-color="white">Cambiar foto <i
                         class="fa-regular fa-image ms-1"></i></label>
             </div>
@@ -167,6 +158,27 @@
                     <button type="submit" class="btn btn_detail btn-block" data-mdb-ripple-init data-mdb-ripple-color="white">
                         Guardar Cambios <i class="fa-regular fa-floppy-disk ms-1"></i>
                     </button>
+                </div>
+            </div>
+            <div class="mt-4 accordion accordion-borderless" id="noteAccordion">
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="flush-headingTwoX">
+                        <button data-mdb-collapse-init class="accordion-button p-3 collapsed" type="button" data-mdb-toggle="collapse"
+                            data-mdb-target="#flush-collapseTwoX" aria-expanded="false" aria-controls="flush-collapseTwoX">
+                            Nota: ...
+                        </button>
+                    </h2>
+                    <div id="flush-collapseTwoX" class="accordion-collapse collapse" aria-labelledby="flush-headingTwoX" data-mdb-parent="#noteAccordion">
+                        <div class="accordion-body p-2">
+                            <small>
+                                Ademas de crear/editar la informacion del mapa, se recomienda editar los lugares y caminos en (OSM) OpenStreetMaps
+                                <i class="fa-solid fa-book-atlas"></i><br>
+                                Tambien se recomienda registrar los caminos y lugares sin su nombre, ya que estos intervienen
+                                en la visualizacion del mapa en este sitio web. <br>
+                                Utiliza la capa de <u>Mapbox Satelite</u> <i class="fa-solid fa-layer-group ms-1"></i> al editar la informacion en OSM
+                            </small>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

@@ -43,13 +43,12 @@ urlpatterns = [
 
     # Blog ----------------------------------------------------------
     path('administracion/crear_blog/', views.create_blog, name='create_blog'),
-    path('administracion/registrar_img_blog/', views.upload_image, name='send_imgsblog'),
+    path('administracion/subir_img_blog/', views.upload_image, name='send_imgsblog'),
     path('administracion/lista_imagenes/', views.lista_imagenes, name='lista_imagenes'),
     
     # Mapa ----------------------------------------------------------
     path('administracion/mapa/', views.update_mapa, name='update_mapa'),
-    path('administracion/obtener_edificio/', views.obtenerEdificio, name='obtenerEdificio'),
-    path('administracion/regEdificio_mapa/', views.update_create_pleace_map, name='regEdificio'),
+    path('administracion/subir_mapa/', views.update_create_pleace_map, name='regEdificio'),
     
     # Notificaciones ----------------------------------------------------------
     path('administracion/notificaciones/', views.ver_notis, name='notificaciones'),

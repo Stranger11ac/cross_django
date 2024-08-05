@@ -156,64 +156,7 @@ $(document).ready(function () {
             }
         });
 
-        // Formulario del mapa en programador ################################
-        $("#cancelNewEdif").on("click", function () {
-            $("#groupTitleMap").slideToggle("fast");
-            $("#cancelNewEdif").slideToggle("fast");
-            $(".img_form_map").slideToggle();
-            $("#isNewEdif").prop("checked", true);
-
-            $("#mapTitle").text("");
-            $("#formTitle").val("");
-            $("#textTiny").setContent("");
-        });
-        function obtenerDatosEdificio(infoid, urlConsulta) {
-            if (infoid) {
-                $.ajax({
-                    url: urlConsulta,
-                    type: "GET",
-                    data: { id: infoid },
-                    success: function (data) {
-                        $("#isNewEdif").prop("checked", false);
-                        $("#groupTitleMap").hide();
-                        $(".img_form_map").slideDown();
-                        $("#cancelNewEdif").show();
-
-                        $("#mapTitle").text(data.titulo);
-                        $("#formTitle").val(data.titulo);
-                        tinymce.get("textTiny").setContent(data.informacion);
-
-                        const oldImgUrl = data.imagen_url;
-                        let newImgUrl;
-                        let suggestImgText;
-
-                        if (data.imagen_url) {
-                            $("#suggestImg").hide();
-                            newImgUrl = oldImgUrl.replace("/cross_asistent", "");
-                            suggestImgText = "(Opcional)";
-                        } else {
-                            $("#suggestImg").show();
-                            newImgUrl = "/static/img/default_image.webp";
-                            suggestImgText = "(fachada)";
-                        }
-                        $("#suggestImgText").text(suggestImgText);
-                        $("#imagen_actual").attr("src", newImgUrl);
-                    },
-                });
-            }
-        }
-        $("#selectEdif").change(function () {
-            var infoid = $(this).val();
-            const urlConsulta = $(this).data("second-action");
-            obtenerDatosEdificio(infoid, urlConsulta);
-        });
-        $("#color_picker").on("input", function () {
-            var color = $(this).val();
-            $("#color").val(color);
-            $("#colorVal").text(color);
-        });
-
-        // Limpiar valor de input ####################################################
+        // Limpiar valor de input ##################################################################
         const inputCleared = $("input[data-init-clear], textarea[data-init-clear]");
         inputCleared.each(function () {
             $(this).on("input", function () {
@@ -234,7 +177,7 @@ $(document).ready(function () {
             $(this).slideUp("fast");
         });
 
-        // Notificaciones ######################################
+        // Notificaciones #############################################################
         // Marcar todas las notificaciones como leídas al hacer clic en el botón
         $("#markAsReadButton").on("click", function () {
             $('[id^="notif_"]').each(function () {
@@ -344,8 +287,9 @@ $(document).ready(function () {
             }
         }
 
-        // Firma del blog ###################################
-        const oldSignature = $.trim($("#firmaPerfilTexto").text()); // obtener texto sin espacios en inicio y final (trim)
+        // Firma del blog ##################################################
+        // obtener texto sin espacios en inicio y final (trim)
+        const oldSignature = $.trim($("#firmaPerfilTexto").text());
         $("#new_firma").on("input", function () {
             const inputText = $(this).val();
 
@@ -357,7 +301,7 @@ $(document).ready(function () {
             }
         });
 
-        // Colocar imagen del input file ##########################
+        // Colocar imagen del input file #############################################
         function readURL(input) {
             if (input.files && input.files[0]) {
                 var reader = new FileReader();
@@ -371,7 +315,7 @@ $(document).ready(function () {
             readURL(this);
         });
 
-        // Inpits del perfil ###################################
+        // Inpits del perfil ##########################################################
         $("[data-input_transparent]").on({
             focus: function () {
                 $(this).toggleClass("input_transparent");
@@ -450,7 +394,7 @@ $(document).ready(function () {
             });
 
             thisInput.on("click", function () {
-                oldNameInput = originalNameInput; // Restablece el nombre original al hacer clic
+                oldNameInput = originalNameInput;
             });
         });
         // Desplegar boton si se elimina la foto de perfil
