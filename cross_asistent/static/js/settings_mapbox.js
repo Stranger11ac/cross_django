@@ -114,10 +114,11 @@ class CustomControl {
 
                     const newUID = $("#muid").data("new-uid");
                     $("#muid").removeClass("active").val(newUID);
+                    $("#namecolor").addClass("active").val("gray");
+                    $("#colorPicker").addClass("active").val("#808080");
                     if (formChanges) {
                         initPolygonDrawing();
                         $("#nombreEdificio").removeClass("active").val("");
-                        $("#colorEdificio").removeClass("active").val("");
                         $("#puertaCordsEdificio").removeClass("active").val("");
 
                         $("#esquina1").removeClass("active").val("");
@@ -792,7 +793,7 @@ if (mapElement.classList.contains("map_editing")) {
     }
     function drawPolygon() {
         const polygonText = document.getElementById("nombreEdificio").value || "Nuevo Lugar";
-        const polygonColor = document.getElementById("colorEdificio").value || "#808080";
+        const polygonColor = document.getElementById("colorHex").value || "#808080";
 
         const coordinates = [
             coords[0].toArray(),
@@ -896,7 +897,7 @@ if (mapElement.classList.contains("map_editing")) {
         puertaCordsEdificio.value = `${e.lngLat.lng}, ${e.lngLat.lat}`;
         btnDoor.classList.remove("bg_purple-blue");
         btnDoor.classList.add("btn_detail");
-        
+
         map.off("click", addMarkerDoor);
     }
     function updateDoorCords(e) {

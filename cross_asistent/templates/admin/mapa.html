@@ -84,12 +84,15 @@
             <section class="row">
                 <div class="col-10">
                     <div class="form-outline" data-mdb-input-init>
-                        <input type="text" class="form-control" id="colorEdificio" name="colorEdificio" autocapitalize="off" required />
-                        <label class="form-label" for="colorEdificio">Color: (nombre / HEX)</label>
+                        <input type="text" class="form-control" id="namecolor" name="namecolor" autocapitalize="off" data-colorName list="colorsList"/>
+                        <label class="form-label" for="namecolor">Nombre del Color:</label>
                     </div>
+                    <datalist id="colorsList"></datalist>
                 </div>
                 <div class="col-2 ps-1">
-                    <input type="color" class="form-control form-control-color p-1 rounded border border-secondary" id="colorPicker" value="#808080">
+                    <input type="text" class="d-none" id="colorHex" name="colorEdificio" value="#808080" required />
+                    <input type="color" class="form-control form-control-color p-1 rounded border border-secondary" id="colorPicker" value="#808080"
+                        data-colorPicker>
                 </div>
             </section>
             <!-- Poligonos, boton e inputs -->
@@ -132,7 +135,8 @@
                 <input type="text" id="puertaCordsEdificio" name="puertaCordsEdificio" class="form-control pe-4" aria-describedby="inputBtnDoor" readonly
                     required />
                 <label class="form-label" for="puertaCordsEdificio">Puerta:</label>
-                <button class="btn btn_detail px-3 rounded-end text-white" type="button" id="inputBtnDoor" data-mdb-ripple-init data-mdb-ripple-color="white" title="Colocar Marcador de la Entrada">
+                <button class="btn btn_detail px-3 rounded-end text-white" type="button" id="inputBtnDoor" data-mdb-ripple-init data-mdb-ripple-color="white"
+                    title="Colocar Marcador de la Entrada">
                     <i class="fa-solid fa-location-dot fs-10"></i>
                 </button>
             </div>

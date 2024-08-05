@@ -488,7 +488,7 @@ def update_create_pleace_map(request):
         return redirect('update_mapa')
 
     isNewPost = request.POST.get('isNew')
-    muidPost = request.POST.get('isNew')
+    muidPost = request.POST.get('muid')
     nombrePost = request.POST.get('nombreEdificio')
     colorPost = request.POST.get('colorEdificio')
     p1Post = request.POST.get('esquina1')
@@ -511,7 +511,7 @@ def update_create_pleace_map(request):
                 edificio.p4_polygons = p4Post
                 edificio.door_cords = door_cordsPost
                 edificio.informacion = informacionPost
-                edificio.muid=muidPost,
+                edificio.muid = muidPost,
                 edificio.save()
                 success_message = f'Se Actualizaron los datos de <span>"{nombrePost}"</span> en el mapa de forma exitosa 🧐😁🎈'
 
@@ -522,6 +522,7 @@ def update_create_pleace_map(request):
                 success_message += '<br>Se actualizo su imagen en la Base de datos 😁🎉🎈'
             return JsonResponse({'success': True, 'message': success_message}, status=200)
         else:
+            # validar si este ya existe en el mapa y en db para que no se repitan
             models.Mapa.objects.create(
                 nombre=nombrePost,
                 color=colorPost,
