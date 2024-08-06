@@ -1,9 +1,9 @@
-from django.db import models
-from django.db.models.signals import pre_save, post_delete
+from django.db.models.signals import pre_save, post_delete, pre_delete
 from django.contrib.auth.models import User
 from django.utils.text import slugify
 from django.dispatch import receiver
 from django.conf import settings
+from django.db import models
 import random
 import string
 import os
@@ -14,7 +14,7 @@ def generate_random_string(length):
     characters = string.ascii_letters + string.digits
     return ''.join(random.choice(characters) for _ in range(length))
 
-"""Ruta imagen"""
+"""Cambiar Nombre del Archivo"""
 def create_filename_path(filename, setname, sufix,length, lenghtrandom, strpath):
     ext = filename.split('.')[-1]
     setname = setname[:length] if len(setname) > length else setname
@@ -73,6 +73,9 @@ class Banners(models.Model):
     imagen = models.ImageField(upload_to=set_imgBanner_path, blank=True, null=True)
     expiracion = models.DateTimeField(blank=True, null=True)
     visible = models.BooleanField(default=True)
+        
+    def __str__(self):
+        return self.titulo
     
     def save(self, *args, **kwargs):
         if not self.imagen:
@@ -83,6 +86,11 @@ class Banners(models.Model):
                 if self.imagen != existing_banner.imagen:
                     existing_banner.imagen.delete(save=False)
         super().save(*args, **kwargs)
+    
+    def delete(self, *args, **kwargs):
+        if self.imagen:
+            self.imagen.delete()
+        super(Banners, self).delete(*args, **kwargs)
 
 class Categorias(models.Model):
     categoria = models.CharField(max_length=50)
@@ -109,6 +117,13 @@ class Database(models.Model):
     
     def __str__(self):
         return self.titulo
+    
+    def delete(self, *args, **kwargs):
+        if self.imagen:
+            self.imagen.delete()
+        if self.documento:
+            self.documento.delete()
+        super(Database, self).delete(*args, **kwargs)
 
 class Articulos(models.Model):
     encabezado = models.ImageField(upload_to=set_imgBlog_path, blank=True, null=True)
@@ -117,6 +132,14 @@ class Articulos(models.Model):
     autor = models.CharField(max_length=100)
     creacion = models.DateField(auto_now_add=True)
     actualizacion = models.DateField(auto_now=True, blank=True, null=True)
+    
+    def __str__(self):
+        return self.titulo
+    
+    def delete(self, *args, **kwargs):
+        if self.encabezado:
+            self.encabezado.delete()
+        super(Articulos, self).delete(*args, **kwargs)
 
 class Mapa(models.Model):
     muid = models.CharField(max_length=23)
@@ -140,10 +163,8 @@ class Imagenes(models.Model):
     
     def delete(self, *args, **kwargs):
         if self.imagen:
-            image_path = os.path.join(settings.MEDIA_ROOT, self.imagen.path)
-            if os.path.isfile(image_path):
-                os.remove(image_path)
-        super().delete(*args, **kwargs)
+            self.imagen.delete()
+        super(Imagenes, self).delete(*args, **kwargs)
 
 class Notificacion(models.Model):
     usuario = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -170,6 +191,29 @@ class UserProfile(models.Model):
             if old_profile.profile_picture and old_profile.profile_picture != self.profile_picture:
                 old_profile.profile_picture.delete(save=False)
         super().save(*args, **kwargs)
+
+
+@receiver(pre_delete, sender=Banners)
+def delete_files_on_object_delete(sender, instance, **kwargs):
+    if instance.imagen:
+        instance.imagen.delete(save=False)
+
+@receiver(pre_delete, sender=Database)
+def delete_files_on_object_delete(sender, instance, **kwargs):
+    if instance.imagen:
+        instance.imagen.delete(save=False)
+    if instance.documento:
+        instance.documento.delete(save=False)
+
+@receiver(pre_delete, sender=Articulos)
+def delete_files_on_object_delete(sender, instance, **kwargs):
+    if instance.imagen:
+        instance.imagen.delete(save=False)
+
+@receiver(pre_delete, sender=Imagenes)
+def delete_files_on_object_delete(sender, instance, **kwargs):
+    if instance.imagen:
+        instance.imagen.delete(save=False)
 
 @receiver(post_delete, sender=UserProfile)
 def delete_profile_picture_on_delete(sender, instance, **kwargs):
