@@ -67,8 +67,8 @@ def set_pdfDB_path(instance, filename):
 
 
 class Banners(models.Model):
-    titulo = models.CharField(max_length=60)
-    descripcion = models.CharField(max_length=350)
+    titulo = models.CharField(max_length=150, null=True, blank=True)
+    descripcion = models.CharField(max_length=350, null=True, blank=True)
     redirigir = models.CharField(max_length=200, null=True, blank=True)
     imagen = models.ImageField(upload_to=set_imgBanner_path, blank=True, null=True)
     expiracion = models.DateTimeField(blank=True, null=True)

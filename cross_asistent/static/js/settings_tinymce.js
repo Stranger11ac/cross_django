@@ -41,6 +41,40 @@ const uploadImageTiny = async (blobInfo, progress) => {
 };
 
 tinymce.init({
+    selector: "#tituloBanner",
+    language: "es_MX",
+    branding: false,
+    statusbar: false,
+    resize: false,
+    plugins: "quickbars",
+    mobile: {
+        toolbar_mode: "sliding",
+        height: 150,
+    },
+    menubar: false,
+    toolbar_mode: "wrap",
+    toolbar: "undo redo | bold removeformat",
+    quickbars_insert_toolbar: false,
+    quickbars_selection_toolbar: "bold removeformat",
+    height: 150,
+    promotion: false,
+    skin: tinyTheme,
+    content_css: [
+        tinyTheme, // Asegúrate de que tinyTheme esté definido y accesible
+        // '/static/css/styles.css'  // Ruta a tu hoja de estilos
+    ],
+    forced_root_block: "", // Esto evita que TinyMCE envuelva el contenido en <p>
+    setup: function (editor) {
+        editor.on("NodeChange", function (e) {
+            var nodes = editor.dom.select("b, strong");
+            nodes.forEach(function (node) {
+                editor.dom.addClass(node, "text_detail");
+            });
+        });
+    },
+});
+
+tinymce.init({
     selector: "#textTiny",
     language: "es_MX",
     branding: false,

@@ -282,10 +282,10 @@ nav .navbar-collapse {
 .swiper-slide-active .buttons .btn_slide {
     animation: fadeInLeft 0.8s;
     animation-delay: 0.2s;
-    opacity: 1;
+    opacity: 0;
 }
 
-.slide-inner .header-text {
+.slide-inner .slider-content {
     position: absolute;
     width: 100%;
     padding: 0 10%;
@@ -295,15 +295,16 @@ nav .navbar-collapse {
     text-align: center;
 }
 
-.carousel-item p,
-.carousel-item h5 {
+.carousel-item p {
     font-size: initial !important;
     display: block !important;
     line-height: initial !important;
 }
 
-.carousel-item h5,
-.slide-inner .header-text h2 {
+.slide-inner .slider-content h2 {
+    backdrop-filter: blur(5px);
+    border: none;
+    border-radius: var(--border-radius);
     position: relative;
     z-index: 2;
     font-size: 2rem;
@@ -316,19 +317,20 @@ nav .navbar-collapse {
 }
 
 .carousel-item p,
-.slide-inner .header-text p {
+.slide-inner .slider-content p {
     color: #fff;
-    font-size: 1.5rem;
     opacity: 1;
     visibility: visible;
+    padding-inline: 15px;
     text-shadow: 0 0 20px black, 0 0 30px black;
-    display: none;
 }
 
-.text_detail,
-.carousel-item em,
-.slide-inner .header-text h2 em {
-    color: var(--var-detail_flat);
+.slide-inner .slider-content p.slider-content_desc {
+    border-radius: var(--border-radius);
+    backdrop-filter: blur(5px);
+    border: none;
+    display: none;
+    font-size: 1.5rem;
 }
 
 .slide-inner .buttons {
@@ -347,7 +349,7 @@ nav .navbar-collapse {
 }
 
 @media (min-width: 992px) {
-    .slide-inner .header-text {
+    .slide-inner .slider-content {
         width: 50%;
         top: 50%;
         left: 10%;
@@ -355,11 +357,11 @@ nav .navbar-collapse {
         text-align: initial;
     }
 
-    .slide-inner .header-text h2 {
+    .slide-inner .slider-content h2 {
         font-size: 3rem;
     }
 
-    .slide-inner .header-text p {
+    .slide-inner .slider-content p.slider-content_desc {
         display: block;
     }
 }
@@ -390,6 +392,11 @@ main.main_anchor {
     border-radius: 5px;
     background-color: black;
     background: black;
+}
+
+
+.text_detail {
+    color: var(--var-detail_flat);
 }
 
 /*########################### Botones / buttons ###########################*/
@@ -1157,7 +1164,7 @@ input:checked+.slider:before {
     overflow: hidden !important;
 }
 
-.offcanvas-header .header-image img{
+.offcanvas-header .header-image img {
     width: 100%;
     height: auto;
     object-fit: cover;

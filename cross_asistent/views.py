@@ -315,7 +315,7 @@ def upload_banner(request):
             expiracionPOST = None
             
         banner = models.Banners(
-            titulo = request.POST.get('titulo'),
+            titulo = request.POST.get('contenidoWord'),
             descripcion = request.POST.get('descripcion'),
             redirigir = request.POST.get('redirigir'),
             imagen = request.FILES.get('imagen'),     
