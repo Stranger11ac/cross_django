@@ -21,12 +21,18 @@ if (colorTheme) {
     }
 }
 
+var urlSendImgs = $("[data-upload-imgs]").data('upload-imgs')
+var relativeUrlSend = `../../..${urlSendImgs}`
+
+var urlListImgs = $("[data-list-imgs]").data('list-imgs')
+var relativeUrlImgs = `../../..${urlListImgs}`
+
 const uploadImageTiny = async (blobInfo, progress) => {
     try {
         const formData = new FormData();
         formData.append("file", blobInfo.blob(), blobInfo.filename());
         formData.append("csrfmiddlewaretoken", getCSRFToken());
-        const response = await fetch("../../administracion/registrar_img_blog/", {
+        const response = await fetch(relativeUrlSend, {
             method: "POST",
             body: formData,
             credentials: "include",
@@ -183,7 +189,7 @@ tinymce.init({
     image_title: true,
     automatic_uploads: true,
     // file_picker_types: "image",
-    images_upload_url: "../../administracion/registrar_img_blog/",
+    images_upload_url: relativeUrlSend,
     images_upload_handler: uploadImageTiny,
     min_height: 625,
     autoresize_min_height: 625,
@@ -205,8 +211,7 @@ tinymce.init({
         editor.ui.registry.addButton("gallerycustom", {
             icon: "gallery",
             onAction: function () {
-                var cmsURL = "../../administracion/lista_imagenes/";
-                window.open(cmsURL, "Seleccionar Imagen", "width=350,max-height=900");
+                window.open(relativeUrlImgs, "Seleccionar Imagen", "width=350,max-height=900");
             },
         });
 

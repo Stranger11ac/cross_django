@@ -50,9 +50,9 @@
                             <div class="mb-4" data-mdb-input-init>
                                 <label class="form-label" for="new_firma">
                                     {% if user.userprofile.blog_firma %}
-                                    Cambiar 
+                                    Cambiar
                                     {% else %}
-                                    Personalizar 
+                                    Personalizar
                                     {% endif %}
                                     firma de Autor:<span class="fs-8"> (opcional)</span>
                                 </label>
@@ -70,7 +70,8 @@
             </div>
         </div>
         <div class="col-12 col-md-6 col-xl-8">
-            <textarea id="mainTiny" name="contenidoWord" placeholder="Escribe tu articulo..."></textarea>
+            <textarea id="mainTiny" name="contenidoWord" placeholder="Escribe tu articulo..." 
+            data-list-imgs="{% url 'lista_imagenes' %}" data-upload-imgs="{% url 'send_imgsblog' %}"></textarea>
             <div class="card d-md-none mt-4">
                 <div class="card-body">
                     <button type="submit" class="btn btn_detail w-100">Publicar <i class="fa-regular fa-paper-plane ms-1"></i></button>
