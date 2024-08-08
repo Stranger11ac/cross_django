@@ -75,7 +75,6 @@ $(document).ready(function () {
         // Agrega la clase active al banner con la id mas baja #######################################
         var minIdNumber = Infinity;
         let minIdElement = null;
-
         $('[id^="bannerid_"]').each(function () {
             var id = $(this).attr("id");
             var number = parseInt(id.split("_")[1]);
@@ -84,7 +83,6 @@ $(document).ready(function () {
                 minIdElement = $(this);
             }
         });
-
         if (minIdElement !== null) {
             minIdElement.addClass("active");
         }
@@ -246,17 +244,17 @@ $(document).ready(function () {
             });
             var color = $(this).addClass("active").data("change-color");
             var rgb = $(this).data("rgb");
-            $("body").attr("data-color_prefer", color);
+            $("html").attr("data-color_prefer", color);
             localStorage.setItem("data-color_prefer", color);
             localStorage.setItem("data-color_rgb", rgb);
         });
         const colorPrefer = localStorage.getItem("data-color_prefer");
         if (colorPrefer) {
             $(`[data-change-color="${colorPrefer}"]`).addClass("active");
-            $("body").attr("data-color_prefer", colorPrefer);
+            $("html").attr("data-color_prefer", colorPrefer);
         } else {
             $('[data-change-color="blue"]').addClass("active");
-            $("body").attr("data-color_prefer", "blue");
+            $("html").attr("data-color_prefer", "blue");
         }
         // Cambiar tema
         $("#switchTheme").on("click", function () {
@@ -324,7 +322,6 @@ $(document).ready(function () {
                 $(this).toggleClass("input_transparent");
             },
         });
-
         var otherChanges = false;
         function togglePassBlock() {
             if (otherChanges) {
@@ -615,7 +612,7 @@ function jsonSubmit(e) {
         })
         .then((data) => {
             dataMessage = data.message;
-            if (data.success) {
+            if (data.success == true) {
                 // thisForm.reset();
                 dataIcon = "success";
                 if (data.icon) {
@@ -648,7 +645,7 @@ function jsonSubmit(e) {
                 passwordInputs.forEach((input) => (input.value = ""));
 
                 alertSToast(dataPosition, timerOut, dataIcon, dataMessage, alertfunction);
-            } else {
+            } else if (data.success == false){
                 console.error(dataMessage);
 
                 if (data.valSelector) {

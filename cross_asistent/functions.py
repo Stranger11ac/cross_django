@@ -299,13 +299,26 @@ def editar_usuario(request, user_id):
     return JsonResponse({'success': False, 'message': 'Acción no permitida.'}, status=403)
 
 # Banners ----------------------------------------------------------
-def update_banner_visibility(request):
-    now = timezone.now()
-    expired_banners = models.Banners.objects.filter(expiracion__lte=now, visible=True)
-    for banner in expired_banners:
-        banner.visible = False
-        banner.save()
-    return JsonResponse({'status': 'success'})
+@login_required
+@never_cache
+def banners_visibility_now(request):
+    if request.method == 'POST':
+        banneridPOST = request.POST.get('banner_id')
+        if banneridPOST:
+            expired_banners = models.Banners.objects.filter(id=banneridPOST)
+            update_visibility = request.POST.get('banner_visible')
+            returnJson = {'success': True, 'functions':'reload', 'message':f'Se cambio la visibilidad del banner <span>#{banneridPOST}</span> exitosamente 🫡🥳🎉.'}
+        else:
+            now = timezone.now()
+            expired_banners = models.Banners.objects.filter(expiracion__lte=now, visible=True)
+            update_visibility = False
+            returnJson = {'status': 'success'}
+            
+        for banner in expired_banners:
+            banner.visible = update_visibility
+            banner.save()
+        return JsonResponse(returnJson, status=201)
+    return('upload_banner')
 
 # Base de Datos ----------------------------------------------------------
 @login_required

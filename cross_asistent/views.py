@@ -28,6 +28,7 @@ def index(request):
             'descripcion': banner.descripcion,
             'redirigir': banner.redirigir,
             'imagen': imagen_url,
+            'onlyImg': banner.solo_imagen,
         })
 
     return render(request, 'index.html', {
@@ -306,8 +307,11 @@ def marcar_notificaciones_leidas(request):
 # Banners ----------------------------------------------------------
 @login_required
 @never_cache
-def upload_banner(request):
+def banners_page(request):
     if request.method == 'POST':
+        soloImagenPOST = request.POST.get('soloImagen')
+        if soloImagenPOST == None:
+            soloImagenPOST = False
         expiracionPOST = request.POST.get('expiracion')
         if expiracionPOST:
             expiracionPOST = expiracionPOST
@@ -318,7 +322,8 @@ def upload_banner(request):
             titulo = request.POST.get('contenidoWord'),
             descripcion = request.POST.get('descripcion'),
             redirigir = request.POST.get('redirigir'),
-            imagen = request.FILES.get('imagen'),     
+            imagen = request.FILES.get('imagen'),
+            solo_imagen = soloImagenPOST,
             expiracion = expiracionPOST
         )
         banner.save()
@@ -326,7 +331,7 @@ def upload_banner(request):
         return JsonResponse({
             'success': True,
             'functions': 'reload',
-            'message': f'El banner <u>{banner.titulo}</u> fue modificado exitosamente 🥳🎉🎈.'
+            'message': f'El banner {banner.titulo} fue creado exitosamente 🥳🎉🎈.'
         }, status=200)
     
     banners_all = models.Banners.objects.all()
@@ -340,26 +345,29 @@ def upload_banner(request):
             'descripcion': banner.descripcion,
             'redirigir': banner.redirigir,
             'imagen': imagen_url,
-            'expiracion': banner.expiracion,
+            'expiracion': banner.expiracion if not banner.expiracion == None else '',
+            'visible': banner.visible,
+            'onlyImg': banner.solo_imagen,
         })
-    context = { 'banners': banners_modificados, 'active_page': 'banner','pages': functions.pages }
+    context = { 'banners': banners_modificados,
+               'active_page': 'banner',
+               'pages': functions.pages,
+               'banners_cound': banners_all.count() }
     return render(request, 'admin/banners.html', context)
 
 @login_required
 @never_cache
 def edit_banner(request, banner_id):
     banner = get_object_or_404(models.Banners, id=banner_id)
-    if request.method == 'POST':
-        new_image = request.FILES.get('imagen')
-
-        if new_image:
-            if banner.imagen:
-                if default_storage.exists(banner.imagen.name):
-                    default_storage.delete(banner.imagen.name)
+    if request.method == 'POST':        
+        banner.solo_imagen = request.POST.get('soloImagen')
+        if banner.solo_imagen == None:
+            banner.solo_imagen = False
             
+        new_image = request.FILES.get('imagen')
+        if not new_image == None:
             banner.imagen = new_image
-        
-        banner.titulo = request.POST.get('titulo')
+        banner.titulo = request.POST.get('contenidoWord')
         banner.descripcion = request.POST.get('descripcion')
         banner.redirigir = request.POST.get('redirigir')
         if banner.expiracion:
@@ -378,9 +386,9 @@ def edit_banner(request, banner_id):
 @never_cache
 def delete_banner(request, banner_id):
     if request.method == 'POST':
-        icon = 'warning'
         banner = get_object_or_404(models.Banners, id=banner_id)
         banner.delete()
+        icon = 'warning'
         return JsonResponse({'success': True, 'functions': 'reload', 'message': 'Banner eliminado exitosamente.', 'icon': icon}, status=200)
     return JsonResponse({'success': False, 'message': 'Acción no permitida.'}, status=403)
 

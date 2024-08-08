@@ -1,18 +1,23 @@
 // Functionamiento de TinyMCE #################################################################
 let tinyTheme = "oxide";
+let tinyThemeCss = "default";
 $("#switchTheme").on("click", function () {
     if ($("#switchTheme").is(":checked")) {
         tinyTheme = "oxide";
+        tinyThemeCss = "default";
     } else {
         tinyTheme = "dark";
+        tinyThemeCss = "dark";
     }
 });
 const colorTheme = localStorage.getItem("data-mdb-theme");
 if (colorTheme) {
     if (colorTheme == "light") {
         tinyTheme = "oxide";
+        tinyThemeCss = "default";
     } else {
         tinyTheme = "dark";
+        tinyThemeCss = "dark";
     }
 }
 
@@ -40,8 +45,9 @@ const uploadImageTiny = async (blobInfo, progress) => {
     }
 };
 
+// titulo
 tinymce.init({
-    selector: "#tituloBanner",
+    selector: ".bannerTitle",
     language: "es_MX",
     branding: false,
     statusbar: false,
@@ -49,21 +55,18 @@ tinymce.init({
     plugins: "quickbars",
     mobile: {
         toolbar_mode: "sliding",
-        height: 150,
+        height: 110,
     },
     menubar: false,
     toolbar_mode: "wrap",
     toolbar: "undo redo | bold removeformat",
     quickbars_insert_toolbar: false,
     quickbars_selection_toolbar: "bold removeformat",
-    height: 150,
+    height: 110,
     promotion: false,
     skin: tinyTheme,
-    content_css: [
-        tinyTheme, // Asegúrate de que tinyTheme esté definido y accesible
-        // '/static/css/styles.css'  // Ruta a tu hoja de estilos
-    ],
-    forced_root_block: "", // Esto evita que TinyMCE envuelva el contenido en <p>
+    content_css: tinyThemeCss,
+    forced_root_block: "",
     setup: function (editor) {
         editor.on("NodeChange", function (e) {
             var nodes = editor.dom.select("b, strong");
@@ -73,7 +76,7 @@ tinymce.init({
         });
     },
 });
-
+// Mapa
 tinymce.init({
     selector: "#textTiny",
     language: "es_MX",
@@ -99,9 +102,9 @@ tinymce.init({
     min_height: 450,
     promotion: false,
     skin: tinyTheme,
-    content_css: tinyTheme,
+    content_css: tinyThemeCss,
 });
-
+// Blog
 tinymce.init({
     selector: "#mainTiny",
     language: "es_MX",
@@ -176,7 +179,7 @@ tinymce.init({
         "White",
     ],
     skin: tinyTheme,
-    content_css: tinyTheme,
+    content_css: tinyThemeCss,
     image_title: true,
     automatic_uploads: true,
     // file_picker_types: "image",

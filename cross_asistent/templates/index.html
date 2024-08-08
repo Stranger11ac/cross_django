@@ -22,11 +22,13 @@
                         <div class="row">
                             <div class="col-lg-8">
                                 <div class="slider-content">
+                                    {% if not banner.onlyImg %}
                                     <h2>
                                         {% autoescape off %} {{ banner.titulo }} {% endautoescape %}
                                     </h2>
                                     <!-- <div class="div-dec"></div> -->
                                     <p class="slider-content_desc">{% autoescape off %} {{ banner.descripcion }} {% endautoescape %}</p>
+                                    {% endif %}
                                     <div class="buttons">
                                         {% if banner.redirigir %}
                                         <a href="{{banner.redirigir}}" target="_blank" rel="noopener noreferrer" class="btn_slide btn btn_detail btn-lg">

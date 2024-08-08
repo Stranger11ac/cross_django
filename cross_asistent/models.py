@@ -9,12 +9,10 @@ import string
 import os
 
 
-"""Generar una cadena aleatoria"""
 def generate_random_string(length):
     characters = string.ascii_letters + string.digits
     return ''.join(random.choice(characters) for _ in range(length))
 
-"""Cambiar Nombre del Archivo"""
 def create_filename_path(filename, setname, sufix,length, lenghtrandom, strpath):
     ext = filename.split('.')[-1]
     setname = setname[:length] if len(setname) > length else setname
@@ -22,13 +20,11 @@ def create_filename_path(filename, setname, sufix,length, lenghtrandom, strpath)
     filename = f"{sufix}_{slugify(setname)}_uid-{random_string}.{ext}"
     return os.path.join(strpath, filename)
 
-"""Ruta imagen del Banner"""
 def set_imgBanner_path(instance, filename):
     newName = instance.titulo.strip().replace(' ', '')
     thispath = 'cross_asistent/static/files/imagenes/banners/'
     return create_filename_path(filename, newName, 'banner', 15, 5, thispath)
 
-"""Ruta imagen de Database segun categoria"""
 def set_imgDB_path(instance, filename):
     newName = instance.titulo.strip().replace(' ', '')
     thispath = 'cross_asistent/static/files/imagenes/'
@@ -41,25 +37,21 @@ def set_imgDB_path(instance, filename):
     
     return create_filename_path(filename, newName, 'db', 20, 6, thispath)
 
-"""Ruta imagen de Articulos"""
 def set_imgBlog_path(instance, filename):
     newName = instance.titulo.strip().replace(' ', '')
     thispath = 'cross_asistent/static/files/imagenes/blogs/'
     return create_filename_path(filename, newName, 'blog', 18, 8, thispath)
 
-"""Ruta imagenes"""
 def set_imgs_path(instance, filename):
     newName = filename.strip().replace(' ', '')
     thispath = 'cross_asistent/static/files/imagenes/'
     return create_filename_path(filename, newName, 'cross_image', 20, 11, thispath)
 
-"""Ruta imagen de perfiles"""
 def set_imgProfile_path(instance, filename):
     newName = instance.user.username.strip().replace(' ', '')
     thispath = 'cross_asistent/static/files/imagenes/personal/'
     return create_filename_path(filename, newName, 'profile', 20, 8, thispath)
 
-"""Ruta Documento de Database"""
 def set_pdfDB_path(instance, filename):
     newName = instance.titulo.strip().replace(' ', '')
     thispath = 'cross_asistent/static/files/documentos/'
@@ -72,20 +64,11 @@ class Banners(models.Model):
     redirigir = models.CharField(max_length=200, null=True, blank=True)
     imagen = models.ImageField(upload_to=set_imgBanner_path, blank=True, null=True)
     expiracion = models.DateTimeField(blank=True, null=True)
+    solo_imagen = models.BooleanField(default=False)
     visible = models.BooleanField(default=True)
         
     def __str__(self):
         return self.titulo
-    
-    def save(self, *args, **kwargs):
-        if not self.imagen:
-            self.imagen = '/static/img/default_image.webp'
-        else:
-            if self.id:
-                existing_banner = Banners.objects.get(id=self.id)
-                if self.imagen != existing_banner.imagen:
-                    existing_banner.imagen.delete(save=False)
-        super().save(*args, **kwargs)
     
     def delete(self, *args, **kwargs):
         if self.imagen:

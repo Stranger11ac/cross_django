@@ -10,12 +10,12 @@
     <section class="row">
         <!-- carrusel -->
         <div class="col-md-6 col-xl-4 mb-4 mb-md-0">
-            <div id="carouselMaterialStyle" class="carousel slide" data-mdb-ride="carousel" data-mdb-carousel-init>
+            <div id="carouselMaterialStyle" class="carousel carousel_custom slide" data-mdb-ride="carousel" data-mdb-carousel-init>
                 <!-- Inner -->
                 <div class="carousel-inner rounded-5 shadow-2-strong">
                     {% if banners_all.count == 0 %}
-                    <div class="carousel-item active" id="bannerid_default" data-mdb-interval="10000">
-                        <img src="{% static 'img/default_image.webp' %}" class="h-100 d-block w-100" alt="Sunset" />
+                    <div class="carousel-item active max_h200" id="bannerid_default" data-mdb-interval="20000">
+                        <img src="{% static 'img/default_image.webp' %}" class="img-fluid" alt="Sunset" />
                         <div class="carousel-caption">
                             <h5>😯 No hay banners</h5>
                             <p class="mb-0">El total de banners es 0, este banner se muestra por <strong>default</strong></p>
@@ -23,16 +23,21 @@
                     </div>
                     {%else%}
                     {% for oneBanner in banners_all %}
-                    <div class="carousel-item" id="bannerid_{{oneBanner.id}}" data-mdb-interval="10000">
+                    <div class="carousel-item max_h200" id="bannerid_{{oneBanner.id}}" data-mdb-interval="20000">
                         {% with imagen_url=oneBanner.imagen.url|eliminar_prefijo:'cross_asistent/' %}
-                        <img src="{{imagen_url}}" class="h-100 d-block w-100 materialboxed" alt="Sunset" />
+                        <img src="{{imagen_url}}" class="img-fluid" alt="Sunset" />
                         {% endwith %}
+                        {% if not oneBanner.solo_imagen %}
                         <div class="carousel-caption">
+                            {% if not oneBanner.visible %}<div class="mt-3"></div><u class="text-danger mt-5">Banner Invisible</u> <br>{% endif %}
                             {% autoescape off %}
                             <h5>{{oneBanner.titulo}}</h5>
-                            <p class="mb-0">{{oneBanner.descripcion}}</p>
                             {% endautoescape %}
+                            {% if oneBanner.visible %}
+                            <p class="mb-0">{{oneBanner.descripcion}}</p>
+                            {% endif %}
                         </div>
+                        {% endif %}
                     </div>
                     {% endfor %}
                     {% endif %}
@@ -41,11 +46,11 @@
 
                 <!-- Controls -->
                 {% if banners_all.count > 0 %}
-                <button class="carousel-control-prev" type="button" data-mdb-target="#carouselMaterialStyle" data-mdb-slide="prev">
+                <button class="carousel-control-prev max_h200" type="button" data-mdb-target="#carouselMaterialStyle" data-mdb-slide="prev">
                     <span class="carousel-control-prev-icon" aria-hidden="true"></span>
                     <span class="visually-hidden">Previous</span>
                 </button>
-                <button class="carousel-control-next" type="button" data-mdb-target="#carouselMaterialStyle" data-mdb-slide="next">
+                <button class="carousel-control-next max_h200" type="button" data-mdb-target="#carouselMaterialStyle" data-mdb-slide="next">
                     <span class="carousel-control-next-icon" aria-hidden="true"></span>
                     <span class="visually-hidden">Next</span>
                 </button>
@@ -305,16 +310,16 @@
                     </div>
                 </div>
                 <!-- tabla de usuarios -->
-                <div class="table-responsive" id="table-container">
+                <div class="table-responsive rounded" id="table-container">
                     <table class="table table_odd align-middle m-0">
                         <thead>
                             <tr>
-                                <th class="fw-bold text_detail">#</th>
-                                <th class="fw-bold text_detail">Usuario</th>
-                                <th class="fw-bold text_detail">Nombre</th>
-                                <th class="fw-bold text_detail">Apellido</th>
-                                <th class="fw-bold text_detail">Email</th>
-                                <th class="fw-bold text_detail">Acciones</th>
+                                <th>#</th>
+                                <th>Usuario</th>
+                                <th>Nombre</th>
+                                <th>Apellido</th>
+                                <th>Email</th>
+                                <th>Acciones</th>
                             </tr>
                         </thead>
                         <tbody>

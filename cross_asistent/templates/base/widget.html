@@ -1,12 +1,16 @@
 {% load static %}
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" data-mdb-theme="light">
 
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="icon" href="{% static 'img/UTC_icono.ico' %}" />
     <title>{% block title %}TITULO{% endblock %} | Asistente UTC</title>
+    <script>
+        (function () { const theme = localStorage.getItem('data-mdb-theme') || 'light'; document.documentElement.setAttribute('data-mdb-theme', theme); })();
+        (function () { const themeColor = localStorage.getItem('data-color_prefer') || 'blue'; document.documentElement.setAttribute('data-color_prefer', themeColor); })();
+    </script>
     <link rel="preload" href="{% static 'css/mdb_fontawesome.min.css' %}" as="style" />
     <link rel="preload" href="{% static 'js/libraries.min.js' %}" as="script" />
 
@@ -16,7 +20,7 @@
     <link rel="stylesheet" href="{% static 'css/styles.css' %}" />
 </head>
 
-<body data-color_prefer>
+<body>
     <nav class="navbar navbar-expand-lg navbar-light bg-body-tertiary">
         <div class="container container-fluid">
             <a class="navbar-brand" href="{% block link_home %}/{% endblock %}">
@@ -150,4 +154,5 @@
     <script defer src="{% static 'js/settings.js' %}"></script>
     {% block scripts_end %} {% endblock %}
 </body>
+
 </html>

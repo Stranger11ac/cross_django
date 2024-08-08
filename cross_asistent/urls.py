@@ -27,37 +27,37 @@ urlpatterns = [
     path('administracion/perfil/editar_perfil', functions.editar_perfil, name='editprofile'),
     
     # Usuarios ----------------------------------------------------------
-    path('administracion/modificar_usuario/', functions.in_active, name='in_active'),
-    path('administracion/editar_usuario/<int:user_id>/', functions.editar_usuario, name='editar_usuario'),
-    path('administracion/eliminar_usuario/<int:user_id>/', functions.eliminar_usuario, name='eliminar_usuario'),
-    path('administracion/Database/', functions.createDatabase, name='create_database'),
+    path('administracion/usuarios/activacion/', functions.in_active, name='in_active'),
+    path('administracion/usuarios/editar/<int:user_id>/', functions.editar_usuario, name='editar_usuario'),
+    path('administracion/usuarios/eliminar/<int:user_id>/', functions.eliminar_usuario, name='eliminar_usuario'),
     
     # Banners ----------------------------------------------------------
-    path('administracion/banners/', views.upload_banner, name='upload_banner'),
-    path('administracion/banners/<int:banner_id>/edit/', views.edit_banner, name='edit_banner'),
-    path('administracion/banners/delete/<int:banner_id>/', views.delete_banner, name='delete_banner'),
-    path('administracion/update_banner_visibility/', functions.update_banner_visibility, name='update_banner_visibility'),
+    path('administracion/banners/', views.banners_page, name='upload_banner'),
+    path('administracion/banners/editar/<int:banner_id>/', views.edit_banner, name='edit_banner'),
+    path('administracion/banners/eliminar/<int:banner_id>/', views.delete_banner, name='delete_banner'),
+    path('administracion/banners/actualizar_visibilidad/', functions.banners_visibility_now, name='update_banner_visibility'),
 
     # Database ----------------------------------------------------------
     path('administracion/Base_de_datos/', views.database_page, name='database_page'),
+    path('administracion/database/crear/', functions.createDatabase, name='create_database'),
 
     # Blog ----------------------------------------------------------
-    path('administracion/crear_blog/', views.create_blog, name='create_blog'),
-    path('administracion/subir_img_blog/', views.upload_image, name='send_imgsblog'),
-    path('administracion/lista_imagenes/', views.lista_imagenes, name='lista_imagenes'),
+    path('administracion/blog/crear/', views.create_blog, name='create_blog'),
+    path('administracion/galeria/subir/', views.upload_image, name='send_imgsblog'),
+    path('administracion/galeria/lista/', views.lista_imagenes, name='lista_imagenes'),
     
     # Mapa ----------------------------------------------------------
-    path('administracion/mapa/', views.update_mapa, name='update_mapa'),
-    path('administracion/subir_mapa/', views.update_create_pleace_map, name='upload_map'),
-    path('administracion/editar_lugar_del_mapa/', functions.delete_pleaceMap, name='del_pleace_map'),
-    path('administracion/editar_lugar_BaseDatos/', functions.delete_pleaceMap_DB, name='del_pleace_mapdb'),
+    path('administracion/mapa/editar/', views.update_mapa, name='update_mapa'),
+    path('administracion/mapa/modificar/', views.update_create_pleace_map, name='upload_map'),
+    path('administracion/mapa/eliminar/', functions.delete_pleaceMap, name='del_pleace_map'),
+    path('administracion/mapa/elimiina/database/', functions.delete_pleaceMap_DB, name='del_pleace_mapdb'),
     
     # Notificaciones ----------------------------------------------------------
     path('administracion/notificaciones/', views.ver_notis, name='notificaciones'),
-    path('administracion/notificacion_leida/', views.marcar_notificaciones_leidas, name='marcar_notificaciones_leidas'),
+    path('administracion/notificaciones/notificacion_leida/', views.marcar_notificaciones_leidas, name='marcar_notificaciones_leidas'),
 
     # Preguntas ----------------------------------------------------------
-    path('administracion/pregunta_eliminar/', functions.preguntas_deleted, name='question_deleted'),
+    path('administracion/preguntas/eliminar/', functions.preguntas_deleted, name='question_deleted'),
     
     # Importar y Exportar ----------------------------------------------------------
     path('administracion/export/categorias/', imex_port.export_categorias, name='export_categorias'),

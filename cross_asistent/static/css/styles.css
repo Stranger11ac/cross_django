@@ -348,6 +348,44 @@ nav .navbar-collapse {
     opacity: 0.9;
 }
 
+
+/*########################### Carrusel MDB ###########################*/
+.carousel_container {
+    min-height: 210px;
+}
+
+.carousel img {
+    object-fit: cover;
+}
+
+.carousel-control-next,
+.carousel-control-prev {
+    text-shadow: 0 0 5px var(--mdb-surface-color);
+}
+
+.carousel.carousel_custom .carousel-item {
+    position: relative;
+    height: 400px;
+}
+
+.carousel.carousel_custom img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: inherit;
+}
+
+.carousel .carousel-item .carousel-caption {
+    border: none;
+    border-radius: var(--border-radius);
+    background: var(--darkA6);
+    background-color: var(--darkA6);
+    backdrop-filter: blur(3px);
+    text-shadow: 0 0 15px var(--whiteA9) !important;
+    padding: 5px !important;
+}
+
+
 @media (min-width: 992px) {
     .slide-inner .slider-content {
         width: 50%;
@@ -824,32 +862,6 @@ main.main_anchor {
 }
 
 
-/*########################### Carrusel MDB ###########################*/
-.carousel_container {
-    min-height: 210px;
-}
-
-.carousel .carousel-item.active,
-.carousel .carousel-item-next.carousel-item-start,
-.carousel .carousel-item-prev.carousel-item-end {
-    height: 200px !important;
-    max-height: 200px !important;
-}
-
-.carousel .carousel-item img {
-    object-fit: cover !important;
-}
-
-.carousel .carousel-item .carousel-caption {
-    border: none;
-    border-radius: var(--border-radius);
-    background: var(--darkA6);
-    background-color: var(--darkA6);
-    backdrop-filter: blur(3px);
-    text-shadow: 0 0 15px var(--whiteA9) !important;
-    padding: 10px !important;
-}
-
 /*########################### Tarjetas / cards MDB ###########################*/
 .card {
     box-shadow: 0 0 8px var(--darkA2) !important;
@@ -924,12 +936,16 @@ main.main_anchor {
 }
 
 /*########################### Tabla MDB ###########################*/
+.table p {
+    margin: 0;
+}
+
 .table-responsive {
     scroll-behavior: smooth;
 }
 
 .table_odd .table_odd_items {
-    /* --mdb-table-bg: var(--mdb-light); */
+    text-shadow: 0 0 10px var(--mdb-surface-bg);
     transition: var(--transitionEase);
 }
 
@@ -1201,16 +1217,25 @@ input:checked+.slider:before {
 
 #materialbox-overlay {
     position: fixed;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
+    inset: 0 !important;
     background-color: #292929;
     background: var(--darkA8);
     backdrop-filter: blur(5px);
     z-index: 1000;
     will-change: opacity;
     cursor: pointer;
+    height: 100vh !important;
+    max-height: 100vh !important;
+}
+
+#materialbox-overlay::before {
+    font: var(--fa-font-solid);
+    content: "\f00d";
+    position: absolute;
+    right: 25px;
+    top: 15px;
+    font-size: 2rem;
+    color: white;
 }
 
 .materialbox-caption {
@@ -1559,6 +1584,20 @@ img.img-rounded {
     border-radius: var(--border-radius);
 }
 
+.img_mask-dark {
+    position: relative;
+    z-index: 0;
+}
+
+.img_mask-dark::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(#1dedc3, #5b0ed8);
+    opacity: 0.5;
+    z-index: 1;
+}
+
 .img_article {
     overflow: hidden;
     max-height: 45vh;
@@ -1588,6 +1627,10 @@ img.img-rounded {
     max-height: 100px;
 }
 
+.max_h150 {
+    max-height: 150px;
+}
+
 .max_h200 {
     max-height: 200px;
 }
@@ -1602,6 +1645,10 @@ img.img-rounded {
 
 .max_h350 {
     max-height: 350px;
+}
+
+.max_h400 {
+    max-height: 400px;
 }
 
 .min_h100 {
@@ -1923,6 +1970,10 @@ img.img-rounded {
 /*################ Alerts customClass Sweetalert ################*/
 .title_alert {
     word-break: break-word;
+}
+
+.title_alert p {
+    margin: 0 !important;
 }
 
 .title_alert hr {
