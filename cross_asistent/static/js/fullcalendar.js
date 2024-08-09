@@ -7,7 +7,6 @@ document.addEventListener("DOMContentLoaded", function () {
         const options = { hour: "2-digit", minute: "2-digit", hour12: true };
         return date.toLocaleTimeString("es-ES", options);
     }
-
     var calendarEl = document.getElementById("calendar");
     var dataEvents = calendarEl.getAttribute("data-events");
     var calendar = new FullCalendar.Calendar(calendarEl, {
@@ -16,7 +15,7 @@ document.addEventListener("DOMContentLoaded", function () {
             end: "today,prev,next",
         },
         footerToolbar: {
-            start: "timeGridWeek,dayGridMonth,multiMonthYear",
+            start: "timeGridDay,timeGridWeek,dayGridMonth,multiMonthYear",
             end: "prevYear,nextYear",
         },
         firstDay: 0, // Domingo
@@ -49,50 +48,50 @@ document.addEventListener("DOMContentLoaded", function () {
         },
         eventClick: function (info) {
             var eventObj = info.event;
+            var $eventDesc = $("#eventDesc");
+            var $eventEndDate = $("#eventEndDate");
+            var $eventEndTime = $("#eventEndTime");
+            var $dateSeparator = $("#dateSeparator");
+            var $eventBtnDiv = $("#eventBtnDiv");
+            var $eventBtn = $("#eventBtn");
+            var $eventImg = $("#eventImg");
 
-            document.getElementById("eventModalLabel").innerText = eventObj.title;
-            document.getElementById("eventStartDate").innerText = formatDate(eventObj.start);
-            document.getElementById("eventStartTime").innerText = formatTime(eventObj.start);
+            // Actualizar texto de los elementos
+            $("#eventModalLabel").text(`TITULO:${eventObj.title}`);
+            $("#eventStartDate").text(formatDate(eventObj.start));
+            $("#eventStartTime").text(formatTime(eventObj.start));
 
-            if (eventObj.extendedProps.description) {
-                document.getElementById("eventDesc").innerText = eventObj.extendedProps.description;
-            } else {
-                document.getElementById("eventDesc").classList.add("none");
+            // Descripción del evento
+            $eventDesc
+                .text(eventObj.extendedProps.description || "")
+                .toggleClass("none", !eventObj.extendedProps.description);
+
+            // Fecha y hora de finalización del evento
+            var hasEnd = !!eventObj.end;
+            $eventEndDate.text(hasEnd ? formatDate(eventObj.end) : "");
+            $eventEndTime.text(hasEnd ? formatTime(eventObj.end) : "");
+            $dateSeparator.toggleClass("none", !hasEnd);
+
+            // Ubicación del evento
+            $("#eventLoc").text(eventObj.extendedProps.location || "Campus UTC");
+
+            // Botón de evento
+            var hasButton = eventObj.extendedProps.button !== "";
+            $eventBtnDiv.toggleClass("none", !hasButton);
+            $eventBtn.attr("href", hasButton ? eventObj.extendedProps.button : "");
+
+            // Imagen del evento
+            var imgJson = eventObj.extendedProps.imagen;
+            $eventImg.toggleClass("none", imgJson === "false");
+            if (imgJson !== "false") {
+                $eventImg.attr("src", imgJson.replace("cross_asistent/", ""));
             }
 
-            if (eventObj.end) {
-                document.getElementById("eventEndDate").innerText = formatDate(eventObj.end);
-                document.getElementById("eventEndTime").innerText = formatTime(eventObj.end);
-                document.getElementById("dateSeparator").classList.remove("none");
-            } else {
-                document.getElementById("eventEndDate").innerText = "";
-                document.getElementById("eventEndTime").innerText = "";
-                document.getElementById("dateSeparator").classList.add("none");
-            }
-
-            document.getElementById("eventLoc").innerText = eventObj.extendedProps.location || "Campus UTC";
-
-            if (eventObj.extendedProps.button == "false") {
-                document.getElementById("eventBtnDiv").classList.add("none");
-                document.getElementById("eventBtn").href = "";
-            } else {
-                document.getElementById("eventBtnDiv").classList.remove("none");
-                document.getElementById("eventBtn").href = eventObj.extendedProps.button;
-            }
-
-            const imgJson = eventObj.extendedProps.imagen;
-            if (imgJson == "false") {
-                document.getElementById("eventImg").classList.add("none");
-            } else {
-                document.getElementById("eventImg").classList.remove("none");
-                imgSrc = imgJson.replace("cross_asistent/", "");
-                document.getElementById("eventImg").src = imgSrc;
-            }
-
+            // Mostrar el modal con un retraso
             var myModal = new mdb.Modal(document.getElementById("eventModal"));
             setTimeout(() => {
                 myModal.show();
-            }, 500);
+            }, 200);
 
             info.jsEvent.preventDefault();
         },

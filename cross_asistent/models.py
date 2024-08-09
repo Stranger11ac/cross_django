@@ -94,6 +94,7 @@ class Database(models.Model):
     muid = models.CharField(max_length=23)
     evento_fecha_inicio = models.DateTimeField(blank=True, null=True)
     evento_fecha_fin = models.DateTimeField(blank=True, null=True)
+    evento_allDay = models.BooleanField(default=False)
     evento_lugar = models.CharField(max_length=200, blank=True, null=True, default='Campus UTC')
     evento_className = models.CharField(max_length=100, blank=True, null=True, default='event_detail')
     fecha_modificacion = models.DateTimeField(auto_now=True)

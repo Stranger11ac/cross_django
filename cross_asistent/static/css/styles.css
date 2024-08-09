@@ -1619,6 +1619,10 @@ img.img-rounded {
     max-width: 100px;
 }
 
+.max_w150 {
+    max-width: 150px;
+}
+
 .max_w200 {
     max-width: 200px;
 }

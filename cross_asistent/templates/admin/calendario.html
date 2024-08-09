@@ -19,6 +19,7 @@
                     </h3>
                     <form method="post" action="{% url 'create_database' %}" data-submit-form id="databaseForm" autocomplete="off">
                         {% csrf_token %}
+                        <input type="text" id="categoria" name="categoria" class="d-none" value="Calendario" required />
                         <div class="form-outline mb-4" data-mdb-input-init>
                             <i class="fa-solid fa-heading trailing"></i>
                             <input type="text" id="titulo" name="titulo" class="form-control form-icon-trailing" required />
@@ -26,7 +27,7 @@
                         </div>
                         <div class="form-outline mb-4" data-mdb-input-init>
                             <i class="fa-solid fa-keyboard trailing"></i>
-                            <textarea class="form-control form-icon-trailing" id="informacion" name="informacion" rows="3" required></textarea>
+                            <textarea class="form-control form-icon-trailing" id="informacion" name="informacion" rows="3"></textarea>
                             <label for="informacion" class="form-label">Descripción:</label>
                         </div>
                         <div class="form-outline mb-4" data-mdb-input-init>
@@ -37,36 +38,40 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-outline mb-4" data-mdb-input-init>
-                                    <input type="datetime-local" id="eInicio" name="eInicio" class="form-control active" required />
-                                    <label class="form-label" for="eInicio">Inicio:</label>
+                                    <input type="datetime-local" id="eStart" name="eStart" class="form-control active" min="2024-01-01T00:00" required />
+                                    <label class="form-label" for="eStart">Inicio:</label>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-outline mb-4" data-mdb-input-init>
-                                    <input type="datetime-local" id="efin" name="efin" class="form-control active" required />
-                                    <label class="form-label" for="efin">Fin:</label>
+                                    <input type="datetime-local" id="eEnd" name="eEnd" class="form-control active" min="2024-01-01T00:00" required />
+                                    <label class="form-label" for="eEnd">Fin:</label>
                                 </div>
                             </div>
                         </div>
                         <div class="form-check mb-4">
-                            <input class="form-check-input" type="checkbox" value="True" id="efullDay" name="efullDay" />
-                            <label class="form-check-label" for="efullDay">Dura Todo el dia</label>
+                            <input class="form-check-input" type="checkbox" value="True" id="eAllDay" name="eAllDay" />
+                            <label class="form-check-label" for="eAllDay">Dura Todo el dia</label>
+                        </div>
+                        <div class="form-outline mb-4" data-mdb-input-init>
+                            <input type="text" id="ePleace" name="ePleace" class="form-control active text-end" value="Campus UTC" required />
+                            <label class="form-label" for="ePleace">Lugar:</label>
+                        </div>
+                        <div class="form-outline mb-4">
+                            <select class="form-select" id="eColor" name="eColor" required>
+                                <option selected disabled hidden>Seleccione Color de Fondo:</option>
+                                <option value="event_detail">Color por Defecto</option>
+                                <option value="customColor">Personalizado</option>
+                                <option value="btn_cyan-purple">cyan-purple</option>
+                                <option value="bg_purple-blue">purple-blue</option>
+                                <option value="bg_blue-green">blue-green</option>
+                                <option value="bg_red-blue">red-blue</option>
+                                <option value="bg_blue-red">blue-red</option>
+                            </select>
                         </div>
                         <div class="mb-4">
                             <label for="imagen" class="form-label">Imágen: <small>(opcional)</small></label>
                             <input type="file" class="form-control" id="imagen" name="imagen" accept="image/jpeg, image/png, image/webp*">
-                        </div>
-                        <div class="form-outline mb-4" data-mdb-input-init>
-                            <input type="text" id="ePleace" name="ePleace" class="form-control active" value="Campus UTC" required />
-                            <label class="form-label" for="ePleace">Lugar:</label>
-                        </div>
-                        <div class="form-outline mb-4">
-                            <select class="form-select" id="color" name="color" required>
-                                <option selected disabled hidden>Seleccione Color de Fondo:</option>
-                                <option value="event_detail">Color por Defecto:</option>
-                                <option value="customColor">Personalizado</option>
-                                <option value="#000">Negro</option>
-                            </select>
                         </div>
                         <div>
                             <button type="submit" class="btn btn_detail btn-block">Guardar <i class="fa-solid fa-paper-plane ms-1"></i></button>
@@ -84,7 +89,7 @@
 
     <!-- Modal de MDBootstrap -->
     <div class="modal fade" id="eventModal" tabindex="-1" aria-labelledby="eventModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="eventModalLabel">Detalle del Evento</h5>
@@ -95,7 +100,7 @@
 
                     <div class="d-flex justify-content-between">
                         <div>
-                            <img id="eventImg" class="rounded materialBoxed none max_w150">
+                            <img id="eventImg" class="rounded materialBoxed none max_w150 max_h150">
                         </div>
                         <div class="d-flex align-items-center gap_10">
                             <div>
@@ -128,4 +133,5 @@
 {% endblock %}
 {% block scripts_end %}
 <script src="{% static 'js/settings_fullcalendar.js' %}"></script>
+<script src="{% static 'js/fullcalendar.js' %}"></script>
 {% endblock %}

@@ -365,17 +365,38 @@ def createDatabase(request):
     if request.method == 'POST':
         try:
             categoriaIdPOST = request.POST.get('categoria')
-            categoria = models.Categorias.objects.get(id=categoriaIdPOST) if categoriaIdPOST else None
+            categoria = get_object_or_404(models.Categorias, categoria=categoriaIdPOST)
             tituloPOST = request.POST.get('titulo')
             informacionPOST = request.POST.get('informacion')
             redirigirPOST = request.POST.get('redirigir')
-            documentosPOST = request.FILES.get('documentos')
-            imagenesPOST = request.FILES.get('imagenes')
+            documentoPOST = request.FILES.get('documento')
+            imagenPOST = request.FILES.get('imagen')
+            evento_fecha_inicioPOST = request.POST.get('eStart')
+            evento_fecha_finPOST = request.POST.get('eEnd')
+            evento_allDayPOST = request.POST.get('eAllDay')
+            evento_lugarPOST = request.POST.get('ePleace')
+            evento_classNamePOST = request.POST.get('eColor')
             
-            if categoria and categoria.categoria == 'Preguntas':
+            existing_record = models.Database.objects.filter(
+                titulo=tituloPOST,
+                evento_fecha_inicio=evento_fecha_inicioPOST,
+                evento_fecha_fin=evento_fecha_finPOST,
+            ).exists()
+
+            if existing_record:
+                return JsonResponse({
+                    'success': False, 
+                    'message': '😯Este evento ya existe. <br> Hay otro registro con el mismo nombre, fecha de inicio y fecha de fin. 🧐🤔😯',
+                }, status=400)
+            
+            if categoriaIdPOST == 'Preguntas':
                 frecuenciaPOST = 1
             else:
                 frecuenciaPOST = 0
+                
+            dbMessage =  'Nuevo registro en la base de datos 🎉🎉🎉'
+            if categoriaIdPOST == 'Calendario':
+                dbMessage =  'Nuevo Evento registrado exitosamente 🫡😁🎉'
             
             models.Database.objects.create(
                 categoria=categoria,
@@ -383,18 +404,18 @@ def createDatabase(request):
                 informacion=informacionPOST,
                 redirigir=redirigirPOST,
                 frecuencia=frecuenciaPOST,
-                documentos=documentosPOST,
-                imagenes=imagenesPOST,
-                evento_lugar='',
-                evento_className='',
+                documento=documentoPOST,
+                imagen=imagenPOST,
+                muid=f'others_{models.generate_random_string(6)}',
+                evento_fecha_inicio=evento_fecha_inicioPOST if evento_fecha_inicioPOST else '',
+                evento_fecha_fin=evento_fecha_finPOST if evento_fecha_finPOST else '',
+                evento_allDay=evento_allDayPOST if not evento_allDayPOST == None else False,
+                evento_lugar=evento_lugarPOST if evento_lugarPOST else '',
+                evento_className=evento_classNamePOST if evento_classNamePOST else '',
             )
+            models.Notificacion.objects.create(usuario=request.user,tipo='Base de Datos',mensaje=f'{request.user.username} ha creado un nuevo registro de categoría "{categoriaIdPOST}".',)
             
-            models.Notificacion.objects.create(
-                usuario=request.user,
-                tipo='Base de Datos',
-                mensaje=f'{request.user.username} ha creado un nuevo registro de categoría "{categoria}".',
-            )
-            return JsonResponse({'success': True, 'message': 'Nuevo registro en la base de datos 🎉🎉🎉', 'position':'top'}, status=200)
+            return JsonResponse({'success': True, 'functions':'reload', 'message': dbMessage, 'position':'top'}, status=200)
         
         except Exception as e:
             return JsonResponse({'success': False, 'message': f'Ocurrió un error 😯😥 <br>{str(e)}'}, status=400)
@@ -413,6 +434,7 @@ def calendario_eventos(request):
         'button': evento.redirigir if evento.redirigir else '',
         'start': evento.evento_fecha_inicio.isoformat() if evento.evento_fecha_inicio else '',
         'end': evento.evento_fecha_fin.isoformat() if evento.evento_fecha_fin else '',
+        'allDay': evento.evento_allDay,
     } for evento in eventos]
     
     return JsonResponse(eventos_json, safe=False)
