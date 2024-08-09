@@ -5,8 +5,8 @@ urlpatterns = [
     # Páginas de inicio ----------------------------------------------------------
     path('', views.index, name='home'),
     path('chatbot/', functions.chatbot, name='chatbot'),
-    path('preguntas_frecuentes/', views.faq, name='faq'),
-    path('preguntar/', views.crear_pregunta, name='enviar_preguntas'),
+    path('preguntas_frecuentes/', views.fqt_questions, name='faq'),
+    path('preguntar/', views.fqt_questions_send, name='enviar_preguntas'),
     path('blogs/', views.blogs, name='blog'),
     path('blogs/<int:Articulos_id>/', views.mostrar_blog, name='mostrar_blog'),
     path('calendario/', views.calendario, name='calendario'),
@@ -33,24 +33,29 @@ urlpatterns = [
     
     # Banners ----------------------------------------------------------
     path('administracion/banners/', views.banners_page, name='upload_banner'),
-    path('administracion/banners/editar/<int:banner_id>/', views.edit_banner, name='edit_banner'),
-    path('administracion/banners/eliminar/<int:banner_id>/', views.delete_banner, name='delete_banner'),
+    path('administracion/banners/editar/<int:banner_id>/', functions.banner_update, name='edit_banner'),
+    path('administracion/banners/eliminar/<int:banner_id>/', functions.banner_delete, name='delete_banner'),
     path('administracion/banners/actualizar_visibilidad/', functions.banners_visibility_now, name='update_banner_visibility'),
 
     # Database ----------------------------------------------------------
     path('administracion/Base_de_datos/', views.database_page, name='database_page'),
     path('administracion/database/crear/', functions.createDatabase, name='create_database'),
+    path('administracion/calendario/', views.calendario_page, name='calendario_page'),
 
     # Blog ----------------------------------------------------------
-    path('administracion/blog/crear/', views.create_blog, name='create_blog'),
-    path('administracion/galeria/subir/', views.upload_image, name='send_imgsblog'),
-    path('administracion/galeria/lista/', views.lista_imagenes, name='lista_imagenes'),
+    path('administracion/blog/crear/', views.blog_page, name='create_blog'),
+    path('administracion/blog/editar/', functions.blog_change, name='blog_get'),
+    path('administracion/blog/eliminar/', functions.blog_delete, name='blog_delete'),
     
     # Mapa ----------------------------------------------------------
-    path('administracion/mapa/editar/', views.update_mapa, name='update_mapa'),
+    path('administracion/mapa/editar/', views.map_page, name='update_mapa'),
     path('administracion/mapa/modificar/', views.update_create_pleace_map, name='upload_map'),
     path('administracion/mapa/eliminar/', functions.delete_pleaceMap, name='del_pleace_map'),
     path('administracion/mapa/elimiina/database/', functions.delete_pleaceMap_DB, name='del_pleace_mapdb'),
+    
+    # Galeria ----------------------------------------------------------
+    path('administracion/galeria/subir/', views.upload_image, name='send_imgsblog'),
+    path('administracion/galeria/lista/', views.lista_imagenes, name='lista_imagenes'),
     
     # Notificaciones ----------------------------------------------------------
     path('administracion/notificaciones/', views.ver_notis, name='notificaciones'),

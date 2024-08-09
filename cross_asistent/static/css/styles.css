@@ -21,6 +21,7 @@
     --gradient_green: linear-gradient(135deg, #02913c, #04422f);
     --gradient_purple: linear-gradient(135deg, #723bca, #2a085a);
     --gradient_orange: linear-gradient(135deg, #d29c15, #dc4817);
+    --gradient_blue-purple: linear-gradient(135deg, #1dedc3, #5b0ed8);
 
     /* Color white transparent-> "alpha chanel" */
     /* Colorxd */
@@ -140,6 +141,18 @@
     --fc-button-active-bg-color: #9f7710;
     --fc-button-active-border-color: #9f7710;
     --img-filter: hue-rotate(-100deg) saturate(350%);
+    accent-color: var(--var-detail_flat);
+}
+
+[data-color_prefer="gradient_blue-purple"] {
+    --var-detail_flat: #3b71ca;
+    --var-detail_dark: #274b85;
+    --var-detail: var(--gradient_blue-purple);
+    --fc-button-bg-color: var(--var-detail_flat);
+    --fc-button-border-color: var(--var-detail_flat);
+    --fc-button-hover-bg-color: var(--var-detail_dark);
+    --fc-button-active-bg-color: var(--var-detail_dark);
+    --fc-button-active-border-color: var(--var-detail_dark);
     accent-color: var(--var-detail_flat);
 }
 
@@ -521,6 +534,11 @@ main.main_anchor {
     background: var(--gradient_orange) !important;
 }
 
+.btn_cyan-purple,
+.btn_cyan-purple:active,
+.btn_cyan-purple:hover {
+    background: var(--gradient_blue-purple) !important;
+}
 
 .bg_teal {
     background: #00695C;
@@ -854,13 +872,16 @@ main.main_anchor {
 
 /*########################### Mascara / mask ###########################*/
 .mask_dark {
-    background: linear-gradient(to bottom, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.5) 70%);
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 0), var(--darkA5) 70%);
 }
 
 .mask_white {
-    background: linear-gradient(to top, var(--mdb-body-bg) 40px, rgba(0, 0, 0, 0.4) 30%, transparent 60%);
+    background: linear-gradient(to top, var(--mdb-body-bg) 40px, var(--darkA4) 30%, transparent 60%);
 }
 
+.mask_cyan-purple {
+    background: linear-gradient(#1dedc3, #5b0ed8);
+}
 
 /*########################### Tarjetas / cards MDB ###########################*/
 .card {
@@ -1587,15 +1608,6 @@ img.img-rounded {
 .img_mask-dark {
     position: relative;
     z-index: 0;
-}
-
-.img_mask-dark::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(#1dedc3, #5b0ed8);
-    opacity: 0.5;
-    z-index: 1;
 }
 
 .img_article {

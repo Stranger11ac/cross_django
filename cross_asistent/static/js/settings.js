@@ -407,6 +407,51 @@ $(document).ready(function () {
             }
         });
 
+        // Editar Blog ################################################################
+        $("#formularioArticulo #blogNewUpdate").change(function () {
+            blogIdGet = $("#formularioArticulo #blogNewUpdate").val();
+            dataGetBlog = $("#formularioArticulo #blogNewUpdate").data("get-blog");
+            if (blogIdGet != "newBlog") {
+                $.ajax({
+                    url: dataGetBlog,
+                    type: "GET",
+                    data: { id: blogIdGet },
+                    success: function (data) {
+                        $("#formularioArticulo #imgArticle").attr("src", "/static/img/default_image.webp");
+                        if (data.encabezado) {
+                            $("#formularioArticulo #imgArticle").attr("src", data.encabezado);
+                        }
+                        $("#formularioArticulo #titulo").addClass("active").val(data.titulo);
+                        const blogContent = data.contenido;
+                        tinymce.get("mainTiny").setContent(blogContent);
+                        $("#formularioArticulo .blogSubmit").html(
+                            'Modificar <i class="fa-regular fa-paper-plane ms-1"></i>'
+                        );
+                        $("#formularioArticulo .btnModal").slideDown("fast");
+                        $("#blogDelete #blogDeleteTitle").text(data.titulo)
+                        $("#blogDelete #blogIdDelete").val(blogIdGet)
+                    },
+                    error: function (error) {
+                        console.error("Error al obtener datos: " + error);
+                        alertSToast(
+                            "center",
+                            8000,
+                            "error",
+                            "UPS! 😯🤔🧐<br> hubo un error al obtener los datos, consulte la consola."
+                        );
+                    },
+                });
+            } else {
+                $("#formularioArticulo #imgArticle").attr("src", "/static/img/default_image.webp");
+                $("#formularioArticulo #titulo").removeClass("active").val("");
+                tinymce.get("mainTiny").setContent("");
+                $("#formularioArticulo .blogSubmit").html('Publicar <i class="fa-regular fa-paper-plane ms-1"></i>');
+                $("#formularioArticulo .btnModal").slideUp("fast");
+                $("#blogDelete #blogDeleteTitle").text('')
+                $("#blogDelete #blogIdDelete").val('')
+            }
+        });
+
         //
         //
         //
@@ -645,7 +690,7 @@ function jsonSubmit(e) {
                 passwordInputs.forEach((input) => (input.value = ""));
 
                 alertSToast(dataPosition, timerOut, dataIcon, dataMessage, alertfunction);
-            } else if (data.success == false){
+            } else if (data.success == false) {
                 console.error(dataMessage);
 
                 if (data.valSelector) {

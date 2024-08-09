@@ -886,14 +886,6 @@ fetch(url)
 
         // Abrir offcanvas: Informacion del edificio
         map.on("click", "places-layer", (e) => {
-            // Funcion para cerrar todo los offcanvas
-            // document.querySelectorAll(".offcanvas.show").forEach((openOffcanvasElement) => {
-            //     const openOffcanvasInstance = bootstrap.Offcanvas.getInstance(openOffcanvasElement);
-            //     if (openOffcanvasInstance) {
-            //         openOffcanvasInstance.hide();
-            //     }
-            // });
-
             const feature = e.features[0];
             const { nombre, informacion, imagen_url, color, door, muid } = feature.properties;
             const { coordinates } = feature.geometry;

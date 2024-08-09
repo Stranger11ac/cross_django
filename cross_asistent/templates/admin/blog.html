@@ -45,16 +45,25 @@
                 <div class="col-12">
                     <div class="card">
                         <div class="card-body">
-                            <input type="text" id="autor" name="autor" class="d-none" readonly aria-label="readonly" value="{{user.username}}" required />
+                            <div class="form-outline mb-3">
+                                <select class="form-select" id="blogNewUpdate" name="blogNewUpdate" data-get-blog="{% url 'blog_get' %}">
+                                    <option selected disabled hidden>Modificar Articulo:</option>
+                                    <option value="newBlog">Crear Nuevo Articulo:</option>
+                                    {% for blog in blogsTiple %}
+                                    <option value="{{ blog.id }}">{{ blog.titulo }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
 
-                            <div class="mb-4" data-mdb-input-init>
+                            <input type="text" id="autor" name="autor" class="d-none" readonly aria-label="readonly" value="{{user.username}}" required />
+                            <div class="mb-3" data-mdb-input-init>
                                 <label class="form-label" for="new_firma">
                                     {% if user.userprofile.blog_firma %}
                                     Cambiar
                                     {% else %}
                                     Personalizar
                                     {% endif %}
-                                    firma de Autor:<span class="fs-8"> (opcional)</span>
+                                    firma:<span class="fs-8"> (opcional)</span>
                                 </label>
                                 <input type="text" id="new_firma" name="new_firma" class="form-control text-white"
                                     placeholder="Ej: Ing. / Lic. {{user.first_name}}" />
@@ -62,24 +71,65 @@
 
                             <label class="form-label" for="encabezadoImg">Imagen de Encabezado: <span class="fs-8">(opcional)</span> </label>
                             <input type="file" class="form-control text-right" id="encabezadoImg" name="encabezadoImg" accept="image/*" data-img_dom-change />
-                            <button type="submit" class="btn btn_detail w-100 d-none d-md-block mt-4">Publicar <i
-                                    class="fa-regular fa-paper-plane ms-1"></i></button>
+                            <div class="d-none d-md-block">
+                                <button type="button" class="btn btn-danger btn-block mt-4 btnModal none" data-mdb-ripple-init data-mdb-modal-init
+                                    data-mdb-target="#blogDelete">
+                                    Eliminar Blog <i class="fa-regular fa-trash-can"></i>
+                                </button>
+                                <button type="submit" class="btn btn_detail btn-block mt-4 blogSubmit" id="blogSubmit">
+                                    Publicar <i class="fa-regular fa-paper-plane ms-1"></i>
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
         <div class="col-12 col-md-6 col-xl-8">
-            <textarea id="mainTiny" name="contenidoWord" placeholder="Escribe tu articulo..." 
-            data-list-imgs="{% url 'lista_imagenes' %}" data-upload-imgs="{% url 'send_imgsblog' %}"></textarea>
+            <textarea id="mainTiny" name="contenidoWord" placeholder="Escribe tu articulo..." data-list-imgs="{% url 'lista_imagenes' %}"
+                data-upload-imgs="{% url 'send_imgsblog' %}"></textarea>
             <div class="card d-md-none mt-4">
-                <div class="card-body">
-                    <button type="submit" class="btn btn_detail w-100">Publicar <i class="fa-regular fa-paper-plane ms-1"></i></button>
+                <div class="card-body row">
+                    <div class="col btnModal none">
+                        <button type="button" class="btn btn-danger btn-block" data-mdb-ripple-init data-mdb-modal-init data-mdb-target="#blogDelete">
+                            Eliminar Blog <i class="fa-regular fa-trash-can"></i>
+                        </button>
+                    </div>
+                    <div class="col">
+                        <button type="submit" class="btn btn_detail btn-block blogSubmit" id="blogSubmit">
+                            Publicar <i class="fa-regular fa-paper-plane ms-1"></i>
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
     </form>
 </main>
+
+<!-- Modal: Elimiinar Blog -->
+<div class="modal fade" id="blogDelete" tabindex="-1" aria-labelledby="blogDeleteLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="blogDeleteLabel">Eliminar Blog</h5>
+                <button type="button" class="btn-close" data-mdb-ripple-init data-mdb-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <h4 class="text-center">Deseas eliminar el blog titulado:</h4>
+                <h4 class="text-center" id="blogDeleteTitle"></h4>
+                <p class="mb-0 mt-4">Esta accion es permanente, se eliminara la imagen de encabezado pero las imagenes del articulo se mantienen en la galeria
+                    global</p>
+            </div>
+            <div class="modal-footer d-flex justify-content-between">
+                <button type="button" class="btn btn-secondary" data-mdb-ripple-init data-mdb-dismiss="modal">Cancelar</button>
+                <form action="{% url 'blog_delete' %}" method="post" id="formularioArticulo" data-submit-form>
+                    <input type="text" name="blogIdDelete" id="blogIdDelete" class="d-none">
+                    <button type="submit" class="btn btn-danger" data-mdb-ripple-init>eliminar</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}
 {% block scripts_end %}
 <script src="{% static 'tinymce/tinymce.min.js' %}"></script>

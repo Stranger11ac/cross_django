@@ -3,10 +3,10 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.hashers import check_password
 from sklearn.metrics.pairwise import cosine_similarity
 from django.views.decorators.cache import never_cache
-from django.http import JsonResponse, HttpResponse
 from django.db import IntegrityError, transaction
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.models import User
+from django.http import JsonResponse
 from django.utils import timezone
 from django.conf import settings
 from django.db.models import Q
@@ -32,6 +32,7 @@ pages = [
         {'name': 'database', 'url': 'database_page', 'display_name': 'Database', 'icon': 'fa-solid fa-database'},
         {'name': 'blog', 'url': 'create_blog', 'display_name': 'Blogs', 'icon': 'fa-solid fa-newspaper'},
         {'name': 'mapa', 'url': 'update_mapa', 'display_name': 'Mapa', 'icon': 'fa-solid fa-map-location-dot'},
+        {'name': 'calendario', 'url': 'calendario_page', 'display_name': 'Calendario', 'icon': 'fa-solid fa-calendar-days'},
     ]
 
 def chatgpt(question, instructions):
@@ -138,7 +139,7 @@ def chatbot(request):
                     "titulo": mejor_coincidencia.titulo,
                     "informacion": answer,
                     "redirigir":  mejor_coincidencia.redirigir,
-                    "imagenes": mejor_coincidencia.imagenes.url.replace("/cross_asistent", "") if mejor_coincidencia.imagenes else None
+                    "imagenes": mejor_coincidencia.imagenes.url.replace("cross_asistent/", "") if mejor_coincidencia.imagenes else None
                 }
                 print(f"Respuesta JSON: {respuesta}")  
                 return JsonResponse({'success': True, 'answer': respuesta,})
@@ -301,6 +302,43 @@ def editar_usuario(request, user_id):
 # Banners ----------------------------------------------------------
 @login_required
 @never_cache
+def banner_update(request, banner_id):
+    banner = get_object_or_404(models.Banners, id=banner_id)
+    if request.method == 'POST':        
+        banner.solo_imagen = request.POST.get('soloImagen')
+        if banner.solo_imagen == None:
+            banner.solo_imagen = False
+            
+        new_image = request.FILES.get('imagen')
+        if not new_image == None:
+            banner.imagen = new_image
+        banner.titulo = request.POST.get('contenidoWord')
+        banner.descripcion = request.POST.get('descripcion')
+        banner.redirigir = request.POST.get('redirigir')
+        if banner.expiracion:
+            banner.expiracion = request.POST.get('expiracion')
+        banner.save()
+        
+        return JsonResponse({
+            'success': True,
+            'functions': 'reload',
+            'message': f'El banner <u>{banner.titulo}</u> fue modificado exitosamente 🥳🎉🎈.'
+        }, status=200)
+    
+    return JsonResponse({'success': False, 'message': 'Acción no permitida.'}, status=403)
+
+@login_required
+@never_cache
+def banner_delete(request, banner_id):
+    if request.method == 'POST':
+        banner = get_object_or_404(models.Banners, id=banner_id)
+        banner.delete()
+        icon = 'warning'
+        return JsonResponse({'success': True, 'functions': 'reload', 'message': 'Banner eliminado exitosamente.', 'icon': icon}, status=200)
+    return JsonResponse({'success': False, 'message': 'Acción no permitida.'}, status=403)
+
+@login_required
+@never_cache
 def banners_visibility_now(request):
     if request.method == 'POST':
         banneridPOST = request.POST.get('banner_id')
@@ -362,7 +400,7 @@ def createDatabase(request):
             return JsonResponse({'success': False, 'message': f'Ocurrió un error 😯😥 <br>{str(e)}'}, status=400)
     return JsonResponse({'error': 'Método no válido'}, status=400)
 
-# Calendario: Eventos ----------------------------------------------------------
+# Calendario: Eventos ---------------------
 def calendario_eventos(request):
     categoriaGet = get_object_or_404(models.Categorias, categoria="Calendario")
     eventos = models.Database.objects.filter(categoria=categoriaGet).select_related('categoria')
@@ -378,6 +416,38 @@ def calendario_eventos(request):
     } for evento in eventos]
     
     return JsonResponse(eventos_json, safe=False)
+
+# Blogs ----------------------------------------------------------
+@login_required
+@never_cache
+def blog_change(request):
+    if request.method == 'GET':
+        blogIdGET = request.GET.get('id')
+        if (blogIdGET):
+            blogGet = get_object_or_404(models.Articulos, id=blogIdGET)
+            blogEncabezado = blogGet.encabezado
+            if blogEncabezado:
+                blogEncabezado = blogGet.encabezado.url.replace("cross_asistent/", "")
+            else:
+                blogEncabezado = ''
+            data = {
+                'autor': blogGet.autor,
+                'titulo': blogGet.titulo,
+                'contenido': blogGet.contenido,
+                'encabezado': blogEncabezado,
+            }
+            return JsonResponse(data)
+    return JsonResponse({'success': False}, status=400)
+
+@login_required
+@never_cache
+def blog_delete(request):
+    if request.method == 'POST':
+        idPOST = request.POST.get('blogIdDelete')
+        blogId = get_object_or_404(models.Articulos, id=idPOST)
+        blogId.delete()
+        return JsonResponse({'success': True, 'functions': 'reload', 'message': f'El blog "{blogId.titulo}" <u>se elimino</u> exitosamente. 😯😬🎉', 'icon': 'warning'}, status=200)
+    return JsonResponse({'success': False, 'message': 'Acción no permitida.'}, status=403)
 
 # Mapa ----------------------------------------------------------
 def mapa_data(request):

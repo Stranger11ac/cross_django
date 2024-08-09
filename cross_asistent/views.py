@@ -21,7 +21,7 @@ def index(request):
     banners_modificados = []
 
     for banner in banners_all:
-        imagen_url = banner.imagen.url.replace("/cross_asistent", "")
+        imagen_url = banner.imagen.url.replace("cross_asistent/", "")
         banners_modificados.append({
             'id': banner.id,
             'titulo': banner.titulo,
@@ -36,7 +36,7 @@ def index(request):
         'active_page': 'inicio'
     })
 
-def faq(request):
+def fqt_questions(request):
     if not request.user.is_staff:
         logout(request)
     
@@ -47,7 +47,7 @@ def faq(request):
         'active_page': 'faq'
     })
 
-def crear_pregunta(request):    
+def fqt_questions_send(request):    
     if request.method == "POST":
         if request.content_type == 'application/json':
             try:
@@ -84,7 +84,7 @@ def blogs(request):
     for oneblog in blogs:
         imagen_url = oneblog.encabezado
         if not imagen_url == '':
-            img = oneblog.encabezado.url.replace("/cross_asistent", "")
+            img = oneblog.encabezado.url.replace("cross_asistent/", "")
             imgClass = 'item_img-url'
         else:
             img = '/static/img/default_image.webp'
@@ -109,7 +109,7 @@ def mostrar_blog(request, Articulos_id):
     articulo = get_object_or_404(models.Articulos, pk=Articulos_id)
     autor_username = articulo.autor
     if articulo.encabezado:
-        encabezado_url = articulo.encabezado.url.replace('cross_asistent', '')
+        encabezado_url = articulo.encabezado.url.replace('cross_asistent/', '')
     else:
         encabezado_url = ''
     
@@ -250,7 +250,7 @@ def vista_programador(request):
         'banners_all': banners_all,
         'preguntas_sending': questions_all,
         'num_preguntas': databaseall.count(),
-        'num_blogs': models.Articulos.objects.all().count(),
+        'num_blogs': models.Articulos.objects.filter(autor=request.user).count(),
     }
      
     if request.method == 'POST':
@@ -275,7 +275,7 @@ def vista_programador(request):
 def ver_perfil(request):
     perfil_extencion = request.user.userprofile
     if perfil_extencion.profile_picture:
-        request.user.userprofile.profile_picture = request.user.userprofile.profile_picture.url.replace("/cross_asistent", "")
+        request.user.userprofile.profile_picture = request.user.userprofile.profile_picture.url.replace("cross_asistent/", "")
     else:
         request.user.userprofile.profile_picture = '/static/img/UTC_logo-plano.webp'
         
@@ -338,7 +338,7 @@ def banners_page(request):
     banners_modificados = []
 
     for banner in banners_all:
-        imagen_url = banner.imagen.url.replace("/cross_asistent", "")
+        imagen_url = banner.imagen.url.replace("cross_asistent/", "")
         banners_modificados.append({
             'id': banner.id,
             'titulo': banner.titulo,
@@ -355,43 +355,6 @@ def banners_page(request):
                'banners_cound': banners_all.count() }
     return render(request, 'admin/banners.html', context)
 
-@login_required
-@never_cache
-def edit_banner(request, banner_id):
-    banner = get_object_or_404(models.Banners, id=banner_id)
-    if request.method == 'POST':        
-        banner.solo_imagen = request.POST.get('soloImagen')
-        if banner.solo_imagen == None:
-            banner.solo_imagen = False
-            
-        new_image = request.FILES.get('imagen')
-        if not new_image == None:
-            banner.imagen = new_image
-        banner.titulo = request.POST.get('contenidoWord')
-        banner.descripcion = request.POST.get('descripcion')
-        banner.redirigir = request.POST.get('redirigir')
-        if banner.expiracion:
-            banner.expiracion = request.POST.get('expiracion')
-        banner.save()
-        
-        return JsonResponse({
-            'success': True,
-            'functions': 'reload',
-            'message': f'El banner <u>{banner.titulo}</u> fue modificado exitosamente 🥳🎉🎈.'
-        }, status=200)
-    
-    return JsonResponse({'success': False, 'message': 'Acción no permitida.'}, status=403)
-
-@login_required
-@never_cache
-def delete_banner(request, banner_id):
-    if request.method == 'POST':
-        banner = get_object_or_404(models.Banners, id=banner_id)
-        banner.delete()
-        icon = 'warning'
-        return JsonResponse({'success': True, 'functions': 'reload', 'message': 'Banner eliminado exitosamente.', 'icon': icon}, status=200)
-    return JsonResponse({'success': False, 'message': 'Acción no permitida.'}, status=403)
-
 # Base de Datos ----------------------------------------------------------
 @login_required
 @never_cache
@@ -399,11 +362,11 @@ def database_page(request):
     datos_modificados = []
     for dato in databaseall.order_by('-id'):
         if dato.imagen:
-            imagen_url = dato.imagen.url.replace("/cross_asistent", "")
+            imagen_url = dato.imagen.url.replace("cross_asistent/", "")
         else:
             imagen_url = ''
         if dato.documento:
-            documento_url = dato.documento.url.replace("/cross_asistent", "")
+            documento_url = dato.documento.url.replace("cross_asistent/", "")
         else:
             documento_url = ''
         datos_modificados.append({
@@ -419,70 +382,79 @@ def database_page(request):
         })
     context = { 'database': datos_modificados, 'active_page': 'database','pages': functions.pages, 'categorias': categoriasall }
     return render(request, 'admin/database.html', context)
+
+@login_required
+@never_cache
+def calendario_page(request):
+    context = { 'active_page': 'calendario', 'pages': functions.pages }
+    return render(request, 'admin/calendario.html', context)
     
 # Blogs ----------------------------------------------------------
 @login_required
 @never_cache
-def create_blog(request):
+def blog_page(request):
     if request.method == 'POST':
         try:
-            articulo = models.Articulos(
-                titulo=request.POST.get('titulo'),
-                contenido=request.POST.get('contenidoWord'),
-                autor=request.POST.get('autor'),
-                encabezado=request.FILES.get('encabezadoImg')
-            )
-            articulo.save()
+            autorPOST = request.POST.get('autor')
+            tituloPOST = request.POST.get('titulo')
+            contenidoWordPOST = request.POST.get('contenidoWord')
+            encabezadoImgPOST = request.FILES.get('encabezadoImg')
+            blogUpdate = request.POST.get('blogNewUpdate')
             
+            if not blogUpdate == None and not blogUpdate == 'newBlog':
+                blogUpdate = get_object_or_404(models.Articulos, id=blogUpdate)
+                blogUpdate.autor = autorPOST
+                blogUpdate.titulo = tituloPOST
+                blogUpdate.contenido = contenidoWordPOST
+                blogUpdate.encabezado = encabezadoImgPOST
+                blogUpdate.save()
+                jsonMessage='Excelente 🥳🎈🎉. Tu articulo fue modificado de forma exitosa. 😁🫡'
+                
+                models.Notificacion.objects.create(
+                    usuario=request.user,
+                    tipo='Blog',
+                    mensaje=f'{request.user.username} ha Modificado su blog titulado "{tituloPOST}".',
+                )
+                
+            else:
+                articulo = models.Articulos(
+                    autor=autorPOST,
+                    titulo=tituloPOST,
+                    contenido=contenidoWordPOST,
+                    encabezado=encabezadoImgPOST,
+                )
+                articulo.save()
+                jsonMessage='Excelente 🥳🎈🎉. Tu articulo ya fue publicado. Puedes editarlo cuando gustes. 🧐😊'
+                
+                models.Notificacion.objects.create(
+                    usuario=request.user,
+                    tipo='Blog',
+                    mensaje=f'{request.user.username} ha subido un nuevo blog titulado "{articulo.titulo}".',
+                )
+                
             user_perfil = request.user.userprofile
             if request.POST.get('new_firma'):
                 user_perfil.blog_firma = request.POST.get('new_firma')
                 user_perfil.save()
-            
-            models.Notificacion.objects.create(
-                usuario=request.user,
-                tipo='Blog',
-                mensaje=f'{request.user.username} ha subido un nuevo blog titulado "{articulo.titulo}".',
-            )
 
-            return JsonResponse({'success': True, 'message': 'Excelente 🥳🎈🎉. Tu articulo ya fue publicado. Puedes editarlo cuando gustes. 🧐😊'}, status=200)
+            return JsonResponse({'success': True, 'functions':'reload', 'message': jsonMessage}, status=200)
         except Exception as e:
             return JsonResponse({'success': False, 'message': f'Ocurrio un error😯😥 <br>{str(e)}'}, status=400)
-    return render(request, 'admin/blog.html', {'active_page': 'blog','pages': functions.pages})
-
-@login_required
-@never_cache
-def upload_image(request):
-    if request.method == 'POST':
-        try:
-            image_file = request.FILES['file']
-            imagen_articulo = models.Imagenes(imagen=image_file)
-            imagen_articulo.save()
-            image_url = imagen_articulo.imagen.url.replace("/cross_asistent", "")
-
-            return JsonResponse({'location': image_url})
-        except Exception as e:
-            return JsonResponse({'error': str(e)}, status=400)
-    return JsonResponse({'error': 'Error al subir la imagen'}, status=400)
-
-@login_required
-@never_cache
-def lista_imagenes(request):
-    imagenes = models.Imagenes.objects.all()
-    imagenes_modificadas = []
-
-    for imagen in imagenes:
-        imagen_url = imagen.imagen.url.replace("/cross_asistent", "")
-        imagenes_modificadas.append({
-            'id': imagen.id,
-            'url': imagen_url
+        
+    yourBlogs = models.Articulos.objects.filter(autor = request.user)
+    blogsTiple=[]
+    for oneBlog in yourBlogs:
+        blogsTiple.append({
+            'id': oneBlog.id,
+            'titulo': oneBlog.titulo,
         })
-    return render(request, 'admin/blog_imgs.html', {'imagenes': imagenes_modificadas})
+    
+    return render(request, 'admin/blog.html', {'active_page':'blog','pages':functions.pages, 'blogsTiple':blogsTiple})
 
 #Mapa ----------------------------------------------------------
 @login_required
 @never_cache
-def update_mapa(request):
+def map_page(request):
     categoria_mapa = models.Categorias.objects.get(categoria="Mapa")
     map_inDB = models.Database.objects.filter(categoria=categoria_mapa)
     UID = f'mapa-pleace_{models.generate_random_string(11)}'
@@ -556,3 +528,33 @@ def update_create_pleace_map(request):
             )
 
             return JsonResponse({'success': True, 'message': 'Se creo un nuevo edificio en el mapa y en la base de datos de forma exitosa 🎉🎉🎉'}, status=200)
+
+#Galeria ----------------------------------------------------------
+@login_required
+@never_cache
+def upload_image(request):
+    if request.method == 'POST':
+        try:
+            image_file = request.FILES['file']
+            imagen_articulo = models.Imagenes(imagen=image_file)
+            imagen_articulo.save()
+            image_url = imagen_articulo.imagen.url.replace("cross_asistent/", "")
+
+            return JsonResponse({'location': image_url})
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=400)
+    return JsonResponse({'error': 'Error al subir la imagen'}, status=400)
+
+@login_required
+@never_cache
+def lista_imagenes(request):
+    imagenes = models.Imagenes.objects.all()
+    imagenes_modificadas = []
+
+    for imagen in imagenes:
+        imagen_url = imagen.imagen.url.replace("cross_asistent/", "")
+        imagenes_modificadas.append({
+            'id': imagen.id,
+            'url': imagen_url
+        })
+    return render(request, 'admin/blog_imgs.html', {'imagenes': imagenes_modificadas})

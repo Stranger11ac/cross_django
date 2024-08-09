@@ -190,8 +190,8 @@ def delete_files_on_object_delete(sender, instance, **kwargs):
 
 @receiver(pre_delete, sender=Articulos)
 def delete_files_on_object_delete(sender, instance, **kwargs):
-    if instance.imagen:
-        instance.imagen.delete(save=False)
+    if instance.encabezado:
+        instance.encabezado.delete(save=False)
 
 @receiver(pre_delete, sender=Imagenes)
 def delete_files_on_object_delete(sender, instance, **kwargs):
