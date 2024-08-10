@@ -257,7 +257,6 @@ if (mapElement.classList.contains("map_editing")) {
             drawPolygonButton.classList.remove("btn_detail", "bg_red-blue");
             drawPolygonButton.classList.add("bg_purple-blue");
             drawPolygonButton.innerHTML = 'Borrar marcadores <i class="fa-solid fa-trash-can ms-1"></i>';
-
         } else if (createNew === "") {
             drawPolygonButton.classList.remove("bg_purple-blue", "bg_red-blue");
             drawPolygonButton.classList.add("btn_detail");
@@ -455,7 +454,7 @@ class CustomControl {
         });
         const btnroute = createButton(
             "route",
-            '<div class="mapboxgl-ctrl-icon" data-btn_closed="controls_route"><i class="fa-solid fa-route"></i></div>',
+            '<div class="mapboxgl-ctrl-icon" data-btn_closed="controlsRoute"><i class="fa-solid fa-route"></i></div>',
             "Como ir a..."
         );
 
@@ -493,7 +492,7 @@ class CustomControl {
                         $("#esquina3").removeClass("active").val("");
                         $("#esquina4").removeClass("active").val("");
 
-                        $('[for="fotoEdificio"]').html('Subir foto <i class="fa-regular fa-image ms-1"></i>')
+                        $('[for="fotoEdificio"]').html('Subir foto <i class="fa-regular fa-image ms-1"></i>');
                         $("#fotoEdificio").attr("required", true);
                         tinymce.get("textTiny").setContent("");
                     }
@@ -684,8 +683,8 @@ fetch(url)
             }
             let savedColor = localStorage.getItem("data-color_rgb");
             currentMarker = new mapboxgl.Marker({
-                draggable: false,
                 color: savedColor || "#3b71ca",
+                draggable: false,
             })
                 .setLngLat(lngLat)
                 .addTo(map);
@@ -916,7 +915,7 @@ fetch(url)
                 $("#esquina3").addClass("active").val(coordinates[0][2]);
                 $("#esquina4").addClass("active").val(coordinates[0][3]);
 
-                $('[for="fotoEdificio"]').html('Cambiar foto <i class="fa-regular fa-image ms-1"></i>')
+                $('[for="fotoEdificio"]').html('Cambiar foto <i class="fa-regular fa-image ms-1"></i>');
                 $("#fotoEdificio").attr("required", false);
                 tinymce.get("textTiny").setContent(informacion);
                 setColorInput();
@@ -1011,15 +1010,15 @@ fetch(url)
                 $("#route-info").empty();
             });
         });
-
-        // Agregar nuevo menu
-        map.addControl(new CustomControl(), "top-right");
     })
     .catch((error) => {
         console.error("Error al obtener los datos del mapa:");
         console.error(error);
         alertSToast("top", 5000, "error", "Ocurrio un error inesperado. verifica la consola. #403");
     });
+
+// Agregar nuevo menu
+map.addControl(new CustomControl(), "top-right");
 
 // Cursor segun el evento ###########################################
 map.getCanvas().style.cursor = "default";

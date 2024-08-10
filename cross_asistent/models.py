@@ -36,7 +36,7 @@ def set_imgDB_path(instance, filename):
         elif categoria == 'Calendario':
             thispath += 'calendario/'
     
-    return create_filename_path(filename, newName, 'db', 35, 4, thispath)
+    return create_filename_path(filename, newName, 'db', 35, 8, thispath)
 
 def set_imgBlog_path(instance, filename):
     newName = instance.titulo.strip().replace(' ', '')
@@ -56,7 +56,7 @@ def set_imgProfile_path(instance, filename):
 def set_pdfDB_path(instance, filename):
     newName = instance.titulo.strip().replace(' ', '')
     thispath = 'cross_asistent/static/files/documentos/'
-    return create_filename_path(filename, newName, 'db_doc', 18, 8, thispath)
+    return create_filename_path(filename, newName, 'db_doc', 18, 10, thispath)
 
 
 class Banners(models.Model):
