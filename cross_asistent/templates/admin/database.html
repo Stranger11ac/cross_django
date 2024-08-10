@@ -12,6 +12,7 @@
         <hr class="hr_divisor mx-4 mx-md-0" />
     </div>
     <div class="row">
+        <!-- Formulario: Crear Database -->
         <section class="col-lg-8">
             <section class="card mb-4">
                 <div class="card-body">
@@ -24,7 +25,7 @@
                                     <select class="form-select" id="categoria" name="categoria" required>
                                         <option selected disabled hidden>Seleccione una categoría:</option>
                                         {% for categoria in categorias %}
-                                        <option value="{{ categoria.id }}">{{ categoria.categoria }}</option>
+                                        <option value="{{ categoria.categoria }}">{{ categoria.categoria }}</option>
                                         {% endfor %}
                                     </select>
                                 </div>
@@ -64,46 +65,42 @@
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col d-none d-md-block"></div>
-                            <div class="col d-none d-lg-block"></div>
-                            <div class="col d-none d-lg-block"></div>
                             <div class="col">
                                 <button type="submit" class="btn btn_detail btn-block">Guardar</button>
                             </div>
-
                         </div>
                     </form>
                 </div>
             </section>
         </section>
-
+        <!-- Formulario: crear Categoria -->
         <section class="col-lg-4">
             <section class="card mb-4">
                 <div class="card-body">
                     <h3 class="text-center mb-4">Nueva Categoria</h3>
-                    <form method="post" action="{% url 'create_database' %}" data-submit-form id="databaseForm" autocomplete="off">
+                    <form method="post" action="{% url 'categorias_create' %}" data-submit-form id="categoriasForm" autocomplete="off">
                         {% csrf_token %}
                         <div class="form-outline mb-4" data-mdb-input-init>
                             <i class="fa-solid fa-layer-group trailing"></i>
-                            <input type="text" id="titulo" name="titulo" class="form-control form-icon-trailing" required />
-                            <label class="form-label" for="titulo">Nombre:</label>
+                            <input type="text" id="categoria" name="categoria" class="form-control form-icon-trailing" required />
+                            <label class="form-label" for="categoria">Nombre:</label>
                         </div>
                         <div class="form-outline mb-4" data-mdb-input-init>
-                            <textarea class="form-control" id="informacion" name="informacion" rows="4" required></textarea>
-                            <label for="informacion" class="form-label">Descripcion:</label>
+                            <textarea class="form-control" id="descripcion" name="descripcion" rows="4" required></textarea>
+                            <label for="descripcion" class="form-label">Descripcion:</label>
                         </div>
                         <button type="submit" class="btn btn_detail btn-block">Registrar</button>
                     </form>
                 </div>
             </section>
         </section>
-
+        <!-- Tabla: registros de la base de datos -->
         <section class="col-12">
             <div class="card">
                 <div class="card-body text-center">
                     <h4 class="mb-3">Lista de Registros</h4>
                     {% if database %}
-                    <div class="table-responsive" id="table-container">
+                    <div class="table-responsive rounded" id="table-container">
                         <table class="table table_odd align-middle m-0">
                             <thead>
                                 <tr>
@@ -112,7 +109,6 @@
                                     <th class="fw-bold text_detail">Título</th>
                                     <th class="fw-bold text_detail">Imagen</th>
                                     <th class="fw-bold text_detail">Documento</th>
-                                    <th class="fw-bold text_detail">Ultima modificacion</th>
                                     <th class="fw-bold text_detail">Acciones</th>
                                 </tr>
                             </thead>
@@ -128,7 +124,6 @@
                                         {% endif %}
                                     </td>
                                     <td>{{ dato.documento }}</td>
-                                    <td>{{ dato.modificacion }}</td>
                                     <td>
                                         <div class="d-flex flex-column align-items-center gap_10">
                                             <button type="button" class="btn btn-floating btn-info" data-mdb-ripple-init data-mdb-modal-init
@@ -138,7 +133,7 @@
                                             {% csrf_token %}
                                             <button type="button" class="btn btn-floating btn-danger" data-mdb-ripple-init data-mdb-modal-init
                                                 data-mdb-target="#eliminar_modal_{{ dato.id }}">
-                                                <i class="fa-solid fa-trash fs-12"></i>
+                                                <i class="fa-regular fa-trash-can fs-12"></i>
                                             </button>
                                             </form>
                                         </div>
@@ -151,39 +146,70 @@
                                     <div class="modal-dialog modal-dialog-centered">
                                         <div class="modal-content">
                                             <div class="modal-header">
-                                                <h5 class="modal-title" id="editBannerModalLabel{{ dato.id }}">Editar dato</h5>
+                                                <h5 class="modal-title" id="editBannerModalLabel{{ dato.id }}">Editar Informacion</h5>
                                                 <button type="button" class="btn-close" data-mdb-ripple-init data-mdb-dismiss="modal"
                                                     aria-label="Close"></button>
                                             </div>
                                             <div class="modal-body text-start">
-                                                <form method="POST" enctype="multipart/form-data" data-submit-form>
+                                                <form method="post" action="{% url 'database_update' %}" data-submit-form id="dbUpdate" autocomplete="off">
                                                     {% csrf_token %}
-                                                    <div class="mb-3">
-                                                        <label for="editTitulo{{ dato.id }}" class="form-label">Título</label>
-                                                        <input type="text" class="form-control" id="editTitulo{{ dato.id }}" name="titulo"
-                                                            value="{{ dato.titulo }}" required autocomplete="off" autocapitalize="off">
+                                                    <input type="text" class="d-none" value="{{ dato.id }}" name="id">
+                                                    <div class="row pt-2">
+                                                        <div class="col-md-3">
+                                                            <div class="form-outline mb-4">
+                                                                <select class="form-select" id="categoria{{ dato.id }}" name="categoria" required>
+                                                                    <option selected hidden value="{{ dato.categoria }}">
+                                                                        Categoria: {{ dato.categoria }}</option>
+                                                                    {% for categoria in categorias %}
+                                                                    <option value="{{ categoria.categoria }}">{{ categoria.categoria }}</option>
+                                                                    {% endfor %}
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col">
+                                                            <div class="form-outline mb-4" data-mdb-input-init>
+                                                                <i class="fa-solid fa-heading trailing"></i>
+                                                                <input type="text" id="titulo{{ dato.id }}" name="titulo"
+                                                                    class="form-control active form-icon-trailing" value="{{ dato.titulo }}" required />
+                                                                <label class="form-label" for="titulo{{ dato.id }}">Título:</label>
+                                                            </div>
+                                                        </div>
                                                     </div>
-                                                    <div class="mb-3">
-                                                        <label for="editDescripcion{{ dato.id }}" class="form-label">Descripción</label>
-                                                        <input type="text" class="form-control" id="editDescripcion{{ dato.id }}" name="descripcion"
-                                                            value="{{ dato.descripcion }}" required autocomplete="off" autocapitalize="off">
+                                                    <div class="form-outline mb-4" data-mdb-input-init>
+                                                        <i class="fa-solid fa-keyboard trailing"></i>
+                                                        <textarea class="form-control active form-icon-trailing" id="informacion{{ dato.id }}"
+                                                            name="informacion" rows="3" required>{{ dato.informacion }}</textarea>
+                                                        <label for="informacion{{ dato.id }}" class="form-label">Información:</label>
                                                     </div>
-                                                    <div class="mb-3">
-                                                        <label for="editArticulo{{ dato.id }}" class="form-label">Redirigir a
-                                                            :</label>
-                                                        <input type="text" class="form-control" id="editArticulo{{ dato.id }}" name="articulo"
-                                                            value="{{ dato.articulo }}"" autocomplete=" off" autocapitalize="off"">
+                                                    <div class="row">
+                                                        <div class="col-12">
+                                                            <div class="form-outline mb-4" data-mdb-input-init>
+                                                                <i class="fa-solid fa-link trailing"></i>
+                                                                <input type="url" id="redirigir{{ dato.id }}" name="redirigir"
+                                                                    class="form-control active form-icon-trailing" value="{{ dato.redirigir }}" />
+                                                                <label class="form-label" for="redirigir{{ dato.id }}">Redirigir: (url / liga)</label>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                            <div class="mb-4">
+                                                                <label for="documentos{{ dato.id }}" class="form-label">Cambiar Documento: (PDF)</label>
+                                                                <input type="file" class="form-control" id="documentos{{ dato.id }}" name="documentos"
+                                                                    accept="application/pdf">
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                            <div class="mb-4">
+                                                                <label for="imagenes{{ dato.id }}" class="form-label">Cambiar Imágen:</label>
+                                                                <input type="file" class="form-control" id="imagenes{{ dato.id }}" name="imagenes"
+                                                                    accept="image/jpeg, image/png, image/webp*">
+                                                            </div>
+                                                        </div>
                                                     </div>
-                                                    <div class=" mb-3">
-                                                        <label for="editImagen{{ dato.id }}" class="form-label">Imagen</label>
-                                                        <input type="file" class="form-control" id="editImagen{{ dato.id }}" name="imagen">
+                                                    <div class="row">
+                                                        <div class="col">
+                                                            <button type="submit" class="btn btn_detail btn-block">Guardar</button>
+                                                        </div>
                                                     </div>
-                                                    <div class="mb-3">
-                                                        <label for="editExpiracion{{ dato.id }}" class="form-label">Expiración</label>
-                                                        <input type="datetime-local" class="form-control" id="editExpiracion{{ dato.id }}" name="expiracion"
-                                                            value="{{ dato.expiracion|date:'Y-m-d\\TH:i' }}">
-                                                    </div>
-                                                    <button type="submit" class="btn btn-primary">Guardar Cambios</button>
                                                 </form>
                                             </div>
                                         </div>
@@ -206,14 +232,13 @@
                                                 </h3>
                                                 <h6 class="text-center">"{{ dato.id }} - {{ dato.titulo }}"</h6>
                                                 <p class="text-center">Se eliminara toda la informacion relacionada <br> Esta acción es permanente</p>
-                                                <hr class="my-4">
-                                                <form id="eliminarBannerForm-{{ dato.id }}" method="post" data-submit-form>
+                                            </div>
+                                            <div class="modal-footer justify-content-between">
+                                                <button type="button" class="btn btn_detail" data-mdb-ripple-init data-mdb-dismiss="modal">Cancelar</button>
+                                                <form method="post" action="{% url 'database_delete' %}" data-submit-form>
                                                     {% csrf_token %}
-                                                    <div class="d-flex justify-content-between">
-                                                        <button type="button" class="btn btn_detail" data-mdb-ripple-init
-                                                            data-mdb-dismiss="modal">Cancelar</button>
-                                                        <button type="submit" class="btn btn-danger">Eliminar</button>
-                                                    </div>
+                                                    <input type="text" value="{{ dato.id }}" name="id" class="d-none">
+                                                    <button type="submit" class="btn btn-danger">Eliminar <i class="fa-regular fa-trash-can ms-1"></i></button>
                                                 </form>
                                             </div>
                                         </div>

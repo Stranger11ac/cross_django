@@ -21,8 +21,8 @@
                     <div class="carousel-item active" id="bannerid_default" data-mdb-interval="15000">
                         <img src="{% static 'img/default_image.webp' %}" />
                         <div class="carousel-caption">
-                            <h5>😯 No hay banners</h5>
-                            <p class="mb-0">El total de banners es 0, este banner se muestra por <strong>default</strong></p>
+                            <h5 class="text-white">😯 No hay banners</h5>
+                            <p class="mb-0">Este banner se muestra por <strong>default</strong></p>
                         </div>
                     </div>
                     {%else%}
@@ -119,8 +119,8 @@
                                 <tr class="table_odd_items {% if not onebanner.visible %}table-active{% endif %}">
                                     <td {% if not onebanner.visible or onebanner.onlyImg %}colspan="2" {% endif %}>
                                         {% if not onebanner.visible %}<u class="text-danger">Banner Invisible</u> <br>{% endif %}
-                                        {% if onebanner.onlyImg %} <u class="text-success">Se muestra solo la Imagen y el boton de ve mas</u>{% endif %}
                                         {% autoescape off %}{{ onebanner.titulo }}{% endautoescape %}
+                                        {% if onebanner.onlyImg %} <u class="text-success">Se muestra solo la Imagen y el boton de ve mas</u>{% endif %}
                                     </td>
                                     {% if onebanner.visible and not onebanner.onlyImg %}
                                     <td>{{ onebanner.descripcion }}</td>

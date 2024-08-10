@@ -240,13 +240,13 @@ def vista_programador(request):
     banners_all = models.Banners.objects.all()
     users = User.objects.all().order_by('-id')
     questions_all = models.Preguntas.objects.all().order_by('-id')
-    categorias = models.Categorias.objects.filter(categoria__in=['Preguntas', 'Informacion', 'Personal'])
+    categoriasFilter = models.Categorias.objects.filter(categoria__in=['Preguntas', 'Informacion', 'Personal'])
     contexto = {
         'users': users,
         'user': request.user,
         'active_page': 'home',
         'pages': functions.pages,
-        'categorias': categorias,
+        'categorias': categoriasFilter,
         'banners_all': banners_all,
         'preguntas_sending': questions_all,
         'num_preguntas': databaseall.count(),

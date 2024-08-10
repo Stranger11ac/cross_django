@@ -38,7 +38,8 @@ urlpatterns = [
     path('administracion/banners/actualizar_visibilidad/', functions.banners_visibility_now, name='update_banner_visibility'),
 
     # Database ----------------------------------------------------------
-    path('administracion/Base_de_datos/', views.database_page, name='database_page'),
+    path('administracion/categorias/crear/', functions.categorias_create, name='categorias_create'),
+    path('administracion/base_de_datos/', views.database_page, name='database_page'),
     path('administracion/database/crear/', functions.database_create, name='create_database'),
     path('administracion/database/actualizar/', functions.database_update, name='database_update'),
     path('administracion/database/eliminar/', functions.database_delete, name='database_delete'),

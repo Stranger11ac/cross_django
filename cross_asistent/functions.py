@@ -358,6 +358,31 @@ def banners_visibility_now(request):
         return JsonResponse(returnJson, status=201)
     return('upload_banner')
 
+# Categorias ----------------------------------------------------------
+@login_required
+@never_cache
+def categorias_create(request):
+    if request.method == 'POST':
+        try:
+            categoriaPOST = request.POST.get('categoria')
+            descripcionPOST = request.POST.get('descripcion')
+            
+            existing_record = models.Database.objects.filter(categoria=categoriaPOST).exists()
+            if existing_record:
+                return JsonResponse({'success': False, 'message': f'la categoria "{categoriaPOST}" ya esta registrada. 🧐🤔😯',}, status=400)
+            
+            models.Categorias.objects.create(
+                categoria=categoriaPOST,
+                descripcion=descripcionPOST,
+            )
+            models.Notificacion.objects.create(usuario=request.user,tipo='Categorias',mensaje=f'{request.user.username} ha creado una nueva categoria llamada "{categoriaPOST}" .',)
+            
+            return JsonResponse({'success': True, 'functions':'reload', 'message': f'Categoria "{categoriaPOST}" creada exitosamente 😁🎉🎈', 'position':'center'}, status=200)
+        
+        except Exception as e:
+            return JsonResponse({'success': False, 'message': f'Ocurrió un error 😯😥 <br>{str(e)}'}, status=400)
+    return JsonResponse({'error': 'Método no válido'}, status=400)
+
 # Base de Datos ----------------------------------------------------------
 @login_required
 @never_cache
@@ -383,9 +408,9 @@ def database_create(request):
                 return JsonResponse({'success': False, 'message': '😯Este evento ya existe. <br> Hay otro registro con el mismo nombre, fecha de inicio y fecha de fin. 🧐🤔😯',}, status=400)
             
             if categoriaIdPOST == 'Preguntas':
-                frecuenciaPOST = 1
+                frecuenciaVAL = 1
             else:
-                frecuenciaPOST = 0
+                frecuenciaVAL = 0
                 
             dbMessage =  'Nuevo registro en la base de datos 🎉🎉🎉'
             if categoriaIdPOST == 'Calendario':
@@ -396,15 +421,15 @@ def database_create(request):
                 titulo=tituloPOST,
                 informacion=informacionPOST,
                 redirigir=redirigirPOST,
-                frecuencia=frecuenciaPOST,
+                frecuencia=frecuenciaVAL,
                 documento=documentoPOST,
                 imagen=imagenPOST,
                 muid=f'{categoriaIdPOST}_{models.generate_random_string(6)}',
-                evento_fecha_inicio=evento_fecha_inicioPOST if evento_fecha_inicioPOST else '',
-                evento_fecha_fin=evento_fecha_finPOST if evento_fecha_finPOST else '',
+                evento_fecha_inicio=evento_fecha_inicioPOST or None,
+                evento_fecha_fin=evento_fecha_finPOST or None,
                 evento_allDay=evento_allDayPOST if not evento_allDayPOST == None else False,
-                evento_lugar=evento_lugarPOST if evento_lugarPOST else '',
-                evento_className=evento_classNamePOST if evento_classNamePOST else '',
+                evento_lugar=evento_lugarPOST or '',
+                evento_className=evento_classNamePOST or '',
             )
             models.Notificacion.objects.create(usuario=request.user,tipo='Base de Datos',mensaje=f'{request.user.username} ha creado un nuevo registro de categoría "{categoriaIdPOST}".',)
             
@@ -434,15 +459,15 @@ def database_update(request):
             dbUpdate.titulo=request.POST.get('titulo')
             dbUpdate.informacion=request.POST.get('informacion')
             dbUpdate.redirigir=request.POST.get('redirigir')
-            dbUpdate.frecuencia=frecuenciaPOST if frecuenciaPOST else '0'
+            dbUpdate.frecuencia=frecuenciaPOST or '0'
             dbUpdate.documento=request.FILES.get('documento')
             dbUpdate.imagen=request.FILES.get('imagen')
             dbUpdate.muid=f'{categoriaIdPOST}_{models.generate_random_string(6)}'
-            dbUpdate.evento_fecha_inicio=evento_fecha_inicioPOST if evento_fecha_inicioPOST else ''
-            dbUpdate.evento_fecha_fin=evento_fecha_finPOST if evento_fecha_finPOST else ''
+            dbUpdate.evento_fecha_inicio=evento_fecha_inicioPOST or None
+            dbUpdate.evento_fecha_fin=evento_fecha_finPOST or None
             dbUpdate.evento_allDay=evento_allDayPOST if not evento_allDayPOST == None else False
-            dbUpdate.evento_lugar=evento_lugarPOST if evento_lugarPOST else ''
-            dbUpdate.evento_className=evento_classNamePOST if evento_classNamePOST else 'event_detail'
+            dbUpdate.evento_lugar=evento_lugarPOST or ''
+            dbUpdate.evento_className=evento_classNamePOST or 'event_detail'
             dbUpdate.save()
             
             models.Notificacion.objects.create(usuario=request.user,tipo='Base de Datos',mensaje=f'{request.user.username} ha Actualizado un registro de categoría "{categoriaIdPOST}".',)

@@ -16,7 +16,7 @@
         <div class="col-12 col-md-6 col-xl-4 mb-4 mb-md-0 position-relative">
             <div class="row sticky-md sticky-top-4">
                 <div class="col mb-4">
-                    <div class="card card_mxh-450">
+                    <div class="card card_mxh-450 min_h200">
                         <img src="{% static 'img/default_image.webp' %}" id="imgArticle" class="card-img" data-img_dom />
                         <div class="card-img-overlay mask mask_dark">
                             <div class="d-flex flex-column justify-content-end h-100">
@@ -121,7 +121,7 @@
                     global</p>
             </div>
             <div class="modal-footer d-flex justify-content-between">
-                <button type="button" class="btn btn-secondary" data-mdb-ripple-init data-mdb-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn_detail" data-mdb-ripple-init data-mdb-dismiss="modal">Cancelar</button>
                 <form action="{% url 'blog_delete' %}" method="post" id="formularioArticulo" data-submit-form>
                     <input type="text" name="blogIdDelete" id="blogIdDelete" class="d-none">
                     <button type="submit" class="btn btn-danger" data-mdb-ripple-init>eliminar</button>

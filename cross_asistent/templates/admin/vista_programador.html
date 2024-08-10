@@ -17,8 +17,8 @@
                     <div class="carousel-item active max_h200" id="bannerid_default" data-mdb-interval="20000">
                         <img src="{% static 'img/default_image.webp' %}" class="img-fluid" alt="Sunset" />
                         <div class="carousel-caption">
-                            <h5>😯 No hay banners</h5>
-                            <p class="mb-0">El total de banners es 0, este banner se muestra por <strong>default</strong></p>
+                            <h5 class="text-white">😯 No hay banners</h5>
+                            <p class="mb-0">Este banner se muestra por <strong>default</strong></p>
                         </div>
                     </div>
                     {%else%}
@@ -152,7 +152,7 @@
                                     <select class="form-select" id="categoria" name="categoria" required>
                                         <option selected disabled hidden>Seleccione una categoría:</option>
                                         {% for categoria in categorias %}
-                                        <option value="{{ categoria.id }}">{{ categoria.categoria }}</option>
+                                        <option value="{{ categoria.categoria }}">{{ categoria.categoria }}</option>
                                         {% endfor %}
                                     </select>
                                 </div>

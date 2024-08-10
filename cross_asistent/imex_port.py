@@ -55,8 +55,10 @@ def export_database(request):
                 info.frecuencia if info.frecuencia else '',
                 info.documento.url if info.documento else '',
                 info.imagen.url if info.imagen else '',
+                info.muid if info.muid else '',
                 info.evento_fecha_inicio if info.evento_fecha_inicio else '',
                 info.evento_fecha_fin if info.evento_fecha_fin else '',
+                info.evento_allDay if info.evento_allDay else '',
                 info.evento_lugar if info.evento_lugar else '',
                 info.evento_className if info.evento_className else '',
                 info.fecha_modificacion if info.fecha_modificacion else '',
@@ -64,7 +66,7 @@ def export_database(request):
             for info in databaseall
         ]
         return create_csv_response(f"UTC_database_{now}.csv", 
-            ['ID', 'Categoria', 'Titulo', 'Informacion', 'Redirigir', 'Frecuencia', 'Documento', 'Imagen', 'Evento:fecha de inicio', 'Evento:fecha de fin', 'Evento:lugar', 'Evento:className (CSS)', 'Fecha Modificacion'], 
+            ['ID', 'Categoria', 'Titulo', 'Informacion', 'Redirigir', 'Frecuencia', 'Documento', 'Imagen', 'MUID','Evento:fecha de inicio', 'Evento:fecha de fin', 'Evento:Todo el dia','Evento:lugar', 'Evento:className (CSS)', 'Fecha Modificacion'], 
             rows
         )
     return JsonResponse({'success': False, 'message': 'Acción no permitida. 🧐😠🤥'}, status=400)
@@ -81,7 +83,13 @@ def import_database(request):
         'frecuencia': lambda row: int(row[5]),
         'documento': 6,
         'imagen': 7,
-        'fecha_modificacion': 8,
+        'muid': 8,
+        'evento_fecha_inicio': 8,
+        'evento_fecha_fin': 10,
+        'evento_allDay': 11,
+        'evento_lugar': 12,
+        'evento_className': 13,
+        'fecha_modificacion': 14,
     }, 'Base de Datos importadas correctamente. 🎉😁🫡')
 
 @login_required
@@ -91,6 +99,7 @@ def export_mapa(request):
     if request.user.is_staff:
         rows = [
             [
+                info.muid if info.muid else '',
                 info.nombre if info.nombre else '',
                 info.informacion if info.informacion else '',
                 info.color if info.color else '',
@@ -103,7 +112,7 @@ def export_mapa(request):
             for info in mapaall
         ]
         return create_csv_response(f"UTC_mapa_{now}.csv", 
-            ['nombre', 'informacion', 'color', 'door_cords', 'p1_polygons', 'p2_polygons', 'p3_polygons', 'p4_polygons'], 
+            ['MUID', 'Nombre', 'Informacion', 'Color', 'Coordenadas: Puerta', 'Coordenadas: Esquina 1', 'Coordenadas: Esquina 2', 'Coordenadas: Esquina 3', 'Coordenadas: Esquina 4'], 
             rows
         )
     return JsonResponse({'success': False, 'message': 'Acción no permitida. 🧐😠🤥'}, status=400)
@@ -112,14 +121,15 @@ def export_mapa(request):
 @never_cache
 def import_mapa(request):
     return import_csv_data(request, Mapa, {
-        'nombre': 0,
-        'informacion': 1,
-        'color': 2,
-        'door_cords': 3,
-        'p1_polygons': 4,
-        'p2_polygons': 5,
-        'p3_polygons': 6,
-        'p4_polygons': 7,
+        'muid': 0,
+        'nombre': 1,
+        'informacion': 2,
+        'color': 3,
+        'door_cords': 4,
+        'p1_polygons': 5,
+        'p2_polygons': 6,
+        'p3_polygons': 7,
+        'p4_polygons': 8,
     }, 'Datos Del Mapa importados correctamente. 🎉😁🫡')
 
 """Importa datos desde un archivo CSV para un modelo específico."""
