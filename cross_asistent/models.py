@@ -26,16 +26,17 @@ def set_imgBanner_path(instance, filename):
     return create_filename_path(filename, newName, 'banner', 15, 5, thispath)
 
 def set_imgDB_path(instance, filename):
-    newName = instance.titulo.strip().replace(' ', '')
+    categoria = instance.categoria.categoria
+    instanceTitulo = instance.titulo.strip().replace(' ', '')
+    newName = f'{categoria}_{instanceTitulo}'
     thispath = 'cross_asistent/static/files/imagenes/'
     if instance.categoria:
-        categoria = instance.categoria.categoria
         if categoria == 'Mapa':
             thispath += 'mapa/'
         elif categoria == 'Calendario':
             thispath += 'calendario/'
     
-    return create_filename_path(filename, newName, 'db', 20, 6, thispath)
+    return create_filename_path(filename, newName, 'db', 35, 4, thispath)
 
 def set_imgBlog_path(instance, filename):
     newName = instance.titulo.strip().replace(' ', '')

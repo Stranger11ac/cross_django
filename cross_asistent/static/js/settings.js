@@ -428,8 +428,8 @@ $(document).ready(function () {
                             'Modificar <i class="fa-regular fa-paper-plane ms-1"></i>'
                         );
                         $("#formularioArticulo .btnModal").slideDown("fast");
-                        $("#blogDelete #blogDeleteTitle").text(data.titulo)
-                        $("#blogDelete #blogIdDelete").val(blogIdGet)
+                        $("#blogDelete #blogDeleteTitle").text(data.titulo);
+                        $("#blogDelete #blogIdDelete").val(blogIdGet);
                     },
                     error: function (error) {
                         console.error("Error al obtener datos: " + error);
@@ -447,9 +447,16 @@ $(document).ready(function () {
                 tinymce.get("mainTiny").setContent("");
                 $("#formularioArticulo .blogSubmit").html('Publicar <i class="fa-regular fa-paper-plane ms-1"></i>');
                 $("#formularioArticulo .btnModal").slideUp("fast");
-                $("#blogDelete #blogDeleteTitle").text('')
-                $("#blogDelete #blogIdDelete").val('')
+                $("#blogDelete #blogDeleteTitle").text("");
+                $("#blogDelete #blogIdDelete").val("");
             }
+        });
+
+        // Editar Evento -Calendario ######################################
+        // Cambiar clase del select option
+        $("[data-select_addClass]").change(function () {
+            const newClass = $(this).val();
+            $(this).attr("class", `form-select change_bg ${newClass}`);
         });
 
         //

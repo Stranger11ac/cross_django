@@ -39,7 +39,9 @@ urlpatterns = [
 
     # Database ----------------------------------------------------------
     path('administracion/Base_de_datos/', views.database_page, name='database_page'),
-    path('administracion/database/crear/', functions.createDatabase, name='create_database'),
+    path('administracion/database/crear/', functions.database_create, name='create_database'),
+    path('administracion/database/actualizar/', functions.database_update, name='database_update'),
+    path('administracion/database/eliminar/', functions.database_delete, name='database_delete'),
     path('administracion/calendario/', views.calendario_page, name='calendario_page'),
 
     # Blog ----------------------------------------------------------

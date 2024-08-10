@@ -361,7 +361,7 @@ def banners_visibility_now(request):
 # Base de Datos ----------------------------------------------------------
 @login_required
 @never_cache
-def createDatabase(request):
+def database_create(request):
     if request.method == 'POST':
         try:
             categoriaIdPOST = request.POST.get('categoria')
@@ -377,17 +377,10 @@ def createDatabase(request):
             evento_lugarPOST = request.POST.get('ePleace')
             evento_classNamePOST = request.POST.get('eColor')
             
-            existing_record = models.Database.objects.filter(
-                titulo=tituloPOST,
-                evento_fecha_inicio=evento_fecha_inicioPOST,
-                evento_fecha_fin=evento_fecha_finPOST,
-            ).exists()
+            existing_record = models.Database.objects.filter(titulo=tituloPOST,evento_fecha_inicio=evento_fecha_inicioPOST,evento_fecha_fin=evento_fecha_finPOST,).exists()
 
             if existing_record:
-                return JsonResponse({
-                    'success': False, 
-                    'message': '😯Este evento ya existe. <br> Hay otro registro con el mismo nombre, fecha de inicio y fecha de fin. 🧐🤔😯',
-                }, status=400)
+                return JsonResponse({'success': False, 'message': '😯Este evento ya existe. <br> Hay otro registro con el mismo nombre, fecha de inicio y fecha de fin. 🧐🤔😯',}, status=400)
             
             if categoriaIdPOST == 'Preguntas':
                 frecuenciaPOST = 1
@@ -406,7 +399,7 @@ def createDatabase(request):
                 frecuencia=frecuenciaPOST,
                 documento=documentoPOST,
                 imagen=imagenPOST,
-                muid=f'others_{models.generate_random_string(6)}',
+                muid=f'{categoriaIdPOST}_{models.generate_random_string(6)}',
                 evento_fecha_inicio=evento_fecha_inicioPOST if evento_fecha_inicioPOST else '',
                 evento_fecha_fin=evento_fecha_finPOST if evento_fecha_finPOST else '',
                 evento_allDay=evento_allDayPOST if not evento_allDayPOST == None else False,
@@ -415,7 +408,65 @@ def createDatabase(request):
             )
             models.Notificacion.objects.create(usuario=request.user,tipo='Base de Datos',mensaje=f'{request.user.username} ha creado un nuevo registro de categoría "{categoriaIdPOST}".',)
             
-            return JsonResponse({'success': True, 'functions':'reload', 'message': dbMessage, 'position':'top'}, status=200)
+            return JsonResponse({'success': True, 'functions':'reload', 'message': dbMessage, 'position':'center'}, status=200)
+        
+        except Exception as e:
+            return JsonResponse({'success': False, 'message': f'Ocurrió un error 😯😥 <br>{str(e)}'}, status=400)
+    return JsonResponse({'error': 'Método no válido'}, status=400)
+
+@login_required
+@never_cache
+def database_update(request):
+    if request.method == 'POST':
+        try:
+            idPOST = request.POST.get('id')
+            categoriaIdPOST = request.POST.get('categoria')
+            categoriaGET = get_object_or_404(models.Categorias, categoria=categoriaIdPOST)
+            frecuenciaPOST = request.POST.get('frecuencia')
+            evento_fecha_inicioPOST = request.POST.get('eStart')
+            evento_fecha_finPOST = request.POST.get('eEnd')
+            evento_allDayPOST = request.POST.get('eAllDay')
+            evento_lugarPOST = request.POST.get('ePleace')
+            evento_classNamePOST = request.POST.get('eColor')
+            
+            dbUpdate = get_object_or_404(models.Database, id=idPOST)
+            dbUpdate.categoria=categoriaGET
+            dbUpdate.titulo=request.POST.get('titulo')
+            dbUpdate.informacion=request.POST.get('informacion')
+            dbUpdate.redirigir=request.POST.get('redirigir')
+            dbUpdate.frecuencia=frecuenciaPOST if frecuenciaPOST else '0'
+            dbUpdate.documento=request.FILES.get('documento')
+            dbUpdate.imagen=request.FILES.get('imagen')
+            dbUpdate.muid=f'{categoriaIdPOST}_{models.generate_random_string(6)}'
+            dbUpdate.evento_fecha_inicio=evento_fecha_inicioPOST if evento_fecha_inicioPOST else ''
+            dbUpdate.evento_fecha_fin=evento_fecha_finPOST if evento_fecha_finPOST else ''
+            dbUpdate.evento_allDay=evento_allDayPOST if not evento_allDayPOST == None else False
+            dbUpdate.evento_lugar=evento_lugarPOST if evento_lugarPOST else ''
+            dbUpdate.evento_className=evento_classNamePOST if evento_classNamePOST else 'event_detail'
+            dbUpdate.save()
+            
+            models.Notificacion.objects.create(usuario=request.user,tipo='Base de Datos',mensaje=f'{request.user.username} ha Actualizado un registro de categoría "{categoriaIdPOST}".',)
+            
+            dbMessage =  f'Se actualizo "{request.POST.get('titulo')}" en la base de datos exitosamente 🫡😁🎉'
+            return JsonResponse({'success': True, 'functions':'reload', 'message': dbMessage, 'position':'center'}, status=200)
+        
+        except Exception as e:
+            return JsonResponse({'success': False, 'message': f'Ocurrió un error 😯😥 <br>{str(e)}'}, status=400)
+    return JsonResponse({'error': 'Método no válido'}, status=400)
+
+@login_required
+@never_cache
+def database_delete(request):
+    if request.method == 'POST':
+        try:
+            idPOST = request.POST.get('id')            
+            dbDelete = get_object_or_404(models.Database, id=idPOST)
+            dbDelete.delete()
+            
+            models.Notificacion.objects.create(usuario=request.user,tipo='Base de Datos',mensaje=f'{request.user.username} elimino el registro numero "{idPOST}", de titulo {dbDelete.titulo}.',)
+            
+            dbMessage =  f'"{dbDelete.titulo}" Se elimino de la base de datos 😯🧐😬🫡'
+            return JsonResponse({'success': True, 'functions':'reload', 'message': dbMessage, 'icon':'warning'}, status=200)
         
         except Exception as e:
             return JsonResponse({'success': False, 'message': f'Ocurrió un error 😯😥 <br>{str(e)}'}, status=400)
@@ -426,6 +477,7 @@ def calendario_eventos(request):
     categoriaGet = get_object_or_404(models.Categorias, categoria="Calendario")
     eventos = models.Database.objects.filter(categoria=categoriaGet).select_related('categoria')
     eventos_json = [{
+        'id': evento.id,
         'title': evento.titulo,
         'description': evento.informacion,
         'classNames': evento.evento_className,

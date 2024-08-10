@@ -7,6 +7,12 @@ document.addEventListener("DOMContentLoaded", function () {
         const options = { hour: "2-digit", minute: "2-digit", hour12: true };
         return date.toLocaleTimeString("es-ES", options);
     }
+    function formatDateInput(date) {
+        return date.toISOString().slice(0, 10);
+    }
+    function formatTimeInput(date) {
+        return date.toTimeString().slice(0, 5);
+    }
     var calendarEl = document.getElementById("calendar");
     var dataEvents = calendarEl.getAttribute("data-events");
     var calendar = new FullCalendar.Calendar(calendarEl, {
@@ -38,6 +44,9 @@ document.addEventListener("DOMContentLoaded", function () {
             meridiem: "narrow",
         },
         views: {
+            timeGridWeek: {
+                hiddenDays: [0, 6],
+            },
             dayGridMonth: {
                 displayEventTime: false,
             },
@@ -48,50 +57,95 @@ document.addEventListener("DOMContentLoaded", function () {
         },
         eventClick: function (info) {
             var eventObj = info.event;
-            var $eventDesc = $("#eventDesc");
-            var $eventEndDate = $("#eventEndDate");
-            var $eventEndTime = $("#eventEndTime");
-            var $dateSeparator = $("#dateSeparator");
-            var $eventBtnDiv = $("#eventBtnDiv");
-            var $eventBtn = $("#eventBtn");
-            var $eventImg = $("#eventImg");
+            const imgJson = eventObj.extendedProps.imagen;
+            var myModal = new mdb.Modal(document.getElementById("eventModal"));
+            const valEnd = eventObj.end;
+            const valStart = eventObj.start;
+            const valTitulo = eventObj.title;
+            const valallDay = eventObj.allDay;
+            const valclassNames = eventObj.classNames;
+            const valBtn = eventObj.extendedProps.button;
+            const valPleace = eventObj.extendedProps.location;
+            const valDescription = eventObj.extendedProps.description;
 
-            // Actualizar texto de los elementos
-            $("#eventModalLabel").text(`TITULO:${eventObj.title}`);
-            $("#eventStartDate").text(formatDate(eventObj.start));
-            $("#eventStartTime").text(formatTime(eventObj.start));
+            if ($("#eventModal").hasClass("calendar_update")) {
+                $(".idUpdate").val(eventObj.id);
 
-            // Descripción del evento
-            $eventDesc
-                .text(eventObj.extendedProps.description || "")
-                .toggleClass("none", !eventObj.extendedProps.description);
+                $("#tituloUpdate").addClass("active").val(valTitulo);
+                $(".eventTitle").text(valTitulo);
 
-            // Fecha y hora de finalización del evento
-            var hasEnd = !!eventObj.end;
-            $eventEndDate.text(hasEnd ? formatDate(eventObj.end) : "");
-            $eventEndTime.text(hasEnd ? formatTime(eventObj.end) : "");
-            $dateSeparator.toggleClass("none", !hasEnd);
+                $("#informacionUpdate").addClass("active").val(valDescription);
+                $("#redirigirUpdate").addClass("active").val(valBtn);
+                $("#ePleaceUpdate").addClass("active").val(valPleace);
+                $("#eStartUpdate")
+                    .addClass("active")
+                    .val(`${formatDateInput(valStart)}T${formatTimeInput(valStart)}`);
+                if (valEnd) {
+                    $("#eEndUpdate")
+                        .addClass("active")
+                        .val(`${formatDateInput(valEnd)}T${formatTimeInput(valEnd)}`);
+                } else {
+                    $("#eEndUpdate")
+                        .addClass("active")
+                        .val(`${formatDateInput(valStart)}T${formatTimeInput(valStart)}`);
+                }
+                if (valallDay) {
+                    $("#eAllDayUpdate").attr("checked", true);
+                } else {
+                    $("#eAllDayUpdate").attr("checked", false);
+                }
+                $("#eColorUpdate option#eColorSelected").attr("selected", false);
+                $(`#eColorUpdate option[value="${valclassNames}"]`).attr("selected", true);
+                $("[data-select_addClass]").attr("class", `form-select change_bg ${valclassNames}`);
 
-            // Ubicación del evento
-            $("#eventLoc").text(eventObj.extendedProps.location || "Campus UTC");
-
-            // Botón de evento
-            var hasButton = eventObj.extendedProps.button !== "";
-            $eventBtnDiv.toggleClass("none", !hasButton);
-            $eventBtn.attr("href", hasButton ? eventObj.extendedProps.button : "");
-
-            // Imagen del evento
-            var imgJson = eventObj.extendedProps.imagen;
-            $eventImg.toggleClass("none", imgJson === "false");
-            if (imgJson !== "false") {
-                $eventImg.attr("src", imgJson.replace("cross_asistent/", ""));
+                if (imgJson == "") {
+                    $("[for='imagenUpdate']").html('Subir Imagen <i class="fa-regular fa-images ms-1"></i>');
+                } else {
+                    $("[for='imagenUpdate']").html('Cambiar Imagen <i class="fa-regular fa-images ms-1"></i>');
+                }
+            } else {
+                $("#eventModalLabel").text(valTitulo);
+                $("#eventStartDate").text(formatDate(valStart));
+                $("#eventStartTime").text(formatTime(valStart));
+                $("#eventLoc").text(valPleace || "Campus UTC");
+                if (valDescription) {
+                    $("#eventDesc").text(valDescription);
+                } else {
+                    $("#eventDesc").addClass("none");
+                }
+                if (valEnd) {
+                    $("#eventEndDate").text(formatDate(valEnd));
+                    $("#eventEndTime").text(formatTime(valEnd));
+                    $("#dateSeparator").removeClass("none");
+                } else {
+                    $("#eventEndDate").text("");
+                    $("#eventEndTime").text("");
+                    $("#dateSeparator").addClass("none");
+                }
+                if (valBtn == "") {
+                    $("#eventBtnDiv").addClass("none");
+                    $("#eventBtn").attr("href", "");
+                } else {
+                    $("#eventBtnDiv").removeClass("none");
+                    $("#eventBtn").attr("href", valBtn);
+                }
             }
 
-            // Mostrar el modal con un retraso
-            var myModal = new mdb.Modal(document.getElementById("eventModal"));
+            if (imgJson == "") {
+                $("#eventImg").addClass("none");
+
+                if ($("#eventModal").hasClass("calendar_update")) {
+                    $("#eventImg").removeClass("none");
+                }
+            } else {
+                $("#eventImg").removeClass("none");
+                let imgSrc = imgJson.replace("cross_asistent/", "");
+                $("#eventImg").attr("src", imgSrc);
+            }
+
             setTimeout(() => {
                 myModal.show();
-            }, 200);
+            }, 300);
 
             info.jsEvent.preventDefault();
         },

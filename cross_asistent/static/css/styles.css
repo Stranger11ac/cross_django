@@ -537,6 +537,7 @@ main.main_anchor {
 .btn_cyan-purple,
 .btn_cyan-purple:active,
 .btn_cyan-purple:hover {
+    background-color: var(--gradient_blue-purple) !important;
     background: var(--gradient_blue-purple) !important;
 }
 
@@ -550,18 +551,22 @@ main.main_anchor {
 }
 
 .bg_purple-blue {
+    background-color: var(--var-detail) !important;
     background: linear-gradient(45deg, #ae37cc 10%, #3b71ca 90%);
 }
 
 .bg_blue-green {
+    background-color: var(--var-detail) !important;
     background: linear-gradient(45deg, #3b71ca 10%, #02913c 90%);
 }
 
 .bg_red-blue {
+    background-color: var(--var-detail) !important;
     background: linear-gradient(45deg, #b4330f 10%, #3b71ca 90%);
 }
 
 .bg_blue-red {
+    background-color: var(--var-detail) !important;
     background: linear-gradient(45deg, #3b71ca 10%, #b4330f 90%);
 }
 
@@ -1069,6 +1074,14 @@ label {
 
 .form-check-input:checked {
     border-color: var(--var-detail_flat) !important;
+}
+
+select.form-select.change_bg {
+    color: white important;
+}
+
+select.form-select.change_bg option {
+    color: var(--mdb-surface-bg) !important;
 }
 
 /* SWITCH */
