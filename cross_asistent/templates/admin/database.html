@@ -54,13 +54,13 @@
                             <div class="col-md-6">
                                 <div class="mb-4">
                                     <label for="documentos" class="form-label">Documento: (PDF)</label>
-                                    <input type="file" class="form-control" id="documentos" name="documentos" accept="application/pdf">
+                                    <input type="file" class="form-control" id="documentos" name="documento" accept="application/pdf">
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="mb-4">
                                     <label for="imagenes" class="form-label">Imágen:</label>
-                                    <input type="file" class="form-control" id="imagenes" name="imagenes" accept="image/jpeg, image/png, image/webp*">
+                                    <input type="file" class="form-control" id="imagenes" name="imagen" accept="image/jpeg, image/png, image/webp*">
                                 </div>
                             </div>
                         </div>
@@ -77,7 +77,7 @@
         <section class="col-lg-4">
             <section class="card mb-4">
                 <div class="card-body">
-                    <h3 class="text-center mb-4">Nueva Categoria</h3>
+                    <h3 class="text-center mb-4">Nueva Categoría</h3>
                     <form method="post" action="{% url 'categorias_create' %}" data-submit-form id="categoriasForm" autocomplete="off">
                         {% csrf_token %}
                         <div class="form-outline mb-4" data-mdb-input-init>
@@ -87,7 +87,7 @@
                         </div>
                         <div class="form-outline mb-4" data-mdb-input-init>
                             <textarea class="form-control" id="descripcion" name="descripcion" rows="4" required></textarea>
-                            <label for="descripcion" class="form-label">Descripcion:</label>
+                            <label for="descripcion" class="form-label">Descripción:</label>
                         </div>
                         <button type="submit" class="btn btn_detail btn-block">Registrar</button>
                     </form>
@@ -105,9 +105,9 @@
                             <thead>
                                 <tr>
                                     <th class="fw-bold text_detail">id</th>
-                                    <th class="fw-bold text_detail">Categoria</th>
+                                    <th class="fw-bold text_detail">Categoría</th>
                                     <th class="fw-bold text_detail">Título</th>
-                                    <th class="fw-bold text_detail">Imagen</th>
+                                    <th class="fw-bold text_detail">Imágen</th>
                                     <th class="fw-bold text_detail">Documento</th>
                                     <th class="fw-bold text_detail">Acciones</th>
                                 </tr>
@@ -193,14 +193,14 @@
                                                         <div class="col-md-6">
                                                             <div class="mb-4">
                                                                 <label for="documentos{{ dato.id }}" class="form-label">Cambiar Documento: (PDF)</label>
-                                                                <input type="file" class="form-control" id="documentos{{ dato.id }}" name="documentos"
+                                                                <input type="file" class="form-control" id="documentos{{ dato.id }}" name="documento"
                                                                     accept="application/pdf">
                                                             </div>
                                                         </div>
                                                         <div class="col-md-6">
                                                             <div class="mb-4">
                                                                 <label for="imagenes{{ dato.id }}" class="form-label">Cambiar Imágen:</label>
-                                                                <input type="file" class="form-control" id="imagenes{{ dato.id }}" name="imagenes"
+                                                                <input type="file" class="form-control" id="imagenes{{ dato.id }}" name="imagen"
                                                                     accept="image/jpeg, image/png, image/webp*">
                                                             </div>
                                                         </div>
@@ -228,10 +228,10 @@
                                                     aria-label="Close"></button>
                                             </div>
                                             <div class="modal-body">
-                                                <h3 class="text-center mb-2">Quieres eliminar el dato <u>{{ dato.titulo }}</u>?
+                                                <h3 class="text-center mb-2">¿Quieres eliminar el dato <u>{{ dato.titulo }}</u>?
                                                 </h3>
                                                 <h6 class="text-center">"{{ dato.id }} - {{ dato.titulo }}"</h6>
-                                                <p class="text-center">Se eliminara toda la informacion relacionada <br> Esta acción es permanente</p>
+                                                <p class="text-center">Se eliminará toda la información relacionada <br> Esta acción es permanente</p>
                                             </div>
                                             <div class="modal-footer justify-content-between">
                                                 <button type="button" class="btn btn_detail" data-mdb-ripple-init data-mdb-dismiss="modal">Cancelar</button>

@@ -23,7 +23,7 @@
             <!-- Formulario de ruta -->
             <form autocomplete="off" id="form_route">
                 <select id="origen" class="form-control mb-3">
-                    <option disabled selected hidden>Tu ubicacion</option>
+                    <option disabled selected hidden>Tu ubicación</option>
                 </select>
                 <select id="destino" class="form-control">
                     <option disabled selected hidden>Seleccionar destino</option>
@@ -97,7 +97,7 @@
             </section>
             <!-- Poligonos, boton e inputs -->
             <button type="button" id="btnPoligon" class="btn btn_detail btn-block text-white mt-4" data-mdb-ripple-init data-mdb-ripple-color="white">
-                Dibujar Poligono <i class="fa-solid fa-draw-polygon ms-1"></i>
+                Dibujar Polígono<i class="fa-solid fa-draw-polygon ms-1"></i>
             </button>
             <button type="button" id="btnPoligonCancel" class="btn btn-danger btn-block mt-4 none" data-mdb-ripple-init data-mdb-ripple-color="white">
                 Cancelar <i class="fa-solid fa-power-off ms-1"></i>
@@ -175,11 +175,11 @@
                     <div id="flush-collapseTwoX" class="accordion-collapse collapse" aria-labelledby="flush-headingTwoX" data-mdb-parent="#noteAccordion">
                         <div class="accordion-body p-2">
                             <small>
-                                Ademas de crear/editar la informacion del mapa, se recomienda editar los lugares y caminos en (OSM) OpenStreetMaps
+                                Además de crear/editar la información del mapa, se recomienda editar los lugares y caminos en (OSM) OpenStreetMaps
                                 <i class="fa-solid fa-book-atlas"></i><br>
-                                Tambien se recomienda registrar los caminos y lugares sin su nombre, ya que estos intervienen
-                                en la visualizacion del mapa en este sitio web. <br>
-                                Utiliza la capa de <u>Mapbox Satelite</u> <i class="fa-solid fa-layer-group ms-1"></i> al editar la informacion en OSM
+                                También se recomienda registrar los caminos y lugares sin su nombre, ya que estos intervienen
+                                en la visualización del mapa en este sitio web. <br>
+                                Utiliza la capa de <u>Mapbox Satelite</u> <i class="fa-solid fa-layer-group ms-1"></i> al editar la información en OSM
                             </small>
                         </div>
                     </div>
@@ -237,7 +237,7 @@
                 <input id="dark-v11" type="radio" name="rtoggle" value="dark" class="none">
                 <div class="card-body pb-1 p-3 text-center">
                     <div><i class="fa-solid fa-map"></i></div>
-                    <div>Obscuro</div>
+                    <div>Oscuro</div>
                 </div>
             </label>
         </div>
@@ -254,7 +254,7 @@
             </div>
             <div class="modal-body">
                 <h4 class="col-8 col-md-12 mx-auto text-center">¿Quieres saber como llegar a la UTC?</h4>
-                <p class="p-3">Con esta opcion te enviaremos a <span class="fw-bold style_google">Google</span> Maps, para que puedas ir desde tu ubicacion
+                <p class="p-3">Con esta opción te enviaremos a <span class="fw-bold style_google">Google</span> Maps, para que puedas ir desde tu ubicación 
                     hasta la UTC
                 </p>
             </div>
@@ -279,23 +279,23 @@
             <div class="modal-body">
                 <h4 class="text-center">¿Quiere eliminar "<span class="text-danger" data-namePleace></span>"? 😯🧐😬</h4>
                 <br>
-                <h4 class="text-center">Esta accion es permanente y puede afectar varios sistemas</h4>
+                <h4 class="text-center">Esta acción es permanente y puede afectar varios sistemas</h4>
                 <p class="p-3 mb-0">
-                    "<span class="text-danger" data-namePleace></span>" está ligado a informacion en la base de datos global y del Mapa, puede eliminar ambos o
+                    "<span class="text-danger" data-namePleace></span>" está ligado a información en la base de datos global y del Mapa, puede eliminar ambos o
                     solamente la
-                    informacion en el mapa.
+                    información en el mapa.
                 </p>
                 <div class="d-flex justify-content-between">
                     <form id="formDeleteMap" data-submit-form action="{% url 'del_pleace_map' %}" method="post">
                         <input type="text" class="d-none" required name="muid" data-muid>
                         <button type="submit" class="btn btn-warning" data-mdb-ripple-init data-mdb-dismiss="modal">
-                            Eliiminar en Mapa
+                            Eliminar en Mapa
                         </button>
                     </form>
                     <form id="formDeleteMap" data-submit-form action="{% url 'del_pleace_mapdb' %}" method="post">
                         <input type="text" class="d-none" required name="muid" data-muid>
                         <button type="submit" class="btn btn-danger" data-mdb-ripple-init data-mdb-dismiss="modal">
-                            Eliiminar en Ambos
+                            Eliminar en Ambos
                         </button>
                     </form>
                 </div>

@@ -10,6 +10,7 @@ from django.conf import settings
 from . import models
 import datetime
 
+# Plantilla links programador / administrador ----------------------------------------------------------
 pages = [
         {'name': 'banner', 'url': 'upload_banner', 'display_name': 'Banners', 'icon': 'fa-solid fa-image'},
         {'name': 'database', 'url': 'database_page', 'display_name': 'Database', 'icon': 'fa-solid fa-database'},

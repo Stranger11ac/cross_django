@@ -1,6 +1,6 @@
 {% extends 'base/widget.html' %}
 {% load static %}
-{% block title %}Administracion | Iniciar Sesion / Registro{% endblock %}
+{% block title %} Administración | Iniciar Sesión / Registro{% endblock %}
 {% block content %}
 <!-- Se modificoc la parte del inicio de sesion para los usuarios que vayan a entrar -->
 <main class="container container-fluid">
@@ -41,7 +41,7 @@
                 </div>
                 <!-- Registrar -->
                 <div class="tab-pane fade" id="pills-logup" role="tabpanel" aria-labelledby="tab-logup">
-                    <h3 class="text-center">Registrate!</h3>
+                    <h3 class="text-center">Registráte!</h3>
                     <hr class="hr_divisor mb-5 mb-md-2">
                     <form id="signupForm" method="POST" action="{% url 'singup' %}" data-validate-singup autocomplete="off">
                         {% csrf_token %}
