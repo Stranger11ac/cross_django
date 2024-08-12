@@ -345,7 +345,7 @@ def banners_visibility_now(request):
         if banneridPOST:
             expired_banners = models.Banners.objects.filter(id=banneridPOST)
             update_visibility = request.POST.get('banner_visible')
-            returnJson = {'success': True, 'functions':'reload', 'message':f'Se cambio la visibilidad del banner <span>#{banneridPOST}</span> exitosamente 🫡🥳🎉.'}
+            returnJson = {'success': True, 'functions':'reload', 'message':f'Se cambió la visibilidad del banner <span>#{banneridPOST}</span> exitosamente 🫡🥳🎉.'}
         else:
             now = timezone.now()
             expired_banners = models.Banners.objects.filter(expiracion__lte=now, visible=True)
@@ -369,7 +369,7 @@ def categorias_create(request):
             
             existing_record = models.Database.objects.filter(categoria=categoriaPOST).exists()
             if existing_record:
-                return JsonResponse({'success': False, 'message': f'la categoria "{categoriaPOST}" ya esta registrada. 🧐🤔😯',}, status=400)
+                return JsonResponse({'success': False, 'message': f'la categoría "{categoriaPOST}" ya está registrada. 🧐🤔😯',}, status=400)
             
             models.Categorias.objects.create(
                 categoria=categoriaPOST,
@@ -377,7 +377,7 @@ def categorias_create(request):
             )
             models.Notificacion.objects.create(usuario=request.user,tipo='Categorias',mensaje=f'{request.user.username} ha creado una nueva categoria llamada "{categoriaPOST}" .',)
             
-            return JsonResponse({'success': True, 'functions':'reload', 'message': f'Categoria "{categoriaPOST}" creada exitosamente 😁🎉🎈', 'position':'center'}, status=200)
+            return JsonResponse({'success': True, 'functions':'reload', 'message': f'Categoría "{categoriaPOST}" creada exitosamente 😁🎉🎈', 'position':'center'}, status=200)
         
         except Exception as e:
             return JsonResponse({'success': False, 'message': f'Ocurrió un error 😯😥 <br>{str(e)}'}, status=400)
@@ -472,7 +472,7 @@ def database_update(request):
             
             models.Notificacion.objects.create(usuario=request.user,tipo='Base de Datos',mensaje=f'{request.user.username} ha Actualizado un registro de categoría "{categoriaIdPOST}".',)
             
-            dbMessage =  f'Se actualizo "{request.POST.get('titulo')}" en la base de datos exitosamente 🫡😁🎉'
+            dbMessage =  f'Se actualizó "{request.POST.get('titulo')}" en la base de datos exitosamente 🫡😁🎉'
             return JsonResponse({'success': True, 'functions':'reload', 'message': dbMessage, 'position':'center'}, status=200)
         
         except Exception as e:
@@ -490,7 +490,7 @@ def database_delete(request):
             
             models.Notificacion.objects.create(usuario=request.user,tipo='Base de Datos',mensaje=f'{request.user.username} elimino el registro numero "{idPOST}", de titulo {dbDelete.titulo}.',)
             
-            dbMessage =  f'"{dbDelete.titulo}" Se elimino de la base de datos 😯🧐😬🫡'
+            dbMessage =  f'"{dbDelete.titulo}" Se eliminó de la base de datos 😯🧐😬🫡'
             return JsonResponse({'success': True, 'functions':'reload', 'message': dbMessage, 'icon':'warning'}, status=200)
         
         except Exception as e:
@@ -584,7 +584,7 @@ def delete_pleaceMap(request):
         sendUid = request.POST.get('muid')
         pleace = get_object_or_404(models.Mapa, muid=sendUid)
         pleace.delete()
-        return JsonResponse({'success': True, 'functions': 'reload', 'message': f'Se elimino <u>"{pleace.nombre}"</u> del Mapa exitosamente. 😯😬🎉', 'icon': 'warning'}, status=200)
+        return JsonResponse({'success': True, 'functions': 'reload', 'message': f'Se eliminó <u>"{pleace.nombre}"</u> del Mapa exitosamente. 😯😬🎉', 'icon': 'warning'}, status=200)
     return JsonResponse({'success': False, 'message': 'Acción no permitida.'}, status=403)
 
 @login_required
@@ -596,7 +596,7 @@ def delete_pleaceMap_DB(request):
         pleace.delete()
         pleaceDB = get_object_or_404(models.Database, muid=sendUid)
         pleaceDB.delete()
-        return JsonResponse({'success': True, 'functions': 'reload', 'message': f'Se elimino <u>"{pleace.nombre}"</u> del Mapa y de la Base de Datos exitosamente. ⚠️😯😬🎉', 'icon': 'warning'}, status=200)
+        return JsonResponse({'success': True, 'functions': 'reload', 'message': f'Se eliminó <u>"{pleace.nombre}"</u> del Mapa y de la Base de Datos exitosamente. ⚠️😯😬🎉', 'icon': 'warning'}, status=200)
     return JsonResponse({'success': False, 'message': 'Acción no permitida.'}, status=403)
 
 # Preguntas ----------------------------------------------------------
