@@ -13,7 +13,6 @@ import requests
 import openai
 import json
 import spacy
-
 # ChatBot ----------------------------------------------------------
 # Cargar el modelo de lenguaje español
 # analizar texto en aplicaciones de procesamiento de lenguaje natural.
@@ -22,17 +21,7 @@ nlp = spacy.load("es_core_news_sm")
 respuestas_simples = {
     "contacto": "Puedes contactarnos al teléfono (844)288-38-00 ☎️",
 }
-palabras_clave = ["hola", "servicios", "escolares", "donde", "esta"]  # Ejemplo de palabras clave
-
-# Plantilla links programador / administrador ----------------------------------------------------------
-pages = [
-        {'name': 'banner', 'url': 'upload_banner', 'display_name': 'Banners', 'icon': 'fa-solid fa-image'},
-        {'name': 'database', 'url': 'database_page', 'display_name': 'Database', 'icon': 'fa-solid fa-database'},
-        {'name': 'blog', 'url': 'create_blog', 'display_name': 'Blogs', 'icon': 'fa-solid fa-newspaper'},
-        {'name': 'mapa', 'url': 'update_mapa', 'display_name': 'Mapa', 'icon': 'fa-solid fa-map-location-dot'},
-        {'name': 'calendario', 'url': 'calendario_page', 'display_name': 'Calendario', 'icon': 'fa-solid fa-calendar-days'},
-    ]
-
+palabras_clave = ["hola", "servicios", "escolares", "donde", "esta"]
 recognized_texts = []
 is_recognizing = False
 recognition_thread = None
@@ -78,7 +67,7 @@ def stop_recognition(request):
         if recognized_texts:
             question = " ".join(recognized_texts)
             response = requests.post(
-                'http://localhost:8000/recognized-text/',
+                'http://localhost:8000/recognized_text/',
                 json={'question': question}
             )
             response_data = response.json()  # Obtener la respuesta JSON
