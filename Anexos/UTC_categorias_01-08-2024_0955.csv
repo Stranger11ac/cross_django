@@ -1,0 +1,6 @@
+﻿ID,Categoria,Descripcion
+2,Mapa,"Información de los edificios, laboratorios y otras instalaciones dentro del campus de la universidad"
+3,Informacion,"Datos sobre la universidad, sus instalaciones o el campus, esta es información extra que no se encuentra en otra categoría"
+4,Personal,"Información del personal de la institución, ya sea personal administrativo o docente"
+5,Calendario,Agrupación de los eventos y fechas importantes. este se utiliza solamente para el calendario con fullcalendar.js
+6,Preguntas,Preguntas frecuentes cuya información eta destinada al público en general
