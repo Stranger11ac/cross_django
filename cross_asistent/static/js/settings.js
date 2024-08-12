@@ -506,7 +506,6 @@ function chatSubmit(e) {
     const valID = `uuid${tokendid}`;
 
     const htmlBlock = `<div class="output_block"><div class="btn_secondary chat_msg user_submit" data-tokeid="${valID}">${pregunta}</div></div>`;
-    
     contOutput.insertAdjacentHTML("beforeend", htmlBlock);
     const user_submit = document.querySelector(`.user_submit[data-tokeid="${valID}"]`);
     setTimeout(() => {
@@ -523,25 +522,25 @@ function chatSubmit(e) {
             "X-CSRFToken": chatForm.querySelector("[name=csrfmiddlewaretoken]").value,
         },
     })
-    .then(response => {
-        if (!response.ok) {
-            return response.json().then(data => {
-                throw new Error(data.message || "Error desconocido");
-            });
-        }
-        return response.json();
-    })
-    .then(data => {
-        if (data.success) {
-            displayChatbotResponse(data.answer);
-        } else {
-            alertSToast("top", 8000, "error", `Error: ${data.message}`);
-        }
-    })
-    .catch(error => {
-        console.error("😥 Error:", error);
-        alertSToast("top", 8000, "warning", "Ocurrió un error. Intente nuevamente. 😥");
-    });
+        .then((response) => {
+            if (!response.ok) {
+                return response.json().then((data) => {
+                    throw new Error(data.message || "Error desconocido");
+                });
+            }
+            return response.json();
+        })
+        .then((data) => {
+            if (data.success) {
+                displayChatbotResponse(data.answer);
+            } else {
+                alertSToast("top", 8000, "error", `Error: ${data.message}`);
+            }
+        })
+        .catch((error) => {
+            console.error("😥 Error:", error);
+            alertSToast("top", 8000, "warning", "Ocurrió un error. Intente nuevamente. 😥");
+        });
 }
 
 // Función para Manejar y Mostrar la Respuesta del Chatbot 
@@ -564,6 +563,10 @@ function displayChatbotResponse(answer) {
         btnRedir = `<br><br> <a class="btn btn_secondary mb-2" style="min-width:300px;" target="_blank" rel="noopener noreferrer" href="${dataRedirigir}" >Ver Mas <i class="fa-solid fa-arrow-up-right-from-square ms-1"></i></a>`;
     }
 
+<<<<<<< HEAD
+=======
+    // Aquí va el bloque de HTML que mencionaste
+>>>>>>> 4bbb7572cd551030ca2ebff7fd0699daa8918754
     const htmlBlock = `<div class="btn_detail chat_msg asistent_response" data-tokeid="${valID}"><span>${answer.informacion} ${btnRedir}</span><span>${viewImage}</span></div>`;
 
     contOutput.insertAdjacentHTML("beforeend", htmlBlock);
@@ -583,6 +586,7 @@ function displayChatbotResponse(answer) {
     }, 20);
 }
 
+<<<<<<< HEAD
 // Función para Actualizar el Chat con la Pregunta del Usuario por Voz
     function updateChat(question) {
         const tokendid = cadenaRandom(5, alfabetico);
@@ -600,6 +604,41 @@ function displayChatbotResponse(answer) {
     function scrollToBottom() {
         contOutput.scrollTop = contOutput.scrollHeight;
     }
+=======
+// Función para enviar preguntas por voz al chatbot
+function sendVoiceQuestion() {
+    fetch("/stop-recognition/", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+    })
+        .then((response) => response.json())
+        .then((data) => {
+            console.log("Datos recibidos de stop-recognition:", data);
+            if (data.status === "success") {
+                if (data.response && data.response.question) {
+                    const question = data.response.question;
+                    updateChat(question); // Mostrar la pregunta reconocida del usuario
+                }
+                if (data.response && data.response.chatbot_answer) {
+                    displayChatbotResponse(data.response.chatbot_answer); // Muestra la respuesta del bot
+                }
+            } else {
+                alertSToast("top", 8000, "warning", "No se pudo obtener una respuesta del chatbot.");
+            }
+        })
+        .catch((error) => {
+            console.error("Error al enviar la pregunta por voz:", error);
+            alertSToast("top", 8000, "warning", "Ocurrió un error al procesar la pregunta por voz.");
+        });
+}
+
+// Función para actualizar el chat con la pregunta del usuario
+function updateChat(question) {
+    const tokendid = cadenaRandom(5, alfabetico);
+    const valID = `uuid${tokendid}`;
+>>>>>>> 4bbb7572cd551030ca2ebff7fd0699daa8918754
 
 // Control de Audio ################################################################
     const toggleAudioButton = document.querySelector("#toggleAudio");
@@ -619,11 +658,16 @@ function displayChatbotResponse(answer) {
         }
     });
 
+<<<<<<< HEAD
 // Control de Reconocimiento de Voz ################################################################
     const recVoice = document.getElementById('recVoice');
+=======
+    // Control de reconocimiento de voz
+    const recVoice = document.getElementById("recVoice");
+>>>>>>> 4bbb7572cd551030ca2ebff7fd0699daa8918754
     let isRecognizing = false;
 
-    recVoice.addEventListener('click', () => {
+    recVoice.addEventListener("click", () => {
         if (isRecognizing) {
             stopRecognition();
         } else {
@@ -632,41 +676,58 @@ function displayChatbotResponse(answer) {
     });
 
     function startRecognition() {
+<<<<<<< HEAD
         fetch('/start_recognition/', {
             method: 'POST',
+=======
+        fetch("/start-recognition/", {
+            method: "POST",
+>>>>>>> 4bbb7572cd551030ca2ebff7fd0699daa8918754
             headers: {
-                'Content-Type': 'application/json',
-                'X-CSRFToken': '{{ csrf_token }}'
+                "Content-Type": "application/json",
+                "X-CSRFToken": "{{ csrf_token }}",
             },
         })
-        .then(response => response.json())
-        .then(data => {
-            if (data.status === 'success') {
-                isRecognizing = true;
-                recVoice.innerHTML = '<i class="fa-solid fa-stop"></i>';
-            } else {
-                console.error('Error:', data.message);
-            }
-        });
+            .then((response) => response.json())
+            .then((data) => {
+                if (data.status === "success") {
+                    isRecognizing = true;
+                    recVoice.innerHTML = '<i class="fa-solid fa-stop"></i>';
+                } else {
+                    console.error("Error:", data.message);
+                }
+            });
     }
 
     function stopRecognition() {
+<<<<<<< HEAD
         fetch('/stop_recognition/', {
             method: 'POST',
+=======
+        fetch("/stop-recognition/", {
+            method: "POST",
+>>>>>>> 4bbb7572cd551030ca2ebff7fd0699daa8918754
             headers: {
-                'Content-Type': 'application/json',
-                'X-CSRFToken': '{{ csrf_token }}'
+                "Content-Type": "application/json",
+                "X-CSRFToken": "{{ csrf_token }}",
             },
         })
-        .then(response => response.json())
-        .then(data => {
-            if (data.status === 'success') {
-                isRecognizing = false;
-                recVoice.innerHTML = '<i class="fa-solid fa-microphone"></i>';
-                if (data.response && data.response.question) {
-                    const question = data.response.question;
-                    updateChat(question);
+            .then((response) => response.json())
+            .then((data) => {
+                if (data.status === "success") {
+                    isRecognizing = false;
+                    recVoice.innerHTML = '<i class="fa-solid fa-microphone"></i>';
+                    if (data.response && data.response.question) {
+                        const question = data.response.question;
+                        updateChat(question);
+                    }
+                    if (data.response && data.response.chatbot_answer) {
+                        displayChatbotResponse(data.response.chatbot_answer);
+                    }
+                } else {
+                    console.error("Error:", data.message);
                 }
+<<<<<<< HEAD
                 if (data.response && data.response.chatbot_answer) {
                     displayChatbotResponse(data.response.chatbot_answer);
                 }
@@ -679,13 +740,21 @@ function displayChatbotResponse(answer) {
 
 //################### Saludo y Repoducion Inicial del Chatbot ###################
 document.addEventListener("DOMContentLoaded", function () {
+=======
+            })
+            .catch((error) => console.error("Error en la solicitud:", error));
+    }
+
+    // ################### Saludo y Repoducion del Chatbot ###################
+>>>>>>> 4bbb7572cd551030ca2ebff7fd0699daa8918754
     const contOutput = document.querySelector("#output");
     const RepAudioButton = document.querySelector("#RepAudio");
     const voiceBtn = document.querySelector("#voiceBtn");
 
     if (contOutput) {
         const valID = `uuid${cadenaRandom(5, alfabetico)}`;
-        const saludo = "Hola ¡Bienvenido al asistente virtual de la Universidad Tecnologica de Coahuila! ¿En qué puedo ayudarte hoy?";
+        const saludo =
+            "Hola ¡Bienvenido al asistente virtual de la Universidad Tecnologica de Coahuila! ¿En qué puedo ayudarte hoy?";
         const htmlBlock = `
             <div class="btn_detail chat_msg asistent_response" data-tokeid="${valID}">
                 <span>${saludo}</span>
@@ -699,17 +768,16 @@ document.addEventListener("DOMContentLoaded", function () {
             scrollToBottom();
         }, 20);
 
-        const audioUrl = '/static/audio/welcome_message.mp3';
-        RepAudioButton.addEventListener('click', function() {
+        const audioUrl = "/static/audio/welcome_message.mp3";
+        RepAudioButton.addEventListener("click", function () {
             const audio = new Audio(audioUrl);
             audio.playbackRate = 1.3;
             audio.play().catch((error) => {
                 console.error("Error al reproducir el audio:", error);
             });
         });
-        };
-    });
-
+    }
+});
 
 // Hacer scroll con un nuevo mensaje en el chat ###############################################
 function scrollToBottom() {
