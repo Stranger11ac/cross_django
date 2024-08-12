@@ -10,9 +10,9 @@ from django.urls import reverse
 from . import functions, models
 import json
 
+categoriasall = models.Categorias.objects.all()
 databaseall = models.Database.objects.all()
 mapaall = models.Mapa.objects.all()
-categoriasall = models.Categorias.objects.all()
 
 def index(request):
     if not request.user.is_staff:
