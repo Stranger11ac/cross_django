@@ -300,9 +300,9 @@ def marcar_notificaciones_leidas(request):
         models.Notificacion.objects.filter(id__in=ids).update(leida=True)
         # return JsonResponse({'status': 'success'})
 
-        return JsonResponse({'status': 'success', 'message': f'Notificcacion {ids}, se marco como leida para todos los usuarios', 'icon': 'info'}, status=200)
+        return JsonResponse({'status': 'success', 'message': f'Notificacion {ids}, se marco como leida para todos los usuarios', 'icon': 'info'}, status=200)
     except Exception as e:
-        return JsonResponse({'status': 'error', 'message': f'Ocurrio un error😯😥 <br>{str(e)}', 'icon': 'error'}, status=400)
+        return JsonResponse({'status': 'error', 'message': f'Ocurrió un error😯😥 <br>{str(e)}', 'icon': 'error'}, status=400)
 
 # Banners ----------------------------------------------------------
 @login_required
@@ -424,7 +424,7 @@ def blog_page(request):
                     encabezado=encabezadoImgPOST,
                 )
                 articulo.save()
-                jsonMessage='Excelente 🥳🎈🎉. Tu articulo ya fue publicado. Puedes editarlo cuando gustes. 🧐😊'
+                jsonMessage='Excelente 🥳🎈🎉. Tu artículo ya fue publicado. Puedes editarlo cuando gustes. 🧐😊'
                 
                 models.Notificacion.objects.create(
                     usuario=request.user,
@@ -439,7 +439,7 @@ def blog_page(request):
 
             return JsonResponse({'success': True, 'functions':'reload', 'message': jsonMessage}, status=200)
         except Exception as e:
-            return JsonResponse({'success': False, 'message': f'Ocurrio un error😯😥 <br>{str(e)}'}, status=400)
+            return JsonResponse({'success': False, 'message': f'Ocurrió un error😯😥 <br>{str(e)}'}, status=400)
         
     yourBlogs = models.Articulos.objects.filter(autor = request.user)
     blogsTiple=[]
@@ -500,7 +500,7 @@ def update_create_pleace_map(request):
                 map_database = get_object_or_404(models.Database, muid=muidPost)
                 map_database.imagen = imagenPost
                 map_database.save()
-                success_message += '<br>Se actualizo su imagen en la Base de datos 😁🎉🎈'
+                success_message += '<br>Se actualizó su imagen en la Base de datos 😁🎉🎈'
             return JsonResponse({'success': True, 'message': success_message}, status=200)
         else:
             # validar si este ya existe en el mapa y en db para que no se repitan
@@ -527,7 +527,7 @@ def update_create_pleace_map(request):
                 evento_className='',
             )
 
-            return JsonResponse({'success': True, 'message': 'Se creo un nuevo edificio en el mapa y en la base de datos de forma exitosa 🎉🎉🎉'}, status=200)
+            return JsonResponse({'success': True, 'message': 'Se creó un nuevo edificio en el mapa y en la base de datos de forma exitosa 🎉🎉🎉'}, status=200)
 
 #Galeria ----------------------------------------------------------
 @login_required
