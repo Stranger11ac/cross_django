@@ -1,10 +1,14 @@
 from django.urls import path
-from . import functions, views, imex_port
+from . import functions, views, imex_port, chatbots
 
 urlpatterns = [
     # Páginas de inicio ----------------------------------------------------------
     path('', views.index, name='home'),
-    path('chatbot/', functions.chatbot, name='chatbot'),
+    path('chatbot/', chatbots.chatbot, name='chatbot'),
+    path('speekText/', chatbots.speekText, name='speekText'),
+    path('start-recognition/', chatbots.start_recognition, name='start_recognition'),
+    path('stop-recognition/', chatbots.stop_recognition, name='stop_recognition'),
+    path('recognized-text/', chatbots.recognized_text, name='recognized_text'),
     path('preguntas_frecuentes/', views.fqt_questions, name='faq'),
     path('preguntar/', views.fqt_questions_send, name='enviar_preguntas'),
     path('blogs/', views.blogs, name='blog'),
