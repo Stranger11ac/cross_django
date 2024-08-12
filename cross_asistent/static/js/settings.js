@@ -563,10 +563,7 @@ function displayChatbotResponse(answer) {
         btnRedir = `<br><br> <a class="btn btn_secondary mb-2" style="min-width:300px;" target="_blank" rel="noopener noreferrer" href="${dataRedirigir}" >Ver Mas <i class="fa-solid fa-arrow-up-right-from-square ms-1"></i></a>`;
     }
 
-<<<<<<< HEAD
-=======
     // Aquí va el bloque de HTML que mencionaste
->>>>>>> 4bbb7572cd551030ca2ebff7fd0699daa8918754
     const htmlBlock = `<div class="btn_detail chat_msg asistent_response" data-tokeid="${valID}"><span>${answer.informacion} ${btnRedir}</span><span>${viewImage}</span></div>`;
 
     contOutput.insertAdjacentHTML("beforeend", htmlBlock);
@@ -586,25 +583,6 @@ function displayChatbotResponse(answer) {
     }, 20);
 }
 
-<<<<<<< HEAD
-// Función para Actualizar el Chat con la Pregunta del Usuario por Voz
-    function updateChat(question) {
-        const tokendid = cadenaRandom(5, alfabetico);
-        const valID = `uuid${tokendid}`;
-
-        const htmlBlock = `<div class="output_block"><div class="btn_secondary chat_msg user_submit" data-tokeid="${valID}">${question}</div></div>`;
-
-        contOutput.insertAdjacentHTML("beforeend", htmlBlock);
-        const userSubmit = document.querySelector(`.user_submit[data-tokeid="${valID}"]`);
-        setTimeout(() => {
-            userSubmit.classList.add("visible");
-            setTimeout(scrollToBottom, 500);
-        }, 20);
-    }
-    function scrollToBottom() {
-        contOutput.scrollTop = contOutput.scrollHeight;
-    }
-=======
 // Función para enviar preguntas por voz al chatbot
 function sendVoiceQuestion() {
     fetch("/stop-recognition/", {
@@ -638,7 +616,6 @@ function sendVoiceQuestion() {
 function updateChat(question) {
     const tokendid = cadenaRandom(5, alfabetico);
     const valID = `uuid${tokendid}`;
->>>>>>> 4bbb7572cd551030ca2ebff7fd0699daa8918754
 
 // Control de Audio ################################################################
     const toggleAudioButton = document.querySelector("#toggleAudio");
@@ -658,13 +635,8 @@ function updateChat(question) {
         }
     });
 
-<<<<<<< HEAD
-// Control de Reconocimiento de Voz ################################################################
-    const recVoice = document.getElementById('recVoice');
-=======
     // Control de reconocimiento de voz
     const recVoice = document.getElementById("recVoice");
->>>>>>> 4bbb7572cd551030ca2ebff7fd0699daa8918754
     let isRecognizing = false;
 
     recVoice.addEventListener("click", () => {
@@ -676,13 +648,8 @@ function updateChat(question) {
     });
 
     function startRecognition() {
-<<<<<<< HEAD
-        fetch('/start_recognition/', {
-            method: 'POST',
-=======
         fetch("/start-recognition/", {
             method: "POST",
->>>>>>> 4bbb7572cd551030ca2ebff7fd0699daa8918754
             headers: {
                 "Content-Type": "application/json",
                 "X-CSRFToken": "{{ csrf_token }}",
@@ -700,13 +667,8 @@ function updateChat(question) {
     }
 
     function stopRecognition() {
-<<<<<<< HEAD
-        fetch('/stop_recognition/', {
-            method: 'POST',
-=======
         fetch("/stop-recognition/", {
             method: "POST",
->>>>>>> 4bbb7572cd551030ca2ebff7fd0699daa8918754
             headers: {
                 "Content-Type": "application/json",
                 "X-CSRFToken": "{{ csrf_token }}",
@@ -727,26 +689,11 @@ function updateChat(question) {
                 } else {
                     console.error("Error:", data.message);
                 }
-<<<<<<< HEAD
-                if (data.response && data.response.chatbot_answer) {
-                    displayChatbotResponse(data.response.chatbot_answer);
-                }
-            } else {
-                console.error('Error:', data.message);
-            }
-        })
-        .catch(error => console.error('Error en la solicitud:', error));
-    };
-
-//################### Saludo y Repoducion Inicial del Chatbot ###################
-document.addEventListener("DOMContentLoaded", function () {
-=======
             })
             .catch((error) => console.error("Error en la solicitud:", error));
     }
 
     // ################### Saludo y Repoducion del Chatbot ###################
->>>>>>> 4bbb7572cd551030ca2ebff7fd0699daa8918754
     const contOutput = document.querySelector("#output");
     const RepAudioButton = document.querySelector("#RepAudio");
     const voiceBtn = document.querySelector("#voiceBtn");
@@ -777,7 +724,7 @@ document.addEventListener("DOMContentLoaded", function () {
             });
         });
     }
-});
+};
 
 // Hacer scroll con un nuevo mensaje en el chat ###############################################
 function scrollToBottom() {
