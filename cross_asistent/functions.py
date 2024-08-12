@@ -24,7 +24,7 @@ nlp = spacy.load("es_core_news_sm")
 respuestas_simples = {
     "contacto": "Puedes contactarnos al teléfono (844)288-38-00 ☎️",
 }
-palabras_clave = ["hola", "servicios", "escolares", "donde", "esta"]  # Ejemplo de palabras clave
+palabras_clave = ["hola", "servicios", "escolares", "donde", "esta"] # Ejemplo de palabras clave
 
 # Plantilla links programador / administrador ----------------------------------------------------------
 pages = [
