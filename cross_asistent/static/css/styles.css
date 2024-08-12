@@ -2064,10 +2064,10 @@ img.img-rounded {
         transform: translateZ(0)
     }
 }
-.btn-floating {
+.btn-floatingg {
     transition: transform 0.2s;
 }
 
-.btn-floating:active {
+.btn-floatingg:active {
     transform: scale(0.95);
 }
