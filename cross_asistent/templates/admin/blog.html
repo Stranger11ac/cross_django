@@ -47,8 +47,8 @@
                         <div class="card-body">
                             <div class="form-outline mb-3">
                                 <select class="form-select" id="blogNewUpdate" name="blogNewUpdate" data-get-blog="{% url 'blog_get' %}">
-                                    <option selected disabled hidden>Modificar Articulo:</option>
-                                    <option value="newBlog">Crear Nuevo Articulo:</option>
+                                    <option selected disabled hidden>Modificar Artículo:</option>
+                                    <option value="newBlog">Crear Nuevo Artículo:</option>
                                     {% for blog in blogsTiple %}
                                     <option value="{{ blog.id }}">{{ blog.titulo }}</option>
                                     {% endfor %}
@@ -117,7 +117,7 @@
             <div class="modal-body">
                 <h4 class="text-center">Deseas eliminar el blog titulado:</h4>
                 <h4 class="text-center" id="blogDeleteTitle"></h4>
-                <p class="mb-0 mt-4">Esta accion es permanente, se eliminara la imagen de encabezado pero las imagenes del articulo se mantienen en la galeria
+                <p class="mb-0 mt-4">Esta acción es permanente, se eliminará la imágen de encabezado pero las imágenes del artículo se mantienen en la galería 
                     global</p>
             </div>
             <div class="modal-footer d-flex justify-content-between">

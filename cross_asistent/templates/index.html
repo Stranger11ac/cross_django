@@ -49,52 +49,58 @@
             <div class="swiper-button-prev"></div>
         </div>
     </div>
+
     <!-- Asistente -->
     <section href="#asistente" class="asistent_group">
         <div class="box_asistent">
-            <model-viewer id="asistent_model" src="{% static 'models/RobotExpressive.glb' %}" tone-mapping="neutral" camera-orbit="15deg 70deg 60m"
-                poster="{% static 'img/poster.webp' %}" shadow-intensity="1">
+            <model-viewer id="asistent_model" src="{% static 'models/RobotExpressive.glb' %}" tone-mapping="neutral" camera-orbit="15deg 70deg 60m" autoplay
+                animation-name="Wave" poster="{% static 'img/poster.webp' %}" shadow-intensity="1">
             </model-viewer>
-            <div class="box_asistent_controls">
-                <div class="controls_buttons">
-                    <button type="button" id="closeChat" class="btn btn_controls btn_secondary controls_btn_keyboard toggle_controls">
+            <!-- Controles iniciales -->
+            <div  class="box_asistent_controls" >
+                <div class="controls_buttons" >
+                    <button type="button" id="RepAudio" class="btn btn_controls btn_secondary controls_btn_keyboard toggle_controls">
                         <i class="fa-regular fa-keyboard"></i>
                     </button>
-                    <button type="button" class="btn btn_controls btn-light controls_btn_microphone">
-                        <i class="fa-solid fa-comment text_detail" id="btn_controls_icon"></i>
+                    <button type="button" class="btn btn_controls btn_detail controls_btn_microphone">
+                        <i class="fa-solid fa-comment" id="btn_controls_icon"></i>
                     </button>
-                    <button type="button" class="btn btn_controls btn_secondary controls_btn_close">
+                    <button type="button"  class="btn btn_controls btn_secondary controls_btn_close">
                         <i class="fa-solid fa-xmark"></i>
                     </button>
                 </div>
             </div>
+            <!-- Controles del chat -->
             <form id="chatForm" class="controls_input" method="POST" action="{% url 'chatbot' %}">
                 {% csrf_token %}
+                <button type="button" id="toggleAudio" class="btn btn_detail btn-floating position-relative bottom-0 end-0">
+                    <i id="audioIcon" class="fa-solid fa-volume-high"></i>
+                </button>
                 <div class="position-relative bottom-0 end-0">
                     <div class="form-outline" data-mdb-input-init>
                         <textarea class="form-control bg-body-tertiary" id="txtQuestion" name="question" required maxlength="200"></textarea>
-                        <label class="form-label bg-body-tertiary" for="txtQuestion">Haz una
-                            pregunta:</label>
+                        <label class="form-label bg-body-tertiary" for="txtQuestion">Haz una pregunta:</label>
                     </div>
                     <div class="controls_input-buttons position-absolute top-0 end-0">
-                        <button type="button" id="closeChat" class="btn btn_light btn-floating btn-sm controls_btn_close">
+                        <button type="button" id="closeChat" class="btn btn_secondary btn-floating btn-sm controls_btn_close">
                             <i class="fa-solid fa-xmark"></i>
                         </button>
-                        <button type="button" id="closeInput" class="btn btn_light btn-floating btn-sm toggle_controls">
-                            <i class="fa-solid fa-microphone"></i>
+                        <button type="button" id="recVoice" class="btn btn_secondary btn-floating btn-sm controls_btn_audio">
+                            <i class="fa-solid fa-microphone" id="btn_controls_icon"></i>
                         </button>
+                        <div class="audio-animation"></div>
                         <button type="submit" id="chatForm_submit" class="btn btn_detail btn-floating">
                             <i class="fa-solid fa-paper-plane"></i>
                         </button>
                     </div>
                 </div>
             </form>
-            <div class="output_messages" id="output"></div>
+            <div class="output_messages" id="output"></div>            
         </div>
     </section>
-</main>
+    </main>
 
-<!-- Modal: imagen de QR -->
+    <!-- Modal: imagen de QR -->
 <div class="modal fade" id="modalqr" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content text-center">

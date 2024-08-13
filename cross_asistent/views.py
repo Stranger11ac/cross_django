@@ -57,14 +57,6 @@ def fqt_questions_send(request):
 
                 pregunta = models.Preguntas(pregunta=preguntaPOST, descripcion=descripcionPOST)
                 pregunta.save()
-                
-                # # Hay un error en: Cannot assign "'"Persona"'": "Notificacion.usuario" must be a "User" instance.
-                # No se puede registrar el usuario Anonimo ya que requiere una instancia de un usuario existente en la DB
-                # models.Notificacion.objects.create(
-                #     usuario=request.user,
-                #     tipo='Pregunta',
-                #     mensaje=f'{request.user.username} ha realizado una nueva pregunta: "{preguntaPOST}".',
-                # )
 
                 return JsonResponse({'success': True, 'message': 'Gracias por tu pregunta. ❤️💕😁👍 <br>La responderemos lo mas pronto posible. 😁😊🫡'}, status=200)
             except Exception as e:
