@@ -13,6 +13,7 @@ import requests
 import openai
 import json
 import spacy
+
 # ChatBot ----------------------------------------------------------
 # Cargar el modelo de lenguaje español
 # analizar texto en aplicaciones de procesamiento de lenguaje natural.
@@ -90,7 +91,6 @@ def stop_recognition(request):
             return JsonResponse({'status': 'success', 'message': 'No se reconoció ningún texto.'})
 
     return JsonResponse({'status': 'error', 'message': 'Recognition not started or invalid request'})
-
 
 @csrf_exempt
 def recognized_text(request):
@@ -186,6 +186,7 @@ def score_result(result, palabras_clave, entities, pregunta_procesada):
 
     print(f"score{score}")
     return score
+
 def chatbot(request):
     if request.method == 'POST':
         try:
@@ -193,7 +194,7 @@ def chatbot(request):
             question = data.get('question', '').strip()
 
             if not question:
-                return JsonResponse({'success': False, 'message': 'Pregunta vacía.'})
+                return JsonResponse({'success': False, 'message': 'No puedo responder una pregunta que no existe 🤔🧐😬.'})
 
             # Verifica respuestas simples
             for clave, respuesta in respuestas_simples.items():
@@ -218,7 +219,7 @@ def chatbot(request):
 
             if mejor_coincidencia:
                 informacion = mejor_coincidencia.informacion
-                system_prompt = f"Eres un asistente de la Universidad Tecnologica de Coahuila. Responde la pregunta con esta información encontrada: {informacion}"
+                system_prompt = f"Eres un asistente de la Universidad Tecnologica de Coahuila. Responde la pregunta con esta información: {informacion}"
                 answer = chatgpt(question, system_prompt)
 
                 respuesta = {
@@ -236,7 +237,7 @@ def chatbot(request):
 
             else:
                 respuesta = {
-                    "informacion": "¿Podrías ser más específico en tu pregunta? No logré entender completamente lo que necesitas."
+                    "informacion": "¿Podrías ser más específico en tu pregunta? No logré entender lo que necesitas."
                     if len(palabras_clave) == 0 and len(entidades) == 0
                     else "Lo siento, no encontré información relevante."
                 }
