@@ -19,4 +19,162 @@ FullCalendar.Bootstrap5=function(e,t,o){"use strict";class r extends o.Theme{}r.
 
 
 // Configurations ###############################################################################
-document.addEventListener("DOMContentLoaded",function(){function formatDate(e){const t={year:"2-digit",month:"2-digit",day:"2-digit"};return e.toLocaleDateString("es-ES",t)}function formatTime(e){const t={hour:"2-digit",minute:"2-digit",hour12:!0};return e.toLocaleTimeString("es-ES",t)}function formatDateInput(e){return e.toISOString().slice(0,10)}function formatTimeInput(e){return e.toTimeString().slice(0,5)}var calendarEl=document.getElementById("calendar"),dataEvents=calendarEl.getAttribute("data-events"),calendar=new FullCalendar.Calendar(calendarEl,{headerToolbar:{start:"title",end:"today,prev,next"},footerToolbar:{start:"timeGridDay,timeGridWeek,dayGridMonth,multiMonthYear",end:"prevYear,nextYear"},firstDay:0,events:dataEvents,initialView:"dayGridMonth",locale:"es",height:"auto",navLinks:!0,nowIndicator:!0,weekNumbers:!0,weekText:"",slotLabelFormat:{hour:"numeric",minute:"2-digit",hour12:!0},eventTimeFormat:{hour:"numeric",hour12:!0,meridiem:"narrow"},views:{timeGridWeek:{hiddenDays:[0,6]},dayGridMonth:{displayEventTime:!1},multiMonthYear:{multiMonthMaxColumns:4,multiMonthMinWidth:250}},eventClick:function(info){var eventObj=info.event,{end:valEnd,start:valStart,title:valTitulo,allDay:valallDay,classNames:valclassNames}=eventObj,{imagen:imgJson,button:valBtn,location:valPleace,description:valDescription}=eventObj.extendedProps,myModal=new mdb.Modal(document.getElementById("eventModal"));const updateModal=$("#eventModal").hasClass("calendar_update");if(updateModal){$(".idUpdate").val(eventObj.id),$("#tituloUpdate, #informacionUpdate, #redirigirUpdate, #ePleaceUpdate").each(function(){$(this).addClass("active").val(eval(this.id.replace("Update","")))}),$(".eventTitle").text(valTitulo),$("#eStartUpdate").addClass("active").val(`${formatDateInput(valStart)}T${formatTimeInput(valStart)}`),$("#eEndUpdate").addClass("active").val(`${formatDateInput(valEnd||valStart)}T${formatTimeInput(valEnd||valStart)}`),$("#eAllDayUpdate").prop("checked",valallDay),$("#eColorUpdate option").prop("selected",!1),$(`#eColorUpdate option[value="${valclassNames}"]`).prop("selected",!0),$("[data-select_addClass]").attr("class",`form-select change_bg ${valclassNames}`);const imgLabel=""===imgJson?"Subir Imagen":"Cambiar Imagen";$("[for='imagenUpdate']").html(`${imgLabel} <i class="fa-regular fa-images ms-1"></i>`)}else{$("#eventModalLabel").text(valTitulo),$("#eventStartDate").text(formatDate(valStart)),$("#eventStartTime").text(formatTime(valStart)),$("#eventLoc").text(valPleace||"Campus UTC"),valDescription?$("#eventDesc").text(valDescription).removeClass("none"):$("#eventDesc").addClass("none"),valEnd?($("#eventEndDate").text(formatDate(valEnd)),$("#eventEndTime").text(formatTime(valEnd)),$("#dateSeparator").removeClass("none")):($("#eventEndDate, #eventEndTime").text(""),$("#dateSeparator").addClass("none"));const e=""===valBtn?"add":"remove";$("#eventBtnDiv").toggleClass("none","add"===e),$("#eventBtn").attr("href",valBtn||"")}$("#eventImg").toggleClass("none",""===imgJson&&!updateModal),""!==imgJson&&$("#eventImg").attr("src",imgJson.replace("cross_asistent/","")),setTimeout(myModal.show.bind(myModal),300),info.jsEvent.preventDefault()}});calendar.render(),$(document).on("click",".fc-multimonth-month",function(){var e=$(this).attr("data-date");calendar.changeView("dayGridMonth",e)})});
+document.addEventListener("DOMContentLoaded", function () {
+    function formatDate(date) {
+        const options = { year: "2-digit", month: "2-digit", day: "2-digit" };
+        return date.toLocaleDateString("es-ES", options);
+    }
+    function formatTime(date) {
+        const options = { hour: "2-digit", minute: "2-digit", hour12: true };
+        return date.toLocaleTimeString("es-ES", options);
+    }
+    function formatDateInput(date) {
+        return date.toISOString().slice(0, 10);
+    }
+    function formatTimeInput(date) {
+        return date.toTimeString().slice(0, 5);
+    }
+    var calendarEl = document.getElementById("calendar");
+    var dataEvents = calendarEl.getAttribute("data-events");
+    var calendar = new FullCalendar.Calendar(calendarEl, {
+        headerToolbar: {
+            start: "title",
+            end: "today,prev,next",
+        },
+        footerToolbar: {
+            start: "timeGridDay,timeGridWeek,dayGridMonth,multiMonthYear",
+            end: "prevYear,nextYear",
+        },
+        firstDay: 0, // Domingo
+        events: dataEvents,
+        initialView: "dayGridMonth",
+        locale: "es",
+        height: "auto",
+        navLinks: true,
+        nowIndicator: true,
+        weekNumbers: true,
+        weekText: "",
+        slotLabelFormat: {
+            hour: "numeric",
+            minute: "2-digit",
+            hour12: true,
+        },
+        eventTimeFormat: {
+            hour: "numeric",
+            hour12: true,
+            meridiem: "narrow",
+        },
+        views: {
+            timeGridWeek: {
+                hiddenDays: [0, 6],
+            },
+            dayGridMonth: {
+                displayEventTime: false,
+            },
+            multiMonthYear: {
+                multiMonthMaxColumns: 4,
+                multiMonthMinWidth: 250,
+            },
+        },
+        eventClick: function (info) {
+            var eventObj = info.event;
+            const imgJson = eventObj.extendedProps.imagen;
+            var myModal = new mdb.Modal(document.getElementById("eventModal"));
+            const valEnd = eventObj.end;
+            const valStart = eventObj.start;
+            const valTitulo = eventObj.title;
+            const valallDay = eventObj.allDay;
+            const valclassNames = eventObj.classNames;
+            const valBtn = eventObj.extendedProps.button;
+            const valPleace = eventObj.extendedProps.location;
+            const valDescription = eventObj.extendedProps.description;
+
+            if ($("#eventModal").hasClass("calendar_update")) {
+                $(".idUpdate").val(eventObj.id);
+
+                $("#tituloUpdate").addClass("active").val(valTitulo);
+                $(".eventTitle").text(valTitulo);
+
+                $("#informacionUpdate").addClass("active").val(valDescription);
+                $("#redirigirUpdate").addClass("active").val(valBtn);
+                $("#ePleaceUpdate").addClass("active").val(valPleace);
+                $("#eStartUpdate")
+                    .addClass("active")
+                    .val(`${formatDateInput(valStart)}T${formatTimeInput(valStart)}`);
+                if (valEnd) {
+                    $("#eEndUpdate")
+                        .addClass("active")
+                        .val(`${formatDateInput(valEnd)}T${formatTimeInput(valEnd)}`);
+                } else {
+                    $("#eEndUpdate")
+                        .addClass("active")
+                        .val(`${formatDateInput(valStart)}T${formatTimeInput(valStart)}`);
+                }
+                if (valallDay) {
+                    $("#eAllDayUpdate").attr("checked", true);
+                } else {
+                    $("#eAllDayUpdate").attr("checked", false);
+                }
+                $("#eColorUpdate option#eColorSelected").attr("selected", false);
+                $(`#eColorUpdate option[value="${valclassNames}"]`).attr("selected", true);
+                $("[data-select_addClass]").attr("class", `form-select change_bg ${valclassNames}`);
+
+                if (imgJson == "") {
+                    $("[for='imagenUpdate']").html('Subir Imagen <i class="fa-regular fa-images ms-1"></i>');
+                } else {
+                    $("[for='imagenUpdate']").html('Cambiar Imagen <i class="fa-regular fa-images ms-1"></i>');
+                }
+            } else {
+                $("#eventModalLabel").text(valTitulo);
+                $("#eventStartDate").text(formatDate(valStart));
+                $("#eventStartTime").text(formatTime(valStart));
+                $("#eventLoc").text(valPleace || "Campus UTC");
+                if (valDescription) {
+                    $("#eventDesc").text(valDescription);
+                } else {
+                    $("#eventDesc").addClass("none");
+                }
+                if (valEnd) {
+                    $("#eventEndDate").text(formatDate(valEnd));
+                    $("#eventEndTime").text(formatTime(valEnd));
+                    $("#dateSeparator").removeClass("none");
+                } else {
+                    $("#eventEndDate").text("");
+                    $("#eventEndTime").text("");
+                    $("#dateSeparator").addClass("none");
+                }
+                if (valBtn == "") {
+                    $("#eventBtnDiv").addClass("none");
+                    $("#eventBtn").attr("href", "");
+                } else {
+                    $("#eventBtnDiv").removeClass("none");
+                    $("#eventBtn").attr("href", valBtn);
+                }
+            }
+
+            if (imgJson == "") {
+                $("#eventImg").addClass("none");
+
+                if ($("#eventModal").hasClass("calendar_update")) {
+                    $("#eventImg").removeClass("none");
+                }
+            } else {
+                $("#eventImg").removeClass("none");
+                let imgSrc = imgJson.replace("cross_asistent/", "");
+                $("#eventImg").attr("src", imgSrc);
+            }
+
+            setTimeout(() => {
+                myModal.show();
+            }, 300);
+
+            info.jsEvent.preventDefault();
+        },
+    });
+    calendar.render();
+
+    $(document).on("click", ".fc-multimonth-month", function () {
+        var dataDate = $(this).attr("data-date");
+        calendar.changeView("dayGridMonth", dataDate);
+    });
+});

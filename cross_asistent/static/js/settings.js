@@ -601,113 +601,113 @@ function displayChatbotResponse(answer) {
     }
 
 // Control de Audio ################################################################
-    const toggleAudioButton = document.querySelector("#toggleAudio");
-    const audioIcon = document.querySelector("#audioIcon");
+    // const toggleAudioButton = document.querySelector("#toggleAudio");
+    // const audioIcon = document.querySelector("#audioIcon");
 
-    toggleAudioButton.addEventListener("click", function () {
-        audioEnabled = !audioEnabled;
+    // toggleAudioButton.addEventListener("click", function () {
+    //     audioEnabled = !audioEnabled;
 
-        if (audioEnabled) {
-            audioIcon.classList.remove("fa-volume-mute");
-            audioIcon.classList.add("fa-volume-high");
-            console.log("Audio activado");
-        } else {
-            audioIcon.classList.remove("fa-volume-high");
-            audioIcon.classList.add("fa-volume-mute");
-            console.log("Audio silenciado");
-        }
-    });
+    //     if (audioEnabled) {
+    //         audioIcon.classList.remove("fa-volume-mute");
+    //         audioIcon.classList.add("fa-volume-high");
+    //         console.log("Audio activado");
+    //     } else {
+    //         audioIcon.classList.remove("fa-volume-high");
+    //         audioIcon.classList.add("fa-volume-mute");
+    //         console.log("Audio silenciado");
+    //     }
+    // });
 
 // Control de Reconocimiento de Voz ################################################################
-    const recVoice = document.getElementById('recVoice');
-    let isRecognizing = false;
+    // const recVoice = document.getElementById('recVoice');
+    // let isRecognizing = false;
 
-    recVoice.addEventListener('click', () => {
-        if (isRecognizing) {
-            stopRecognition();
-        } else {
-            startRecognition();
-        }
-    });
+    // recVoice.addEventListener('click', () => {
+    //     if (isRecognizing) {
+    //         stopRecognition();
+    //     } else {
+    //         startRecognition();
+    //     }
+    // });
 
-    function startRecognition() {
-        fetch('/start_recognition/', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRFToken': '{{ csrf_token }}'
-            },
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.status === 'success') {
-                isRecognizing = true;
-                recVoice.innerHTML = '<i class="fa-solid fa-stop"></i>';
-            } else {
-                console.error('Error:', data.message);
-            }
-        });
-    }
+    // function startRecognition() {
+    //     fetch('/start_recognition/', {
+    //         method: 'POST',
+    //         headers: {
+    //             'Content-Type': 'application/json',
+    //             'X-CSRFToken': '{{ csrf_token }}'
+    //         },
+    //     })
+    //     .then(response => response.json())
+    //     .then(data => {
+    //         if (data.status === 'success') {
+    //             isRecognizing = true;
+    //             recVoice.innerHTML = '<i class="fa-solid fa-stop"></i>';
+    //         } else {
+    //             console.error('Error:', data.message);
+    //         }
+    //     });
+    // }
 
-    function stopRecognition() {
-        fetch('/stop_recognition/', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRFToken': '{{ csrf_token }}'
-            },
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.status === 'success') {
-                isRecognizing = false;
-                recVoice.innerHTML = '<i class="fa-solid fa-microphone"></i>';
-                if (data.response && data.response.question) {
-                    const question = data.response.question;
-                    updateChat(question);
-                }
-                if (data.response && data.response.chatbot_answer) {
-                    displayChatbotResponse(data.response.chatbot_answer);
-                }
-            } else {
-                console.error('Error:', data.message);
-            }
-        })
-        .catch(error => console.error('Error en la solicitud:', error));
-    };
+    // function stopRecognition() {
+    //     fetch('/stop_recognition/', {
+    //         method: 'POST',
+    //         headers: {
+    //             'Content-Type': 'application/json',
+    //             'X-CSRFToken': '{{ csrf_token }}'
+    //         },
+    //     })
+    //     .then(response => response.json())
+    //     .then(data => {
+    //         if (data.status === 'success') {
+    //             isRecognizing = false;
+    //             recVoice.innerHTML = '<i class="fa-solid fa-microphone"></i>';
+    //             if (data.response && data.response.question) {
+    //                 const question = data.response.question;
+    //                 updateChat(question);
+    //             }
+    //             if (data.response && data.response.chatbot_answer) {
+    //                 displayChatbotResponse(data.response.chatbot_answer);
+    //             }
+    //         } else {
+    //             console.error('Error:', data.message);
+    //         }
+    //     })
+    //     .catch(error => console.error('Error en la solicitud:', error));
+    // };
 
 //################### Saludo y Repoducion Inicial del Chatbot ###################
-document.addEventListener("DOMContentLoaded", function () {
-    const contOutput = document.querySelector("#output");
-    const RepAudioButton = document.querySelector("#RepAudio");
-    const voiceBtn = document.querySelector("#voiceBtn");
+// document.addEventListener("DOMContentLoaded", function () {
+//     const contOutput = document.querySelector("#output");
+//     const RepAudioButton = document.querySelector("#RepAudio");
+//     const voiceBtn = document.querySelector("#voiceBtn");
 
-    if (contOutput) {
-        const valID = `uuid${cadenaRandom(5, alfabetico)}`;
-        const saludo = "Hola ¡Bienvenido al asistente virtual de la Universidad Tecnologica de Coahuila! ¿En qué puedo ayudarte hoy?";
-        const htmlBlock = `
-            <div class="btn_detail chat_msg asistent_response" data-tokeid="${valID}">
-                <span>${saludo}</span>
-            </div>`;
+//     if (contOutput) {
+//         const valID = `uuid${cadenaRandom(5, alfabetico)}`;
+//         const saludo = "Hola ¡Bienvenido al asistente virtual de la Universidad Tecnologica de Coahuila! ¿En qué puedo ayudarte hoy?";
+//         const htmlBlock = `
+//             <div class="btn_detail chat_msg asistent_response" data-tokeid="${valID}">
+//                 <span>${saludo}</span>
+//             </div>`;
 
-        contOutput.insertAdjacentHTML("beforeend", htmlBlock);
+//         contOutput.insertAdjacentHTML("beforeend", htmlBlock);
 
-        const asistent_response = document.querySelector(`.asistent_response[data-tokeid="${valID}"]`);
-        setTimeout(function () {
-            asistent_response.classList.add("visible");
-            scrollToBottom();
-        }, 20);
+//         const asistent_response = document.querySelector(`.asistent_response[data-tokeid="${valID}"]`);
+//         setTimeout(function () {
+//             asistent_response.classList.add("visible");
+//             scrollToBottom();
+//         }, 20);
 
-        const audioUrl = '/static/audio/welcome_message.mp3';
-        RepAudioButton.addEventListener('click', function() {
-            const audio = new Audio(audioUrl);
-            audio.playbackRate = 1.3;
-            audio.play().catch((error) => {
-                console.error("Error al reproducir el audio:", error);
-            });
-        });
-        };
-    });
+//         const audioUrl = '/static/audio/welcome_message.mp3';
+//         RepAudioButton.addEventListener('click', function() {
+//             const audio = new Audio(audioUrl);
+//             audio.playbackRate = 1.3;
+//             audio.play().catch((error) => {
+//                 console.error("Error al reproducir el audio:", error);
+//             });
+//         });
+//         };
+//     });
 
 
 // Hacer scroll con un nuevo mensaje en el chat ###############################################
@@ -755,6 +755,15 @@ inputs.forEach((input) => {
 // MaterialBox https://materializecss.com/ ################################################
 var imagesZoom = document.querySelectorAll(".materialBoxed");
 var instances = M.Materialbox.init(imagesZoom);
+
+// $(".materialBoxed").click(function () {
+//     if($(this).hasClass('active')) {
+//         // $(".navbar-collapse").css('z-index', 0);
+//         $(".navbar-collapse").css('background', 'blue');
+//     } else {
+//         $(".navbar-collapse").css('background', 'red');
+//     }
+// })
 
 // Enviar formulario JSON ######################################################################
 function jsonSubmit(e) {

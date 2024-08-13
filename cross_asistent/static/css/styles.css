@@ -252,7 +252,6 @@ nav .dropdown-menu {
 nav .navbar-collapse {
     width: 100%;
     left: 0;
-    z-index: 20;
     padding-block: 20px;
     box-shadow: 0 8px 5px var(--darkA2);
 }
@@ -892,6 +891,7 @@ main.main_anchor {
 .card {
     box-shadow: 0 0 8px var(--darkA2) !important;
     overflow: hidden;
+    z-index: 0;
 }
 
 .card.card_mxh-450 {
@@ -911,6 +911,7 @@ main.main_anchor {
     margin: auto;
     box-shadow: 0 0px 8px var(--darkA5);
     overflow: hidden;
+    z-index: 0;
 }
 
 .card__img_perfil {
@@ -918,6 +919,7 @@ main.main_anchor {
     width: 100%;
     position: relative;
     background: linear-gradient(45deg, var(--color-bg1), var(--color-bg2));
+    z-index: 0;
 }
 
 .card__img_perfil .card__avatar_perfil {
@@ -932,7 +934,7 @@ main.main_anchor {
     border: 10px solid var(--mdb-card-bg);
     transform: translateX(-50%);
     overflow: hidden;
-    z-index: 5;
+    z-index: 1000;
 }
 
 .card__img_perfil .card__avatar_perfil::before {
@@ -1251,12 +1253,13 @@ input:checked+.slider:before {
 
 #materialbox-overlay {
     position: fixed;
-    inset: 0 !important;
+    top: 0;
+    left: 0;
     background-color: #292929;
     background: var(--darkA8);
-    backdrop-filter: blur(5px);
-    z-index: 1000;
+    backdrop-filter: blur(3px);
     will-change: opacity;
+    z-index: 1000;
     cursor: pointer;
     height: 100vh !important;
     max-height: 100vh !important;
@@ -1616,11 +1619,6 @@ input:checked+.slider:before {
 
 img.img-rounded {
     border-radius: var(--border-radius);
-}
-
-.img_mask-dark {
-    position: relative;
-    z-index: 0;
 }
 
 .img_article {
