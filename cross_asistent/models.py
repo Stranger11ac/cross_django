@@ -167,7 +167,7 @@ class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     profile_picture = models.ImageField(upload_to=set_imgProfile_path, blank=True, null=True)
     tutorial = models.BooleanField(default=True)
-    blog_firma = models.TextField(blank=True, null=True)
+    blog_firma = models.CharField(max_length=200 ,blank=True, null=True)
     password_update = models.DateField(blank=True, null=True)
     
     def save(self, *args, **kwargs):

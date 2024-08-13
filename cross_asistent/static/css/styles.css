@@ -891,7 +891,6 @@ main.main_anchor {
 .card {
     box-shadow: 0 0 8px var(--darkA2) !important;
     overflow: hidden;
-    z-index: 0;
 }
 
 .card.card_mxh-450 {
