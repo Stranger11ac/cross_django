@@ -673,7 +673,7 @@ if (toggleAudioButton && audioIcon) {
             }
         });
     }
-
+    
     function startRecognition(startRecognitionUrl) {
         fetch(startRecognitionUrl, {
             method: 'POST',
@@ -692,7 +692,7 @@ if (toggleAudioButton && audioIcon) {
             }
         });
     }
-
+    
     function stopRecognition(stopRecognitionUrl) {
         fetch(stopRecognitionUrl, {
             method: 'POST',
@@ -706,19 +706,23 @@ if (toggleAudioButton && audioIcon) {
             if (data.status === 'success') {
                 isRecognizing = false;
                 recVoice.innerHTML = '<i class="fa-solid fa-microphone"></i>';
-                if (data.response && data.response.question) {
-                    const question = data.response.question;
-                    updateChat(question);
-                }
-                if (data.response && data.response.chatbot_answer) {
-                    displayChatbotResponse(data.response.chatbot_answer);
+                
+                if (data.response) {
+                    if (data.response.question) {
+                        const question = data.response.question;
+                        updateChat(question);
+                    }
+                    if (data.response.chatbot_answer) {
+                        const chatbotAnswer = data.response.chatbot_answer;
+                        displayChatbotResponse(chatbotAnswer);
+                    }
                 }
             } else {
                 console.error('Error:', data.message);
             }
         })
         .catch(error => console.error('Error en la solicitud:', error));
-    };
+    }
 
 // Hacer scroll con un nuevo mensaje en el chat ###############################################
 function scrollToBottom() {

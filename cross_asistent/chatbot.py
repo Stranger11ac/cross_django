@@ -68,13 +68,16 @@ def stop_recognition(request):
 
         if recognized_texts:
             question = " ".join(recognized_texts)
-            recognized_text_url = reverse('recognized_text')  # Genera la URL usando el nombre de la ruta
-            
-            response = requests.post(
-                f'http://localhost:8000{recognized_text_url}',  # Usa la URL generada
-                json={'question': question}
-            )
-            response_data = response.json()  # Obtener la respuesta JSON
+
+            class FakeRequest:
+                def __init__(self, body):
+                    self.body = body
+                    self.method = 'POST'
+
+            fake_request = FakeRequest(json.dumps({'question': question}))
+            response = recognized_text(fake_request)
+
+            response_data = json.loads(response.content)
 
             if isinstance(response_data, dict):
                 answer = response_data.get('answer', {})
@@ -101,11 +104,12 @@ def recognized_text(request):
         try:
             data = json.loads(request.body)
             question = data.get('question', '').strip()
-            
+
             if not question:
-                return JsonResponse({'success': False, 'message': 'Pregunta vacía.'})            
-            response = chatbot(request)
+                return JsonResponse({'success': False, 'message': 'Pregunta vacía.'})
             
+            response = chatbot(request)
+
             return response
         
         except json.JSONDecodeError:
