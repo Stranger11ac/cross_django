@@ -3,14 +3,12 @@ from sklearn.metrics.pairwise import cosine_similarity
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
 from django.conf import settings
-from django.urls import reverse
 import speech_recognition as sr
 from django.db.models import Q
 from pathlib import Path
 from gtts import gTTS
 from . import models
 import threading
-import requests
 import openai
 import json
 import spacy
