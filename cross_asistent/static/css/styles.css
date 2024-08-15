@@ -254,6 +254,9 @@ nav .navbar-collapse {
     left: 0;
     padding-block: 20px;
     box-shadow: 0 8px 5px var(--darkA2);
+    position: fixed;
+    top: 0;
+    z-index: 9999;
 }
 
 @media (min-width: 992px) {
