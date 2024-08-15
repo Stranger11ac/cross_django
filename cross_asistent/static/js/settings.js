@@ -489,9 +489,34 @@ function cadenaRandom(longitud, caracteres) {
 
 // Funcion de preguntar a chatGPT https://platform.openai.com/ #################################
 const contOutput = document.querySelector("#output");
-let audioEnabled = true;
+const toggleAudioButton = document.querySelector("#toggleAudio");
+const audioIcon = document.querySelector("#audioIcon");
+const RepAudioButton = document.querySelector("#RepAudio");
 
-// Función Principal para Enviar Preguntas Escritas al Chatbot
+let audioEnabled = true;
+let saludoMostrado = false;
+
+// Funcion para Controlar el Audio #################################################################
+function playAudio(audioUrl) {
+    if (audioUrl && audioEnabled) {
+        const audio = new Audio(audioUrl);
+        audio.playbackRate = 1.3;
+        
+        audio.play().catch((error) => {
+            console.error("Error al reproducir el audio:", error);
+        });
+        const checkAudioState = setInterval(function () {
+            if (!audioEnabled) {
+                audio.pause(); 
+            }
+        }, 100);
+        audio.addEventListener('ended', function () {
+            clearInterval(checkAudioState);
+        });
+    }
+}
+
+// Funcion para Mostrar y Mandar la Pregunta del Usuario #################################################################
 function chatSubmit(e) {
     e.preventDefault();
     const pregunta = txtQuestion.value;
@@ -543,7 +568,7 @@ function chatSubmit(e) {
     });
 }
 
-// Función para Manejar y Mostrar la Respuesta del Chatbot 
+// Función para Manejar y Mostrar la Respuesta del Chatbot #################################################################
 function displayChatbotResponse(answer) {
     const tokendid = cadenaRandom(5, alfabetico);
     const valID = `uuid${tokendid}`;
@@ -571,18 +596,35 @@ function displayChatbotResponse(answer) {
     setTimeout(function () {
         asistent_response.classList.add("visible");
         setTimeout(scrollToBottom, 350);
-
-        if (dataAudio && audioEnabled) {
-            const audio = new Audio(dataAudio);
-            audio.playbackRate = 1.3;
-            audio.play().catch((error) => {
-                console.error("Error al reproducir el audio:", error);
-            });
-        }
+    
+        playAudio(dataAudio); 
     }, 20);
 }
 
-// Función para Actualizar el Chat con la Pregunta del Usuario por Voz
+// Menejar el Saludo Inicial #########################################################
+if (contOutput && !saludoMostrado) { 
+    const valID = `uuid${cadenaRandom(5, alfabetico)}`;
+    const saludo = "Hola ¡Bienvenido al asistente virtual de la Universidad Tecnologica de Coahuila! ¿En qué puedo ayudarte hoy?";
+    const htmlBlock = `<div class="btn_detail chat_msg asistent_response" data-tokeid="${valID}"><span>${saludo}</span></div>`;
+
+    contOutput.insertAdjacentHTML("beforeend", htmlBlock);
+
+    const asistent_response = document.querySelector(`.asistent_response[data-tokeid="${valID}"]`);
+    setTimeout(function () {
+        asistent_response.classList.add("visible");
+        scrollToBottom();
+    }, 20);
+
+    const audioUrl = '/static/audio/welcome_message.mp3';
+    RepAudioButton.addEventListener('click', function() {
+        if (!saludoMostrado) {
+            playAudio(audioUrl); 
+            saludoMostrado = true; 
+        }
+    });
+}
+
+// Función para Actualizar el Chat con la Pregunta del Usuario por Voz################################################################
     function updateChat(question) {
         const tokendid = cadenaRandom(5, alfabetico);
         const valID = `uuid${tokendid}`;
@@ -600,115 +642,83 @@ function displayChatbotResponse(answer) {
         contOutput.scrollTop = contOutput.scrollHeight;
     }
 
-// Control de Audio ################################################################
-    // const toggleAudioButton = document.querySelector("#toggleAudio");
-    // const audioIcon = document.querySelector("#audioIcon");
+// Control de Boton de Audio ################################################################
 
-    // toggleAudioButton.addEventListener("click", function () {
-    //     audioEnabled = !audioEnabled;
-
-    //     if (audioEnabled) {
-    //         audioIcon.classList.remove("fa-volume-mute");
-    //         audioIcon.classList.add("fa-volume-high");
-    //         console.log("Audio activado");
-    //     } else {
-    //         audioIcon.classList.remove("fa-volume-high");
-    //         audioIcon.classList.add("fa-volume-mute");
-    //         console.log("Audio silenciado");
-    //     }
-    // });
+if (toggleAudioButton && audioIcon) {
+    toggleAudioButton.addEventListener("click", function () {
+        audioEnabled = !audioEnabled;
+        if (audioEnabled) {
+            audioIcon.classList.remove("fa-volume-mute");
+            audioIcon.classList.add("fa-volume-high");
+        } else {
+            audioIcon.classList.remove("fa-volume-high");
+            audioIcon.classList.add("fa-volume-mute");
+        }
+    });
+}
 
 // Control de Reconocimiento de Voz ################################################################
-    // const recVoice = document.getElementById('recVoice');
-    // let isRecognizing = false;
+    const recVoice = document.getElementById('recVoice');
+    let isRecognizing = false;
 
-    // recVoice.addEventListener('click', () => {
-    //     if (isRecognizing) {
-    //         stopRecognition();
-    //     } else {
-    //         startRecognition();
-    //     }
-    // });
+    if (recVoice) {
+        const startRecognitionUrl = recVoice.getAttribute('data-start');
+        const stopRecognitionUrl = recVoice.getAttribute('data-stop');
+        
+        recVoice.addEventListener('click', () => {
+            if (isRecognizing) {
+                stopRecognition(stopRecognitionUrl);
+            } else {
+                startRecognition(startRecognitionUrl);
+            }
+        });
+    }
 
-    // function startRecognition() {
-    //     fetch('/start_recognition/', {
-    //         method: 'POST',
-    //         headers: {
-    //             'Content-Type': 'application/json',
-    //             'X-CSRFToken': '{{ csrf_token }}'
-    //         },
-    //     })
-    //     .then(response => response.json())
-    //     .then(data => {
-    //         if (data.status === 'success') {
-    //             isRecognizing = true;
-    //             recVoice.innerHTML = '<i class="fa-solid fa-stop"></i>';
-    //         } else {
-    //             console.error('Error:', data.message);
-    //         }
-    //     });
-    // }
+    function startRecognition(startRecognitionUrl) {
+        fetch(startRecognitionUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token }}'
+            },
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                isRecognizing = true;
+                recVoice.innerHTML = '<i class="fa-solid fa-stop"></i>';
+            } else {
+                console.error('Error:', data.message);
+            }
+        });
+    }
 
-    // function stopRecognition() {
-    //     fetch('/stop_recognition/', {
-    //         method: 'POST',
-    //         headers: {
-    //             'Content-Type': 'application/json',
-    //             'X-CSRFToken': '{{ csrf_token }}'
-    //         },
-    //     })
-    //     .then(response => response.json())
-    //     .then(data => {
-    //         if (data.status === 'success') {
-    //             isRecognizing = false;
-    //             recVoice.innerHTML = '<i class="fa-solid fa-microphone"></i>';
-    //             if (data.response && data.response.question) {
-    //                 const question = data.response.question;
-    //                 updateChat(question);
-    //             }
-    //             if (data.response && data.response.chatbot_answer) {
-    //                 displayChatbotResponse(data.response.chatbot_answer);
-    //             }
-    //         } else {
-    //             console.error('Error:', data.message);
-    //         }
-    //     })
-    //     .catch(error => console.error('Error en la solicitud:', error));
-    // };
-
-//################### Saludo y Repoducion Inicial del Chatbot ###################
-// document.addEventListener("DOMContentLoaded", function () {
-//     const contOutput = document.querySelector("#output");
-//     const RepAudioButton = document.querySelector("#RepAudio");
-//     const voiceBtn = document.querySelector("#voiceBtn");
-
-//     if (contOutput) {
-//         const valID = `uuid${cadenaRandom(5, alfabetico)}`;
-//         const saludo = "Hola ¡Bienvenido al asistente virtual de la Universidad Tecnologica de Coahuila! ¿En qué puedo ayudarte hoy?";
-//         const htmlBlock = `
-//             <div class="btn_detail chat_msg asistent_response" data-tokeid="${valID}">
-//                 <span>${saludo}</span>
-//             </div>`;
-
-//         contOutput.insertAdjacentHTML("beforeend", htmlBlock);
-
-//         const asistent_response = document.querySelector(`.asistent_response[data-tokeid="${valID}"]`);
-//         setTimeout(function () {
-//             asistent_response.classList.add("visible");
-//             scrollToBottom();
-//         }, 20);
-
-//         const audioUrl = '/static/audio/welcome_message.mp3';
-//         RepAudioButton.addEventListener('click', function() {
-//             const audio = new Audio(audioUrl);
-//             audio.playbackRate = 1.3;
-//             audio.play().catch((error) => {
-//                 console.error("Error al reproducir el audio:", error);
-//             });
-//         });
-//         };
-//     });
-
+    function stopRecognition(stopRecognitionUrl) {
+        fetch(stopRecognitionUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token }}'
+            },
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                isRecognizing = false;
+                recVoice.innerHTML = '<i class="fa-solid fa-microphone"></i>';
+                if (data.response && data.response.question) {
+                    const question = data.response.question;
+                    updateChat(question);
+                }
+                if (data.response && data.response.chatbot_answer) {
+                    displayChatbotResponse(data.response.chatbot_answer);
+                }
+            } else {
+                console.error('Error:', data.message);
+            }
+        })
+        .catch(error => console.error('Error en la solicitud:', error));
+    };
 
 // Hacer scroll con un nuevo mensaje en el chat ###############################################
 function scrollToBottom() {

@@ -85,7 +85,7 @@
                         <button type="button" id="closeChat" class="btn btn_secondary btn-floating btn-sm controls_btn_close">
                             <i class="fa-solid fa-xmark"></i>
                         </button>
-                        <button type="button" id="recVoice" class="btn btn_secondary btn-floating btn-sm controls_btn_audio">
+                        <button type="button" id="recVoice" class="btn btn_secondary btn-floating btn-sm controls_btn_audio" data-start="{% url 'start_recognition' %}" data-stop="{% url 'stop_recognition' %}">
                             <i class="fa-solid fa-microphone" id="btn_controls_icon"></i>
                         </button>
                         <div class="audio-animation"></div>

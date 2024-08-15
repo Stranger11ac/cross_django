@@ -3,6 +3,7 @@ from sklearn.metrics.pairwise import cosine_similarity
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
 from django.conf import settings
+from django.urls import reverse
 import speech_recognition as sr
 from django.db.models import Q
 from pathlib import Path
@@ -67,8 +68,10 @@ def stop_recognition(request):
 
         if recognized_texts:
             question = " ".join(recognized_texts)
+            recognized_text_url = reverse('recognized_text')  # Genera la URL usando el nombre de la ruta
+            
             response = requests.post(
-                'http://localhost:8000/recognized_text/',
+                f'http://localhost:8000{recognized_text_url}',  # Usa la URL generada
                 json={'question': question}
             )
             response_data = response.json()  # Obtener la respuesta JSON
@@ -101,11 +104,8 @@ def recognized_text(request):
             
             if not question:
                 return JsonResponse({'success': False, 'message': 'Pregunta vacía.'})            
-            # Procesa la pregunta con el chatbot
             response = chatbot(request)
             
-            # Aquí asumimos que `chatbot` devuelve un JsonResponse, por lo tanto no es necesario
-            # crear otro JsonResponse alrededor de la respuesta.
             return response
         
         except json.JSONDecodeError:
