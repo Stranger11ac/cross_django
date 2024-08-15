@@ -500,7 +500,7 @@ let saludoMostrado = false;
 function playAudio(audioUrl) {
     if (audioUrl && audioEnabled) {
         const audio = new Audio(audioUrl);
-        audio.playbackRate = 1.3;
+        audio.playbackRate = 1.5;
         
         audio.play().catch((error) => {
             console.error("Error al reproducir el audio:", error);

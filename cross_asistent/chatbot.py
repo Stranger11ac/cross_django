@@ -11,6 +11,7 @@ from . import models
 import threading
 import openai
 import json
+import unicodedata
 import spacy
 
 # ChatBot ----------------------------------------------------------
@@ -139,6 +140,22 @@ def synthesize_speech(text, file_name):
     tts.save(speech_file_path)
     return speech_file_path
 
+def normalize_text(text):
+    return ''.join(
+        c for c in unicodedata.normalize('NFD', text)
+        if unicodedata.category(c) != 'Mn'
+    )
+
+def process_question(pregunta):
+    # Normaliza el texto para eliminar acentos y otros signos diacríticos
+    pregunta_normalizada = normalize_text(pregunta.lower().strip())
+
+    doc = nlp(pregunta_normalizada)
+    tokens = [token.lemma_ for token in doc if (not token.is_stop and token.is_alpha) or token.text in palabras_clave]
+    pregunta_procesada = " ".join(tokens)
+    
+    print(f"Pregunta procesada: {pregunta_procesada}")
+    return pregunta_procesada
 def process_question(pregunta):
     doc = nlp(pregunta.lower().strip())
     tokens = [token.lemma_ for token in doc if (not token.is_stop and token.is_alpha) or token.text in palabras_clave]
@@ -189,6 +206,24 @@ def score_result(result, palabras_clave, entities, pregunta_procesada):
     print(f"score{score}")
     return score
 
+def filter_results(pregunta):
+    palabras_clave = process_question(pregunta)
+    entities = extract_entities(pregunta)
+    query = create_query(palabras_clave, entities)
+
+    # Buscar en toda la base de datos
+    results = Q.objects.filter(query)
+
+    # Puntuar cada resultado
+    scored_results = [(result, score_result(result, palabras_clave, entities, process_question(pregunta))) for result in results]
+
+    # Ordenar los resultados por puntuación
+    sorted_results = sorted(scored_results, key=lambda x: x[1], reverse=True)
+
+    return sorted_results
+from django.http import JsonResponse
+import json
+
 def chatbot(request):
     if request.method == 'POST':
         try:
@@ -199,20 +234,21 @@ def chatbot(request):
                 return JsonResponse({'success': False, 'message': 'No puedo responder una pregunta que no existe 🤔🧐😬.'})
 
             # Verifica respuestas simples
-            for clave, respuesta in respuestas_simples.items():
-                if clave in question:
-                    return JsonResponse({'success': True, 'answer': {'informacion': respuesta}})
+            respuesta_simple = next((respuesta for clave, respuesta in respuestas_simples.items() if clave in question), None)
+            if respuesta_simple:
+                return JsonResponse({'success': True, 'answer': {'informacion': respuesta_simple}})
 
             # Procesa la pregunta
             pregunta_procesada = process_question(question)
             entidades = extract_entities(question)
             palabras_clave = pregunta_procesada.split()
             query = create_query(palabras_clave, entidades)
-                        
+
+            # Busca coincidencias en la base de datos
             coincidencias = models.Database.objects.filter(query)
             mejor_coincidencia = None
             mejor_puntuacion = -1
-            
+
             for coincidencia in coincidencias:
                 puntuacion = score_result(coincidencia, palabras_clave, entidades, pregunta_procesada)
                 if puntuacion > mejor_puntuacion:
@@ -233,21 +269,24 @@ def chatbot(request):
 
                 audio_path = synthesize_speech(answer, "respuesta_asistente")
                 respuesta["audio_url"] = f"/static/audio/{audio_path.name}"
-                
+
                 print(f"Respuesta {respuesta}")
                 return JsonResponse({'success': True, 'answer': respuesta})
 
-            else:
-                respuesta = {
-                    "informacion": "¿Podrías ser más específico en tu pregunta? No logré entender lo que necesitas."
-                    if len(palabras_clave) == 0 and len(entidades) == 0
-                    else "Lo siento, no encontré información relevante."
-                }
-                return JsonResponse({'success': True, 'answer': respuesta})
+            # Si no se encontró una buena coincidencia
+            respuesta_default = {
+                "informacion": "¿Podrías ser más específico en tu pregunta? No logré entender lo que necesitas."
+                if not palabras_clave and not entidades
+                else "Lo siento, no encontré información relevante."
+            }
+            return JsonResponse({'success': True, 'answer': respuesta_default})
         
         except json.JSONDecodeError:
             return JsonResponse({'success': False, 'message': 'Error en el formato del JSON.'})
+        except KeyError as e:
+            return JsonResponse({'success': False, 'message': f'Error en la clave del JSON: {str(e)}'})
         except Exception as e:
-            return JsonResponse({'success': False, 'message': str(e)})
+            return JsonResponse({'success': False, 'message': f'Error inesperado: {str(e)}'})
 
     return JsonResponse({'success': False, 'message': 'Método no permitido.'})
+
