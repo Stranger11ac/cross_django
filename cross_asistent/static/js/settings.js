@@ -492,11 +492,10 @@ const contOutput = document.querySelector("#output");
 const toggleAudioButton = document.querySelector("#toggleAudio");
 const audioIcon = document.querySelector("#audioIcon");
 const RepAudioButton = document.querySelector("#RepAudio");
-
 let audioEnabled = true;
 let saludoMostrado = false;
 
-// Funcion para Controlar el Audio #################################################################
+// Funcion para Controlar el Audio ######################
 function playAudio(audioUrl) {
     if (audioUrl && audioEnabled) {
         const audio = new Audio(audioUrl);
@@ -516,7 +515,7 @@ function playAudio(audioUrl) {
     }
 }
 
-// Funcion para Mostrar y Mandar la Pregunta del Usuario #################################################################
+// Funcion para Mostrar y Mandar la Pregunta del Usuario ################
 function chatSubmit(e) {
     e.preventDefault();
     const pregunta = txtQuestion.value;
@@ -568,7 +567,7 @@ function chatSubmit(e) {
     });
 }
 
-// Función para Manejar y Mostrar la Respuesta del Chatbot #################################################################
+// Función para Manejar y Mostrar la Respuesta del Chatbot #################
 function displayChatbotResponse(answer) {
     const tokendid = cadenaRandom(5, alfabetico);
     const valID = `uuid${tokendid}`;
@@ -581,14 +580,14 @@ function displayChatbotResponse(answer) {
     let btnRedir = "";
 
     if (dataImage != null) {
-        viewImage = `<br><br> <img src="${dataImage}" width="350">`;
+        viewImage = `<br><br> <img src="${dataImage}" class="img-rounded max_w300">`;
     }
 
     if (dataRedirigir != null) {
-        btnRedir = `<br><br> <a class="btn btn_secondary mb-2" style="min-width:300px;" target="_blank" rel="noopener noreferrer" href="${dataRedirigir}" >Ver Mas <i class="fa-solid fa-arrow-up-right-from-square ms-1"></i></a>`;
+        btnRedir = `<br><br> <a class="btn btn_detail mb-2" style="min-width:300px;" target="_blank" rel="noopener noreferrer" href="${dataRedirigir}" >Ver Mas <i class="fa-solid fa-arrow-up-right-from-square ms-1"></i></a>`;
     }
 
-    const htmlBlock = `<div class="btn_detail chat_msg asistent_response" data-tokeid="${valID}"><span>${answer.informacion} ${btnRedir}</span><span>${viewImage}</span></div>`;
+    const htmlBlock = `<div class="chat_msg asistent_response" data-tokeid="${valID}"><span>${answer.informacion} ${btnRedir}</span><span>${viewImage}</span></div>`;
 
     contOutput.insertAdjacentHTML("beforeend", htmlBlock);
     const asistent_response = document.querySelector(`.asistent_response[data-tokeid="${valID}"]`);
@@ -601,11 +600,10 @@ function displayChatbotResponse(answer) {
     }, 20);
 }
 
-// Menejar el Saludo Inicial #########################################################
+// Menejar el Saludo Inicial ######################
 if (contOutput && !saludoMostrado) { 
     const valID = `uuid${cadenaRandom(5, alfabetico)}`;
-    const saludo = "Hola ¡Bienvenido al asistente virtual de la Universidad Tecnologica de Coahuila! ¿En qué puedo ayudarte hoy?";
-    const htmlBlock = `<div class="btn_detail chat_msg asistent_response" data-tokeid="${valID}"><span>${saludo}</span></div>`;
+    const htmlBlock = `<div class="chat_msg asistent_response" data-tokeid="${valID}"><span>Hola ¡Bienvenido al asistente virtual de la Universidad Tecnologica de Coahuila! ¿En qué puedo ayudarte hoy?</span></div>`;
 
     contOutput.insertAdjacentHTML("beforeend", htmlBlock);
 
@@ -615,16 +613,16 @@ if (contOutput && !saludoMostrado) {
         scrollToBottom();
     }, 20);
 
-    const audioUrl = '/static/audio/welcome_message.mp3';
     RepAudioButton.addEventListener('click', function() {
         if (!saludoMostrado) {
-            playAudio(audioUrl); 
-            saludoMostrado = true; 
+            playAudio('/static/audio/welcome_message.mp3'); 
         }
     });
+
+    saludoMostrado = true; 
 }
 
-// Función para Actualizar el Chat con la Pregunta del Usuario por Voz################################################################
+// Función para Actualizar el Chat con la Pregunta del Usuario por Voz###########
     function updateChat(question) {
         const tokendid = cadenaRandom(5, alfabetico);
         const valID = `uuid${tokendid}`;
@@ -642,7 +640,7 @@ if (contOutput && !saludoMostrado) {
         contOutput.scrollTop = contOutput.scrollHeight;
     }
 
-// Control de Boton de Audio ################################################################
+// Control de Boton de Audio #########################
 
 if (toggleAudioButton && audioIcon) {
     toggleAudioButton.addEventListener("click", function () {
@@ -657,7 +655,7 @@ if (toggleAudioButton && audioIcon) {
     });
 }
 
-// Control de Reconocimiento de Voz ################################################################
+// Control de Reconocimiento de Voz #########################
     const recVoice = document.getElementById('recVoice');
     let isRecognizing = false;
 
@@ -724,7 +722,7 @@ if (toggleAudioButton && audioIcon) {
         .catch(error => console.error('Error en la solicitud:', error));
     }
 
-// Hacer scroll con un nuevo mensaje en el chat ###############################################
+// Hacer scroll con un nuevo mensaje en el chat ####################
 function scrollToBottom() {
     contOutput.scrollTop = contOutput.scrollHeight;
 }
