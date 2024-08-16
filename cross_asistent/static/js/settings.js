@@ -583,7 +583,7 @@ function displayChatbotResponse(answer) {
         viewImage = `<br><br> <img src="${dataImage}" class="img-rounded max_w300 max_h300">`;
     }
 
-    if (dataRedirigir != '') {
+    if (dataRedirigir != null) {
         btnRedir = `<br><br> <a class="btn btn_detail mb-2 max_w300" target="_blank" rel="noopener noreferrer" href="${dataRedirigir}" >Ver Mas <i class="fa-solid fa-arrow-up-right-from-square ms-1"></i></a>`;
     }
 
