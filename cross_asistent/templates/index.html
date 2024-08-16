@@ -53,19 +53,19 @@
     <!-- Asistente -->
     <section href="#asistente" class="asistent_group">
         <div class="box_asistent">
-            <model-viewer id="asistent_model" src="{% static 'models/RobotExpressive.glb' %}" tone-mapping="neutral" camera-orbit="15deg 70deg 60m" autoplay
-                animation-name="Wave" poster="{% static 'img/poster.webp' %}" shadow-intensity="1">
+            <model-viewer id="asistent_model" src="{% static 'models/RobotExpressive.glb' %}" tone-mapping="neutral" camera-orbit="15deg 70deg 60m"
+                poster="{% static 'img/poster.webp' %}" shadow-intensity="1">
             </model-viewer>
             <!-- Controles iniciales -->
-            <div  class="box_asistent_controls" >
-                <div class="controls_buttons" >
+            <div class="box_asistent_controls">
+                <div class="controls_buttons">
                     <button type="button" id="RepAudio" class="btn btn_controls btn_secondary controls_btn_keyboard toggle_controls">
                         <i class="fa-regular fa-keyboard"></i>
                     </button>
                     <button type="button" class="btn btn_controls btn_detail controls_btn_microphone">
                         <i class="fa-solid fa-comment" id="btn_controls_icon"></i>
                     </button>
-                    <button type="button"  class="btn btn_controls btn_secondary controls_btn_close">
+                    <button type="button" class="btn btn_controls btn_secondary controls_btn_close">
                         <i class="fa-solid fa-xmark"></i>
                     </button>
                 </div>
@@ -85,7 +85,8 @@
                         <button type="button" id="closeChat" class="btn btn_secondary btn-floating btn-sm controls_btn_close">
                             <i class="fa-solid fa-xmark"></i>
                         </button>
-                        <button type="button" id="recVoice" class="btn btn_secondary btn-floating btn-sm controls_btn_audio" data-start="{% url 'start_recognition' %}" data-stop="{% url 'stop_recognition' %}">
+                        <button type="button" id="recVoice" class="btn btn_secondary btn-floating btn-sm controls_btn_audio"
+                            data-start="{% url 'start_recognition' %}" data-stop="{% url 'stop_recognition' %}">
                             <i class="fa-solid fa-microphone" id="btn_controls_icon"></i>
                         </button>
                         <div class="audio-animation"></div>
@@ -95,12 +96,12 @@
                     </div>
                 </div>
             </form>
-            <div class="output_messages" id="output"></div>            
+            <div class="output_messages" id="output"></div>
         </div>
     </section>
-    </main>
+</main>
 
-    <!-- Modal: imagen de QR -->
+<!-- Modal: imagen de QR -->
 <div class="modal fade" id="modalqr" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content text-center">

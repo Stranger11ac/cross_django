@@ -257,7 +257,7 @@ def chatbot(request):
 
             if mejor_coincidencia:
                 informacion = mejor_coincidencia.informacion
-                system_prompt = f"Eres un asistente de la Universidad Tecnologica de Coahuila. Responde la pregunta con esta información: {informacion}"
+                system_prompt = f"Eres Howky, un asistente de la Universidad Tecnologica de Coahuila. Responde la pregunta con esta información: {informacion}"
                 answer = chatgpt(question, system_prompt)
 
                 respuesta = {

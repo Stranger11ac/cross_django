@@ -529,7 +529,7 @@ function chatSubmit(e) {
     const tokendid = cadenaRandom(5, alfabetico);
     const valID = `uuid${tokendid}`;
 
-    const htmlBlock = `<div class="output_block"><div class="btn_secondary chat_msg user_submit" data-tokeid="${valID}">${pregunta}</div></div>`;
+    const htmlBlock = `<div class="output_block"><div class="btn_detail chat_msg user_submit" data-tokeid="${valID}">${pregunta}</div></div>`;
     contOutput.insertAdjacentHTML("beforeend", htmlBlock);
     const user_submit = document.querySelector(`.user_submit[data-tokeid="${valID}"]`);
     setTimeout(() => {
@@ -580,14 +580,14 @@ function displayChatbotResponse(answer) {
     let btnRedir = "";
 
     if (dataImage != null) {
-        viewImage = `<br><br> <img src="${dataImage}" class="img-rounded max_w300">`;
+        viewImage = `<br><br> <img src="${dataImage}" class="img-rounded max_w300 max_h300">`;
     }
 
-    if (dataRedirigir != null) {
-        btnRedir = `<br><br> <a class="btn btn_detail mb-2" style="min-width:300px;" target="_blank" rel="noopener noreferrer" href="${dataRedirigir}" >Ver Mas <i class="fa-solid fa-arrow-up-right-from-square ms-1"></i></a>`;
+    if (dataRedirigir != '') {
+        btnRedir = `<br><br> <a class="btn btn_detail mb-2 max_w300" target="_blank" rel="noopener noreferrer" href="${dataRedirigir}" >Ver Mas <i class="fa-solid fa-arrow-up-right-from-square ms-1"></i></a>`;
     }
 
-    const htmlBlock = `<div class="chat_msg asistent_response" data-tokeid="${valID}"><span>${answer.informacion} ${btnRedir}</span><span>${viewImage}</span></div>`;
+    const htmlBlock = `<div class="chat_msg asistent_response" data-tokeid="${valID}">${answer.informacion} ${btnRedir} ${viewImage}</div>`;
 
     contOutput.insertAdjacentHTML("beforeend", htmlBlock);
     const asistent_response = document.querySelector(`.asistent_response[data-tokeid="${valID}"]`);
@@ -603,7 +603,7 @@ function displayChatbotResponse(answer) {
 // Menejar el Saludo Inicial ######################
 if (contOutput && !saludoMostrado) { 
     const valID = `uuid${cadenaRandom(5, alfabetico)}`;
-    const htmlBlock = `<div class="chat_msg asistent_response" data-tokeid="${valID}"><span>Hola ¡Bienvenido al asistente virtual de la Universidad Tecnologica de Coahuila! ¿En qué puedo ayudarte hoy?</span></div>`;
+    const htmlBlock = `<div class="chat_msg asistent_response" data-tokeid="${valID}"><span>Hola!!! Soy Howky, tu asistente virtual de la Universidad Tecnologica de Coahuila! <br>¿En qué puedo ayudarte?</span></div>`;
 
     contOutput.insertAdjacentHTML("beforeend", htmlBlock);
 
@@ -611,15 +611,15 @@ if (contOutput && !saludoMostrado) {
     setTimeout(function () {
         asistent_response.classList.add("visible");
         scrollToBottom();
-    }, 20);
+    }, 220);
 
     RepAudioButton.addEventListener('click', function() {
         if (!saludoMostrado) {
             playAudio('/static/audio/welcome_message.mp3'); 
         }
+        saludoMostrado = true;
     });
 
-    saludoMostrado = true; 
 }
 
 // Función para Actualizar el Chat con la Pregunta del Usuario por Voz###########
@@ -864,6 +864,7 @@ function jsonSubmit(e) {
         });
 }
 
+// alertSToast('top', 8000, 'success', '<br>lo normal');
 // Template Alertas switalert ###################################################
 function alertSToast(posittionS, timerS, iconS, titleS, didDestroyS) {
     const Toast = Swal.mixin({
@@ -890,8 +891,6 @@ function alertSToast(posittionS, timerS, iconS, titleS, didDestroyS) {
         title: titleS,
     });
 }
-
-// alertSToast('top', 8000, 'success', '<br>lo normal');
 
 // context menu disabled ######################################################################
 document.oncontextmenu = function () {
