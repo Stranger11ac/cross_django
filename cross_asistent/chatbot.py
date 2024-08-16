@@ -211,18 +211,11 @@ def filter_results(pregunta):
     entities = extract_entities(pregunta)
     query = create_query(palabras_clave, entities)
 
-    # Buscar en toda la base de datos
     results = Q.objects.filter(query)
-
-    # Puntuar cada resultado
     scored_results = [(result, score_result(result, palabras_clave, entities, process_question(pregunta))) for result in results]
-
-    # Ordenar los resultados por puntuación
     sorted_results = sorted(scored_results, key=lambda x: x[1], reverse=True)
 
     return sorted_results
-from django.http import JsonResponse
-import json
 
 def chatbot(request):
     if request.method == 'POST':
@@ -233,18 +226,15 @@ def chatbot(request):
             if not question:
                 return JsonResponse({'success': False, 'message': 'No puedo responder una pregunta que no existe 🤔🧐😬.'})
 
-            # Verifica respuestas simples
             respuesta_simple = next((respuesta for clave, respuesta in respuestas_simples.items() if clave in question), None)
             if respuesta_simple:
                 return JsonResponse({'success': True, 'answer': {'informacion': respuesta_simple}})
 
-            # Procesa la pregunta
             pregunta_procesada = process_question(question)
             entidades = extract_entities(question)
             palabras_clave = pregunta_procesada.split()
             query = create_query(palabras_clave, entidades)
 
-            # Busca coincidencias en la base de datos
             coincidencias = models.Database.objects.filter(query)
             mejor_coincidencia = None
             mejor_puntuacion = -1
@@ -273,7 +263,6 @@ def chatbot(request):
                 print(f"Respuesta {respuesta}")
                 return JsonResponse({'success': True, 'answer': respuesta})
 
-            # Si no se encontró una buena coincidencia
             respuesta_default = {
                 "informacion": "¿Podrías ser más específico en tu pregunta? No logré entender lo que necesitas."
                 if not palabras_clave and not entidades
