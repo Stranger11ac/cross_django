@@ -627,7 +627,7 @@ if (contOutput && !saludoMostrado) {
         const tokendid = cadenaRandom(5, alfabetico);
         const valID = `uuid${tokendid}`;
 
-    const htmlBlock = `<div class="output_block"><div class="btn_secondary chat_msg user_submit" data-tokeid="${valID}">${question}</div></div>`;
+    const htmlBlock = `<div class="output_block"><div class="btn_detail chat_msg user_submit" data-tokeid="${valID}">${question}</div></div>`;
 
         contOutput.insertAdjacentHTML("beforeend", htmlBlock);
         const userSubmit = document.querySelector(`.user_submit[data-tokeid="${valID}"]`);
