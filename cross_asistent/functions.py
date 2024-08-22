@@ -101,7 +101,7 @@ def create_newuser(first_name, last_name, username, email, password1, password2=
         new_user.save()
         aviso=''
         if password2 is not None:
-            aviso = '<br>Tu cuenta está <u>Inhabilitada</u> 😯😬'
+            aviso = '<br>Tu cuenta está <u>In---habilitada</u> 😯😬'
         return {'success': True, 'message': f'Usuario creado exitosamente 🥳🎈 {aviso}'}
     except IntegrityError:
         return {'success': False, 'message': 'Ocurrió un error durante el registro. Intente nuevamente.'}
