@@ -4,11 +4,6 @@ from . import chatbot, functions, views, imex_port
 urlpatterns = [
     # Páginas de inicio ----------------------------------------------------------
     path('', views.index, name='home'),
-    path('chatbot/', chatbot.chatbot, name='chatbot'),
-    path('speekText/', chatbot.speekText, name='speekText'),
-    path('start/', chatbot.start_recognition, name='start_recognition'),
-    path('stop/', chatbot.stop_recognition, name='stop_recognition'),
-    path('recognized_text/', chatbot.recognized_text, name='recognized_text'),
     path('preguntas_frecuentes/', views.fqt_questions, name='faq'),
     path('preguntar/', views.fqt_questions_send, name='enviar_preguntas'),
     path('blogs/', views.blogs, name='blog'),
@@ -18,6 +13,13 @@ urlpatterns = [
     path('mapa/', views.map, name='map'),
     path('mapa/edificios/', functions.mapa_data, name='mapa_edificios'),
     path('acercade/', views.about, name='about'),
+    
+    # Chatbot y texto a voz ----------------------------------------------------------
+    path('chatbot/', chatbot.chatbot, name='chatbot'),
+    path('speekText/', chatbot.speekText, name='speekText'),
+    path('start/', chatbot.start_recognition, name='start_recognition'),
+    path('stop/', chatbot.stop_recognition, name='stop_recognition'),
+    path('recognized_text/', chatbot.recognized_text, name='recognized_text'),
     
     # Sesion y registro ----------------------------------------------------------
     path('logout/', views.singout, name='singout'),
