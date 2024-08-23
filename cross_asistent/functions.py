@@ -78,7 +78,7 @@ def editar_perfil(request):
         return JsonResponse({'success': False, 'message': 'Acción no permitida.'}, status=400)
 
 # usuarios ----------------------------------------------------------
-def create_newuser(first_name, last_name, username, email, password1, password2=None, is_staff=True, is_active=True):
+def create_newuser(first_name, last_name, username, email, password1, password2=None, is_staff=False, is_active=False):
     if not (password1 and username and email):
         return {'success':False, 'message':'Datos incompletos 😅'}
     if password2 is not None and password1 != password2:
