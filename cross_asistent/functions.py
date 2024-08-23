@@ -283,7 +283,7 @@ def database_create(request):
                 frecuencia=frecuenciaVAL,
                 documento=documentoPOST,
                 imagen=imagenPOST,
-                muid=f'{categoriaIdPOST}_{models.generate_random_string(6)}',
+                uuid=f'{categoriaIdPOST}_{models.generate_random_string(6)}',
                 evento_fecha_inicio=evento_fecha_inicioPOST or None,
                 evento_fecha_fin=evento_fecha_finPOST or None,
                 evento_allDay=evento_allDayPOST if not evento_allDayPOST == None else False,
@@ -321,7 +321,7 @@ def database_update(request):
             dbUpdate.frecuencia=frecuenciaPOST or '0'
             dbUpdate.documento=request.FILES.get('documento')
             dbUpdate.imagen=request.FILES.get('imagen')
-            dbUpdate.muid=f'{categoriaIdPOST}_{models.generate_random_string(6)}'
+            dbUpdate.uuid=f'{categoriaIdPOST}_{models.generate_random_string(6)}'
             dbUpdate.evento_fecha_inicio=evento_fecha_inicioPOST or None
             dbUpdate.evento_fecha_fin=evento_fecha_finPOST or None
             dbUpdate.evento_allDay=evento_allDayPOST if not evento_allDayPOST == None else False
@@ -419,7 +419,7 @@ def mapa_data(request):
             imagen = imagen.replace("cross_asistent", "")
 
         item = {
-            "muid": mapa.muid,
+            "uuid": mapa.uuid,
             "color": mapa.color,
             "imagen_url": imagen,
             "nombre": mapa.nombre,
@@ -440,8 +440,8 @@ def mapa_data(request):
 @never_cache
 def delete_pleaceMap(request):
     if request.method == 'POST':
-        sendUid = request.POST.get('muid')
-        pleace = get_object_or_404(models.Mapa, muid=sendUid)
+        sendUid = request.POST.get('uuid')
+        pleace = get_object_or_404(models.Mapa, uuid=sendUid)
         pleace.delete()
         return JsonResponse({'success': True, 'functions': 'reload', 'message': f'Se eliminó <u>"{pleace.nombre}"</u> del Mapa exitosamente. 😯😬🎉', 'icon': 'warning'}, status=200)
     return JsonResponse({'success': False, 'message': 'Acción no permitida.'}, status=403)
@@ -450,10 +450,10 @@ def delete_pleaceMap(request):
 @never_cache
 def delete_pleaceMap_DB(request):
     if request.method == 'POST':
-        sendUid = request.POST.get('muid')
-        pleace = get_object_or_404(models.Mapa, muid=sendUid)
+        sendUid = request.POST.get('uuid')
+        pleace = get_object_or_404(models.Mapa, uuid=sendUid)
         pleace.delete()
-        pleaceDB = get_object_or_404(models.Database, muid=sendUid)
+        pleaceDB = get_object_or_404(models.Database, uuid=sendUid)
         pleaceDB.delete()
         return JsonResponse({'success': True, 'functions': 'reload', 'message': f'Se eliminó <u>"{pleace.nombre}"</u> del Mapa y de la Base de Datos exitosamente. ⚠️😯😬🎉', 'icon': 'warning'}, status=200)
     return JsonResponse({'success': False, 'message': 'Acción no permitida.'}, status=403)

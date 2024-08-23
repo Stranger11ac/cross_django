@@ -92,7 +92,7 @@ class Database(models.Model):
     frecuencia = models.IntegerField(default=0)
     documento = models.FileField(upload_to=set_pdfDB_path, blank=True, null=True)
     imagen = models.ImageField(upload_to=set_imgDB_path, blank=True, null=True)
-    muid = models.CharField(max_length=23)
+    uuid = models.CharField(max_length=23)
     evento_fecha_inicio = models.DateTimeField(blank=True, null=True)
     evento_fecha_fin = models.DateTimeField(blank=True, null=True)
     evento_allDay = models.BooleanField(default=False)
@@ -127,7 +127,7 @@ class Articulos(models.Model):
         super(Articulos, self).delete(*args, **kwargs)
 
 class Mapa(models.Model):
-    muid = models.CharField(max_length=23)
+    uuid = models.CharField(max_length=23)
     nombre = models.CharField(max_length=200)
     informacion = models.TextField()
     color = models.CharField(max_length=50)

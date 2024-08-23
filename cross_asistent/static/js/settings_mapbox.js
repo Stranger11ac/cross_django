@@ -479,8 +479,8 @@ class CustomControl {
                         document.getElementById("imagen_actual").src = "/static/img/default_image.webp";
                         offcanvasContent.querySelector("#isNewEdif").checked = true;
 
-                        const newUID = $("#muid").data("new-uid");
-                        $("#muid").removeClass("active").val(newUID);
+                        const newUID = $("#uuid").data("new-uid");
+                        $("#uuid").removeClass("active").val(newUID);
                         $("#namecolor").addClass("active").val("gray");
                         $("#colorPicker").addClass("active").val("#808080");
                         initPolygonDrawing();
@@ -576,7 +576,7 @@ fetch(url)
             features: data.map((item) => ({
                 type: "Feature",
                 properties: {
-                    muid: item.muid,
+                    uuid: item.uuid,
                     color: item.color,
                     imagen_url: item.imagen_url,
                     nombre: item.nombre,
@@ -886,7 +886,7 @@ fetch(url)
         // Abrir offcanvas: Informacion del edificio
         map.on("click", "places-layer", (e) => {
             const feature = e.features[0];
-            const { nombre, informacion, imagen_url, color, door, muid } = feature.properties;
+            const { nombre, informacion, imagen_url, color, door, uuid } = feature.properties;
             const { coordinates } = feature.geometry;
 
             const offcanvasContent = document.getElementById("offcanvasContent");
@@ -903,7 +903,7 @@ fetch(url)
 
                 offcanvasContent.querySelector("#isNewEdif").checked = false;
 
-                $("[data-muid]").addClass("active").val(muid);
+                $("[data-uuid]").addClass("active").val(uuid);
                 $("#nombreEdificio").addClass("active").val(nombre);
                 $("#namecolor").addClass("active").val(color);
 

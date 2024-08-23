@@ -79,7 +79,7 @@
         <div class="p-3 mt-3">
             {% csrf_token %}
             <input type="checkbox" name="isNew" id="isNewEdif" class="d-none">
-            <input type="text" name="muid" id="muid" class="d-none" data-muid data-new-uid="{{UID}}" required>
+            <input type="text" name="uuid" id="uuid" class="d-none" data-uuid data-new-uid="{{UID}}" required>
             <!-- Color del poligono -->
             <section class="row">
                 <div class="col-10">
@@ -287,13 +287,13 @@
                 </p>
                 <div class="d-flex justify-content-between">
                     <form id="formDeleteMap" data-submit-form action="{% url 'del_pleace_map' %}" method="post">
-                        <input type="text" class="d-none" required name="muid" data-muid>
+                        <input type="text" class="d-none" required name="uuid" data-uuid>
                         <button type="submit" class="btn btn-warning" data-mdb-ripple-init data-mdb-dismiss="modal">
                             Eliminar en Mapa
                         </button>
                     </form>
                     <form id="formDeleteMap" data-submit-form action="{% url 'del_pleace_mapdb' %}" method="post">
-                        <input type="text" class="d-none" required name="muid" data-muid>
+                        <input type="text" class="d-none" required name="uuid" data-uuid>
                         <button type="submit" class="btn btn-danger" data-mdb-ripple-init data-mdb-dismiss="modal">
                             Eliminar en Ambos
                         </button>

@@ -460,7 +460,7 @@ def update_create_pleace_map(request):
         return redirect('update_mapa')
 
     isNewPost = request.POST.get('isNew')
-    muidPost = request.POST.get('muid')
+    uuidPost = request.POST.get('uuid')
     nombrePost = request.POST.get('nombreEdificio')
     colorPost = request.POST.get('colorEdificio')
     p1Post = request.POST.get('esquina1')
@@ -474,8 +474,8 @@ def update_create_pleace_map(request):
 
     with transaction.atomic():
         if isNewPost is None:
-            if models.Mapa.objects.filter(muid=muidPost).exists():
-                edificio = get_object_or_404(models.Mapa, muid=muidPost)
+            if models.Mapa.objects.filter(uuid=uuidPost).exists():
+                edificio = get_object_or_404(models.Mapa, uuid=uuidPost)
                 edificio.nombre = nombrePost
                 edificio.color = colorPost
                 edificio.p1_polygons = p1Post
@@ -484,12 +484,12 @@ def update_create_pleace_map(request):
                 edificio.p4_polygons = p4Post
                 edificio.door_cords = door_cordsPost
                 edificio.informacion = informacionPost
-                edificio.muid = muidPost,
+                edificio.uuid = uuidPost,
                 edificio.save()
                 success_message = f'Se Actualizaron los datos de <span>"{nombrePost}"</span> en el mapa de forma exitosa 🧐😁🎈'
 
             if imagenPost:
-                map_database = get_object_or_404(models.Database, muid=muidPost)
+                map_database = get_object_or_404(models.Database, uuid=uuidPost)
                 map_database.imagen = imagenPost
                 map_database.save()
                 success_message += '<br>Se actualizó su imagen en la Base de datos 😁🎉🎈'
@@ -505,7 +505,7 @@ def update_create_pleace_map(request):
                 p4_polygons=p4Post,
                 door_cords=door_cordsPost,
                 informacion=informacionPost,
-                muid=muidPost,
+                uuid=uuidPost,
             )
             
             # Verificar notas ToDo
@@ -514,7 +514,7 @@ def update_create_pleace_map(request):
                 titulo=nombrePost,
                 informacion=informacionText,
                 imagen=imagenPost,
-                muid=muidPost,
+                uuid=uuidPost,
                 evento_lugar='',
                 evento_className='',
             )
