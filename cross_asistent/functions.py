@@ -385,7 +385,7 @@ def blog_change(request):
             blogGet = get_object_or_404(models.Articulos, id=blogIdGET)
             blogEncabezado = blogGet.encabezado
             if blogEncabezado:
-                blogEncabezado = blogGet.encabezado.url.replace("cross_asistent/", "")
+                blogEncabezado = blogGet.encabezado.url
             else:
                 blogEncabezado = ''
             data = {
@@ -415,9 +415,6 @@ def mapa_data(request):
         imagen_qs = models.Database.objects.filter(titulo=mapa.nombre).values_list('imagen', flat=True)
         imagen = imagen_qs.first() if imagen_qs.exists() else None
         
-        if imagen:
-            imagen = imagen.replace("cross_asistent", "")
-
         item = {
             "uuid": mapa.uuid,
             "color": mapa.color,

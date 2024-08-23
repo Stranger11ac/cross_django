@@ -21,7 +21,8 @@ def index(request):
     banners_modificados = []
 
     for banner in banners_all:
-        imagen_url = banner.imagen.url.replace("cross_asistent/", "")
+        # imagen_url = banner.imagen.url.replace("cross_asistent/", "")
+        imagen_url = banner.imagen.url
         banners_modificados.append({
             'id': banner.id,
             'titulo': banner.titulo,
@@ -76,7 +77,7 @@ def blogs(request):
     for oneblog in blogs:
         imagen_url = oneblog.encabezado
         if not imagen_url == '':
-            img = oneblog.encabezado.url.replace("cross_asistent/", "")
+            img = oneblog.encabezado.url
             imgClass = 'item_img-url'
         else:
             img = '/static/img/default_image.webp'
@@ -101,7 +102,7 @@ def mostrar_blog(request, Articulos_id):
     articulo = get_object_or_404(models.Articulos, pk=Articulos_id)
     autor_username = articulo.autor
     if articulo.encabezado:
-        encabezado_url = articulo.encabezado.url.replace('cross_asistent/', '')
+        encabezado_url = articulo.encabezado.url
     else:
         encabezado_url = ''
     
@@ -267,7 +268,7 @@ def vista_programador(request):
 def ver_perfil(request):
     perfil_extencion = request.user.userprofile
     if perfil_extencion.profile_picture:
-        request.user.userprofile.profile_picture = request.user.userprofile.profile_picture.url.replace("cross_asistent/", "")
+        request.user.userprofile.profile_picture = request.user.userprofile.profile_picture.url
     else:
         request.user.userprofile.profile_picture = '/static/img/UTC_logo-plano.webp'
         
@@ -330,7 +331,7 @@ def banners_page(request):
     banners_modificados = []
 
     for banner in banners_all:
-        imagen_url = banner.imagen.url.replace("cross_asistent/", "")
+        imagen_url = banner.imagen.url
         banners_modificados.append({
             'id': banner.id,
             'titulo': banner.titulo,
@@ -354,11 +355,11 @@ def database_page(request):
     datos_modificados = []
     for dato in databaseall.order_by('-id'):
         if dato.imagen:
-            imagen_url = dato.imagen.url.replace("cross_asistent/", "")
+            imagen_url = dato.imagen.url
         else:
             imagen_url = ''
         if dato.documento:
-            documento_url = dato.documento.url.replace("cross_asistent/", "")
+            documento_url = dato.documento.url
         else:
             documento_url = ''
         datos_modificados.append({
@@ -530,7 +531,7 @@ def upload_image(request):
             image_file = request.FILES['file']
             imagen_articulo = models.Imagenes(imagen=image_file)
             imagen_articulo.save()
-            image_url = imagen_articulo.imagen.url.replace("cross_asistent/", "")
+            image_url = imagen_articulo.imagen.url
 
             return JsonResponse({'location': image_url})
         except Exception as e:
@@ -544,7 +545,7 @@ def lista_imagenes(request):
     imagenes_modificadas = []
 
     for imagen in imagenes:
-        imagen_url = imagen.imagen.url.replace("cross_asistent/", "")
+        imagen_url = imagen.imagen.url
         imagenes_modificadas.append({
             'id': imagen.id,
             'url': imagen_url

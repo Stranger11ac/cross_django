@@ -22,40 +22,40 @@ def create_filename_path(filename, setname, sufix,length, lenghtrandom, strpath)
 
 def set_imgBanner_path(instance, filename):
     newName = instance.titulo.strip().replace(' ', '')
-    thispath = 'cross_asistent/static/files/imagenes/banners/'
+    thispath = os.path.join(settings.MEDIA_ROOT, 'imagenes/banners/')
     return create_filename_path(filename, newName, 'banner', 15, 5, thispath)
 
 def set_imgDB_path(instance, filename):
     categoria = instance.categoria.categoria
     instanceTitulo = instance.titulo.strip().replace(' ', '')
     newName = f'{categoria}_{instanceTitulo}'
-    thispath = 'cross_asistent/static/files/imagenes/'
+    thispath = os.path.join(settings.MEDIA_ROOT, 'imagenes/')
     if instance.categoria:
         if categoria == 'Mapa':
-            thispath += 'mapa/'
+            thispath = os.path.join(thispath, 'mapa/')
         elif categoria == 'Calendario':
-            thispath += 'calendario/'
+            thispath = os.path.join(thispath, 'calendario/')
     
     return create_filename_path(filename, newName, 'db', 35, 8, thispath)
 
 def set_imgBlog_path(instance, filename):
     newName = instance.titulo.strip().replace(' ', '')
-    thispath = 'cross_asistent/static/files/imagenes/blogs/'
+    thispath = os.path.join(settings.MEDIA_ROOT, 'imagenes/blogs/')
     return create_filename_path(filename, newName, 'blog', 18, 8, thispath)
 
 def set_imgs_path(instance, filename):
     newName = filename.strip().replace(' ', '')
-    thispath = 'cross_asistent/static/files/imagenes/'
+    thispath = os.path.join(settings.MEDIA_ROOT, 'imagenes/')
     return create_filename_path(filename, newName, 'cross_image', 20, 11, thispath)
 
 def set_imgProfile_path(instance, filename):
     newName = instance.user.username.strip().replace(' ', '')
-    thispath = 'cross_asistent/static/files/imagenes/personal/'
+    thispath = os.path.join(settings.MEDIA_ROOT, 'imagenes/personal/')
     return create_filename_path(filename, newName, 'profile', 20, 8, thispath)
 
 def set_pdfDB_path(instance, filename):
     newName = instance.titulo.strip().replace(' ', '')
-    thispath = 'cross_asistent/static/files/documentos/'
+    thispath = os.path.join(settings.MEDIA_ROOT, 'documentos/')
     return create_filename_path(filename, newName, 'db_doc', 18, 10, thispath)
 
 
