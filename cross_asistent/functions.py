@@ -314,28 +314,45 @@ def database_update(request):
             evento_classNamePOST = request.POST.get('eColor')
             
             dbUpdate = get_object_or_404(models.Database, id=idPOST)
-            dbUpdate.categoria=categoriaGET
-            dbUpdate.titulo=request.POST.get('titulo')
-            dbUpdate.informacion=request.POST.get('informacion')
-            dbUpdate.redirigir=request.POST.get('redirigir')
-            dbUpdate.frecuencia=frecuenciaPOST or '0'
-            dbUpdate.documento=request.FILES.get('documento')
-            dbUpdate.imagen=request.FILES.get('imagen')
-            dbUpdate.uuid=f'{categoriaIdPOST}_{models.generate_random_string(6)}'
-            dbUpdate.evento_fecha_inicio=evento_fecha_inicioPOST or None
-            dbUpdate.evento_fecha_fin=evento_fecha_finPOST or None
-            dbUpdate.evento_allDay=evento_allDayPOST if not evento_allDayPOST == None else False
-            dbUpdate.evento_lugar=evento_lugarPOST or ''
-            dbUpdate.evento_className=evento_classNamePOST or 'event_detail'
+            dbUpdate.categoria = categoriaGET
+            dbUpdate.titulo = request.POST.get('titulo')
+            dbUpdate.informacion = request.POST.get('informacion')
+            dbUpdate.redirigir = request.POST.get('redirigir')
+            dbUpdate.frecuencia = frecuenciaPOST or '0'
+            
+            # Validación de archivo
+            documento = request.FILES.get('documento')
+            imagen = request.FILES.get('imagen')
+
+            if documento:
+                dbUpdate.documento = documento
+
+            if imagen:
+                # Validar que la ruta del archivo sea segura y dentro de MEDIA_ROOT
+                if '..' in imagen.name or imagen.name.startswith('/'):
+                    return JsonResponse({'success': False, 'message': 'Ruta de archivo inválida.'}, status=400)
+                dbUpdate.imagen = imagen
+
+            dbUpdate.uuid = f'{categoriaIdPOST}_{models.generate_random_string(6)}'
+            dbUpdate.evento_fecha_inicio = evento_fecha_inicioPOST or None
+            dbUpdate.evento_fecha_fin = evento_fecha_finPOST or None
+            dbUpdate.evento_allDay = evento_allDayPOST if not evento_allDayPOST == None else False
+            dbUpdate.evento_lugar = evento_lugarPOST or ''
+            dbUpdate.evento_className = evento_classNamePOST or 'event_detail'
             dbUpdate.save()
             
-            models.Notificacion.objects.create(usuario=request.user,tipo='Base de Datos',mensaje=f'{request.user.username} ha Actualizado un registro de categoría "{categoriaIdPOST}".',)
+            models.Notificacion.objects.create(
+                usuario=request.user,
+                tipo='Base de Datos',
+                mensaje=f'{request.user.username} ha actualizado un registro de categoría "{categoriaIdPOST}".',
+            )
             
-            dbMessage =  f'Se actualizó "{request.POST.get('titulo')}" en la base de datos exitosamente 🫡😁🎉'
-            return JsonResponse({'success': True, 'functions':'reload', 'message': dbMessage, 'position':'center'}, status=200)
+            dbMessage = f'Se actualizó "{request.POST.get("titulo")}" en la base de datos exitosamente 🫡😁🎉'
+            return JsonResponse({'success': True, 'functions': 'reload', 'message': dbMessage, 'position': 'center'}, status=200)
         
         except Exception as e:
             return JsonResponse({'success': False, 'message': f'Ocurrió un error 😯😥 <br>{str(e)}'}, status=400)
+    
     return JsonResponse({'error': 'Método no válido'}, status=400)
 
 @login_required
