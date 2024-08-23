@@ -93,7 +93,7 @@ WSGI_APPLICATION = 'cross_project.wsgi.application'
 # }
 DATABASES = {
     'default': dj_database_url.config(
-        default='postgresql://cross_asistent_user:XkajENX1YU0ZOmBmV9BnPinSaGiLEfdj@dpg-cr4012o8fa8c73dduhk0-a.oregon-postgres.render.com/cross_asistent',
+        default='postgresql://cross_asistent_production_user:3zBDxS8OZ66dvPGsXZ0leTTk1X4o129B@dpg-cr40bbrtq21c73drq1k0-a.oregon-postgres.render.com/cross_asistent_production',
         # default='postgresql://postgres:postgres@localhost:5432/mysite',
         conn_max_age=600
     )
