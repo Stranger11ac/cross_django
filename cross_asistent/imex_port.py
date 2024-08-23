@@ -19,25 +19,29 @@ def create_csv_response(filename, header, rows):
         writer.writerow(row)
     return response
 
+
+"""Convierte el valor en un booleano. Devuelve False si no es "True"."""
+def parse_all_day(value):
+    return value.strip().lower() == 'true'
+
 @login_required
 @never_cache
 def export_categorias(request):
     now = timezone.localtime(timezone.now()).strftime('%d-%m-%Y_%H%M')
     if request.user.is_staff:
         rows = [
-            [item.id, item.categoria if item.categoria else '', item.descripcion if item.descripcion else '']
+            [item.categoria if item.categoria else '', item.descripcion if item.descripcion else '']
             for item in categoriasall
         ]
-        return create_csv_response(f"UTC_categorias_{now}.csv", ['ID', 'Categoria', 'Descripcion'], rows)
+        return create_csv_response(f"UTC_categorias_{now}.csv", ['Categoria', 'Descripcion'], rows)
     return JsonResponse({'success': False, 'message': 'Acción no permitida. 🧐😠🤥'}, status=400)
 
 @login_required
 @never_cache
 def import_categorias(request):
     return import_csv_data(request, Categorias, {
-        'id': 0,
-        'categoria': 1,
-        'descripcion': 2,
+        'categoria': 0,
+        'descripcion': 1,
     }, 'Categorías importadas correctamente. 🎉😁🫡')
 
 @login_required
@@ -47,18 +51,15 @@ def export_database(request):
     if request.user.is_staff:
         rows = [
             [
-                info.id,
                 info.categoria if info.categoria else '',
                 info.titulo if info.titulo else '',
                 info.informacion if info.informacion else '',
                 info.redirigir if info.redirigir else '',
-                info.frecuencia if info.frecuencia else '',
-                info.documento.url if info.documento else '',
-                info.imagen.url if info.imagen else '',
+                info.frecuencia,
                 info.uuid if info.uuid else '',
                 info.evento_fecha_inicio if info.evento_fecha_inicio else '',
                 info.evento_fecha_fin if info.evento_fecha_fin else '',
-                info.evento_allDay if info.evento_allDay else '',
+                info.evento_allDay,
                 info.evento_lugar if info.evento_lugar else '',
                 info.evento_className if info.evento_className else '',
                 info.fecha_modificacion if info.fecha_modificacion else '',
@@ -66,7 +67,7 @@ def export_database(request):
             for info in databaseall
         ]
         return create_csv_response(f"UTC_database_{now}.csv", 
-            ['ID', 'Categoria', 'Titulo', 'Informacion', 'Redirigir', 'Frecuencia', 'Documento', 'Imagen', 'uuid','Evento:fecha de inicio', 'Evento:fecha de fin', 'Evento:Todo el dia','Evento:lugar', 'Evento:className (CSS)', 'Fecha Modificacion'], 
+            ['Categoria', 'Titulo', 'Informacion', 'Redirigir', 'Frecuencia', 'uuid','Evento:fecha de inicio', 'Evento:fecha de fin', 'Evento:Todo el dia','Evento:lugar', 'Evento:className (CSS)', 'Fecha Modificacion'], 
             rows
         )
     return JsonResponse({'success': False, 'message': 'Acción no permitida. 🧐😠🤥'}, status=400)
@@ -75,21 +76,18 @@ def export_database(request):
 @never_cache
 def import_database(request):
     return import_csv_data(request, Database, {
-        'id': 0,
-        'categoria': lambda row: Categorias.objects.get_or_create(categoria=row[1])[0],
-        'titulo': 2,
-        'informacion': 3,
-        'redirigir': 4,
-        'frecuencia': lambda row: int(row[5]),
-        'documento': 6,
-        'imagen': 7,
-        'uuid': 8,
-        'evento_fecha_inicio': 8,
-        'evento_fecha_fin': 10,
-        'evento_allDay': 11,
-        'evento_lugar': 12,
-        'evento_className': 13,
-        'fecha_modificacion': 14,
+        'categoria': lambda row: Categorias.objects.get_or_create(categoria=row[0])[0],
+        'titulo': 1,
+        'informacion': 2,
+        'redirigir': 3,
+        'frecuencia': lambda row: int(row[4]),
+        'uuid': 5,
+        'evento_fecha_inicio': 6,
+        'evento_fecha_fin': 7,
+        'evento_allDay': lambda row: parse_all_day(row[8]),
+        'evento_lugar': 9,
+        'evento_className': 10,
+        'fecha_modificacion': 11,
     }, 'Base de Datos importadas correctamente. 🎉😁🫡')
 
 @login_required
