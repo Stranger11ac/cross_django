@@ -143,68 +143,6 @@
         <div>
             <div class="card">
                 <div class="card-body">
-
-                    <form method="post" action="{% url 'create_database' %}" data-submit-form id="databaseForm" autocomplete="off">
-                        {% csrf_token %}
-                        <div class="row pt-2">
-                            <div class="col-md-3">
-                                <div class="form-outline mb-4">
-                                    <select class="form-select" id="categoria" name="categoria" required>
-                                        <option selected disabled hidden>Seleccione una categoría:</option>
-                                        {% for categoria in categorias %}
-                                        <option value="{{ categoria.categoria }}">{{ categoria.categoria }}</option>
-                                        {% endfor %}
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="col">
-                                <div class="form-outline mb-4" data-mdb-input-init>
-                                    <i class="fa-solid fa-heading trailing"></i>
-                                    <input type="text" id="titulo" name="titulo" class="form-control form-icon-trailing" required />
-                                    <label class="form-label" for="titulo">Título:</label>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="form-outline mb-4" data-mdb-input-init>
-                            <i class="fa-solid fa-keyboard trailing"></i>
-                            <textarea class="form-control form-icon-trailing" id="informacion" name="informacion" rows="6" required></textarea>
-                            <label for="informacion" class="form-label">Información:</label>
-                        </div>
-                        <div class="row">
-                            <div class="col-12">
-                                <div class="form-outline mb-4" data-mdb-input-init>
-                                    <i class="fa-solid fa-link trailing"></i>
-                                    <input type="url" id="redirigir" name="redirigir" class="form-control form-icon-trailing" />
-                                    <label class="form-label" for="redirigir">Redirigir: (url / liga)</label>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="mb-4">
-                                    <label for="documentos" class="form-label">Documento: (PDF)</label>
-                                    <input type="file" class="form-control" id="documentos" name="documento" accept="application/pdf">
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="mb-4">
-                                    <label for="imagenes" class="form-label">Imágen:</label>
-                                    <input type="file" class="form-control" id="imagenes" name="imagen" accept="image/jpeg, image/png, image/webp*">
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col">
-                                <button type="submit" class="btn btn_detail btn-block">Guardar</button>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </section>
-    <section class="row">
-        <div>
-            <div class="card">
-                <div class="card-body">
                     <h3 class="text-center mb-4"><span class="text_detail">Nuevo</span> Registro</h3>
                     <form method="post" action="{% url 'create_database' %}" data-submit-form id="databaseForm" autocomplete="off">
                         {% csrf_token %}

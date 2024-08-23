@@ -55,7 +55,7 @@ def export_database(request):
                 info.frecuencia if info.frecuencia else '',
                 info.documento.url if info.documento else '',
                 info.imagen.url if info.imagen else '',
-                info.muid if info.muid else '',
+                info.uuid if info.uuid else '',
                 info.evento_fecha_inicio if info.evento_fecha_inicio else '',
                 info.evento_fecha_fin if info.evento_fecha_fin else '',
                 info.evento_allDay if info.evento_allDay else '',
@@ -66,7 +66,7 @@ def export_database(request):
             for info in databaseall
         ]
         return create_csv_response(f"UTC_database_{now}.csv", 
-            ['ID', 'Categoria', 'Titulo', 'Informacion', 'Redirigir', 'Frecuencia', 'Documento', 'Imagen', 'MUID','Evento:fecha de inicio', 'Evento:fecha de fin', 'Evento:Todo el dia','Evento:lugar', 'Evento:className (CSS)', 'Fecha Modificacion'], 
+            ['ID', 'Categoria', 'Titulo', 'Informacion', 'Redirigir', 'Frecuencia', 'Documento', 'Imagen', 'uuid','Evento:fecha de inicio', 'Evento:fecha de fin', 'Evento:Todo el dia','Evento:lugar', 'Evento:className (CSS)', 'Fecha Modificacion'], 
             rows
         )
     return JsonResponse({'success': False, 'message': 'Acción no permitida. 🧐😠🤥'}, status=400)
@@ -83,7 +83,7 @@ def import_database(request):
         'frecuencia': lambda row: int(row[5]),
         'documento': 6,
         'imagen': 7,
-        'muid': 8,
+        'uuid': 8,
         'evento_fecha_inicio': 8,
         'evento_fecha_fin': 10,
         'evento_allDay': 11,
@@ -99,7 +99,7 @@ def export_mapa(request):
     if request.user.is_staff:
         rows = [
             [
-                info.muid if info.muid else '',
+                info.uuid if info.uuid else '',
                 info.nombre if info.nombre else '',
                 info.informacion if info.informacion else '',
                 info.color if info.color else '',
@@ -112,7 +112,7 @@ def export_mapa(request):
             for info in mapaall
         ]
         return create_csv_response(f"UTC_mapa_{now}.csv", 
-            ['MUID', 'Nombre', 'Informacion', 'Color', 'Coordenadas: Puerta', 'Coordenadas: Esquina 1', 'Coordenadas: Esquina 2', 'Coordenadas: Esquina 3', 'Coordenadas: Esquina 4'], 
+            ['uuid', 'Nombre', 'Informacion', 'Color', 'Coordenadas: Puerta', 'Coordenadas: Esquina 1', 'Coordenadas: Esquina 2', 'Coordenadas: Esquina 3', 'Coordenadas: Esquina 4'], 
             rows
         )
     return JsonResponse({'success': False, 'message': 'Acción no permitida. 🧐😠🤥'}, status=400)
@@ -121,7 +121,7 @@ def export_mapa(request):
 @never_cache
 def import_mapa(request):
     return import_csv_data(request, Mapa, {
-        'muid': 0,
+        'uuid': 0,
         'nombre': 1,
         'informacion': 2,
         'color': 3,
