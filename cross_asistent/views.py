@@ -315,7 +315,7 @@ def banners_page(request):
             titulo = request.POST.get('contenidoWord'),
             descripcion = request.POST.get('descripcion'),
             redirigir = request.POST.get('redirigir'),
-            # imagen = request.FILES.get('imagen'),
+            imagen = request.FILES.get('imagen'),
             solo_imagen = soloImagenPOST,
             expiracion = expiracionPOST
         )
@@ -332,13 +332,12 @@ def banners_page(request):
     banners_modificados = []
 
     for banner in banners_all:
-        imagen_url = banner.imagen.url
         banners_modificados.append({
             'id': banner.id,
             'titulo': banner.titulo,
             'descripcion': banner.descripcion,
             'redirigir': banner.redirigir,
-            'imagen': imagen_url,
+            'imagen': banner.imagen.url,
             'expiracion': banner.expiracion if not banner.expiracion == None else '',
             'visible': banner.visible,
             'onlyImg': banner.solo_imagen,

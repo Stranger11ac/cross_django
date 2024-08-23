@@ -24,7 +24,7 @@ mapboxgl.accessToken = mapToken;
 
 const map = new mapboxgl.Map({
     container: "map",
-    style: "mapbox://styles/erik-ochoa010/clyrmncgg000e01pc1z012h9r",
+    style: "mapbox://styles/mapbox/streets-v12",
     center: [-100.93655, 25.55701],
     zoom: 16,
     maxZoom: 20,
@@ -511,7 +511,7 @@ class CustomControl {
                 `<i class="fa-solid fa-book-atlas"></i>`,
                 "Editar en OpenStreetMaps",
                 () => {
-                    const url = "https://www.openstreetmap.org/#map=18/25.55719/-100.93724";
+                    const url = "https://www.openstreetmap.org/edit#map=17/25.55684/-100.93548";
                     window.open(url, "_blank", "noopener,noreferrer");
                 }
             );
