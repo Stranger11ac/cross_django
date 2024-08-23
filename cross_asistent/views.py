@@ -302,29 +302,30 @@ def marcar_notificaciones_leidas(request):
 @never_cache
 def banners_page(request):
     if request.method == 'POST':
-        soloImagenPOST = request.POST.get('soloImagen')
-        if soloImagenPOST == None:
-            soloImagenPOST = False
-        expiracionPOST = request.POST.get('expiracion')
-        if expiracionPOST:
-            expiracionPOST = expiracionPOST
-        else:
-            expiracionPOST = None
+        # soloImagenPOST = request.POST.get('soloImagen')
+        # if soloImagenPOST == None:
+        #     soloImagenPOST = False
+        # expiracionPOST = request.POST.get('expiracion')
+        # if expiracionPOST:
+        #     expiracionPOST = expiracionPOST
+        # else:
+        #     expiracionPOST = None
             
-        banner = models.Banners(
-            titulo = request.POST.get('contenidoWord'),
-            descripcion = request.POST.get('descripcion'),
-            redirigir = request.POST.get('redirigir'),
-            imagen = request.FILES.get('imagen'),
-            solo_imagen = soloImagenPOST,
-            expiracion = expiracionPOST
-        )
-        banner.save()
+        # banner = models.Banners(
+        #     titulo = request.POST.get('contenidoWord'),
+        #     descripcion = request.POST.get('descripcion'),
+        #     redirigir = request.POST.get('redirigir'),
+        #     imagen = request.FILES.get('imagen'),
+        #     solo_imagen = soloImagenPOST,
+        #     expiracion = expiracionPOST
+        # )
+        # banner.save()
         
         return JsonResponse({
             'success': True,
             'functions': 'reload',
-            'message': f'El banner {banner.titulo} fue creado exitosamente 🥳🎉🎈.'
+            'message': f'Se realizo un post🎈.'
+            # 'message': f'El banner {banner.titulo} fue creado exitosamente 🥳🎉🎈.'
         }, status=200)
     
     banners_all = models.Banners.objects.all()
