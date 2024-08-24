@@ -2,7 +2,6 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.cache import never_cache
-from django.core.files.storage import default_storage
 from django.contrib.auth.models import User
 from django.db import models, transaction
 from django.http import JsonResponse
@@ -10,9 +9,11 @@ from django.urls import reverse
 from . import functions, models
 import json
 
-categoriasall = models.Categorias.objects.all()
-databaseall = models.Database.objects.all()
 mapaall = models.Mapa.objects.all()
+databaseall = models.Database.objects.all()
+categoriasall = models.Categorias.objects.all()
+questions_all = models.Preguntas.objects.all().order_by('-id')
+categoriasFilter = models.Categorias.objects.exclude(categoria__in=['Mapa', 'Calendario'])
 
 def index(request):
     if not request.user.is_staff:
@@ -232,18 +233,16 @@ def vista_admin(request):
 def vista_programador(request):
     banners_all = models.Banners.objects.all()
     users = User.objects.all().order_by('-id')
-    questions_all = models.Preguntas.objects.all().order_by('-id')
-    categoriasFilter = models.Categorias.objects.filter(categoria__in=['Preguntas', 'Informacion', 'Personal'])
     contexto = {
-        'users': users,
-        'user': request.user,
-        'active_page': 'home',
-        'pages': functions.pages,
-        'categorias': categoriasFilter,
-        'banners_all': banners_all,
-        'preguntas_sending': questions_all,
-        'num_preguntas': databaseall.count(),
-        'num_blogs': models.Articulos.objects.filter(autor=request.user).count(),
+        'users':users,
+        'user':request.user,
+        'active_page':'home',
+        'pages':functions.pages,
+        'categorias':categoriasFilter,
+        'banners_all':banners_all,
+        'preguntas_sending':questions_all,
+        'num_preguntas':databaseall.count(),
+        'num_blogs':models.Articulos.objects.filter(autor=request.user).count(),
     }
      
     if request.method == 'POST':
@@ -355,28 +354,29 @@ def banners_page(request):
 @login_required
 @never_cache
 def database_page(request):
-    datos_modificados = []
-    for dato in databaseall.order_by('-id'):
-        if dato.imagen:
-            imagen_url = dato.imagen.url
-        else:
-            imagen_url = ''
-        if dato.documento:
-            documento_url = dato.documento.url
-        else:
-            documento_url = ''
-        datos_modificados.append({
-            'id': dato.id,
-            'categoria': dato.categoria,
-            'titulo': dato.titulo,
-            'informacion': dato.informacion,
-            'redirigir': dato.redirigir,
-            'frecuencia': dato.frecuencia,
-            'documento': documento_url,
-            'imagen': imagen_url,
-            'fecha_modificacion': dato.fecha_modificacion,
-        })
-    context = { 'database': datos_modificados, 'active_page': 'database','pages': functions.pages, 'categorias': categoriasall }
+    # datos_modificados = []
+    # for dato in databaseall.order_by('-id'):
+    #     if dato.imagen:
+    #         imagen_url = dato.imagen.url
+    #     else:
+    #         imagen_url = ''
+    #     if dato.documento:
+    #         documento_url = dato.documento.url
+    #     else:
+    #         documento_url = ''
+    #     datos_modificados.append({
+    #         'id': dato.id,
+    #         'categoria': dato.categoria,
+    #         'titulo': dato.titulo,
+    #         'informacion': dato.informacion,
+    #         'redirigir': dato.redirigir,
+    #         'frecuencia': dato.frecuencia,
+    #         'documento': documento_url,
+    #         'imagen': imagen_url,
+    #         'fecha_modificacion': dato.fecha_modificacion,
+    #     })
+    #     'database': datos_modificados, 
+    context = { 'active_page':'database','pages':functions.pages, 'preguntas_sending':questions_all, 'categorias':categoriasFilter, 'categoriasall':categoriasall }
     return render(request, 'admin/database.html', context)
 
 @login_required

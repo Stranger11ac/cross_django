@@ -207,58 +207,76 @@
             </div>
         </div>
     </section>
+    <!-- Todas las Preguntas -->
+    <section class="row mx-auto mt-4" id="preguntasEnviadas">
+        <div class="card col-12">
+            <div class="card-body">
+                <h3 class="text-center mb-4">Preguntas de los Usuarios</h3>
+
+                {% if preguntas_sending %}
+                <!-- tabla de usuarios -->
+                <div class="table-responsive rounded" id="table-container">
+                    <table class="table table_odd align-middle m-0">
+                        <thead>
+                            <tr class="text-center">
+                                <th class="d-none d-md-table-cell">#</th>
+                                <th>Preguntas</th>
+                                <th>Eliminar</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for question in preguntas_sending %}
+                            <tr class="results_item table_odd_items">
+                                <td class="text-center d-none d-md-table-cell">{{question.id}}</td>
+                                <td>
+                                    <div class="accordion accordion-borderless" id="questionList">
+                                        <div class="accordion-item">
+                                            <h2 class="accordion-header" id="heading_{{question.id}}">
+                                                <div data-mdb-collapse-init class="accordion-button collapsed" type="button" data-mdb-toggle="collapse"
+                                                    data-mdb-target="#collapse_{{question.id}}" aria-expanded="false" aria-controls="collapse_{{question.id}}">
+                                                    {{question.pregunta}}
+                                                </div>
+                                            </h2>
+                                            <div id="collapse_{{question.id}}" class="accordion-collapse collapse" aria-labelledby="heading_{{question.id}}"
+                                                data-mdb-parent="#questionList">
+                                                <div class="accordion-body">
+                                                    {{question.descripcion}}
+                                                    <div class="mt-4 {% if not question.descripcion %}mb-4{% endif %}">
+                                                        <small>
+                                                            Enviado el: <br>
+                                                            {{question.fecha}}
+                                                        </small>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <!-- Botones de acciones -->
+                                <td>
+                                    <div class="d-flex justify-content-center align-items-center">
+                                        <form method="post" action="{% url 'question_deleted' %}" data-submit-form>
+                                            <input type="text" name="question_id" value="{{question.id}}" class="d-none">
+                                            <button title="Editar Usuario" type="submit" class="btn btn-floating btn-danger">
+                                                <i class="fa-regular fa-trash-can fs-12"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    {% else %}
+                    <div class="text-center">
+                        <p class="lead m-0">No hay preguntas por el momento.</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+    </section>
     <!-- Importar y Exportar -->
     <section class="row">
-        <!-- Categorias -->
-        <div class="col-md-4">
-            <div class="card mt-4">
-                <div class="card-body">
-                    <h3 class="text-center mb-4">Categorias</h3>
-                    <form action="{% url 'export_categorias' %}" method="get">
-                        <button type="submit" class="btn btn_detail btn-block">
-                            Descargar <i class="fa-solid fa-file-arrow-down ms-1"></i>
-                        </button>
-                    </form>
-                    <div class="mt-5">
-                        <h3 class="text-center mb-4">Importar</h3>
-                        <form method="POST" enctype="multipart/form-data" action="{% url 'import_categorias' %}" data-submit-form>
-                            {% csrf_token %}
-                            <div class="mb-3">
-                                <input type="file" name="file" accept=".csv" class="form-control">
-                            </div>
-                            <button type="submit" class="btn btn_detail btn-block">
-                                Importar <i class="fa-solid fa-file-arrow-up ms-1"></i>
-                            </button>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!-- BD -->
-        <div class="col-md-4">
-            <div class="card mt-4">
-                <div class="card-body">
-                    <h3 class="text-center mb-4">Base de datos</h3>
-                    <form action="{% url 'export_database' %}" method="get">
-                        <button type="submit" class="btn btn_detail btn-block">
-                            Descargar <i class="fa-solid fa-file-arrow-down ms-1"></i>
-                        </button>
-                    </form>
-                    <div class="mt-5">
-                        <h3 class="text-center mb-4">Importar</h3>
-                        <form method="POST" enctype="multipart/form-data" action="{% url 'import_database' %}" data-submit-form>
-                            {% csrf_token %}
-                            <div class="mb-3">
-                                <input type="file" name="file" accept=".csv" class="form-control">
-                            </div>
-                            <button type="submit" class="btn btn_detail btn-block">
-                                Importar <i class="fa-solid fa-file-arrow-up ms-1"></i>
-                            </button>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
         <!-- Mapa -->
         <div class="col-md-4">
             <div class="card mt-4">
@@ -483,54 +501,6 @@
                         </tbody>
                     </table>
                 </div>
-            </div>
-        </div>
-    </section>
-    <!-- Todas las Preguntas -->
-    <section class="row mx-auto mt-4" id="preguntasEnviadas">
-        <div class="card col-12">
-            <div class="card-body">
-                <h3 class="text-center mb-4">Preguntas</h3>
-
-                {% if preguntas_sending %}
-                <div class="accordion accordion-borderless" id="questionList">
-                    {% for question in preguntas_sending %}
-                    <div class="accordion-item">
-                        <h2 class="accordion-header row m-0" id="heading_{{question.id}}">
-                            <div data-mdb-collapse-init class="accordion-button collapsed col" type="button" data-mdb-toggle="collapse"
-                                data-mdb-target="#collapse_{{question.id}}" aria-expanded="false" aria-controls="collapse_{{question.id}}">
-                                {{question.pregunta}}
-                            </div>
-                            <div class="col-3 d-flex justify-content-center align-items-center">
-                                <!-- Botton para eliminar pregunta -->
-                                <form method="post" action="{% url 'question_deleted' %}" data-submit-form>
-                                    <input type="text" name="question_id" value="{{question.id}}" class="d-none">
-                                    <button title="Editar Usuario" type="submit" class="btn btn-floating btn-danger">
-                                        <i class="fa-regular fa-trash-can fs-12"></i>
-                                    </button>
-                                </form>
-                            </div>
-                        </h2>
-                        <div id="collapse_{{question.id}}" class="accordion-collapse collapse" aria-labelledby="heading_{{question.id}}"
-                            data-mdb-parent="#questionList">
-                            <div class="accordion-body">
-                                {{question.descripcion}}
-                                <div class="mt-4 {% if not question.descripcion %}mb-4{% endif %}">
-                                    <small>
-                                        Enviado el: <br>
-                                        {{question.fecha}}
-                                    </small>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    {% endfor %}
-                </div>
-                {% else %}
-                <div class="text-center">
-                    <p class="lead m-0">No hay preguntas disponibles en este momento.</p>
-                </div>
-                {% endif %}
             </div>
         </div>
     </section>
