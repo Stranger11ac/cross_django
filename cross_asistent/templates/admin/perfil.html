@@ -13,7 +13,7 @@
             <div class="card card_perfil">
                 <div class="card__img_perfil" style="--color-bg1:#128be0; --color-bg2:#ae37cc; --var-img-perfil: url({% static 'img/Default_image.webp' %});">
                     <div class="card__avatar_perfil">
-                        <img src="{{ user_profile.profile_picture }}" alt="Foto de perfil" class="rounded" data-img_dom>
+                        <img src="{{ user_profile.profile_picture }}" alt="Foto de perfil" class="img-rounded materialBoxed" data-img_dom>
                     </div>
                 </div>
 
@@ -45,14 +45,16 @@
                             <input type="text" name="firmaBlog" id="firmaBlog" class="input_transparent flex-fill text-end"
                                 value="{{ user.userprofile.blog_firma }}" data-input_transparent placeholder="Firma para tus Blogs">
                         </div>
+                        {% if user_profile.password_update %}
                         <div class="flex-between-wrap align-items-center mt-3">
                             <strong>Contraseña:</strong>
                             <div class="flex-fill text-end">
                                 <small class="fs-7">( Ultima Modificacion )</small>
                                 <br>
-                                {{ user.userprofile.password_update }}
+                                {{ user_profile.password_update }}
                             </div>
                         </div>
+                        {% endif %}
                     </div>
 
                     <section class="row">
@@ -98,7 +100,6 @@
         </div>
     </form>
 </main>
-
 {% endblock %}
 
 {% block scripts_end %}

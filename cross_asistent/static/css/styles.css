@@ -257,6 +257,7 @@ nav .navbar-collapse {
     box-shadow: 0 8px 5px var(--darkA2);
     position: fixed;
     z-index: 5;
+    /* Esto interfiere con el z-index de materialBoxed*/
 }
 
 @media (min-width: 992px) {
@@ -267,6 +268,7 @@ nav .navbar-collapse {
         top: unset !important;
         padding-block: unset;
         box-shadow: none;
+        z-index: auto;
     }
 }
 
@@ -913,7 +915,8 @@ main.main_anchor {
     margin: auto;
     box-shadow: 0 0px 8px var(--darkA5);
     overflow: hidden;
-    z-index: 0;
+    /* z-index: 0; */
+    /* Esto interfiere con el z-index de materialBoxed*/
 }
 
 .card__img_perfil {
@@ -921,7 +924,8 @@ main.main_anchor {
     width: 100%;
     position: relative;
     background: linear-gradient(45deg, var(--color-bg1), var(--color-bg2));
-    z-index: 0;
+    /* z-index: 0; */
+    /* Esto interfiere con el z-index de materialBoxed*/
 }
 
 .card__img_perfil .card__avatar_perfil {
@@ -936,7 +940,7 @@ main.main_anchor {
     border: 10px solid var(--mdb-card-bg);
     transform: translateX(-50%);
     overflow: hidden;
-    z-index: 1000;
+    /* z-index: 1000; */
 }
 
 .card__img_perfil .card__avatar_perfil::before {

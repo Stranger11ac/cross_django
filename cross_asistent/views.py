@@ -271,7 +271,10 @@ def ver_perfil(request):
         request.user.userprofile.profile_picture = request.user.userprofile.profile_picture.url
     else:
         request.user.userprofile.profile_picture = '/static/img/UTC_logo-plano.webp'
-        
+    
+    if not perfil_extencion.blog_firma:
+        perfil_extencion.blog_firma = ''
+                
     return render(request, 'admin/perfil.html', {
         'user_profile': perfil_extencion,
         'active_page': 'perfil',
@@ -399,9 +402,10 @@ def blog_page(request):
                 blogUpdate.autor = autorPOST
                 blogUpdate.titulo = tituloPOST
                 blogUpdate.contenido = contenidoWordPOST
-                blogUpdate.encabezado = encabezadoImgPOST
+                if encabezadoImgPOST:
+                    blogUpdate.encabezado = encabezadoImgPOST
                 blogUpdate.save()
-                jsonMessage='Excelente 🥳🎈🎉. Tu articulo fue modificado de forma exitosa. 😁🫡'
+                jsonMessage='Excelente 🥳🎈🎉. Tu articulo fue <span>modificado</span> de forma exitosa. 😁🫡'
                 
                 models.Notificacion.objects.create(
                     usuario=request.user,
