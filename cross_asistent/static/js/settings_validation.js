@@ -1,23 +1,39 @@
 $(document).ready(function () {
     var typingTimer;
-
     function setupDelayedValidation(selector) {
         $(selector)
             .find("input")
             .each(function () {
                 $(this)
-                    .on("input", function () {
+                    .on("keyup", function () {
                         clearTimeout(typingTimer);
                         var element = this;
                         typingTimer = setTimeout(function () {
                             $(element).valid();
-                        }, 5000);
+                        }, 1000);
                     })
                     .on("keydown", function () {
                         clearTimeout(typingTimer);
                     });
             });
     }
+    
+    // Métodos personalizados de validación
+    $.validator.addMethod("validname", function (value, element) {
+        return this.optional(element) || expressions.name.test(value);
+    });
+
+    $.validator.addMethod("validusername", function (value, element) {
+        return this.optional(element) || expressions.username.test(value);
+    });
+
+    $.validator.addMethod("validemail", function (value, element) {
+        return this.optional(element) || expressions.email.test(value);
+    });
+
+    $.validator.addMethod("validpassword", function (value, element) {
+        return this.optional(element) || expressions.password.test(value);
+    });
 
     function createValidation(selector, rules, messages) {
         try {
