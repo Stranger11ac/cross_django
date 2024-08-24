@@ -1,6 +1,6 @@
 var alfabetico = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
-var alfanumerico = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-var caracteres = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_-%$#@!*&^.";
+var alfanumerico = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz01234567890123456789";
+var caracteres = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz01234567890123456789%$#@!*&.";
 var texto3 = /[a-zA-Z0-9]{3}/;
 var formToken = getCSRFToken();
 var timerOut = 5000;
@@ -108,14 +108,12 @@ $(document).ready(function () {
         $("button[data-editinput]").click(genpass);
         function genpass() {
             $(this).addClass("active");
-            var newRandomPass = cadenaRandom(8, caracteres);
+            var newRandomPass = cadenaRandom(10, caracteres);
             var editInputId = $(this).data("editinput");
             setTimeout(() => {
                 $(this).removeClass("active");
             }, 1000);
-            $("#" + editInputId)
-                .val(newRandomPass)
-                .focus();
+            $("#" + editInputId).val(`UTC${newRandomPass}`).addClass('active');
         }
 
         // Quitar clase show #####################################
@@ -760,7 +758,7 @@ inputs.forEach((input) => {
     };
 
     input.addEventListener("click", copyText);
-    input.addEventListener("focus", copyText);
+    // input.addEventListener("focus", copyText);
 });
 
 // MaterialBox https://materializecss.com/ ################################################

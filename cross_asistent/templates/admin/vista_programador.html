@@ -541,28 +541,28 @@
     <div class="modal-dialog modal-dialog-centered modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="createUserModalLabel">Crea nuevo Usuario</h5>
+                <h5 class="modal-title" id="createUserModalLabel">Crea <span class="text_detail">nuevo</span> Usuario</h5>
                 <button type="button" class="btn-close" data-mdb-ripple-init data-mdb-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form method="POST" id="createuserprog" data-submit-form autocomplete="off">
+                <form method="POST" id="createuserprog" data-validate-createuser autocomplete="off">
                     {% csrf_token %}
                     <!-- Nombre de usuario -->
-                    <div data-mdb-input-init class="form-outline mb-4">
+                    <div data-mdb-input-init class="form-outline">
                         <i class="fa-solid fa-circle-user trailing"></i>
                         <input type="text" id="createusername" name="username" class="form-control form-icon-trailing" required />
                         <label class="form-label" for="createusername">Nombre de usuario</label>
                     </div>
                     <!-- Primer Nombre y Apellidos -->
                     <div class="row">
-                        <div class="col-md-6 mb-4">
+                        <div class="col-md-6 mt-4">
                             <div data-mdb-input-init class="form-outline">
                                 <i class="fa-solid fa-address-card trailing"></i>
                                 <input type="text" id="firstName" name="first_name" class="form-control form-icon-trailing" required />
                                 <label class="form-label" for="firstName">Primer Nombre</label>
                             </div>
                         </div>
-                        <div class="col-md-6 mb-4">
+                        <div class="col-md-6 mt-4">
                             <div data-mdb-input-init class="form-outline">
                                 <i class="fa-regular fa-address-card trailing"></i>
                                 <input type="text" id="lastName" name="last_name" class="form-control form-icon-trailing" required />
@@ -572,14 +572,14 @@
                     </div>
 
                     <!-- Email input -->
-                    <div data-mdb-input-init class="form-outline mb-4">
+                    <div data-mdb-input-init class="form-outline mt-4">
                         <i class="fa-regular fa-envelope trailing"></i>
                         <input type="email" id="emailNew" name="email" class="form-control form-icon-trailing" required />
                         <label class="form-label" for="emailNew">Dirección Email</label>
                     </div>
 
                     <!-- Password input -->
-                    <div data-mdb-input-init class="form-outline form_group-btn mb-4">
+                    <div data-mdb-input-init class="form-outline form_group-btn mt-4">
                         <input type="text" id="pass_newuser" name="password" class="form-control" data-editpass data-copy data-input_pass="generatePass"
                             aria-label="readonly input example" readonly required />
                         <label class="form-label" for="pass_newuser">Contraseña</label>
@@ -594,7 +594,7 @@
 
                     <!-- Activar usuario y Usuario Programador checkboxes -->
                     <div class="row px-1">
-                        <div class="col-md-6 mb-4">
+                        <div class="col-md-6 mt-4">
                             <div class="form-check">
                                 <input class="form-check-input me-2" type="checkbox" name="is_active" value="1" id="userIsactive" checked />
                                 <label class="form-check-label" for="userIsactive">
@@ -602,7 +602,7 @@
                                 </label>
                             </div>
                         </div>
-                        <div class="col-md-6 mb-4">
+                        <div class="col-md-6 mt-4">
                             <div class="form-check">
                                 <input class="form-check-input me-2" type="checkbox" name="is_staff" value="1" id="userIsStaff" />
                                 <label class="form-check-label" for="userIsStaff">
@@ -613,15 +613,17 @@
                     </div>
 
                     <!-- Submit button -->
-                    <button type="submit" class="btn btn_detail btn-block">Registrar</button>
+                    <button type="submit" class="btn btn_detail btn-block mt-4">Registrar</button>
                 </form>
             </div>
         </div>
     </div>
 </div>
-<!-- 
-<section class="m-5">
-    <img src="{% static 'img/default_image.webp' %}" class="img-fluid rounded materialBoxed" alt="Sunset" data-caption="Descripcion de la imagen"/>
-</section> -->
+
 {% include 'base/widget_footer-admin.html' %}
+{% endblock %}
+
+{% block scripts_end %}
+<script src="{% static 'js/jquery.validate.min.js' %}"></script>
+<script src="{% static 'js/settings_validation.js' %}"></script>
 {% endblock %}

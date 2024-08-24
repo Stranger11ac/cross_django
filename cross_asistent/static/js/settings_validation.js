@@ -2,8 +2,6 @@
 // Validar Formulario https://jqueryvalidation.org/ #########################################
 $(document).ready(function () {
     var typingTimer;
-    var doneTypingInterval = 2000;
-
     function setupDelayedValidation() {
         $(this)
             .on("keyup", function () {
@@ -11,12 +9,13 @@ $(document).ready(function () {
                 var element = this;
                 typingTimer = setTimeout(function () {
                     $(element).valid();
-                }, doneTypingInterval);
+                }, 1000);
             })
             .on("keydown", function () {
                 clearTimeout(typingTimer);
             });
     }
+
     $.validator.addMethod("validname", function (value, element) {
         return this.optional(element) || expressions.name.test(value);
     });
@@ -38,6 +37,7 @@ $(document).ready(function () {
     try {
         $("[data-validate-singup]").validate({
             rules: {
+                first_name: { required: true, minlength: 3, validname: true },
                 last_name: { required: true, minlength: 5, validname: true },
                 username: { required: true, minlength: 5, validusername: true },
                 email: { required: true, validemail: true, email: true },
@@ -68,7 +68,7 @@ $(document).ready(function () {
                 password1: {
                     required: "Ingresa una contraseña.",
                     validpassword:
-                        "La contraseña debe tener al menos: <ul class='m-0'><li>8 caracteres</li><li>1 letra mayúscula</li><li>1 letra minúscula</li><li>1 número <li>1 carácter especial (!@#$%)</li></ul>",
+                        "La contraseña debe tener al menos: <ul class='m-0'><li>8 caracteres</li><li>1 letra mayúscula</li><li>1 letra minúscula</li><li>1 número <li>1 carácter especial (!@#$%)</li><li>No puede contener guiones</li></ul>",
                     minlength: "Tu contraseña debe tener al menos 8 caracteres.",
                 },
                 password2: {
@@ -111,6 +111,78 @@ $(document).ready(function () {
             },
         });
         $("[data-validate-singup] input").each(setupDelayedValidation);
+    } catch (error) {
+        console.error("Error Inesperado: ", error);
+        alertSToast("center", 8000, "error", `😥 Ah ocurrido un error #304.`);
+    }
+
+    // Validacion del formulario de registro en Programador ####################################
+    try {
+        $("[data-validate-createuser]").validate({
+            rules: {
+                first_name: { required: true, minlength: 3, validname: true },
+                last_name: { required: true, minlength: 5, validname: true },
+                username: { required: true, minlength: 5, validusername: true },
+                email: { required: true, validemail: true, email: true },
+                password: { required: true, minlength: 8, validpassword: true },
+            },
+            messages: {
+                first_name: {
+                    required: "Ingresa tu nombre.",
+                    validname: "Escribe palabras sin caracteres especiales (!@#$%^&:)",
+                    minlength: "Tu nombre debe tener al menos 3 letras.",
+                },
+                last_name: {
+                    required: "Ingresa tus apellidos.",
+                    validname: "Escribe palabras sin caracteres especiales (!@#$%^&:)",
+                    minlength: "Escribe al menos 5 letras.",
+                },
+                username: {
+                    required: "Ingresa un nombre de usuario.",
+                    validusername: "El nombre de usuario debe contener solo letras, numeros y guiones. El nombre de usuario no puede comenzar por numeros o guiones.",
+                    minlength: "Escribe al menos 5 letras.",
+                },
+                email: {
+                    required: "Ingresa tu correo electrónico.",
+                    validemail: "Ingresa un correo electrónico válido",
+                    email: "Ingresa un correo electrónico válido",
+                },
+                password: {
+                    required: "Ingresa una contraseña.",
+                    validpassword:
+                        "La contraseña debe tener al menos: <ul class='m-0'><li>8 caracteres</li><li>1 letra mayúscula</li><li>1 letra minúscula</li><li>1 número <li>1 carácter especial (!@#$%)</li><li>No puede contener guiones</li></ul>",
+                    minlength: "Tu contraseña debe tener al menos 8 caracteres.",
+                },
+            },
+            errorPlacement: function (error, element) {
+                error.addClass("bg-danger text-white p-2 rounded fs-8");
+                error.insertAfter(element.parent());
+            },
+            highlight: function (element) {
+                $(element).addClass("is-invalid").removeClass("is-valid");
+            },
+            unhighlight: function (element) {
+                $(element).addClass("is-valid").removeClass("is-invalid");
+                $("#lockIcon").removeClass("fa-lock-open").addClass("fa-lock");
+            },
+            invalidHandler: function (event, validator) {
+                var errors = validator.numberOfInvalids();
+                if (errors) {
+                    var message =
+                        errors == 1
+                            ? "Llena correctamente el campo resaltado 🧐🤔😬"
+                            : "Llena correctamente los " + errors + " campos resaltados 🧐🤔😬";
+                    alertSToast('center', 10000, 'error', message);
+                }
+            },
+            submitHandler: function (form) {
+                jsonSubmit({
+                    target: form,
+                    preventDefault: function () {},
+                });
+            },
+        });
+        $("[data-validate-createuser] input").each(setupDelayedValidation);
     } catch (error) {
         console.error("Error Inesperado: ", error);
         alertSToast("center", 8000, "error", `😥 Ah ocurrido un error #304.`);
