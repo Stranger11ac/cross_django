@@ -41,8 +41,8 @@ urlpatterns = [
     
     # Banners ----------------------------------------------------------
     path('administracion/banners/', views.banners_page, name='upload_banner'),
-    path('administracion/banners/editar/<int:banner_id>/', functions.banner_update, name='edit_banner'),
-    path('administracion/banners/eliminar/<int:banner_id>/', functions.banner_delete, name='delete_banner'),
+    path('administracion/banners/editar/', functions.banner_update, name='edit_banner'),
+    path('administracion/banners/eliminar/', functions.banner_delete, name='delete_banner'),
     path('administracion/banners/actualizar_visibilidad/', functions.banners_visibility_now, name='update_banner_visibility'),
 
     # Categorias ----------------------------------------------------------

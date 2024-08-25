@@ -177,8 +177,9 @@
                                                     aria-label="Close"></button>
                                             </div>
                                             <div class="modal-body text-start">
-                                                <form method="post" action="{% url 'edit_banner' onebanner.id %}" data-submit-form autocomplete="off">
+                                                <form method="post" action="{% url 'edit_banner' %}" data-submit-form autocomplete="off">
                                                     {% csrf_token %}
+                                                    <input type="hidden" value="{{ onebanner.id }}" name="banner_id">
                                                     <div>
                                                         <label for="editImagen{{ onebanner.id }}" class="form-label">Imagen:</label>
                                                         <input type="file" class="form-control" id="editImagen{{ onebanner.id }}" name="imagen"
@@ -240,9 +241,10 @@
                                                 <p class="text-center">Se eliminará toda la información relacionada <br> Esta acción es
                                                     permanente</p>
                                                 <hr class="my-4">
-                                                <form id="eliminarBannerForm-{{ onebanner.id }}" action="{% url 'delete_banner' onebanner.id %}" method="post"
+                                                <form id="eliminarBannerForm-{{ onebanner.id }}" action="{% url 'delete_banner' %}" method="post"
                                                     data-submit-form>
                                                     {% csrf_token %}
+                                                    <input type="hidden" value="{{ onebanner.id }}" name="banner_id">
                                                     <div class="d-flex justify-content-between">
                                                         <button type="button" class="btn btn_detail" data-mdb-ripple-init
                                                             data-mdb-dismiss="modal">Cancelar</button>

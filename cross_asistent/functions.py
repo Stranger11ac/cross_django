@@ -161,9 +161,10 @@ def editar_usuario(request, user_id):
 # Banners ----------------------------------------------------------
 @login_required
 @never_cache
-def banner_update(request, banner_id):
-    banner = get_object_or_404(models.Banners, id=banner_id)
-    if request.method == 'POST':        
+def banner_update(request):
+    if request.method == 'POST':
+        banner_id = request.POST.get('banner_id')
+        banner = get_object_or_404(models.Banners, id=banner_id)
         banner.solo_imagen = request.POST.get('soloImagen')
         if banner.solo_imagen == None:
             banner.solo_imagen = False
@@ -190,8 +191,9 @@ def banner_update(request, banner_id):
 
 @login_required
 @never_cache
-def banner_delete(request, banner_id):
+def banner_delete(request):
     if request.method == 'POST':
+        banner_id = request.POST.get('banner_id')
         banner = get_object_or_404(models.Banners, id=banner_id)
         banner.delete()
         icon = 'warning'
