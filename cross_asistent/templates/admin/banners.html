@@ -29,17 +29,20 @@
                     {% for oneBanner in banners %}
                     <div class="carousel-item" id="bannerid_{{oneBanner.id}}" data-mdb-interval="15000">
                         <img src="{{oneBanner.imagen}}" />
-                        {% if not oneBanner.onlyImg %}
                         <div class="carousel-caption">
-                            {% if not oneBanner.visible %}<div class="mt-3"></div><u class="text-danger mt-5">Banner Invisible</u> <br>{% endif %}
+                            {% if not oneBanner.onlyImg %}
                             {% autoescape off %}
                             <h5>{{oneBanner.titulo}}</h5>
                             {% endautoescape %}
                             {% if oneBanner.visible %}
                             <p class="mb-0">{{oneBanner.descripcion}}</p>
                             {% endif %}
+                            {% endif %}
+
+                            {% if not oneBanner.visible %}
+                            <small class="bg-danger rounded-pill p-1">Banner Invisible</small>
+                            {% endif %}
                         </div>
-                        {% endif %}
                     </div>
                     {% endfor %}
                     {% endif %}
@@ -118,9 +121,9 @@
                                 {% for onebanner in banners %}
                                 <tr class="table_odd_items {% if not onebanner.visible %}table-active{% endif %}">
                                     <td {% if not onebanner.visible or onebanner.onlyImg %}colspan="2" {% endif %}>
-                                        {% if not onebanner.visible %}<u class="text-danger">Banner Invisible</u> <br>{% endif %}
                                         {% autoescape off %}{{ onebanner.titulo }}{% endautoescape %}
-                                        {% if onebanner.onlyImg %} <u class="text-success">Se muestra solo la Imagen y el boton de ve mas</u>{% endif %}
+                                        {% if onebanner.onlyImg %} <small class="bg-success rounded-pill p-1 mt-3">Solo la Imagen y boton</small>{% endif %}
+                                        {% if not onebanner.visible %}<small class="bg-danger rounded-pill p-1 mt-3">Banner Invisible</small>{% endif %}
                                     </td>
                                     {% if onebanner.visible and not onebanner.onlyImg %}
                                     <td>{{ onebanner.descripcion }}</td>
@@ -164,7 +167,8 @@
 
                                 <!-- Modal: Edit Banner -->
                                 <div class="modal fade" id="editBannerModal{{ onebanner.id }}" tabindex="-1"
-                                    aria-labelledby="editBannerModalLabel{{ onebanner.id }}" aria-hidden="true">
+                                    aria-labelledby="editBannerModalLabel{{ onebanner.id }}" aria-hidden="true" data-mdb-backdrop="static"
+                                    data-mdb-keyboard="false">
                                     <div class="modal-dialog modal-dialog-centered">
                                         <div class="modal-content">
                                             <div class="modal-header">
@@ -200,8 +204,8 @@
                                                             <small>(Opcional)</small></label>
                                                     </div>
                                                     <div class="form-check mt-4 mb-0">
-                                                        <input class="form-check-input" type="checkbox" value="True" id="soloImagen{{ onebanner.id }}" name="soloImagen"
-                                                        {% if onebanner.onlyImg %}checked{% endif %} />
+                                                        <input class="form-check-input" type="checkbox" value="True" id="soloImagen{{ onebanner.id }}"
+                                                            name="soloImagen" {% if onebanner.onlyImg %}checked{% endif %} />
                                                         <label class="form-check-label" for="soloImagen{{ onebanner.id }}">Mostrar solo la imagen</label>
                                                     </div>
                                                     <div class="mt-4">
@@ -262,8 +266,11 @@
             </div>
         </section>
     </div>
-    <form method="post" action="{% url 'update_banner_visibility' %}" data-submit-form data-submit-ready></form>
 </main>
+<form method="post" action="{% url 'update_banner_visibility' %}" class="d-none" data-submit-form data-submit-ready>
+    {% csrf_token %}
+    <button type="submit" class="d-none"> Actualizar Visibilidad</button>
+</form>
 {% endblock %}
 {% block scripts_end %}
 <script src="{% static 'tinymce/tinymce.min.js' %}"></script>

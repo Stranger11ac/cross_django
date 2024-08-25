@@ -326,8 +326,7 @@ def banners_page(request):
         return JsonResponse({
             'success': True,
             'functions': 'reload',
-            'message': f'Se realizo un post🎈.'
-            # 'message': f'El banner {banner.titulo} fue creado exitosamente 🥳🎉🎈.'
+            'message': f'El banner "{banner.titulo}" fue creado exitosamente 🥳🎉🎈.'
         }, status=200)
     
     banners_all = models.Banners.objects.all()

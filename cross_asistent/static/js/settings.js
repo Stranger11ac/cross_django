@@ -102,6 +102,11 @@ $(document).ready(function () {
         // Crea usuario nuevo desde programador ##############################
         // Registrar un nuevo articulo con TinyMCE ###########################
         $("[data-submit-form]").submit(jsonSubmit);
+        if ($("[data-submit-form]").is("[data-submit-ready]")) {
+            setTimeout(() => {
+                $('[data-submit-ready] button[type="submit"]').click();
+            }, 2000);
+        }
 
         // Editar/Crear usuario
         // generar nueva contraseña aleatoria #################################
@@ -113,7 +118,9 @@ $(document).ready(function () {
             setTimeout(() => {
                 $(this).removeClass("active");
             }, 1000);
-            $("#" + editInputId).val(`UTC${newRandomPass}`).addClass('active');
+            $("#" + editInputId)
+                .val(`UTC${newRandomPass}`)
+                .addClass("active");
         }
 
         // Quitar clase show #####################################

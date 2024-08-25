@@ -174,8 +174,10 @@ def banner_update(request, banner_id):
         banner.titulo = request.POST.get('contenidoWord')
         banner.descripcion = request.POST.get('descripcion')
         banner.redirigir = request.POST.get('redirigir')
-        if banner.expiracion:
-            banner.expiracion = request.POST.get('expiracion')
+        
+        new_expir = request.POST.get('expiracion')
+        if new_expir:
+            banner.expiracion = new_expir
         banner.save()
         
         return JsonResponse({
@@ -199,23 +201,26 @@ def banner_delete(request, banner_id):
 @login_required
 @never_cache
 def banners_visibility_now(request):
-    if request.method == 'POST':
+    if request.method == 'POST':        
         banneridPOST = request.POST.get('banner_id')
         if banneridPOST:
             expired_banners = models.Banners.objects.filter(id=banneridPOST)
             update_visibility = request.POST.get('banner_visible')
+            update_exp = True
             returnJson = {'success': True, 'functions':'reload', 'message':f'Se cambió la visibilidad del banner <span>#{banneridPOST}</span> exitosamente 🫡🥳🎉.'}
         else:
             now = timezone.now()
             expired_banners = models.Banners.objects.filter(expiracion__lte=now, visible=True)
             update_visibility = False
-            returnJson = {'status': 'success'}
+            update_exp = False
+            returnJson = {'success': True, 'message':'Visibilidad actualizada', 'position':'top-end'}
             
         for banner in expired_banners:
             banner.visible = update_visibility
+            if update_exp:
+                banner.expiracion = None
             banner.save()
-        return JsonResponse(returnJson, status=201)
-    return('upload_banner')
+    return JsonResponse(returnJson, status=201)
 
 # Categorias ----------------------------------------------------------
 @login_required
