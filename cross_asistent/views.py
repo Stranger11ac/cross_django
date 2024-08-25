@@ -355,26 +355,26 @@ def banners_page(request):
 @never_cache
 def database_page(request):
     datos_modificados = []
-    for dato in databaseall.order_by('-id'):
-        if dato.imagen:
-            imagen_url = dato.imagen.url
-        else:
-            imagen_url = ''
-        if dato.documento:
-            documento_url = dato.documento.url
-        else:
-            documento_url = ''
-        datos_modificados.append({
-            'id': dato.id,
-            'categoria': dato.categoria,
-            'titulo': dato.titulo,
-            'informacion': dato.informacion,
-            'redirigir': dato.redirigir,
-            'frecuencia': dato.frecuencia,
-            'documento': documento_url,
-            'imagen': imagen_url,
-            'fecha_modificacion': dato.fecha_modificacion,
-        })
+    # for dato in databaseall.order_by('-id'):
+    #     if dato.imagen:
+    #         imagen_url = dato.imagen.url
+    #     else:
+    #         imagen_url = ''
+    #     if dato.documento:
+    #         documento_url = dato.documento.url
+    #     else:
+    #         documento_url = ''
+    #     datos_modificados.append({
+    #         'id': dato.id,
+    #         'categoria': dato.categoria,
+    #         'titulo': dato.titulo,
+    #         'informacion': dato.informacion,
+    #         'redirigir': dato.redirigir,
+    #         'frecuencia': dato.frecuencia,
+    #         'documento': documento_url,
+    #         'imagen': imagen_url,
+    #         'fecha_modificacion': dato.fecha_modificacion,
+    #     })
     context = { 'active_page':'database','pages':functions.pages, 'preguntas_sending':questions_all, 'categorias':categoriasFilter, 'categoriasall':categoriasall, 'database': datos_modificados }
     return render(request, 'admin/database.html', context)
 

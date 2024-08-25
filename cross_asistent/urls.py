@@ -45,13 +45,18 @@ urlpatterns = [
     path('administracion/banners/eliminar/<int:banner_id>/', functions.banner_delete, name='delete_banner'),
     path('administracion/banners/actualizar_visibilidad/', functions.banners_visibility_now, name='update_banner_visibility'),
 
-    # Database ----------------------------------------------------------
+    # Categorias ----------------------------------------------------------
     path('administracion/categorias/crear/', functions.categorias_create, name='categorias_create'),
+    path('administracion/categorias/actualizar/', functions.categorias_update, name='categorias_update'),
+    path('administracion/categorias/eliminar/', functions.categorias_delete, name='categorias_delete'),
+    
+    # Database ----------------------------------------------------------
     path('administracion/base_de_datos/', views.database_page, name='database_page'),
     path('administracion/database/crear/', functions.database_create, name='create_database'),
     path('administracion/database/actualizar/', functions.database_update, name='database_update'),
     path('administracion/database/eliminar/', functions.database_delete, name='database_delete'),
     path('administracion/calendario/', views.calendario_page, name='calendario_page'),
+    path('administracion/preguntas/eliminar/', functions.preguntas_deleted, name='question_deleted'),
 
     # Blog ----------------------------------------------------------
     path('administracion/blog/crear/', views.blog_page, name='create_blog'),
@@ -71,9 +76,6 @@ urlpatterns = [
     # Notificaciones ----------------------------------------------------------
     path('administracion/notificaciones/', views.ver_notis, name='notificaciones'),
     path('administracion/notificaciones/notificacion_leida/', views.marcar_notificaciones_leidas, name='marcar_notificaciones_leidas'),
-
-    # Preguntas ----------------------------------------------------------
-    path('administracion/preguntas/eliminar/', functions.preguntas_deleted, name='question_deleted'),
     
     # Importar y Exportar ----------------------------------------------------------
     path('administracion/export/categorias/', imex_port.export_categorias, name='export_categorias'),

@@ -226,7 +226,7 @@ def categorias_create(request):
             categoriaPOST = request.POST.get('categoria')
             descripcionPOST = request.POST.get('descripcion')
             
-            existing_record = models.Database.objects.filter(categoria=categoriaPOST).exists()
+            existing_record = models.Categorias.objects.filter(categoria=categoriaPOST).exists()
             if existing_record:
                 return JsonResponse({'success': False, 'message': f'la categoría "{categoriaPOST}" ya está registrada. 🧐🤔😯',}, status=400)
             
@@ -234,13 +234,48 @@ def categorias_create(request):
                 categoria=categoriaPOST,
                 descripcion=descripcionPOST,
             )
-            models.Notificacion.objects.create(usuario=request.user,tipo='Categorias',mensaje=f'{request.user.username} ha creado una nueva categoria llamada "{categoriaPOST}" .',)
             
-            return JsonResponse({'success': True, 'functions':'reload', 'message': f'Categoría "{categoriaPOST}" creada exitosamente 😁🎉🎈', 'position':'center'}, status=200)
+            return JsonResponse({'success': True, 'functions':'reload', 'message': f'Categoría <span>{categoriaPOST}</span> fue creada exitosamente 😁🎉🎈', 'position':'center'}, status=200)
         
         except Exception as e:
             return JsonResponse({'success': False, 'message': f'Ocurrió un error 😯😥 <br>{str(e)}'}, status=400)
     return JsonResponse({'error': 'Método no válido'}, status=400)
+
+@login_required
+@never_cache
+def categorias_update(request):
+    if request.method == 'POST':
+        try:
+            idPOST = request.POST.get('id')    
+            categPOST = request.POST.get('categoria')
+            itemUpdate = get_object_or_404(models.Categorias, id=idPOST)
+            itemUpdate.titulo = request.POST.get('descripcion')
+            itemUpdate.save()
+            
+            catMessage = f'Se actualizó la categoria <span>{categPOST}</span> exitosamente 🫡😁🎉'
+            return JsonResponse({'success': True, 'functions': 'reload', 'message': catMessage, 'position': 'center'}, status=200)
+        
+        except Exception as e:
+            return JsonResponse({'success': False, 'message': f'No se pudo actualizar la categoria, Ocurrió un error 😯😥'}, status=400)
+    
+    return JsonResponse({'error': 'Método no válido'}, status=400)
+
+@login_required
+@never_cache
+def categorias_delete(request):
+    if request.method == 'POST':
+        try:
+            idPOST = request.POST.get('id')            
+            categoriaDel = get_object_or_404(models.Categorias, id=idPOST)
+            categoriaDel.delete()
+            
+            catMessage =  f'La categoria <u>{categoriaDel.categoria}</u> se eliminó correctamente 😯🧐😬🫡'
+            return JsonResponse({'success': True, 'functions':'reload', 'message': catMessage, 'icon':'warning'}, status=200)
+        
+        except Exception as e:
+            return JsonResponse({'success': False, 'message': f'Ocurrió un error 😯😥 <br>{str(e)}'}, status=400)
+    return JsonResponse({'error': 'Método no válido'}, status=400)
+
 
 # Base de Datos ----------------------------------------------------------
 @login_required
@@ -264,7 +299,7 @@ def database_create(request):
             existing_record = models.Database.objects.filter(titulo=tituloPOST,evento_fecha_inicio=evento_fecha_inicioPOST,evento_fecha_fin=evento_fecha_finPOST,).exists()
 
             if existing_record:
-                return JsonResponse({'success': False, 'message': '😯Este evento ya existe. <br> Hay otro registro con el mismo nombre, fecha de inicio y fecha de fin. 🧐🤔😯',}, status=400)
+                return JsonResponse({'success': False, 'message': '😯Este registro ya existe. <br> Hay otro registro con el mismo nombre, fecha de inicio y fecha de fin. 🧐🤔😯',}, status=400)
             
             if categoriaIdPOST == 'Preguntas':
                 frecuenciaVAL = 1

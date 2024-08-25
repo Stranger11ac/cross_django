@@ -432,14 +432,14 @@
                                                     aria-label="Close"></button>
                                             </div>
                                             <div class="modal-body text-start">
-                                                <form method="post" action="{% url 'database_update' %}" data-submit-form id="dbUpdate" autocomplete="off">
+                                                <form method="post" action="{% url 'categorias_update' %}" data-submit-form id="dbUpdate" autocomplete="off">
                                                     {% csrf_token %}
                                                     <input type="text" class="d-none" value="{{ dato.id }}" name="id">
 
                                                     <div class="form-outline mb-4" data-mdb-input-init>
                                                         <i class="fa-solid fa-layer-group trailing"></i>
                                                         <input type="text" id="categoria_{{ dato.id }}" name="categoria"
-                                                            class="form-control form-icon-trailing active" value="{{ dato.categoria }}" required />
+                                                            class="form-control form-icon-trailing active" value="{{ dato.categoria }}" readonly required />
                                                         <label class="form-label" for="categoria_{{ dato.id }}">Nombre:</label>
                                                     </div>
 
@@ -480,7 +480,7 @@
                                             </div>
                                             <div class="modal-footer justify-content-between">
                                                 <button type="button" class="btn btn_detail" data-mdb-ripple-init data-mdb-dismiss="modal">Cancelar</button>
-                                                <form method="post" action="{% url 'database_delete' %}" data-submit-form>
+                                                <form method="post" action="{% url 'categorias_delete' %}" data-submit-form>
                                                     {% csrf_token %}
                                                     <input type="text" value="{{ dato.id }}" name="id" class="d-none">
                                                     <button type="submit" class="btn btn-danger">Eliminar <i class="fa-regular fa-trash-can ms-1"></i></button>

@@ -85,7 +85,7 @@ class Categorias(models.Model):
         return self.categoria    
 
 class Database(models.Model):
-    categoria = models.ForeignKey(Categorias, on_delete=models.SET_NULL, null=True)
+    categoria = models.ForeignKey(Categorias, on_delete=models.CASCADE, null=True)
     titulo = models.CharField(max_length=200)
     informacion = models.TextField(blank=True, null=True)
     redirigir = models.URLField(blank=True, null=True)

@@ -148,7 +148,7 @@ def import_csv_data(request, model, field_map, success_message):
                         else:
                             data[field] = row[index]
                     model.objects.create(**data)
-                return JsonResponse({'success': True, 'message': success_message}, status=200)
+                return JsonResponse({'success': True, 'functions':'reload', 'message': success_message}, status=200)
             except UnicodeDecodeError:
                 return JsonResponse({'success': False, 'message': 'Error de codificación. Asegúrese de que el archivo esté en formato UTF-8.'}, status=400)
             except Exception as e:
