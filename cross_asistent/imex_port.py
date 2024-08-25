@@ -30,7 +30,7 @@ def export_categorias(request):
     now = timezone.localtime(timezone.now()).strftime('%d-%m-%Y_%H%M')
     if request.user.is_staff:
         rows = [
-            [item.categoria if item.categoria else '', item.descripcion if item.descripcion else '']
+            [item.categoria or '', item.descripcion or '']
             for item in categoriasall
         ]
         return create_csv_response(f"UTC_categorias_{now}.csv", ['Categoria', 'Descripcion'], rows)
@@ -51,18 +51,18 @@ def export_database(request):
     if request.user.is_staff:
         rows = [
             [
-                info.categoria if info.categoria else '',
-                info.titulo if info.titulo else '',
-                info.informacion if info.informacion else '',
-                info.redirigir if info.redirigir else '',
+                info.categoria or '',
+                info.titulo or '',
+                info.informacion or '',
+                info.redirigir or '',
                 info.frecuencia,
-                info.uuid if info.uuid else '',
-                info.evento_fecha_inicio if info.evento_fecha_inicio else '',
-                info.evento_fecha_fin if info.evento_fecha_fin else '',
+                info.uuid or '',
+                info.evento_fecha_inicio or '',
+                info.evento_fecha_fin or '',
                 info.evento_allDay,
-                info.evento_lugar if info.evento_lugar else '',
-                info.evento_className if info.evento_className else '',
-                info.fecha_modificacion if info.fecha_modificacion else '',
+                info.evento_lugar or '',
+                info.evento_className or '',
+                info.fecha_modificacion or '',
             ]
             for info in databaseall
         ]
@@ -97,15 +97,15 @@ def export_mapa(request):
     if request.user.is_staff:
         rows = [
             [
-                info.uuid if info.uuid else '',
-                info.nombre if info.nombre else '',
-                info.informacion if info.informacion else '',
-                info.color if info.color else '',
-                info.door_cords if info.door_cords else '',
-                info.p1_polygons if info.p1_polygons else '',
-                info.p2_polygons if info.p2_polygons else '',
-                info.p3_polygons if info.p3_polygons else '',
-                info.p4_polygons if info.p4_polygons else '',
+                info.uuid or '',
+                info.nombre or '',
+                info.informacion or '',
+                info.color or '',
+                info.door_cords or '',
+                info.p1_polygons or '',
+                info.p2_polygons or '',
+                info.p3_polygons or '',
+                info.p4_polygons or '',
             ]
             for info in mapaall
         ]
