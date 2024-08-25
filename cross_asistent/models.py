@@ -20,6 +20,7 @@ def create_filename_path(filename, setname, sufix, length, lenghtrandom, strpath
     filename = f"{sufix}_{slugify(setname)}_uid-{random_string}.{ext}"
     return os.path.join(strpath, filename)
 
+
 def set_imgBanner_path(instance, filename):
     newName = instance.titulo.strip().replace(' ', '')
     thispath = os.path.join(settings.MEDIA_ROOT, 'imagenes/banners/')
