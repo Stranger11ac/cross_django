@@ -5,8 +5,8 @@
 <link rel="stylesheet" href="{% static 'css/swiper-bundle.min.css' %}" />
 <script type="module" src="{% static 'js/model-viewer.min.js' %}"></script>
 {% endblock %}
-{% block link_end-extra %}
-<button type="button" class="btn btn_detail btn-floating p-0 ms-2 d-none d-lg-flex" data-mdb-ripple-init data-mdb-modal-init data-mdb-target="#modalqr">
+{% block qrBTN %}
+<button type="button" class="btn btn_detail btn-floating p-0 me-2 me-md-0 ms-md-2" data-mdb-ripple-init data-mdb-modal-init data-mdb-target="#modalqr">
     <i class="fa-solid fa-qrcode fs-14"></i>
 </button>
 {% endblock %}

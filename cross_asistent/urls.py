@@ -1,6 +1,4 @@
 from django.urls import path
-from django.conf import settings
-from django.conf.urls.static import static
 from . import chatbot, functions, views, imex_port
 
 urlpatterns = [
@@ -85,6 +83,3 @@ urlpatterns = [
     path('administracion/export/mapa/', imex_port.export_mapa, name='export_mapa'),
     path('administracion/importar/mapa/', imex_port.import_mapa, name='import_mapa'),
 ]
-
-if settings.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

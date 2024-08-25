@@ -13,7 +13,7 @@ def generate_random_string(length):
     characters = string.ascii_letters + string.digits
     return ''.join(random.choice(characters) for _ in range(length))
 
-def create_filename_path(filename, setname, sufix,length, lenghtrandom, strpath):
+def create_filename_path(filename, setname, sufix, length, lenghtrandom, strpath):
     ext = filename.split('.')[-1]
     setname = setname[:length] if len(setname) > length else setname
     random_string = generate_random_string(lenghtrandom)
@@ -36,7 +36,7 @@ def set_imgDB_path(instance, filename):
         elif categoria == 'Calendario':
             thispath = os.path.join(thispath, 'calendario/')
     
-    return create_filename_path(filename, newName, 'db', 35, 8, thispath)
+    return create_filename_path(filename, newName, 'db', 35, 6, thispath)
 
 def set_imgBlog_path(instance, filename):
     newName = instance.titulo.strip().replace(' ', '')
@@ -62,7 +62,7 @@ def set_pdfDB_path(instance, filename):
 class Banners(models.Model):
     titulo = models.CharField(max_length=150, null=True, blank=True)
     descripcion = models.CharField(max_length=350, null=True, blank=True)
-    redirigir = models.CharField(max_length=200, null=True, blank=True)
+    redirigir = models.TextField(null=True, blank=True)
     imagen = models.ImageField(upload_to=set_imgBanner_path, blank=True, null=True)
     expiracion = models.DateTimeField(blank=True, null=True)
     solo_imagen = models.BooleanField(default=False)
@@ -88,7 +88,7 @@ class Database(models.Model):
     categoria = models.ForeignKey(Categorias, on_delete=models.CASCADE, null=True)
     titulo = models.CharField(max_length=200)
     informacion = models.TextField(blank=True, null=True)
-    redirigir = models.URLField(blank=True, null=True)
+    redirigir = models.TextField(blank=True, null=True)
     frecuencia = models.IntegerField(default=0)
     documento = models.FileField(upload_to=set_pdfDB_path, blank=True, null=True)
     imagen = models.ImageField(upload_to=set_imgDB_path, blank=True, null=True)
@@ -162,6 +162,14 @@ class Preguntas(models.Model):
     pregunta = models.CharField(max_length=150)
     descripcion = models.TextField(blank=True)
     fecha = models.DateTimeField(auto_now_add=True)
+    
+class Configuraciones(models.Model):
+    qr_image = models.ImageField(upload_to=set_imgProfile_path, blank=True, null=True)
+    
+    def delete(self, *args, **kwargs):
+        if self.qr_image:
+            self.qr_image.delete()
+        super(Configuraciones, self).delete(*args, **kwargs)
 
 class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)

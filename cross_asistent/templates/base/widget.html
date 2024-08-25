@@ -28,16 +28,17 @@
             </a>
             <div class="flex-grow-1"></div>
             <div class="m-0 d-flex align-items-center">
-                <div class="me-2 me-md-0 ms-md-2 order-lg-last">
-                    <button type="button" class="btn btn-floating btn_detail" data-mdb-ripple-init data-mdb-modal-init data-mdb-target="#configModal">
+                <div class="order-lg-last">
+                    <button type="button" class="btn btn-floating btn_detail me-2 me-md-0 ms-md-2" title="Configuraciones" data-mdb-ripple-init
+                        data-mdb-modal-init data-mdb-target="#configModal">
                         <i class="fa-solid fa-gear fs-14"></i>
                     </button>
+                    {% block qrBTN %}{% endblock %}
                 </div>
                 <button data-mdb-collapse-init class="navbar-toggler" type="button" data-mdb-target="#navbarText" aria-controls="navbarText"
                     aria-expanded="false" aria-label="Toggle navigation"></button>
                 <div class="collapse navbar-collapse position-absolute top-100 navbar-light bg-body-tertiary flex-grow-0" id="navbarText">
                     <ul class="navbar-nav mb-lg-0 px-2 px-lg-0">
-                        {% block link_start-extra %}{% endblock %}
                         {% block link_default %}
                         <li class="nav-item">
                             <a class="btn {% if active_page == 'inicio' %}btn_secondary{% else %}btn_detail{% endif %} m-1 my-lg-0 d-block" href="/">Inicio <i
@@ -80,7 +81,6 @@
                             </div>
                         </li>
                         {% endblock %}
-                        {% block link_end-extra %}{% endblock %}
                     </ul>
                 </div>
             </div>
