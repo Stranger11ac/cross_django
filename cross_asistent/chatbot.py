@@ -11,7 +11,6 @@ from . import models
 import threading
 import openai
 import json
-import whisper
 import unicodedata
 import spacy
 
@@ -28,34 +27,24 @@ recognized_texts = []
 is_recognizing = False
 recognition_thread = None
 
-
-# Cargar el modelo de Whisper una vez
-model = whisper.load_model("base")
-
 def speekText():
     global is_recognizing, recognized_texts
-    recognized_texts = []
     r = sr.Recognizer()
-
+    recognized_texts = []
     while is_recognizing:
         try:
             with sr.Microphone() as source2:
+                r.adjust_for_ambient_noise(source2, duration=0.2)
                 print("Por favor, hable ahora...")
                 audio2 = r.listen(source2)
-                # Guardar el audio capturado en un archivo temporal
-                temp_audio_path = "temp_audio.wav"
-                with open(temp_audio_path, "wb") as f:
-                    f.write(audio2.get_wav_data())
-                
-                # Usar Whisper para transcribir el audio
-                result = model.transcribe(temp_audio_path)
-                recognized_text = result["text"].lower().strip()
-                
+                recognized_text = r.recognize_google(audio2, language='es-ES')
+                recognized_text = recognized_text.lower().strip()
                 print("Dijiste:", recognized_text)
                 recognized_texts.append(recognized_text)
-                
-        except Exception as e:
-            print(f"Ocurrió un error: {e}")
+        except sr.RequestError as e:
+            print(f"No se pueden solicitar resultados; {e}")
+        except sr.UnknownValueError:
+            print("Ocurrió un error desconocido")
 
 @csrf_exempt
 def start_recognition(request):
