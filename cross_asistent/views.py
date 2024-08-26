@@ -484,7 +484,7 @@ def update_create_pleace_map(request):
     imagenPost = request.FILES.get('fotoEdificio')
 
     with transaction.atomic():
-        if isNewPost is None:
+        if isNewPost == 'notnew':
             if models.Mapa.objects.filter(uuid=uuidPost).exists():
                 edificio = get_object_or_404(models.Mapa, uuid=uuidPost)
                 edificio.nombre = nombrePost
@@ -495,7 +495,6 @@ def update_create_pleace_map(request):
                 edificio.p4_polygons = p4Post
                 edificio.door_cords = door_cordsPost
                 edificio.informacion = informacionPost
-                edificio.uuid = uuidPost,
                 edificio.save()
                 success_message = f'Se Actualizaron los datos de <span>"{nombrePost}"</span> en el mapa de forma exitosa 🧐😁🎈'
 

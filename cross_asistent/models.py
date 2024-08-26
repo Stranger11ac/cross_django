@@ -17,7 +17,7 @@ def create_filename_path(filename, setname, sufix, length, lenghtrandom, strpath
     ext = filename.split('.')[-1]
     setname = setname[:length] if len(setname) > length else setname
     random_string = generate_random_string(lenghtrandom)
-    filename = f"{sufix}_{slugify(setname)}_uid-{random_string}.{ext}"
+    filename = f"{sufix}_{slugify(setname)}_{random_string}.{ext}"
     return os.path.join(strpath, filename)
 
 
@@ -36,23 +36,27 @@ def set_imgDB_path(instance, filename):
             thispath = os.path.join(thispath, 'mapa/')
         elif categoria == 'Calendario':
             thispath = os.path.join(thispath, 'calendario/')
-    
-    return create_filename_path(filename, newName, 'db', 45, 6, thispath)
+    return create_filename_path(filename, newName, 'db', 35, 6, thispath)
 
 def set_imgBlog_path(instance, filename):
     newName = instance.titulo.strip().replace(' ', '')
     thispath = os.path.join(settings.MEDIA_ROOT, 'imagenes/blogs/')
     return create_filename_path(filename, newName, 'blog', 18, 8, thispath)
 
+def set_imgMarker_path(instance, filename):
+    newName = instance.nombre.strip().replace(' ', '')
+    thispath = os.path.join(settings.MEDIA_ROOT, 'imagenes/mapa/')
+    return create_filename_path(filename, newName, 'marker', 18, 8, thispath)
+
 def set_imgs_path(instance, filename):
     newName = filename.strip().replace(' ', '')
     thispath = os.path.join(settings.MEDIA_ROOT, 'imagenes/')
-    return create_filename_path(filename, newName, 'cross_image', 20, 11, thispath)
+    return create_filename_path(filename, newName, 'cross_image', 22, 11, thispath)
 
 def set_conf_path(instance, filename):
     newName = filename.strip().replace(' ', '')
     thispath = os.path.join(settings.MEDIA_ROOT, 'settings/')
-    return create_filename_path(filename, newName, 'config', 20, 4, thispath)
+    return create_filename_path(filename, newName, 'config', 16, 4, thispath)
 
 def set_imgProfile_path(instance, filename):
     newName = instance.user.username.strip().replace(' ', '')
@@ -69,7 +73,7 @@ class Banners(models.Model):
     titulo = models.CharField(max_length=150, null=True, blank=True)
     descripcion = models.CharField(max_length=350, null=True, blank=True)
     redirigir = models.TextField(null=True, blank=True)
-    imagen = models.ImageField(upload_to=set_imgBanner_path, blank=True, null=True)
+    imagen = models.ImageField(upload_to=set_imgBanner_path, max_length=120, blank=True, null=True)
     expiracion = models.DateTimeField(blank=True, null=True)
     solo_imagen = models.BooleanField(default=False)
     visible = models.BooleanField(default=True)
@@ -96,9 +100,9 @@ class Database(models.Model):
     informacion = models.TextField(blank=True, null=True)
     redirigir = models.TextField(blank=True, null=True)
     frecuencia = models.IntegerField(default=0)
-    documento = models.FileField(upload_to=set_pdfDB_path, blank=True, null=True)
-    imagen = models.ImageField(upload_to=set_imgDB_path, blank=True, null=True)
-    uuid = models.CharField(max_length=23)
+    documento = models.FileField(upload_to=set_pdfDB_path, max_length=120, blank=True, null=True)
+    imagen = models.ImageField(upload_to=set_imgDB_path, max_length=120, blank=True, null=True)
+    uuid = models.CharField(max_length=25)
     evento_fecha_inicio = models.DateTimeField(blank=True, null=True)
     evento_fecha_fin = models.DateTimeField(blank=True, null=True)
     evento_allDay = models.BooleanField(default=False)
@@ -115,9 +119,17 @@ class Database(models.Model):
         if self.documento:
             self.documento.delete()
         super(Database, self).delete(*args, **kwargs)
+    
+    def save(self, *args, **kwargs):
+        if self.pk:
+            old_info = Database.objects.get(pk=self.pk)
+            if old_info.imagen and old_info.imagen != self.imagen:
+                old_info.imagen.delete(save=False)
+        super().save(*args, **kwargs)
+        
 
 class Articulos(models.Model):
-    encabezado = models.ImageField(upload_to=set_imgBlog_path, blank=True, null=True)
+    encabezado = models.ImageField(upload_to=set_imgBlog_path, max_length=120, blank=True, null=True)
     titulo = models.CharField(max_length=200)
     contenido = models.TextField()
     autor = models.CharField(max_length=100)
@@ -133,21 +145,28 @@ class Articulos(models.Model):
         super(Articulos, self).delete(*args, **kwargs)
 
 class Mapa(models.Model):
-    uuid = models.CharField(max_length=23)
+    uuid = models.CharField(max_length=25)
     nombre = models.CharField(max_length=200)
     informacion = models.TextField()
     color = models.CharField(max_length=50)
-    door_cords = models.CharField(max_length=100, null=True)
-    p1_polygons = models.CharField(max_length=100, blank=True, null=True)
-    p2_polygons = models.CharField(max_length=100, blank=True, null=True)
-    p3_polygons = models.CharField(max_length=100, blank=True, null=True)
-    p4_polygons = models.CharField(max_length=100, blank=True, null=True)
+    door_cords = models.CharField(max_length=150, null=True)
+    p1_polygons = models.CharField(max_length=150, blank=True, null=True)
+    p2_polygons = models.CharField(max_length=150, blank=True, null=True)
+    p3_polygons = models.CharField(max_length=150, blank=True, null=True)
+    p4_polygons = models.CharField(max_length=150, blank=True, null=True)
+    is_marker = models.BooleanField(default=False)
+    img_marker = models.ImageField(upload_to=set_imgMarker_path, max_length=120, blank=True, null=True)
     
     def __str__(self):
         return self.nombre
+    
+    def delete(self, *args, **kwargs):
+        if self.img_marker:
+            self.img_marker.delete()
+        super(Mapa, self).delete(*args, **kwargs)
 
 class Imagenes(models.Model):
-    imagen = models.ImageField(upload_to=set_imgs_path, blank=True, null=True)
+    imagen = models.ImageField(upload_to=set_imgs_path, max_length=120, blank=True, null=True)
     
     def __str__(self):
         return self.imagen.name
@@ -170,14 +189,14 @@ class Preguntas(models.Model):
     fecha = models.DateTimeField(auto_now_add=True)
     
 class Configuraciones(models.Model):
-    qr_image = models.ImageField(upload_to=set_conf_path)
+    qr_image = models.ImageField(upload_to=set_conf_path, max_length=120)
     redes_sociales = models.TextField(blank=True, null=True)
     copyright_year = models.CharField(max_length=50, default='2020')
     utc_link = models.TextField()
     calendar_btnsYear = models.BooleanField(default=True)
-    about_img_first = models.ImageField(upload_to=set_conf_path)
+    about_img_first = models.ImageField(upload_to=set_conf_path, max_length=120)
     about_text_first = models.TextField() # texto de tiny
-    about_img_second = models.ImageField(upload_to=set_conf_path)
+    about_img_second = models.ImageField(upload_to=set_conf_path, max_length=120)
     about_text_second = models.TextField() # texto de tiny
     
     def __str__(self):
@@ -192,7 +211,7 @@ class Configuraciones(models.Model):
 
 class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    profile_picture = models.ImageField(upload_to=set_imgProfile_path, blank=True, null=True)
+    profile_picture = models.ImageField(upload_to=set_imgProfile_path, max_length=120, blank=True, null=True)
     tutorial = models.BooleanField(default=True)
     blog_firma = models.CharField(max_length=200 ,blank=True, null=True)
     password_update = models.DateField(blank=True, null=True)
@@ -206,27 +225,27 @@ class UserProfile(models.Model):
         super().save(*args, **kwargs)
 
 
+# Función genérica para eliminar archivos asociados a un objeto
+def delete_files(instance, fields):
+    for field in fields:
+        file = getattr(instance, field, None)
+        if file:
+            file.delete(save=False)
+
+# Señal para eliminar archivos antes de eliminar el objeto
 @receiver(pre_delete, sender=Banners)
-def delete_files_on_object_delete(sender, instance, **kwargs):
-    if instance.imagen:
-        instance.imagen.delete(save=False)
-
 @receiver(pre_delete, sender=Database)
-def delete_files_on_object_delete(sender, instance, **kwargs):
-    if instance.imagen:
-        instance.imagen.delete(save=False)
-    if instance.documento:
-        instance.documento.delete(save=False)
-
 @receiver(pre_delete, sender=Articulos)
-def delete_files_on_object_delete(sender, instance, **kwargs):
-    if instance.encabezado:
-        instance.encabezado.delete(save=False)
-
 @receiver(pre_delete, sender=Imagenes)
 def delete_files_on_object_delete(sender, instance, **kwargs):
-    if instance.imagen:
-        instance.imagen.delete(save=False)
+    fields_to_delete = {
+        Banners: ['imagen'],
+        Database: ['imagen', 'documento'],
+        Articulos: ['encabezado'],
+        Imagenes: ['imagen'],
+    }
+    delete_files(instance, fields_to_delete[sender])
+
 
 @receiver(post_delete, sender=UserProfile)
 def delete_profile_picture_on_delete(sender, instance, **kwargs):

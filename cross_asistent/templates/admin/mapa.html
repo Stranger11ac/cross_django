@@ -52,17 +52,6 @@
     method="post" action="{% url 'upload_map' %}" data-submit-form autocomplete="off">
     <div class="offcanvas-header position-relative p-0">
         <button type="button" class="btn-close p-3 m-1 m-md-2 me-3" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-        <!-- <section class="header-image">
-            <img src="{% static 'img/default_image.webp' %}" id="imagen_actual" data-img_dom />
-            <div class="mask mask_white">
-                <div class="d-flex align-items-end h-100 px-3">
-                    <div class="form-outline" data-mdb-input-init>
-                        <input type="text" id="nombreEdificio" id="nombreEdificio" class="form-control" />
-                        <label class="form-label" for="nombreEdificio">Nombre del Lugar:</label>
-                    </div>
-                </div>
-            </div>
-        </section> -->
     </div>
     <div class="offcanvas-body p-0" id="offcanvasContent">
         <div class="position-relative min_h100">
@@ -84,7 +73,7 @@
                 <label class="btn bg_blue-green btn-block text-white" for="fotoEdificio" data-mdb-ripple-init data-mdb-ripple-color="white">
                     Cambiar foto <i class="fa-regular fa-image ms-1"></i></label>
             </div>
-            <input type="checkbox" name="isNew" id="isNewEdif" class="d-none">
+            <input type="text" name="isNew" id="isNewEdif" class="d-none">
             <input type="text" name="uuid" id="uuid" class="d-none" data-uuid data-new-uid="{{UID}}" required>
             <!-- Color del poligono -->
             <section class="row">

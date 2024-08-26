@@ -305,7 +305,7 @@ $(document).ready(function () {
                 $("#switchTheme").prop("checked", true);
                 $("html").attr("data-mdb-theme", "light");
                 localStorage.setItem("mapbox-last_layer", "light-v11");
-            } else {
+            } else if (colorTheme == "dark") {
                 $("#switchText").text("Oscuro");
                 $("#switchTheme").prop("checked", false);
                 $("html").attr("data-mdb-theme", "dark");
