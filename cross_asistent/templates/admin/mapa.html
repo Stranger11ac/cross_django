@@ -66,7 +66,7 @@
     </div>
     <div class="offcanvas-body p-0" id="offcanvasContent">
         <div class="position-relative min_h100">
-            <img src="{% static 'img/default_image.webp' %}" id="imagen_actual" class="img-fluid" data-img_dom />
+            <img src="{% static 'img/default_image.webp' %}" id="imagen_actual" class="img-fluid" />
             <div class="mask mask_white">
                 <div class="d-flex align-items-end h-100 px-3">
                     <div class="form-outline" data-mdb-input-init>
@@ -76,8 +76,14 @@
                 </div>
             </div>
         </div>
-        <div class="p-3 mt-3">
+        <div class="p-3 mt-2">
             {% csrf_token %}
+            <!-- Foto del Lugar -->
+            <div class="mb-4">
+                <input type="file" class="none" id="fotoEdificio" name="fotoEdificio" accept="image/*" data-img_dom="imagen_actual" />
+                <label class="btn bg_blue-green btn-block text-white" for="fotoEdificio" data-mdb-ripple-init data-mdb-ripple-color="white">
+                    Cambiar foto <i class="fa-regular fa-image ms-1"></i></label>
+            </div>
             <input type="checkbox" name="isNew" id="isNewEdif" class="d-none">
             <input type="text" name="uuid" id="uuid" class="d-none" data-uuid data-new-uid="{{UID}}" required>
             <!-- Color del poligono -->
@@ -145,15 +151,9 @@
                 <textarea id="textTiny" class="form-control" name="contenidoWord"
                     placeholder="Escribe a detalle sobre el lugar, puedes hacer listas, encabezados, parrafos y tablas"></textarea>
             </div>
-            <!-- Foto del Lugar -->
-            <div class="mt-4">
-                <input type="file" class="none" id="fotoEdificio" name="fotoEdificio" accept="image/*" data-img_dom-change />
-                <label class="btn bg_blue-green btn-block text-white" for="fotoEdificio" data-mdb-ripple-init data-mdb-ripple-color="white">
-                    Cambiar foto <i class="fa-regular fa-image ms-1"></i></label>
-            </div>
             <div id="submitEdificio" class="offcanvas-footer mt-4 row">
                 <div class="col-2 none" id="btnDeletedPleace">
-                    <button title="Borrar" type="button" class="btn btn-danger btn-block px-1" data-mdb-ripple-init data-mdb-ripple-color="white"
+                    <button title="Borrar lugar" type="button" class="btn btn-danger btn-block px-1" data-mdb-ripple-init data-mdb-ripple-color="white"
                         data-bs-dismiss="offcanvas" data-mdb-ripple-init data-mdb-modal-init data-mdb-target="#deletePleace">
                         <i class="fa-regular fa-trash-can tscale-1-4"></i>
                     </button>
@@ -254,7 +254,7 @@
             </div>
             <div class="modal-body">
                 <h4 class="col-8 col-md-12 mx-auto text-center">¿Quieres saber como llegar a la UTC?</h4>
-                <p class="p-3">Con esta opción te enviaremos a <span class="fw-bold style_google">Google</span> Maps, para que puedas ir desde tu ubicación 
+                <p class="p-3">Con esta opción te enviaremos a <span class="fw-bold style_google">Google</span> Maps, para que puedas ir desde tu ubicación
                     hasta la UTC
                 </p>
             </div>

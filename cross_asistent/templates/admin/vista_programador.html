@@ -229,7 +229,7 @@
                                 <tr class="results_item table_odd_items">
                                     <td class="text-center d-none d-md-table-cell">{{question.id}}</td>
                                     <td>
-                                        <div class="accordion accordion-borderless" id="questionList">
+                                        <div class="accordion" id="questionList">
                                             <div class="accordion-item">
                                                 <h2 class="accordion-header" id="heading_{{question.id}}">
                                                     <div data-mdb-collapse-init class="accordion-button collapsed" type="button" data-mdb-toggle="collapse"
@@ -517,133 +517,189 @@
             <div class="card">
                 <form class="card-body" action="{% url 'update_settings' %}" method="post" data-submit-blur data-submit-form>
                     {% csrf_token %}
-                    <h4 class="text-center mb-4">Mas <span class="text_detail">Configuraciones</span></h4>
+                    <h4 class="text-center mb-4"><span class="text_detail">Mas</span> Configuraciones</h4>
                     {% for config in settingsall %}
-                    <h5 class="mb-3"><i class="fa-solid fa-caret-right me-2"></i>Imagen QR</h5>
-                    <section class="row">
-                        <div class="col mb-3 d-flex align-items-center justify-content-center">
-                            <img src="{{config.qr_image.url}}" alt="Imagen QR del sitio web" id="qrImgDom" class="img-fluid img-rounded materialBoxed max_w200">
-                        </div>
-                        <div class="col-md-4 d-flex align-items-center">
-                            <label class="btn btn-block btn_cyan-purple text-white" for="qrImage">
-                                Cambiar imagen <i class="fa-solid fa-camera-rotate ms-1"></i>
-                            </label>
-                            <input type="file" class="none input_change" id="qrImage" name="qrImage" accept="image/*" data-img_dom="qrImgDom" />
-                        </div>
-                    </section>
-                    <h5 class="mt-5"><i class="fa-solid fa-caret-right me-2"></i>Footer</h5>
-                    <section class="row">
-                        <div class="col-md-6">
-                            <div data-mdb-input-init class="form-outline mt-4">
-                                <input type="text" id="cr_year" name="cr_year" class="form-control input_blur active text-end" value="{{config.copyright_year}}"
-                                    required />
-                                <label class="form-label" for="cr_year">Copyright:</label>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div data-mdb-input-init class="form-outline mt-4">
-                                <input type="text" id="utclink" name="utclink" class="form-control input_blur active text-end" value="{{config.utc_link}}"
-                                    required />
-                                <label class="form-label" for="utclink">Sitio web Oficial:</label>
-                            </div>
-                        </div>
-                        <h5 class="mt-5 mb-0"><i class="fa-solid fa-caret-right me-2"></i>Redes Sociales</h5>
-                        <div class="row pe-0 mt-4">
-                            <div class="col-10 col-lg-2">
-                                <select class="form-select" id="linkicon" name="linkicon" required>
-                                    <option value="Facebook">Facebook</option>
-                                    <option value="Instagram">Instagram</option>
-                                    <option value="Twitter">Twitter</option>
-                                </select>
-                            </div>
-                            <div class="col-2 col-lg-1">
-                                <input type="color" class="d-block form-control input_blur form-control-color p-1 rounded border border-secondary"
-                                    id="linkcolor" value="#808080">
-                            </div>
-                            <div class="col-10 col-lg-8 mt-4 mt-lg-0">
-                                <div data-mdb-input-init class="form-outline">
-                                    <input type="text" id="linkurl" name="linkurl" class="form-control input_blur active text-end" />
-                                    <label class="form-label" for="linkurl">URL:</label>
+
+                    <div class="accordion accordion-borderless" id="settingsAccordion">
+                        <div class="accordion-item">
+                            <h5 class="accordion-header" id="flush-headingqrimage">
+                                <button data-mdb-collapse-init class="accordion-button" type="button" data-mdb-toggle="collapse"
+                                    data-mdb-target="#flush-collapseqrimage" aria-expanded="true" aria-controls="flush-collapseqrimage">
+                                    Imagen QR
+                                </button>
+                            </h5>
+                            <div id="flush-collapseqrimage" class="accordion-collapse collapse show" aria-labelledby="flush-headingqrimage"
+                                data-mdb-parent="#settingsAccordion">
+                                <div class="accordion-body">
+                                    <section class="row">
+                                        <div class="col mb-3 d-flex align-items-center justify-content-center">
+                                            <img src="{{config.qr_image.url}}" alt="Imagen QR del sitio web" id="qrImgDom"
+                                                class="img-fluid img-rounded materialBoxed max_w200">
+                                        </div>
+                                        <div class="col-md-4 d-flex align-items-center">
+                                            <label class="btn btn-block btn_cyan-purple text-white" for="qrImage">
+                                                Cambiar imagen <i class="fa-solid fa-camera-rotate ms-1"></i>
+                                            </label>
+                                            <input type="file" class="none input_change" id="qrImage" name="qrImage" accept="image/*" data-img_dom="qrImgDom" />
+                                        </div>
+                                    </section>
                                 </div>
                             </div>
-                            <div class="col-2 col-lg p-0 mt-4 mt-lg-0">
-                                <button type="button" class="btn btn-danger btn-block" title="eliminar link"><i class="fa-regular fa-trash-can"></i></button>
-                            </div>
                         </div>
-                        <div class="row pe-0 mt-4">
-                            <div class="col-10 col-lg-2">
-                                <select class="form-select" id="linkicon" name="linkicon" required>
-                                    <option value="Facebook">Facebook</option>
-                                    <option value="Instagram">Instagram</option>
-                                    <option value="Twitter">Twitter</option>
-                                </select>
-                            </div>
-                            <div class="col-2 col-lg-1">
-                                <input type="color" class="d-block form-control form-control-color p-1 rounded border border-secondary" id="linkcolor"
-                                    value="#808080">
-                            </div>
-                            <div class="col-10 col-lg-8 mt-4 mt-lg-0">
-                                <div data-mdb-input-init class="form-outline">
-                                    <input type="text" id="linkurl" name="linkurl" class="form-control active text-end" />
-                                    <label class="form-label" for="linkurl">URL:</label>
+                        <div class="accordion-item">
+                            <h5 class="accordion-header" id="flush-headingcalendar">
+                                <button data-mdb-collapse-init class="accordion-button" type="button" data-mdb-toggle="collapse"
+                                    data-mdb-target="#flush-collapsecalendar" aria-expanded="true" aria-controls="flush-collapsecalendar">
+                                    Calendario
+                                </button>
+                            </h5>
+                            <div id="flush-collapsecalendar" class="accordion-collapse collapse" aria-labelledby="flush-headingcalendar"
+                                data-mdb-parent="#settingsAccordion">
+                                <div class="accordion-body">
+                                    <div class="form-check">
+                                        <input class="form-check-input" {% if config.calendar_btnsYear %}checked{% endif %} type="checkbox"
+                                            value="{{config.calendar_btnsYear}}" id="btnsYear" name="btnsYear" />
+                                        <label class="form-check-label" for="btnsYear">Mostrar Botones para cambiar año:</label>
+                                    </div>
                                 </div>
                             </div>
-                            <div class="col-2 col-lg p-0 mt-4 mt-lg-0">
-                                <button type="button" class="btn btn-danger btn-block" title="eliminar link"><i class="fa-regular fa-trash-can"></i></button>
+                        </div>
+                        <div class="accordion-item">
+                            <h5 class="accordion-header" id="flush-headingabout">
+                                <button data-mdb-collapse-init class="accordion-button" type="button" data-mdb-toggle="collapse"
+                                    data-mdb-target="#flush-collapseabout" aria-expanded="true" aria-controls="flush-collapseabout">
+                                    Acerca de...
+                                </button>
+                            </h5>
+                            <div id="flush-collapseabout" class="accordion-collapse collapse" aria-labelledby="flush-headingabout"
+                                data-mdb-parent="#settingsAccordion">
+                                <div class="accordion-body">
+                                    <section class="row">
+                                        <div class="col mb-3 d-flex align-items-center justify-content-center">
+                                            <img src="{{config.about_img_first.url}}" alt="Primer imagen en About" id="firstImgDom"
+                                                class="img-fluid img-rounded materialBoxed max_w200">
+                                        </div>
+                                        <div class="col-md-4 d-flex align-items-center">
+                                            <label class="btn btn-block btn_cyan-purple text-white" for="firstImage">
+                                                Cambiar Primer imagen <i class="fa-solid fa-camera-rotate ms-1"></i>
+                                            </label>
+                                            <input type="file" class="none input_change" id="firstImage" name="firstImage" accept="image/*"
+                                                data-img_dom="firstImgDom" />
+                                        </div>
+                                    </section>
+                                    <div class="form-outline my-4" data-mdb-input-init>
+                                        <textarea class="form-control input_blur" id="sociales" name="sociales" rows="8"
+                                            required>{{config.about_text_first}}</textarea>
+                                        <label for="sociales" class="form-label">Primer Texto:</label>
+                                    </div>
+                                    <section class="row">
+                                        <div class="col mb-3 d-flex align-items-center justify-content-center">
+                                            <img src="{{config.about_img_second.url}}" alt="Segunda imagen en About" id="secondImgDom"
+                                                class="img-fluid img-rounded materialBoxed max_w200">
+                                        </div>
+                                        <div class="col-md-4 d-flex align-items-center">
+                                            <label class="btn btn-block btn_cyan-purple text-white" for="secondImage">
+                                                Cambiar Primer imagen <i class="fa-solid fa-camera-rotate ms-1"></i>
+                                            </label>
+                                            <input type="file" class="none input_change" id="secondImage" name="secondImage" accept="image/*"
+                                                data-img_dom="secondImgDom" />
+                                        </div>
+                                    </section>
+                                    <div class="form-outline mt-4" data-mdb-input-init>
+                                        <textarea class="form-control input_blur" id="sociales" name="sociales" rows="8"
+                                            required>{{config.about_text_second}}</textarea>
+                                        <label for="sociales" class="form-label">Segundo texto:</label>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                        <div class="d-flex justify-content-end">
-                            <button type="button" class="btn btn_detail mt-4">Agregar Nuevo link <i class="fa-solid fa-plus ms-1"></i></button>
-                        </div>
-                        <div>
-                            <div class="form-outline mt-4" data-mdb-input-init>
-                                <textarea class="form-control input_blur" id="sociales" name="sociales" rows="3" required>{{config.redes_sociales}}</textarea>
-                                <label for="sociales" class="form-label">Redes sociales:</label>
+                        <div class="accordion-item">
+                            <h5 class="accordion-header" id="flush-headingfooter">
+                                <button data-mdb-collapse-init class="accordion-button" type="button" data-mdb-toggle="collapse"
+                                    data-mdb-target="#flush-collapsefooter" aria-expanded="true" aria-controls="flush-collapsefooter">
+                                    Footer
+                                </button>
+                            </h5>
+                            <div id="flush-collapsefooter" class="accordion-collapse collapse" aria-labelledby="flush-headingfooter"
+                                data-mdb-parent="#settingsAccordion">
+                                <div class="accordion-body">
+                                    <section class="row">
+                                        <div class="col-md-6">
+                                            <div data-mdb-input-init class="form-outline mt-4">
+                                                <input type="text" id="cr_year" name="cr_year" class="form-control input_blur active text-end"
+                                                    value="{{config.copyright_year}}" required />
+                                                <label class="form-label" for="cr_year">Copyright:</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div data-mdb-input-init class="form-outline mt-4">
+                                                <input type="text" id="utclink" name="utclink" class="form-control input_blur active text-end"
+                                                    value="{{config.utc_link}}" required />
+                                                <label class="form-label" for="utclink">Sitio web Oficial:</label>
+                                            </div>
+                                        </div>
+                                        <h5 class="mt-5 mb-0">Redes Sociales</h5>
+                                        <div class="row pe-0 mt-4">
+                                            <div class="col-10 col-lg-2">
+                                                <select class="form-select" id="linkicon" name="linkicon" required>
+                                                    <option value="Facebook">Facebook</option>
+                                                    <option value="Instagram">Instagram</option>
+                                                    <option value="Twitter">Twitter</option>
+                                                </select>
+                                            </div>
+                                            <div class="col-2 col-lg-1">
+                                                <input type="color"
+                                                    class="d-block form-control input_blur form-control-color p-1 rounded border border-secondary"
+                                                    id="linkcolor" value="#808080">
+                                            </div>
+                                            <div class="col-10 col-lg-8 mt-4 mt-lg-0">
+                                                <div data-mdb-input-init class="form-outline">
+                                                    <input type="text" id="linkurl" name="linkurl" class="form-control input_blur active text-end" />
+                                                    <label class="form-label" for="linkurl">URL:</label>
+                                                </div>
+                                            </div>
+                                            <div class="col-2 col-lg p-0 mt-4 mt-lg-0">
+                                                <button type="button" class="btn btn-danger btn-block" title="eliminar link"><i
+                                                        class="fa-regular fa-trash-can"></i></button>
+                                            </div>
+                                        </div>
+                                        <div class="row pe-0 mt-4">
+                                            <div class="col-10 col-lg-2">
+                                                <select class="form-select" id="linkicon" name="linkicon" required>
+                                                    <option value="Facebook">Facebook</option>
+                                                    <option value="Instagram">Instagram</option>
+                                                    <option value="Twitter">Twitter</option>
+                                                </select>
+                                            </div>
+                                            <div class="col-2 col-lg-1">
+                                                <input type="color" class="d-block form-control form-control-color p-1 rounded border border-secondary"
+                                                    id="linkcolor" value="#808080">
+                                            </div>
+                                            <div class="col-10 col-lg-8 mt-4 mt-lg-0">
+                                                <div data-mdb-input-init class="form-outline">
+                                                    <input type="text" id="linkurl" name="linkurl" class="form-control active text-end" />
+                                                    <label class="form-label" for="linkurl">URL:</label>
+                                                </div>
+                                            </div>
+                                            <div class="col-2 col-lg p-0 mt-4 mt-lg-0">
+                                                <button type="button" class="btn btn-danger btn-block" title="eliminar link"><i
+                                                        class="fa-regular fa-trash-can"></i></button>
+                                            </div>
+                                        </div>
+                                        <div class="d-flex justify-content-end">
+                                            <button type="button" class="btn btn_detail mt-4">Agregar Nuevo link <i class="fa-solid fa-plus ms-1"></i></button>
+                                        </div>
+                                        <div>
+                                            <div class="form-outline mt-4" data-mdb-input-init>
+                                                <textarea class="form-control input_blur" id="sociales" name="sociales" rows="3"
+                                                    required>{{config.redes_sociales}}</textarea>
+                                                <label for="sociales" class="form-label">Redes sociales:</label>
+                                            </div>
+                                        </div>
+                                    </section>
+                                </div>
                             </div>
                         </div>
-                        <div>
-                            <h5 class="mb-3 mt-5"><i class="fa-solid fa-caret-right me-2"></i>Calendario</h5>
-                        </div>
-                        <div>
-                            <div class="form-check">
-                                <input class="form-check-input" {% if config.calendar_btnsYear %}checked{% endif %} type="checkbox"
-                                    value="{{config.calendar_btnsYear}}" id="btnsYear" name="btnsYear" />
-                                <label class="form-check-label" for="btnsYear">Mostrar Botones para cambiar año:</label>
-                            </div>
-                        </div>
-                    </section>
-                    <h5 class="mb-3 mt-5"><i class="fa-solid fa-caret-right me-2"></i>Acerca de</h5>
-                    <section class="row">
-                        <div class="col mb-3 d-flex align-items-center justify-content-center">
-                            <img src="{{config.about_img_first.url}}" alt="Primer imagen en About" id="firstImgDom"
-                                class="img-fluid img-rounded materialBoxed max_w200">
-                        </div>
-                        <div class="col-md-4 d-flex align-items-center">
-                            <label class="btn btn-block btn_cyan-purple text-white" for="firstImage">
-                                Cambiar Primer imagen <i class="fa-solid fa-camera-rotate ms-1"></i>
-                            </label>
-                            <input type="file" class="none input_change" id="firstImage" name="firstImage" accept="image/*" data-img_dom="firstImgDom" />
-                        </div>
-                    </section>
-                    <div class="form-outline my-4" data-mdb-input-init>
-                        <textarea class="form-control input_blur" id="sociales" name="sociales" rows="8" required>{{config.about_text_first}}</textarea>
-                        <label for="sociales" class="form-label">Primer Texto:</label>
-                    </div>
-                    <section class="row">
-                        <div class="col mb-3 d-flex align-items-center justify-content-center">
-                            <img src="{{config.about_img_second.url}}" alt="Segunda imagen en About" id="secondImgDom"
-                                class="img-fluid img-rounded materialBoxed max_w200">
-                        </div>
-                        <div class="col-md-4 d-flex align-items-center">
-                            <label class="btn btn-block btn_cyan-purple text-white" for="secondImage">
-                                Cambiar Primer imagen <i class="fa-solid fa-camera-rotate ms-1"></i>
-                            </label>
-                            <input type="file" class="none input_change" id="secondImage" name="secondImage" accept="image/*" data-img_dom="secondImgDom" />
-                        </div>
-                    </section>
-                    <div class="form-outline mt-4" data-mdb-input-init>
-                        <textarea class="form-control input_blur" id="sociales" name="sociales" rows="8" required>{{config.about_text_second}}</textarea>
-                        <label for="sociales" class="form-label">Segundo texto:</label>
                     </div>
                     {% endfor %}
                     <button type="submit" class="d-none">S</button>

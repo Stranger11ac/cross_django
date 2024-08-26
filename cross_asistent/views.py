@@ -504,7 +504,7 @@ def update_create_pleace_map(request):
                 map_database.imagen = imagenPost
                 map_database.save()
                 success_message += '<br>Se actualizó su imagen en la Base de datos 😁🎉🎈'
-            return JsonResponse({'success': True, 'message': success_message}, status=200)
+            return JsonResponse({'success': True, 'message': success_message, 'functions':'reload'}, status=200)
         else:
             # validar si este ya existe en el mapa y en db para que no se repitan
             models.Mapa.objects.create(
@@ -530,7 +530,7 @@ def update_create_pleace_map(request):
                 evento_className='',
             )
 
-            return JsonResponse({'success': True, 'message': 'Se creó un nuevo edificio en el mapa y en la base de datos de forma exitosa 🎉🎉🎉'}, status=200)
+            return JsonResponse({'success': True, 'message': 'Se creó un nuevo edificio en el mapa y en la base de datos de forma exitosa 🎉🎉🎉', 'functions':'reload'}, status=200)
 
 #Galeria ----------------------------------------------------------
 @login_required
