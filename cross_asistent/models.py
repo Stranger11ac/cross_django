@@ -37,7 +37,7 @@ def set_imgDB_path(instance, filename):
         elif categoria == 'Calendario':
             thispath = os.path.join(thispath, 'calendario/')
     
-    return create_filename_path(filename, newName, 'db', 35, 6, thispath)
+    return create_filename_path(filename, newName, 'db', 45, 6, thispath)
 
 def set_imgBlog_path(instance, filename):
     newName = instance.titulo.strip().replace(' ', '')
@@ -48,6 +48,11 @@ def set_imgs_path(instance, filename):
     newName = filename.strip().replace(' ', '')
     thispath = os.path.join(settings.MEDIA_ROOT, 'imagenes/')
     return create_filename_path(filename, newName, 'cross_image', 20, 11, thispath)
+
+def set_conf_path(instance, filename):
+    newName = filename.strip().replace(' ', '')
+    thispath = os.path.join(settings.MEDIA_ROOT, 'settings/')
+    return create_filename_path(filename, newName, 'config', 20, 4, thispath)
 
 def set_imgProfile_path(instance, filename):
     newName = instance.user.username.strip().replace(' ', '')
@@ -165,12 +170,25 @@ class Preguntas(models.Model):
     fecha = models.DateTimeField(auto_now_add=True)
     
 class Configuraciones(models.Model):
-    qr_image = models.ImageField(upload_to=set_imgProfile_path, blank=True, null=True)
+    qr_image = models.ImageField(upload_to=set_conf_path)
+    redes_sociales = models.TextField(blank=True, null=True)
+    copyright_year = models.CharField(max_length=50, default='2020')
+    utc_link = models.TextField()
+    calendar_btnsYear = models.BooleanField(default=True)
+    about_img_first = models.ImageField(upload_to=set_conf_path)
+    about_text_first = models.TextField() # texto de tiny
+    about_img_second = models.ImageField(upload_to=set_conf_path)
+    about_text_second = models.TextField() # texto de tiny
     
-    def delete(self, *args, **kwargs):
-        if self.qr_image:
-            self.qr_image.delete()
-        super(Configuraciones, self).delete(*args, **kwargs)
+    def __str__(self):
+        return self.copyright_year
+    
+    def save(self, *args, **kwargs):
+        if self.pk:
+            old_profile = Configuraciones.objects.get(pk=self.pk)
+            if old_profile.qr_image and old_profile.qr_image != self.qr_image:
+                old_profile.qr_image.delete(save=False)
+        super().save(*args, **kwargs)
 
 class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)

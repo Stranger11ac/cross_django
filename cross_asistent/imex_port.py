@@ -20,10 +20,6 @@ def create_csv_response(filename, header, rows):
     return response
 
 
-"""Convierte el valor en un booleano. Devuelve False si no es "True"."""
-def parse_all_day(value):
-    return value.strip().lower() == 'true'
-
 @login_required
 @never_cache
 def export_categorias(request):
@@ -80,14 +76,14 @@ def import_database(request):
         'titulo': 1,
         'informacion': 2,
         'redirigir': 3,
-        'frecuencia': lambda row: int(row[4]),
+        'frecuencia': lambda row: int(row[4]) if row[4] else 0,
         'uuid': 5,
-        'evento_fecha_inicio': 6,
-        'evento_fecha_fin': 7,
+        'evento_fecha_inicio': lambda row: parse_date(row[6]),
+        'evento_fecha_fin': lambda row: parse_date(row[7]),
         'evento_allDay': lambda row: parse_all_day(row[8]),
         'evento_lugar': 9,
         'evento_className': 10,
-        'fecha_modificacion': 11,
+        'fecha_modificacion': lambda row: parse_date(row[11]),
     }, 'Base de Datos importadas correctamente. 🎉😁🫡')
 
 @login_required
@@ -155,3 +151,27 @@ def import_csv_data(request, model, field_map, success_message):
                 return JsonResponse({'success': False, 'message': f'Error al importar datos: {str(e)}'}, status=400)
         return JsonResponse({'success': False, 'message': 'Formulario no válido.'}, status=400)
     return JsonResponse({'success': False, 'message': 'Método no permitido.'}, status=405)
+
+
+"""Convierte el valor en un booleano. Devuelve False si no es "True"."""
+def parse_all_day(value):
+    return value.strip().lower() == 'true'
+
+def parse_date(value):
+    """Convierte una cadena en un objeto datetime o devuelve None si está vacío."""
+    if value.strip():
+        formats = [
+            '%Y-%m-%d %H:%M:%S%z',      # Fecha con hora y zona horaria
+            '%Y-%m-%d %H:%M:%S',         # Fecha con hora
+            '%Y-%m-%d',                  # Solo fecha
+            '%Y-%m-%d %H:%M:%S.%f',      # Fecha con microsegundos
+            '%Y-%m-%d %H:%M:%S.%f%z'     # Fecha con microsegundos y zona horaria
+        ]
+        for date_format in formats:
+            try:
+                return timezone.datetime.strptime(value, date_format)
+            except ValueError:
+                continue
+        raise ValueError(f"Formato de fecha inválido: {value}")
+    return None
+

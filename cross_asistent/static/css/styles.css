@@ -1632,6 +1632,34 @@ img.img-rounded {
     max-height: 45vh;
 }
 
+.img_circle {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 50%;
+    overflow: hidden;
+    border: none;
+    background: var(--var-detail);
+}
+
+.img_circle.img_circle-100 {
+    --img-size: 100px;
+    width: var(--img-size);
+    height: var(--img-size);
+}
+
+.img_circle.img_circle-200 {
+    --img-size: 200px;
+    width: var(--img-size);
+    height: var(--img-size);
+}
+
+.img_circle.img_circle-300 {
+    --img-size: 300px;
+    width: var(--img-size);
+    height: var(--img-size);
+}
+
 .max_w100 {
     max-width: 100px;
 }

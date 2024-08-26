@@ -77,6 +77,9 @@ urlpatterns = [
     path('administracion/notificaciones/', views.ver_notis, name='notificaciones'),
     path('administracion/notificaciones/notificacion_leida/', views.marcar_notificaciones_leidas, name='marcar_notificaciones_leidas'),
     
+    # configuraciones ----------------------------------------------------------
+    path('administracion/configuraciones/actualizar/', functions.settings_update, name='update_settings'),
+    
     # Importar y Exportar ----------------------------------------------------------
     path('administracion/export/categorias/', imex_port.export_categorias, name='export_categorias'),
     path('administracion/importar/categorias/', imex_port.import_categorias, name='import_categorias'),

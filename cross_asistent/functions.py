@@ -527,3 +527,21 @@ def preguntas_deleted(request):
         except Exception as e:
             return JsonResponse({'success': False, 'message': f'Pregunta #{quest_id} no encontrada.'}, status=404)
     return JsonResponse({'success': False, 'message': 'Acción no permitida.'}, status=400)
+
+# Configuraciones ----------------------------------------------------------
+@login_required
+@never_cache
+def settings_update(request):
+    if request.method == 'POST':
+        try:
+            config = get_object_or_404(models.Configuraciones, id='1')
+            qrImgPOST = request.FILES.get('qrImage')
+            if qrImgPOST:
+                config.qr_image = qrImgPOST
+            config.copyright_year = request.POST.get('cr_year')
+            config.save()
+            
+            return JsonResponse({'success': True, 'message': f'Configuraciones Actualizadas', 'position':'top-end'}, status=200)
+        except Exception as e:
+            return JsonResponse({'success': False, 'message': f'Ocurrio un error. {str(e)}'}, status=404)
+    return JsonResponse({'success': False, 'message': 'Acción no permitida.'}, status=400)

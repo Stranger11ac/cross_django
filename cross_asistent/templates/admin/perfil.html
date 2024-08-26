@@ -13,7 +13,7 @@
             <div class="card card_perfil">
                 <div class="card__img_perfil" style="--color-bg1:#128be0; --color-bg2:#ae37cc; --var-img-perfil: url({% static 'img/Default_image.webp' %});">
                     <div class="card__avatar_perfil">
-                        <img src="{{ user_profile.profile_picture }}" alt="Foto de perfil" class="img-rounded materialBoxed" data-img_dom>
+                        <img src="{{ user_profile.profile_picture }}" alt="Foto de perfil" class="img-rounded materialBoxed" id="imgProfileDom">
                     </div>
                 </div>
 
@@ -68,7 +68,8 @@
                                 {% if user_profile.profile_picture == '/static/img/UTC_logo-plano.webp' %}Subir{% else %}Cambiar{% endif %} Foto de Perfil
                                 <i class="fa-solid fa-camera-rotate ms-1"></i>
                             </label>
-                            <input type="file" class="none" id="userPicture" name="userPicture" accept="image/*" data-img_dom-change data-input_change />
+                            <input type="file" class="none" id="userPicture" name="userPicture" accept="image/*" data-img_dom="imgProfileDom"
+                                data-input_change />
                         </div>
                         <div class="col-12 col-md-6 mt-4">
                             <button type="button" id="updatePassBtn" class="btn btn-block bg_blue-green text-white">Cambiar Contraseña</button>

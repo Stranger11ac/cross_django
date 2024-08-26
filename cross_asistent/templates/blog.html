@@ -21,12 +21,21 @@
                 {% if not encabezado_url == '' %}
                 <div>
                     <img src="{{encabezado_url}}" alt='Imagen de encabezado del articulo "{{ articulo.titulo }}"'
-                        class="img-fluid img-rounded max_w250 materialBoxed">
+                        class="img-fluid img-rounded max_w200 materialBoxed">
                 </div>
                 {% endif %}
-                <div>
-                    <p>Escrito por: {{ firma_autor }}</p>
-                    <p class="m-0">{{ articulo.creacion }}</p>
+                <div class="row">
+                    {% if not foto_autor == '' %}
+                    <div class="col-4">
+                    <div class="img_circle img_circle-100">
+                        <img src="{{foto_autor}}" alt="Foto de perfil del Autor de Articulo" class="img-fluid img-rounded materialBoxed">
+                    </div>
+                    </div>
+                    {% endif %}
+                    <div class="col">
+                        <p>Escrito por: {{ firma_autor }}</p>
+                        <p class="m-0">{{ articulo.creacion }}</p>
+                    </div>
                 </div>
             </div>
         </section>

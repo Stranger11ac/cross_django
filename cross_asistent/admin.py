@@ -36,5 +36,6 @@ admin.site.register(models.Mapa, MapaAdmin)
 admin.site.register(models.Imagenes)
 admin.site.register(models.Notificacion, NotifAdmin)
 admin.site.register(models.Preguntas, PreguntasAdmin)
+admin.site.register(models.Configuraciones)
 admin.site.register(models.UserProfile, UserProfileAdmin)
 

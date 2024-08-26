@@ -107,6 +107,12 @@ $(document).ready(function () {
                 $('[data-submit-ready] button[type="submit"]').click();
             }, 2000);
         }
+        $("[data-submit-blur] .input_blur").on("blur", function () {
+            $("[data-submit-blur] button[type='submit']").click();
+        });
+        $("[data-submit-blur] .input_change").on("change", function () {
+            $("[data-submit-blur] button[type='submit']").click();
+        });
 
         // Editar/Crear usuario
         // generar nueva contraseña aleatoria #################################
@@ -305,17 +311,18 @@ $(document).ready(function () {
         });
 
         // Colocar imagen del input file #############################################
-        function readURL(input) {
+        function readURL(input, elementId) {
             if (input.files && input.files[0]) {
                 var reader = new FileReader();
                 reader.onload = function (e) {
-                    $("[data-img_dom]").attr("src", e.target.result);
+                    $(`#${elementId}`).attr("src", e.target.result);
                 };
                 reader.readAsDataURL(input.files[0]);
             }
         }
-        $("[data-img_dom-change]").change(function () {
-            readURL(this);
+        $("[data-img_dom]").change(function () {
+            idImgDom = $(this).data('img_dom')
+            readURL(this, idImgDom);
         });
 
         // Inpits del perfil ##########################################################

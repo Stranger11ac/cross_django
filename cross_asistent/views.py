@@ -12,6 +12,7 @@ import json
 mapaall = models.Mapa.objects.all()
 databaseall = models.Database.objects.all()
 categoriasall = models.Categorias.objects.all()
+settingsall = models.Configuraciones.objects.all()
 questions_all = models.Preguntas.objects.all().order_by('-id')
 categoriasFilter = models.Categorias.objects.exclude(categoria__in=['Mapa', 'Calendario'])
 
@@ -32,9 +33,13 @@ def index(request):
             'imagen': imagen_url,
             'onlyImg': banner.solo_imagen,
         })
+    
+    for oneconfig in settingsall:
+        settings_img_qr = oneconfig.qr_image.url
 
     return render(request, 'index.html', {
         'banners': banners_modificados,
+        'img_qr': settings_img_qr,
         'active_page': 'inicio'
     })
 
@@ -109,11 +114,17 @@ def mostrar_blog(request, Articulos_id):
     
     try:
         user_profile = models.UserProfile.objects.get(user__username=autor_username)
-        user = User.objects.get(username=autor_username)
+        userdef = User.objects.get(username=autor_username)
+        user_picture = user_profile.profile_picture
+        if user_picture:
+            foto_autor = user_picture.url
+        else:
+            foto_autor = ''
+            
         if user_profile.blog_firma:
             firma_autor = user_profile.blog_firma
         else:
-            firma_autor = f'{user.first_name} {user.last_name}'
+            firma_autor = f'{userdef.first_name} {userdef.last_name}'
     except models.UserProfile.DoesNotExist:
         firma_autor = autor_username
     except User.DoesNotExist:
@@ -121,6 +132,7 @@ def mostrar_blog(request, Articulos_id):
 
     return render(request, 'blog.html', {
         'articulo': articulo,
+        'foto_autor': foto_autor,
         'firma_autor': firma_autor,
         'encabezado_url': encabezado_url,
     })
@@ -238,8 +250,9 @@ def vista_programador(request):
         'user':request.user,
         'active_page':'home',
         'pages':functions.pages,
-        'categorias':categoriasFilter,
         'banners_all':banners_all,
+        'settingsall':settingsall,
+        'categorias':categoriasFilter,
         'preguntas_sending':questions_all,
         'num_preguntas':databaseall.count(),
         'num_blogs':models.Articulos.objects.filter(autor=request.user).count(),
