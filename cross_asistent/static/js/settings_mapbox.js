@@ -51,7 +51,124 @@ if (mapElement.classList.contains("map_editing")) {
     formChanges = true;
 
     // Traducir nombre a color
-    var colorMap = { black: "#000000", negro: "#000000", white: "#FFFFFF", blanco: "#FFFFFF", red: "#FF0000", rojo: "#FF0000", green: "#008000", verde: "#008000", blue: "#0000FF", azul: "#0000FF", yellow: "#FFFF00", amarillo: "#FFFF00", cyan: "#00FFFF", cian: "#00FFFF", magenta: "#FF00FF", magenta: "#FF00FF", gray: "#808080", gris: "#808080", darkgray: "#A9A9A9", "gris oscuro": "#A9A9A9", lightgray: "#D3D3D3", "gris claro": "#D3D3D3", dimgray: "#696969", "gris tenue": "#696969", slategray: "#708090", "gris pizarra": "#708090", cornflowerblue: "#6495ED", "azul aciano": "#6495ED", darkred: "#8B0000", "rojo oscuro": "#8B0000", lightgreen: "#90EE90", "verde claro": "#90EE90", darkblue: "#00008B", "azul oscuro": "#00008B", gold: "#FFD700", oro: "#FFD700", silver: "#C0C0C0", plata: "#C0C0C0", pink: "#FFC0CB", rosa: "#FFC0CB", orange: "#FFA500", naranja: "#FFA500", purple: "#800080", morado: "#800080", brown: "#A52A2A", marrón: "#A52A2A", violet: "#EE82EE", violeta: "#EE82EE", turquoise: "#40E0D0", turquesa: "#40E0D0", indigo: "#4B0082", índigo: "#4B0082", khaki: "#F0E68C", caqui: "#F0E68C", maroon: "#800000", granate: "#800000", olive: "#808000", oliva: "#808000", navy: "#000080", "azul marino": "#000080", teal: "#008080", "verde azulado": "#008080", salmon: "#FA8072", salmón: "#FA8072", goldenrod: "#DAA520", "vara de oro": "#DAA520", chocolate: "#D2691E", chocolate: "#D2691E", coral: "#FF7F50", coral: "#FF7F50", aquamarine: "#7FFFD4", aguamarina: "#7FFFD4", fuchsia: "#FF00FF", fucsia: "#FF00FF", lavender: "#E6E6FA", lavanda: "#E6E6FA", beige: "#F5F5DC", beis: "#F5F5DC", azure: "#F0FFFF", "cian claro": "#F0FFFF", ivory: "#FFFFF0", marfil: "#FFFFF0", linen: "#FAF0E6", lino: "#FAF0E6", plum: "#DDA0DD", ciruela: "#DDA0DD", orchid: "#DA70D6", orquídea: "#DA70D6", mintcream: "#F5FFFA", "crema de menta": "#F5FFFA", seashell: "#FFF5EE", concha: "#FFF5EE", honeydew: "#F0FFF0", "rocío de miel": "#F0FFF0", snow: "#FFFAFA", nieve: "#FFFAFA", blanchedalmond: "#FFEBCD", "almendra blanqueada": "#FFEBCD", antiquewhite: "#FAEBD7", "blanco antiguo": "#FAEBD7", skyblue: "#87CEEB", "cielo azul": "#87CEEB", peachpuff: "#FFDAB9", durazno: "#FFDAB9", navajowhite: "#FFDEAD", "blanco navajo": "#FFDEAD", wheat: "#F5DEB3", trigo: "#F5DEB3", peru: "#CD853F", perú: "#CD853F", tomato: "#FF6347", tomate: "#FF6347", lightblue: "#ADD8E6", "azul claro": "#ADD8E6", lime: "#00FF00", lima: "#00FF00", };
+    var colorMap = {
+        black: "#000000",
+        negro: "#000000",
+        white: "#FFFFFF",
+        blanco: "#FFFFFF",
+        red: "#FF0000",
+        rojo: "#FF0000",
+        green: "#008000",
+        verde: "#008000",
+        blue: "#0000FF",
+        azul: "#0000FF",
+        yellow: "#FFFF00",
+        amarillo: "#FFFF00",
+        cyan: "#00FFFF",
+        cian: "#00FFFF",
+        magenta: "#FF00FF",
+        magenta: "#FF00FF",
+        gray: "#808080",
+        gris: "#808080",
+        darkgray: "#A9A9A9",
+        "gris oscuro": "#A9A9A9",
+        lightgray: "#D3D3D3",
+        "gris claro": "#D3D3D3",
+        dimgray: "#696969",
+        "gris tenue": "#696969",
+        slategray: "#708090",
+        "gris pizarra": "#708090",
+        cornflowerblue: "#6495ED",
+        "azul aciano": "#6495ED",
+        darkred: "#8B0000",
+        "rojo oscuro": "#8B0000",
+        lightgreen: "#90EE90",
+        "verde claro": "#90EE90",
+        darkblue: "#00008B",
+        "azul oscuro": "#00008B",
+        gold: "#FFD700",
+        oro: "#FFD700",
+        silver: "#C0C0C0",
+        plata: "#C0C0C0",
+        pink: "#FFC0CB",
+        rosa: "#FFC0CB",
+        orange: "#FFA500",
+        naranja: "#FFA500",
+        purple: "#800080",
+        morado: "#800080",
+        brown: "#A52A2A",
+        marrón: "#A52A2A",
+        violet: "#EE82EE",
+        violeta: "#EE82EE",
+        turquoise: "#40E0D0",
+        turquesa: "#40E0D0",
+        indigo: "#4B0082",
+        índigo: "#4B0082",
+        khaki: "#F0E68C",
+        caqui: "#F0E68C",
+        maroon: "#800000",
+        granate: "#800000",
+        olive: "#808000",
+        oliva: "#808000",
+        navy: "#000080",
+        "azul marino": "#000080",
+        teal: "#008080",
+        "verde azulado": "#008080",
+        salmon: "#FA8072",
+        salmón: "#FA8072",
+        goldenrod: "#DAA520",
+        "vara de oro": "#DAA520",
+        chocolate: "#D2691E",
+        chocolate: "#D2691E",
+        coral: "#FF7F50",
+        coral: "#FF7F50",
+        aquamarine: "#7FFFD4",
+        aguamarina: "#7FFFD4",
+        fuchsia: "#FF00FF",
+        fucsia: "#FF00FF",
+        lavender: "#E6E6FA",
+        lavanda: "#E6E6FA",
+        beige: "#F5F5DC",
+        beis: "#F5F5DC",
+        azure: "#F0FFFF",
+        "cian claro": "#F0FFFF",
+        ivory: "#FFFFF0",
+        marfil: "#FFFFF0",
+        linen: "#FAF0E6",
+        lino: "#FAF0E6",
+        plum: "#DDA0DD",
+        ciruela: "#DDA0DD",
+        orchid: "#DA70D6",
+        orquídea: "#DA70D6",
+        mintcream: "#F5FFFA",
+        "crema de menta": "#F5FFFA",
+        seashell: "#FFF5EE",
+        concha: "#FFF5EE",
+        honeydew: "#F0FFF0",
+        "rocío de miel": "#F0FFF0",
+        snow: "#FFFAFA",
+        nieve: "#FFFAFA",
+        blanchedalmond: "#FFEBCD",
+        "almendra blanqueada": "#FFEBCD",
+        antiquewhite: "#FAEBD7",
+        "blanco antiguo": "#FAEBD7",
+        skyblue: "#87CEEB",
+        "cielo azul": "#87CEEB",
+        peachpuff: "#FFDAB9",
+        durazno: "#FFDAB9",
+        navajowhite: "#FFDEAD",
+        "blanco navajo": "#FFDEAD",
+        wheat: "#F5DEB3",
+        trigo: "#F5DEB3",
+        peru: "#CD853F",
+        perú: "#CD853F",
+        tomato: "#FF6347",
+        tomate: "#FF6347",
+        lightblue: "#ADD8E6",
+        "azul claro": "#ADD8E6",
+        lime: "#00FF00",
+        lima: "#00FF00",
+    };
     const colorsList = $("#colorsList");
     for (let colorName in colorMap) {
         colorsList.append(`<option value="${colorName}">`);
@@ -361,7 +478,7 @@ class CustomControl {
                     const offcanvasContent = document.getElementById("offcanvasContent");
                     if (formChanges) {
                         document.getElementById("imagen_actual").src = "/static/img/default_image.webp";
-                        offcanvasContent.querySelector("#isNewEdif").value = 'new';
+                        offcanvasContent.querySelector("#isNewEdif").value = "new";
 
                         const newUID = $("#uuid").data("new-uid");
                         $("#uuid").removeClass("active").val(newUID);
@@ -515,50 +632,71 @@ fetch(url)
                 map.moveLayer("places-label");
             }
 
-            // Crear capas para cada tipo de camino
-            if (!map.getLayer("smooth-path")) {
-                map.addLayer({
-                    id: "smooth-path",
-                    type: "line",
-                    source: "places",
-                    filter: ["==", ["get", "type"], "smooth_path"],
-                    paint: {
-                        "line-color": "green",
-                        "line-width": 4,
+            // Agregar Imagen
+            // map.loadImage("https://docs.mapbox.com/mapbox-gl-js/assets/cat.png", (error, image) => {
+            map.loadImage("/static/img/Oxxo_Logo.svg.png", (error, image) => {
+                if (error) throw error;
+
+                map.addImage("oxxo", image);
+
+                map.addSource("otzo", {
+                    type: "geojson",
+                    data: {
+                        type: "FeatureCollection",
+                        features: [
+                            {
+                                type: "Feature",
+                                geometry: {
+                                    type: "Point",
+                                    coordinates: [-100.93596294319065, 25.55775995654966],
+                                },
+                            },
+                        ],
                     },
                 });
-            }
 
-            // Capa para mostrar las escaleras
-            if (!map.getLayer("stairs")) {
                 map.addLayer({
-                    id: "stairs",
+                    id: "pointsoxxo",
                     type: "symbol",
-                    source: "places",
-                    filter: ["==", ["get", "hasStairs"], true], // Mostrar solo edificios con escaleras
+                    source: "otzo", // reference the data source
                     layout: {
-                        "icon-image": "stairs-icon", // Imagen del ícono de escaleras
-                        "icon-size": 0.5,
-                        "icon-allow-overlap": true,
-                    },
-                    paint: {
-                        "icon-color": "yellow", // Color del ícono de escaleras
+                        "icon-image": "oxxo", // reference the image
+                        "icon-size": 0.10,
                     },
                 });
-            }
+            });
+            
+            map.loadImage("/static/img/bannorte_logo.png", (error, image) => {
+                if (error) throw error;
 
-            if (!map.getLayer("streets")) {
-                map.addLayer({
-                    id: "streets",
-                    type: "line",
-                    source: "places",
-                    filter: ["==", ["get", "type"], "street"],
-                    paint: {
-                        "line-color": "darkgray",
-                        "line-width": 4,
+                map.addImage("cajero", image);
+
+                map.addSource("pointcajero", {
+                    type: "geojson",
+                    data: {
+                        type: "FeatureCollection",
+                        features: [
+                            {
+                                type: "Feature",
+                                geometry: {
+                                    type: "Point",
+                                    coordinates: [-100.93450411941815, 25.556126447750614],
+                                },
+                            },
+                        ],
                     },
                 });
-            }
+
+                map.addLayer({
+                    id: "puntocajero",
+                    type: "symbol",
+                    source: "pointcajero", // reference the data source
+                    layout: {
+                        "icon-image": "cajero", // reference the image
+                        "icon-size": 0.05,
+                    },
+                });
+            });
         }
 
         function createMarker(lngLat) {
@@ -785,7 +923,7 @@ fetch(url)
                 $("#btnDeletedPleace").show();
                 $("[data-namePleace]").text(nombre);
 
-                offcanvasContent.querySelector("#isNewEdif").value = 'notnew';
+                offcanvasContent.querySelector("#isNewEdif").value = "notnew";
 
                 $("[data-uuid]").addClass("active").val(uuid);
                 $("#nombreEdificio").addClass("active").val(nombre);
