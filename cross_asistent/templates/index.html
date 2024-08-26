@@ -53,8 +53,8 @@
     <!-- Asistente -->
     <section href="#asistente" class="asistent_group">
         <div class="box_asistent">
-            <model-viewer id="asistent_model" src="{% static 'models/RobotExpressive.glb' %}" tone-mapping="neutral" camera-orbit="15deg 70deg 60m"
-                poster="{% static 'img/poster.webp' %}" shadow-intensity="1">
+            <model-viewer id="asistent_model" src="{% static 'models/hawky.002.glb' %}" tone-mapping="neutral" camera-orbit="15deg 70deg 60m"
+                poster="{% static 'img/hawky.001.png' %}" shadow-intensity="1">
             </model-viewer>
             <!-- Controles iniciales -->
             <div class="box_asistent_controls">
@@ -74,9 +74,9 @@
             <form id="chatForm" class="controls_input" method="POST" action="{% url 'chatbot' %}">
                 {% csrf_token %}
                 <!-- Botton para silenciar -->
-                <!-- <button type="button" id="toggleAudio" class="btn btn_detail btn-floating position-relative bottom-0 end-0">
+                <button type="button" id="toggleAudio" class="btn btn_detail btn-floating position-relative bottom-0 end-0">
                     <i id="audioIcon" class="fa-solid fa-volume-high"></i>
-                </button> -->
+                </button>
                 <div class="position-relative bottom-0 end-0">
                     <div class="form-outline" data-mdb-input-init>
                         <textarea class="form-control bg-body-tertiary" id="txtQuestion" name="question" required maxlength="200"></textarea>
@@ -86,10 +86,10 @@
                         <button type="button" id="closeChat" class="btn btn_secondary btn-floating btn-sm controls_btn_close">
                             <i class="fa-solid fa-xmark"></i>
                         </button>
-                        <!-- <button type="button" id="recVoice" class="btn btn_secondary btn-floating btn-sm controls_btn_audio"
+                        <button type="button" id="recVoice" class="btn btn_secondary btn-floating btn-sm controls_btn_audio"
                             data-start="{% url 'start_recognition' %}" data-stop="{% url 'stop_recognition' %}">
                             <i class="fa-solid fa-microphone" id="btn_controls_icon"></i>
-                        </button> -->
+                        </button>
                         <div class="audio-animation"></div>
                         <button type="submit" id="chatForm_submit" class="btn btn_detail btn-floating">
                             <i class="fa-solid fa-paper-plane"></i>
