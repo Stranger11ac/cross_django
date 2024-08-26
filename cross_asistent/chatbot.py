@@ -11,6 +11,7 @@ from . import models
 import threading
 import openai
 import json
+import whisper
 import unicodedata
 import spacy
 
@@ -27,25 +28,35 @@ recognized_texts = []
 is_recognizing = False
 recognition_thread = None
 
+
+# Cargar el modelo de Whisper una vez
+model = whisper.load_model("base")
+
 def speekText():
     global is_recognizing, recognized_texts
-    r = sr.Recognizer()
     recognized_texts = []
+    r = sr.Recognizer()
+
     while is_recognizing:
         try:
             with sr.Microphone() as source2:
-                r.adjust_for_ambient_noise(source2, duration=0.2)
                 print("Por favor, hable ahora...")
                 audio2 = r.listen(source2)
-                recognized_text = r.recognize_google(audio2, language='es-ES')
-                recognized_text = recognized_text.lower().strip()
+                # Guardar el audio capturado en un archivo temporal
+                temp_audio_path = "temp_audio.wav"
+                with open(temp_audio_path, "wb") as f:
+                    f.write(audio2.get_wav_data())
+                
+                # Usar Whisper para transcribir el audio
+                result = model.transcribe(temp_audio_path)
+                recognized_text = result["text"].lower().strip()
+                
                 print("Dijiste:", recognized_text)
                 recognized_texts.append(recognized_text)
-        except sr.RequestError as e:
-            print(f"No se pueden solicitar resultados; {e}")
-        except sr.UnknownValueError:
-            print("Ocurrió un error desconocido")
-    
+                
+        except Exception as e:
+            print(f"Ocurrió un error: {e}")
+
 @csrf_exempt
 def start_recognition(request):
     global is_recognizing, recognition_thread
@@ -147,19 +158,12 @@ def normalize_text(text):
     )
 
 def process_question(pregunta):
-    # Normaliza el texto para eliminar acentos y otros signos diacríticos
     pregunta_normalizada = normalize_text(pregunta.lower().strip())
 
     doc = nlp(pregunta_normalizada)
     tokens = [token.lemma_ for token in doc if (not token.is_stop and token.is_alpha) or token.text in palabras_clave]
     pregunta_procesada = " ".join(tokens)
     
-    print(f"Pregunta procesada: {pregunta_procesada}")
-    return pregunta_procesada
-def process_question(pregunta):
-    doc = nlp(pregunta.lower().strip())
-    tokens = [token.lemma_ for token in doc if (not token.is_stop and token.is_alpha) or token.text in palabras_clave]
-    pregunta_procesada = " ".join(tokens)
     print(f"Pregunta procesada: {pregunta_procesada}")
     return pregunta_procesada
 
