@@ -196,6 +196,7 @@ class UserProfile(models.Model):
     tutorial = models.BooleanField(default=True)
     blog_firma = models.CharField(max_length=200 ,blank=True, null=True)
     password_update = models.DateField(blank=True, null=True)
+    user_token = models.TextField(null=True, blank=True)
     
     def save(self, *args, **kwargs):
         if self.pk:

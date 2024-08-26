@@ -56,22 +56,17 @@ def fqt_questions(request):
 
 def fqt_questions_send(request):    
     if request.method == "POST":
-        if request.content_type == 'application/json':
-            try:
-                data = json.loads(request.body)
-                preguntaPOST = data['pregunta']
-                descripcionPOST = data['descripcion']
+        try:
+            preguntaPOST = request.POST.get('pregunta')
+            descripcionPOST = request.POST.get('descripcion')
 
-                pregunta = models.Preguntas(pregunta=preguntaPOST, descripcion=descripcionPOST)
-                pregunta.save()
+            pregunta = models.Preguntas(pregunta=preguntaPOST, descripcion=descripcionPOST)
+            pregunta.save()
 
-                return JsonResponse({'success': True, 'message': 'Gracias por tu pregunta. ❤️💕😁👍 <br>La responderemos lo mas pronto posible. 😁😊🫡'}, status=200)
-            except Exception as e:
-                print(f'Hay un error en: {e}')
-                return JsonResponse({'error':True, 'success': False, 'message': 'Ups! 😥😯 hubo un error y tu pregunta no se pudo registrar. Por favor intente de nuevo más tarde.'}, status=400)
-        else:
-            print('error, no JSON')
-            return JsonResponse({'error':True, 'success': False, 'message': 'Error: no se permite este tipo de archivo '}, status=400)
+            return JsonResponse({'success': True, 'message': 'Gracias por tu pregunta. ❤️💕😁👍 <br>La responderemos lo mas pronto posible. 😁😊🫡'}, status=200)
+        except Exception as e:
+            print(f'Hay un error en: {e}')
+            return JsonResponse({'error':True, 'success': False, 'message': 'Ups! 😥😯 hubo un error y tu pregunta no se pudo registrar. Por favor intente de nuevo más tarde.'}, status=400)
     return render(request, 'frecuentes.html', {'quest_all': models.Preguntas.objects.all()})
 
 def blogs(request):

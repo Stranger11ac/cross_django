@@ -57,6 +57,7 @@ urlpatterns = [
     path('administracion/database/eliminar/', functions.database_delete, name='database_delete'),
     path('administracion/calendario/', views.calendario_page, name='calendario_page'),
     path('administracion/preguntas/eliminar/', functions.preguntas_deleted, name='question_deleted'),
+    path('database/actualizar_frecuencia/', functions.frequesnce_update, name='update_frequencies_database'),
 
     # Blog ----------------------------------------------------------
     path('administracion/blog/crear/', views.blog_page, name='create_blog'),

@@ -114,6 +114,22 @@ $(document).ready(function () {
             $("[data-submit-blur] button[type='submit']").click();
         });
 
+        // $("[id^='btn_frequence']").each(function() {
+        //     console.log($(this).attr('id'));
+        // });
+
+        $("[data-submit-click]").on("click", function () {
+            const btnSubmitThis = $(this).data("submit-click");
+            $("#" + btnSubmitThis)
+                .click()
+                .attr("disabled", "disabled");
+
+            if (!disabledButtons.includes(btnSubmitThis)) {
+                disabledButtons.push(btnSubmitThis);
+            }
+            localStorage.setItem("disabledButtons", JSON.stringify(disabledButtons));
+        });
+
         // Editar/Crear usuario
         // generar nueva contraseña aleatoria #################################
         $("button[data-editinput]").click(genpass);
@@ -139,10 +155,11 @@ $(document).ready(function () {
         $("[data-reset_form]").on("click", function () {
             var formId = $(this).data("reset_form");
             var formElement = $("#" + formId)[0];
-
-            if (formElement) {
-                formElement.reset();
-            }
+            setTimeout(() => {
+                if (formElement) {
+                    formElement.reset();
+                }
+            }, 1500);
         });
 
         // Estilo Texto Google ####################################
@@ -321,7 +338,7 @@ $(document).ready(function () {
             }
         }
         $("[data-img_dom]").change(function () {
-            idImgDom = $(this).data('img_dom')
+            idImgDom = $(this).data("img_dom");
             readURL(this, idImgDom);
         });
 

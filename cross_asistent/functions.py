@@ -415,6 +415,21 @@ def database_delete(request):
             return JsonResponse({'success': False, 'message': f'Ocurrió un error 😯😥 <br>{str(e)}'}, status=400)
     return JsonResponse({'error': 'Método no válido'}, status=400)
 
+@login_required
+@never_cache
+def frequesnce_update(request):
+    if request.method == 'POST':
+        try:
+            idPOST = request.POST.get('frequence_id')
+            dbUpdate = get_object_or_404(models.Database, id=idPOST)
+            dbUpdate.frecuencia = dbUpdate.frecuencia + 1
+            dbUpdate.save()
+        
+            return JsonResponse({'success': 'success', }, status=200)
+        except Exception as e:
+            return JsonResponse({'success': False, 'message': f'Ocurrió un error 😯😥.  {str(e)}'}, status=400)
+    return JsonResponse({'error': 'Método no válido'}, status=400)
+
 # Calendario: Eventos ---------------------
 def calendario_eventos(request):
     categoriaGet = get_object_or_404(models.Categorias, categoria="Calendario")

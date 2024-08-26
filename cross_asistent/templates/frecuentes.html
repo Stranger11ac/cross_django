@@ -34,7 +34,7 @@
                     </div>
                     <div class="accordion" id="accordionExampleY">
                         {% for quest in quest_all %}
-                        <div class="accordion-item results_item">
+                        <div class="accordion-item results_item" data-submit-click="btn_frequence_{{quest.id}}">
                             <h2 class="accordion-header" id="heading{{ quest.id }}">
                                 <button data-mdb-collapse-init class="accordion-button" type="button" data-mdb-toggle="collapse"
                                     data-mdb-target="#quest-{{ quest.id }}" aria-expanded="true" aria-controls="quest-{{ quest.id }}">
@@ -44,13 +44,35 @@
                             <div id="quest-{{ quest.id }}" class="accordion-collapse collapse {% if quest.id == 1 %}show{% endif %}"
                                 aria-labelledby="heading{{ quest.id }}" data-mdb-parent="#accordionExampleY">
                                 <div class="accordion-body">
-                                    {{ quest.informacion|truncatechars:150 }}
+                                    {% autoescape off %} {{ quest.informacion }}{% endautoescape %}
+                                    {% if quest.imagen or quest.documento or quest.redirigir %}
+                                    <hr class="hr_divisor my-4">
+                                    {% endif %}
+                                    {% if quest.imagen %}
+                                    <img loading="lazy" src="{{quest.imagen.url}}" alt="imagen de: {{quest.titulo}}"
+                                        class="img-fluid img-rounded max_w300 materialBoxed">
+                                    {% endif %}
+
+                                    {% if quest.documento %}
                                     <div>
-                                        <a href class="btn btn_detail">Saber más <i class="fa-solid fa-up-right-from-square ms-1"></i></a>
+                                        <a href="{{ quest.documento }}" target="_blank" rel="noopener noreferrer" class="btn btn_detail">
+                                            Ver PDF Relacionado <i class="fa-regular fa-file-pdf ms-1"></i></a>
                                     </div>
+                                    {% endif %}
+
+                                    {% if quest.redirigir %}
+                                    <div>
+                                        <a href="{{ quest.redirigir }}" target="_blank" rel="noopener noreferrer" class="btn btn_detail">
+                                            Saber más <i class="fa-solid fa-up-right-from-square ms-1"></i></a>
+                                    </div>
+                                    {% endif %}
                                 </div>
                             </div>
                         </div>
+                        <form action="{% url 'update_frequencies_database' %}" method="post" data-submit-form>
+                            <input type="hidden" name="frequence_id" value="{{quest.id}}">
+                            <button type="submit" class="d-none" id="btn_frequence_{{quest.id}}"></button>
+                        </form>
                         {% endfor %}
                     </div>
                     {% else %}
@@ -69,7 +91,7 @@
                     <h4 class="text-center mb-4">
                         ¿No hemos resuelto tus dudas?
                     </h4>
-                    <form method="POST" id="hacerPregunta" action="{% url 'enviar_preguntas' %}" class="text-center" autocomplete="off">
+                    <form method="POST" id="hacerPregunta" action="{% url 'enviar_preguntas' %}" class="text-center" autocomplete="off" data-submit-form>
                         {% csrf_token %}
                         <div class="form-outline mb-4" data-mdb-input-init>
                             <input type="text" id="preguntaPOST" name="pregunta" class="form-control mx-auto" required />
@@ -81,7 +103,7 @@
                             <textarea class="form-control" id="descripcion" rows="4" name="descripcion" data-init-clear></textarea>
                             <label class="form-label" for="descripcion">Escribe más detalles: <small>( OPCIONAL )</small></label>
                         </div>
-                        <button type="submit" class="btn btn_detail btn-block">Enviar <i class="fa-solid fa-paper-plane ms-1"></i></button>
+                        <button type="submit" class="btn btn_detail btn-block" data-reset_form="hacerPregunta">Enviar <i class="fa-solid fa-paper-plane ms-1"></i></button>
                     </form>
                 </div>
             </div>
@@ -94,46 +116,13 @@
 {% endblock %}
 {% block scripts_end %}
 <script>
-    const formElement = document.getElementById('hacerPregunta');
-
-    formElement.addEventListener('submit', (event) => {
-        event.preventDefault(); // Prevent default form submission
-        const questionForm = event.target;
-        const timerOut = 800;
-
-        const formData = {
-            pregunta: document.getElementById('preguntaPOST').value,
-            descripcion: document.getElementById('descripcion').value
-        };
-
-        fetch(questionForm.action, {
-            method: 'POST',
-            headers: {
-                'X-Requested-With': 'XMLHttpRequest',
-                'X-CSRFToken': questionForm.querySelector('[name=csrfmiddlewaretoken]').value,
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(formData)
-        })
-            .then(response => response.json())
-            .then(data => {
-                if (data.message) {
-                    questionForm.reset();
-                    alertSToast('center', timerOut + 4000, 'success', data.message, () => {
-                        if (data.shouldReload) {
-                            location.reload();
-                        }
-                    });
-                    console.log(data.message);
-                } else if (data.errors) {
-                    handleErrors(data.errors);
-                    console.error(data.errors);
-                }
-            })
-            .catch(error => {
-                alert(error);
-                console.error(error);
-            });
+    let disabledButtons = JSON.parse(localStorage.getItem('disabledButtons')) || [];
+    console.log(disabledButtons);
+    disabledButtons.forEach(function (id) {
+        const button = document.getElementById(id);
+        if (button) {
+            button.remove()
+        }
     });
 </script>
 {% endblock %}

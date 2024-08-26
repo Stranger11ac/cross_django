@@ -9,6 +9,7 @@ class CategoriasAdmin(admin.ModelAdmin):
 
 class DatabaseAdmin(admin.ModelAdmin):
     list_display = ('titulo', 'categoria')
+    search_fields = ('titulo', 'informacion')
 
 class ArticulosAdmin(admin.ModelAdmin):
     list_display = ('titulo', 'autor', 'creacion')

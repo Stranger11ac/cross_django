@@ -342,11 +342,16 @@
                             <tbody>
                                 {% for oneuser in users %}
                                 <tr class="results_item table_odd_items table_users">
-                                    <td class="{% if not oneuser.is_active %}text-danger{% elif oneuser.is_staff %}text-warning{% endif %}">
-                                        <strong>{{ oneuser.id }}</strong>
-                                    </td>
-                                    <td class="{% if oneuser.is_staff %}text-warning{% endif %}">
+                                    <td>{{ oneuser.id }}</td>
+                                    <td>
                                         <strong>{{ oneuser.username }}</strong>
+                                        {% if oneuser.is_staff %}
+                                        <div class="text-nowrap bg-info text-white rounded-pill fs-7 mt-1 p-1 px-2">
+                                            Programador <i class="fa-solid fa-star text_detail"></i></div>
+                                        {% elif not oneuser.is_active %}
+                                        <div class="bg-danger text-white rounded-pill fs-7 mt-1 pt-1">
+                                            Inactivo <i class="fa-solid fa-ban"></i></div>
+                                        {% endif %}
                                     </td>
                                     <td>{{ oneuser.first_name }}</td>
                                     <td>{{ oneuser.last_name }}</td>
@@ -507,6 +512,7 @@
                 </div>
             </div>
         </div>
+        <!-- Otras Configuraciones -->
         <div class="mt-4">
             <div class="card">
                 <form class="card-body" action="{% url 'update_settings' %}" method="post" data-submit-blur data-submit-form>
@@ -609,7 +615,8 @@
                     <h5 class="mb-3 mt-5"><i class="fa-solid fa-caret-right me-2"></i>Acerca de</h5>
                     <section class="row">
                         <div class="col mb-3 d-flex align-items-center justify-content-center">
-                            <img src="{{config.about_img_first.url}}" alt="Primer imagen en About" id="firstImgDom" class="img-fluid img-rounded materialBoxed max_w200">
+                            <img src="{{config.about_img_first.url}}" alt="Primer imagen en About" id="firstImgDom"
+                                class="img-fluid img-rounded materialBoxed max_w200">
                         </div>
                         <div class="col-md-4 d-flex align-items-center">
                             <label class="btn btn-block btn_cyan-purple text-white" for="firstImage">
@@ -624,7 +631,8 @@
                     </div>
                     <section class="row">
                         <div class="col mb-3 d-flex align-items-center justify-content-center">
-                            <img src="{{config.about_img_second.url}}" alt="Segunda imagen en About" id="secondImgDom" class="img-fluid img-rounded materialBoxed max_w200">
+                            <img src="{{config.about_img_second.url}}" alt="Segunda imagen en About" id="secondImgDom"
+                                class="img-fluid img-rounded materialBoxed max_w200">
                         </div>
                         <div class="col-md-4 d-flex align-items-center">
                             <label class="btn btn-block btn_cyan-purple text-white" for="secondImage">
