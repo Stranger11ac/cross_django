@@ -208,7 +208,7 @@
             </div>
         </div>
         <!-- Todas las Preguntas -->
-        <div class="mt-4">
+        <div class="pt-4" id="preguntasEnviadas">
             <div class="card">
                 <div class="card-body">
                     <h3 class="text-center mb-4">Preguntas de los Usuarios</h3>
@@ -515,13 +515,13 @@
         <!-- Otras Configuraciones -->
         <div class="mt-4">
             <div class="card">
-                <form class="card-body" action="{% url 'update_settings' %}" method="post" data-submit-blur data-submit-form>
+                <form class="card-body mx-2" action="{% url 'update_settings' %}" method="post" data-submit-blur data-submit-form>
                     {% csrf_token %}
                     <h4 class="text-center mb-4"><span class="text_detail">Mas</span> Configuraciones</h4>
                     {% for config in settingsall %}
 
-                    <div class="accordion accordion-borderless" id="settingsAccordion">
-                        <div class="accordion-item">
+                    <div class="accordion accordion-borderless row" id="settingsAccordion">
+                        <div class="accordion-item col-12 col-md-6 px-0">
                             <h5 class="accordion-header" id="flush-headingqrimage">
                                 <button data-mdb-collapse-init class="accordion-button" type="button" data-mdb-toggle="collapse"
                                     data-mdb-target="#flush-collapseqrimage" aria-expanded="true" aria-controls="flush-collapseqrimage">
@@ -546,7 +546,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="accordion-item">
+                        <div class="accordion-item col-12 col-md-6 px-0">
                             <h5 class="accordion-header" id="flush-headingcalendar">
                                 <button data-mdb-collapse-init class="accordion-button" type="button" data-mdb-toggle="collapse"
                                     data-mdb-target="#flush-collapsecalendar" aria-expanded="true" aria-controls="flush-collapsecalendar">
@@ -564,7 +564,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="accordion-item">
+                        <div class="accordion-item col-12 col-md-6 px-0">
                             <h5 class="accordion-header" id="flush-headingabout">
                                 <button data-mdb-collapse-init class="accordion-button" type="button" data-mdb-toggle="collapse"
                                     data-mdb-target="#flush-collapseabout" aria-expanded="true" aria-controls="flush-collapseabout">
@@ -613,7 +613,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="accordion-item">
+                        <div class="accordion-item col-12 col-md-6 px-0">
                             <h5 class="accordion-header" id="flush-headingfooter">
                                 <button data-mdb-collapse-init class="accordion-button" type="button" data-mdb-toggle="collapse"
                                     data-mdb-target="#flush-collapsefooter" aria-expanded="true" aria-controls="flush-collapsefooter">
@@ -638,50 +638,52 @@
                                                 <label class="form-label" for="utclink">Sitio web Oficial:</label>
                                             </div>
                                         </div>
+                                        <!-- -------------------------------- -->
                                         <h5 class="mt-5 mb-0">Redes Sociales</h5>
                                         <div class="row pe-0 mt-4">
-                                            <div class="col-10 col-lg-2">
+                                            <div class="col-10">
                                                 <select class="form-select" id="linkicon" name="linkicon" required>
                                                     <option value="Facebook">Facebook</option>
                                                     <option value="Instagram">Instagram</option>
                                                     <option value="Twitter">Twitter</option>
                                                 </select>
                                             </div>
-                                            <div class="col-2 col-lg-1">
+                                            <div class="col-2">
                                                 <input type="color"
                                                     class="d-block form-control input_blur form-control-color p-1 rounded border border-secondary"
                                                     id="linkcolor" value="#808080">
                                             </div>
-                                            <div class="col-10 col-lg-8 mt-4 mt-lg-0">
+                                            <div class="col-10 mt-4">
                                                 <div data-mdb-input-init class="form-outline">
                                                     <input type="text" id="linkurl" name="linkurl" class="form-control input_blur active text-end" />
                                                     <label class="form-label" for="linkurl">URL:</label>
                                                 </div>
                                             </div>
-                                            <div class="col-2 col-lg p-0 mt-4 mt-lg-0">
+                                            <div class="col-2 p-0 mt-4">
                                                 <button type="button" class="btn btn-danger btn-block" title="eliminar link"><i
                                                         class="fa-regular fa-trash-can"></i></button>
                                             </div>
                                         </div>
                                         <div class="row pe-0 mt-4">
-                                            <div class="col-10 col-lg-2">
+                                            <div class="col-10">
                                                 <select class="form-select" id="linkicon" name="linkicon" required>
                                                     <option value="Facebook">Facebook</option>
                                                     <option value="Instagram">Instagram</option>
                                                     <option value="Twitter">Twitter</option>
                                                 </select>
                                             </div>
-                                            <div class="col-2 col-lg-1">
-                                                <input type="color" class="d-block form-control form-control-color p-1 rounded border border-secondary"
+                                            <div class="col-2">
+                                                <input type="color"
+                                                    class="d-block form-control input_blur form-control-color p-1 rounded border border-secondary"
                                                     id="linkcolor" value="#808080">
                                             </div>
-                                            <div class="col-10 col-lg-8 mt-4 mt-lg-0">
+                                            <div class="col-10 mt-4">
                                                 <div data-mdb-input-init class="form-outline">
-                                                    <input type="text" id="linkurl" name="linkurl" class="form-control active text-end" />
+                                                    <input type="text" id="linkurl" name="linkurl" class="form-control input_blur active text-end" />
                                                     <label class="form-label" for="linkurl">URL:</label>
                                                 </div>
                                             </div>
-                                            <div class="col-2 col-lg p-0 mt-4 mt-lg-0">
+                                            <div class="col-2 p-0 mt-4">
                                                 <button type="button" class="btn btn-danger btn-block" title="eliminar link"><i
                                                         class="fa-regular fa-trash-can"></i></button>
                                             </div>
