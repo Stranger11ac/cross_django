@@ -521,8 +521,8 @@ class CustomControl {
                 `<div class="mapboxgl-ctrl-icon"><i class="fa-solid fa-cloud-arrow-up"></i></div>`,
                 "Importar y Exportar",
                 () => {
-                    var modalImport = new mdb.Modal(document.getElementById("importInMap"));
-                    modalImport.show();
+                    var myModal = new mdb.Modal(document.getElementById("importInMap"));
+                    myModal.show();
                 }
             );
 

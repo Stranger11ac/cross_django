@@ -74,7 +74,11 @@
                     Cambiar foto <i class="fa-regular fa-image ms-1"></i></label>
             </div>
             <input type="text" name="isNew" id="isNewEdif" class="d-none">
-            <input type="text" name="uuid" id="uuid" class="d-none" data-uuid data-new-uid="{{UID}}" required>
+            
+            <div class="input-group form-outline mt-4" data-mdb-input-init>
+                <input type="text" name="uuid" id="uuid" class="form-control d-non" data-uuid data-new-uid="{{UID}}" readonly required>
+                <label class="form-label" for="esquina1">UUID:</label>
+            </div>
             <!-- Color del poligono -->
             <section class="row">
                 <div class="col-10">
@@ -234,31 +238,29 @@
 </div>
 
 <!-- Modal: Importar y exportar -->
-<div class="modal fade" id="importMap" tabindex="-1" aria-labelledby="importMapLabel" aria-hidden="true">
+<div class="modal fade" id="importInMap" tabindex="-1" aria-labelledby="importInMapLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="importMapLabel">Importar y Exportar <i class="fa-solid fa-cloud ms-1"></i></h5>
+                <h5 class="modal-title" id="importInMapLabel">Importar y Exportar <i class="fa-solid fa-cloud ms-1"></i></h5>
                 <button type="button" class="btn-close" data-mdb-ripple-init data-mdb-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <form action="{% url 'export_mapa' %}" method="get">
                     <button type="submit" class="btn btn_detail btn-block">
-                        Descargar CSV del Mapa <i class="fa-solid fa-file-arrow-down ms-1"></i>
+                        Exportar CSV del Mapa <i class="fa-solid fa-file-arrow-down ms-1"></i>
                     </button>
                 </form>
-                <div class="mt-5">
-                    <h3 class="text-center mb-4">Importar</h3>
-                    <form method="POST" enctype="multipart/form-data" action="{% url 'import_mapa' %}" data-submit-form>
-                        {% csrf_token %}
-                        <div class="mb-3">
-                            <input type="file" name="file" accept=".csv" class="form-control">
-                        </div>
-                        <button type="submit" class="btn btn_detail btn-block">
-                            Importar CSV <i class="fa-solid fa-file-arrow-up ms-1"></i>
-                        </button>
-                    </form>
-                </div>
+                <hr class="hr_divisor my-4">
+                <form method="POST" enctype="multipart/form-data" action="{% url 'import_mapa' %}" data-submit-form>
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <input type="file" name="file" accept=".csv" class="form-control" required>
+                    </div>
+                    <button type="submit" class="btn btn_detail btn-block">
+                        Importar CSV <i class="fa-solid fa-file-arrow-up ms-1"></i>
+                    </button>
+                </form>
             </div>
         </div>
     </div>
@@ -327,7 +329,6 @@
     </div>
 </div>
 
-<!-- <main class="container container-fluid my-5 {% if not user.is_authenticated %}main_container{% endif %}"></main> -->
 {% endblock %}
 {% block scripts_end %}
 <script src="{% static 'tinymce/tinymce.min.js' %}"></script>

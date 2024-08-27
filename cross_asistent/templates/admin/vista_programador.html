@@ -278,31 +278,6 @@
                 </div>
             </div>
         </div>
-        <!-- Importar y Exportar -->
-        <div class="col-md-4">
-            <div class="card mt-4">
-                <div class="card-body">
-                    <h3 class="text-center mb-4">Mapa</h3>
-                    <form action="{% url 'export_mapa' %}" method="get">
-                        <button type="submit" class="btn btn_detail btn-block">
-                            Descargar <i class="fa-solid fa-file-arrow-down ms-1"></i>
-                        </button>
-                    </form>
-                    <div class="mt-5">
-                        <h3 class="text-center mb-4">Importar</h3>
-                        <form method="POST" enctype="multipart/form-data" action="{% url 'import_mapa' %}" data-submit-form>
-                            {% csrf_token %}
-                            <div class="mb-3">
-                                <input type="file" name="file" accept=".csv" class="form-control">
-                            </div>
-                            <button type="submit" class="btn btn_detail btn-block">
-                                Importar <i class="fa-solid fa-file-arrow-up ms-1"></i>
-                            </button>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
         <!-- Todos los usuarios registrados -->
         <div class="pt-4" id="tabla_usuarios">
             <div class="card">
@@ -558,9 +533,9 @@
                                 data-mdb-parent="#settingsAccordion">
                                 <div class="accordion-body">
                                     <div class="form-check">
-                                        <input class="form-check-input" {% if config.calendar_btnsYear %}checked{% endif %} type="checkbox"
+                                        <input class="form-check-input input_change" {% if config.calendar_btnsYear %}checked{% endif %} type="checkbox"
                                             value="{{config.calendar_btnsYear}}" id="btnsYear" name="btnsYear" />
-                                        <label class="form-check-label" for="btnsYear">Mostrar Botones para cambiar año:</label>
+                                        <label class="form-check-label" for="btnsYear">Mostrar Botones para cambiar año</label>
                                     </div>
                                 </div>
                             </div>

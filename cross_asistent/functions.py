@@ -101,7 +101,7 @@ def create_newuser(first_name, last_name, username, email, password1, password2=
         new_user.save()
         aviso=''
         if password2 is not None:
-            aviso = '<br>Tu cuenta está <u>In-habilitada</u> 😯😬'
+            aviso = '<br>Tu cuenta está <u>Inhabilitada</u> 😯😬'
         return {'success': True, 'message': f'Usuario creado exitosamente 🥳🎈 {aviso}'}
     except IntegrityError:
         return {'success': False, 'message': 'Ocurrió un error durante el registro. Intente nuevamente.'}
@@ -563,10 +563,14 @@ def preguntas_deleted(request):
 def settings_update(request):
     if request.method == 'POST':
         try:
-            config = get_object_or_404(models.Configuraciones, id='1')
             qrImgPOST = request.FILES.get('qrImage')
+            btnyear_calendar = request.POST.get('btnsYear')
+            
+            config = get_object_or_404(models.Configuraciones, id='1')
             if qrImgPOST:
                 config.qr_image = qrImgPOST
+            print(btnyear_calendar)
+            config.calendar_btnsYear = btnyear_calendar or False
             config.copyright_year = request.POST.get('cr_year')
             config.save()
             

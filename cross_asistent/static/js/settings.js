@@ -632,7 +632,7 @@ function displayChatbotResponse(answer) {
 // Menejar el Saludo Inicial ######################
 if (contOutput && !saludoMostrado) {
     const valID = `uuid${cadenaRandom(5, alfabetico)}`;
-    const htmlBlock = `<div class="chat_msg asistent_response" data-tokeid="${valID}"><span>Hola!!! Soy Howky, tu asistente virtual de la Universidad Tecnologica de Coahuila! <br>¿En qué puedo ayudarte?</span></div>`;
+    const htmlBlock = `<div class="chat_msg asistent_response" data-tokeid="${valID}"><span>Hola!!! Soy Hawky, tu asistente virtual de la Universidad Tecnologica de Coahuila! <br>¿En qué puedo ayudarte?</span></div>`;
 
     contOutput.insertAdjacentHTML("beforeend", htmlBlock);
 
