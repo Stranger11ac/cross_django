@@ -16,6 +16,16 @@ settingsall = models.Configuraciones.objects.all()
 questions_all = models.Preguntas.objects.all().order_by('-id')
 categoriasFilter = models.Categorias.objects.exclude(categoria__in=['Mapa', 'Calendario'])
 
+def obtener_configuraciones():
+    for oneconfig in settingsall:
+        return {
+            'copyright_settings': oneconfig.copyright_year,
+            'website_settings': oneconfig.utc_link,
+            'calendar_btns_year': getattr(oneconfig, 'calendar_btnsYear', None)  # Solo en caso de que se use
+        }
+    return {}
+
+
 def index(request):
     if not request.user.is_staff:
         logout(request)
@@ -47,17 +57,14 @@ def fqt_questions(request):
     if not request.user.is_staff:
         logout(request)
     
-    for oneconfig in settingsall:
-        copyright_db = oneconfig.copyright_year
-        website_db = oneconfig.utc_link
+    configuraciones = obtener_configuraciones()
     
     categoria_Preguntas = models.Categorias.objects.get(categoria="Preguntas")
     questall = models.Database.objects.filter(frecuencia__gt=0, categoria=categoria_Preguntas).order_by('-frecuencia')
     return render(request, 'frecuentes.html', {
         'quest_all': questall,
         'active_page': 'faq',
-        'copyright_settings': copyright_db,
-        'website_settings': website_db,
+        **configuraciones
     })
 
 def fqt_questions_send(request):    
@@ -79,10 +86,8 @@ def blogs(request):
     if not request.user.is_staff:
         logout(request)
     
-    for oneconfig in settingsall:
-        copyright_db = oneconfig.copyright_year
-        website_db = oneconfig.utc_link
-    
+    configuraciones = obtener_configuraciones()
+
     blogs = models.Articulos.objects.all().order_by('-id')
     blogs_modificados = []
 
@@ -102,20 +107,18 @@ def blogs(request):
             'imagen': img,
             'class': imgClass,
         })
+
     return render(request, 'blogs_all.html', {
         'blogs_all': blogs_modificados,
         'active_page': 'blog',
-        'copyright_settings': copyright_db,
-        'website_settings': website_db,
+        **configuraciones
     })
 
 def mostrar_blog(request, Articulos_id):
     if not request.user.is_staff:
         logout(request)
     
-    for oneconfig in settingsall:
-        copyright_db = oneconfig.copyright_year
-        website_db = oneconfig.utc_link
+    configuraciones = obtener_configuraciones()
     
     articulo = get_object_or_404(models.Articulos, pk=Articulos_id)
     autor_username = articulo.autor
@@ -149,23 +152,19 @@ def mostrar_blog(request, Articulos_id):
         'foto_autor': foto_autor,
         'firma_autor': firma_autor,
         'encabezado_url': encabezado_url,
-        'copyright_settings': copyright_db,
-        'website_settings': website_db,
+        **configuraciones
     })
 
 def calendario(request):
     if not request.user.is_staff:
         logout(request)
     
-    for oneconfig in settingsall:
-        copyright_db = oneconfig.copyright_year
-        website_db = oneconfig.utc_link
-        btns_year = oneconfig.calendar_btnsYear
-    
+    configuraciones = obtener_configuraciones()
+
     return render(request, 'calendario.html', {
-        'active_page': 'calendario', 'show_btns_year': btns_year,
-        'copyright_settings': copyright_db,
-        'website_settings': website_db,
+        'active_page': 'calendario',
+        'show_btns_year': configuraciones.get('calendar_btns_year'),
+        **configuraciones  # Agregar las configuraciones al contexto
     })
 
 def map(request):
@@ -179,14 +178,10 @@ def about(request):
     if not request.user.is_staff:
         logout(request)
     
-    for oneconfig in settingsall:
-        copyright_db = oneconfig.copyright_year
-        website_db = oneconfig.utc_link
-    
+    configuraciones = obtener_configuraciones()
     return render(request, 'about.html', {
         'active_page': 'about',
-        'copyright_settings': copyright_db,
-        'website_settings': website_db,
+        **configuraciones
     })
 
 # Administracion ----------------------------------------------------------
@@ -245,15 +240,11 @@ def singinpage(request):
         else:
             return JsonResponse({'success': False, 'functions': 'singin', 'message': 'Usuario no registrado 😅. Verifica tu nombre de usuario o correo electrónico'}, status=400)
     else:
-        for oneconfig in settingsall:
-            copyright_db = oneconfig.copyright_year
-            website_db = oneconfig.utc_link
-        
+        configuraciones = obtener_configuraciones()
         logout(request)
         return render(request, 'singinup.html', {
             'active_page': 'singin',
-            'copyright_settings': copyright_db,
-            'website_settings': website_db,
+            **configuraciones
         })
 
 @login_required
