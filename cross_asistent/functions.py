@@ -569,8 +569,8 @@ def settings_update(request):
             config = get_object_or_404(models.Configuraciones, id='1')
             if qrImgPOST:
                 config.qr_image = qrImgPOST
-            print(btnyear_calendar)
-            config.calendar_btnsYear = btnyear_calendar or False
+            
+            config.calendar_btnsYear = True if btnyear_calendar else False
             config.copyright_year = request.POST.get('cr_year')
             config.save()
             

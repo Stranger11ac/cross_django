@@ -3,7 +3,7 @@
 {% block title %}Calendario de la Universidad 📰{% endblock %}
 {% block content %}
 <main class="container container-fluid py-5">
-    <section id="calendar" data-events="{% url 'calendario_eventos' %}"></section>
+    <section id="calendar" data-events="{% url 'calendario_eventos' %}" data-show_btnyear="{{show_btns_year}}"></section>
 
     <!-- Modal: Ver info del Evento -->
     <div class="modal fade" id="eventModal" tabindex="-1" aria-labelledby="eventModalLabel" aria-hidden="true">

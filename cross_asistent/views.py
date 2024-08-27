@@ -47,11 +47,17 @@ def fqt_questions(request):
     if not request.user.is_staff:
         logout(request)
     
+    for oneconfig in settingsall:
+        copyright_db = oneconfig.copyright_year
+        website_db = oneconfig.utc_link
+    
     categoria_Preguntas = models.Categorias.objects.get(categoria="Preguntas")
     questall = models.Database.objects.filter(frecuencia__gt=0, categoria=categoria_Preguntas).order_by('-frecuencia')
     return render(request, 'frecuentes.html', {
         'quest_all': questall,
-        'active_page': 'faq'
+        'active_page': 'faq',
+        'copyright_settings': copyright_db,
+        'website_settings': website_db,
     })
 
 def fqt_questions_send(request):    
@@ -72,6 +78,11 @@ def fqt_questions_send(request):
 def blogs(request):
     if not request.user.is_staff:
         logout(request)
+    
+    for oneconfig in settingsall:
+        copyright_db = oneconfig.copyright_year
+        website_db = oneconfig.utc_link
+    
     blogs = models.Articulos.objects.all().order_by('-id')
     blogs_modificados = []
 
@@ -93,12 +104,18 @@ def blogs(request):
         })
     return render(request, 'blogs_all.html', {
         'blogs_all': blogs_modificados,
-        'active_page': 'blog'
+        'active_page': 'blog',
+        'copyright_settings': copyright_db,
+        'website_settings': website_db,
     })
 
 def mostrar_blog(request, Articulos_id):
     if not request.user.is_staff:
         logout(request)
+    
+    for oneconfig in settingsall:
+        copyright_db = oneconfig.copyright_year
+        website_db = oneconfig.utc_link
     
     articulo = get_object_or_404(models.Articulos, pk=Articulos_id)
     autor_username = articulo.autor
@@ -132,13 +149,23 @@ def mostrar_blog(request, Articulos_id):
         'foto_autor': foto_autor,
         'firma_autor': firma_autor,
         'encabezado_url': encabezado_url,
+        'copyright_settings': copyright_db,
+        'website_settings': website_db,
     })
 
 def calendario(request):
     if not request.user.is_staff:
         logout(request)
+    
+    for oneconfig in settingsall:
+        copyright_db = oneconfig.copyright_year
+        website_db = oneconfig.utc_link
+        btns_year = oneconfig.calendar_btnsYear
+    
     return render(request, 'calendario.html', {
-        'active_page': 'calendario'
+        'active_page': 'calendario', 'show_btns_year': btns_year,
+        'copyright_settings': copyright_db,
+        'website_settings': website_db,
     })
 
 def map(request):
@@ -151,8 +178,15 @@ def map(request):
 def about(request):
     if not request.user.is_staff:
         logout(request)
+    
+    for oneconfig in settingsall:
+        copyright_db = oneconfig.copyright_year
+        website_db = oneconfig.utc_link
+    
     return render(request, 'about.html', {
-        'active_page': 'about'
+        'active_page': 'about',
+        'copyright_settings': copyright_db,
+        'website_settings': website_db,
     })
 
 # Administracion ----------------------------------------------------------
@@ -211,9 +245,15 @@ def singinpage(request):
         else:
             return JsonResponse({'success': False, 'functions': 'singin', 'message': 'Usuario no registrado 😅. Verifica tu nombre de usuario o correo electrónico'}, status=400)
     else:
+        for oneconfig in settingsall:
+            copyright_db = oneconfig.copyright_year
+            website_db = oneconfig.utc_link
+        
         logout(request)
         return render(request, 'singinup.html', {
-            'active_page': 'singin'
+            'active_page': 'singin',
+            'copyright_settings': copyright_db,
+            'website_settings': website_db,
         })
 
 @login_required
@@ -387,12 +427,17 @@ def database_page(request):
     context = { 'active_page':'database','pages':functions.pages, 'preguntas_sending':questions_all, 'categorias':categoriasFilter, 'categoriasall':categoriasall, 'database': datos_modificados }
     return render(request, 'admin/database.html', context)
 
+# Calendario ----------------------------------------------------------
 @login_required
 @never_cache
 def calendario_page(request):
-    context = { 'active_page': 'calendario', 'pages': functions.pages }
-    return render(request, 'admin/calendario.html', context)
     
+    for oneconfig in settingsall:
+        btns_year = oneconfig.calendar_btnsYear
+
+    context = { 'active_page': 'calendario', 'show_btns_year': btns_year, 'pages': functions.pages }
+    return render(request, 'admin/calendario.html', context)
+
 # Blogs ----------------------------------------------------------
 @login_required
 @never_cache
