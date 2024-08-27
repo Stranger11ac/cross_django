@@ -92,7 +92,7 @@
                             <label class="form-check-label" for="soloImagen">Mostrar solo la imagen</label>
                         </div>
                         <div class="mt-4">
-                            <label for="expiracion" class="form-label">Visible hasta el... <small>(Opcional)</small></label>
+                            <label for="expiracion" class="form-label">visible hasta el dia: <small>(Opcional)</small></label>
                             <input type="datetime-local" class="form-control" id="expiracion" name="expiracion">
                         </div>
                         <button type="submit" class="btn btn_detail btn-block mt-4" data-mdb-ripple-init data-mdb-ripple-color="white">
@@ -181,11 +181,12 @@
                                                     {% csrf_token %}
                                                     <input type="hidden" value="{{ onebanner.id }}" name="banner_id">
                                                     <div>
-                                                        <label for="editImagen{{ onebanner.id }}" class="form-label">Imagen:</label>
+                                                        <label for="editImagen{{ onebanner.id }}" class="form-label">Cambiar Imagen:</label>
                                                         <input type="file" class="form-control" id="editImagen{{ onebanner.id }}" name="imagen"
                                                             accept="image/*">
                                                     </div>
-                                                    <div class="border border-1 border-secondary rounded mt-4">
+                                                    <label for="editTitulo{{ onebanner.id }}" class="form-label mt-4">Titulo:</label>
+                                                    <div class="border border-1 border-secondary rounded">
                                                         <input type="text" id="editTitulo{{ onebanner.id }}" name="contenidoWord"
                                                             class="form-control form-icon-trailing bannerTitle" value="{{ onebanner.titulo }}" />
                                                     </div>
@@ -210,7 +211,7 @@
                                                         <label class="form-check-label" for="soloImagen{{ onebanner.id }}">Mostrar solo la imagen</label>
                                                     </div>
                                                     <div class="mt-4">
-                                                        <label for="editExpiracion{{ onebanner.id }}" class="form-label">Visible hasta el...
+                                                        <label for="editExpiracion{{ onebanner.id }}" class="form-label">visible hasta el dia:
                                                             <small>(Opcional)</small></label>
                                                         <input type="datetime-local" class="form-control" id="editExpiracion{{ onebanner.id }}"
                                                             name="expiracion" value="{{ onebanner.expiracion|date:'Y-m-d\\TH:i' }}">

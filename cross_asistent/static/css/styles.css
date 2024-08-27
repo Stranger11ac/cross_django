@@ -495,6 +495,13 @@ main.main_anchor {
     transition: transform 0.5s var(--transitionCubicVal);
 }
 
+.btn_opacity-hover {
+    opacity: 0.8;
+    transition: opacity 0.3s ease;
+}
+
+.btn_opacity-hover:hover{opacity: 1;}
+
 .btn_genpass:hover {
     transform: scale(0.9);
 }
@@ -2082,6 +2089,7 @@ img.img-rounded {
         transform: translateZ(0)
     }
 }
+
 @keyframes fadeInLeft {
     0% {
         -webkit-transform: translate3d(-100%, 0, 0);
@@ -2100,30 +2108,37 @@ img.img-rounded {
     background-color: #5bc648 !important;
     background: #5bc648 !important;
 }
+
 .bg_calendar_naranja {
     background-color: #ff6506 !important;
     background: #ff6506 !important;
 }
+
 .bg_calendar_morado {
     background-color: #9e044c !important;
     background: #9e044c !important;
 }
+
 .bg_calendar_azulcielo {
     background-color: #00bfff !important;
     background: #00bfff !important;
 }
+
 .bg_calendar_rojo {
     background-color: #ff1b00 !important;
     background: #ff1b00 !important;
 }
+
 .bg_calendar_rosa {
     background-color: #ff6e8f !important;
     background: #ff6e8f !important;
 }
+
 .bg_calendar_azulfuerte {
     background-color: #003479 !important;
     background: #003479 !important;
 }
+
 .bg_calendar_amarillo {
     background-color: #e3b016 !important;
     background: #e3b016 !important;

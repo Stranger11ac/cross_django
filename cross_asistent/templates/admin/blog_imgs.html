@@ -1,22 +1,14 @@
 {% load static %}
-
 <!DOCTYPE html>
 <html lang="en" data-mdb-theme="light">
-
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
     <link rel="icon" href="{% static 'img/UTC_icono.ico' %}" />
     <title>Seleccionar Imagen | Asistente UTC</title>
-
-    <link rel="preload" href="{% static 'css/mdb_fontawesome.min.css' %}" as="style" />
-    <link rel="preload" href="{% static 'js/libraries.min.js' %}" as="script" />
-
     <link rel="stylesheet" href="{% static 'css/mdb_fontawesome.min.css' %}" />
     <link rel="stylesheet" href="{% static 'css/styles.css' %}" />
 </head>
-
 <body>
     <main class="container container-fluid pb-5 {% if not user.is_authenticated %}main_container{% endif %}">
         <div class="p-5 text-center">
@@ -51,5 +43,4 @@
         }
     </script>
 </body>
-
 </html>

@@ -106,6 +106,26 @@
     </form>
 </main>
 
+<!-- Modal: seleccionar imágenes -->
+<div class="modal fade" id="selectImageModal" tabindex="-1" aria-labelledby="selectImageModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="selectImageModalLabel">Galería, Seleccionar Imagen</h5>
+                <button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div id="imageContainer" class="row">
+                    <!-- Aquí se insertarán las imágenes mediante AJAX -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-mdb-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- Modal: Elimiinar Blog -->
 <div class="modal fade" id="blogDelete" tabindex="-1" aria-labelledby="blogDeleteLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
@@ -117,7 +137,7 @@
             <div class="modal-body">
                 <h4 class="text-center">Deseas eliminar el blog titulado:</h4>
                 <h4 class="text-center" id="blogDeleteTitle"></h4>
-                <p class="mb-0 mt-4">Esta acción es permanente, se eliminará la imágen de encabezado pero las imágenes del artículo se mantienen en la galería 
+                <p class="mb-0 mt-4">Esta acción es permanente, se eliminará la imágen de encabezado pero las imágenes del artículo se mantienen en la galería
                     global</p>
             </div>
             <div class="modal-footer d-flex justify-content-between">
@@ -134,4 +154,13 @@
 {% block scripts_end %}
 <script src="{% static 'tinymce/tinymce.min.js' %}"></script>
 <script src="{% static 'js/settings_tinymce.js' %}"></script>
+
+<script>
+    function insertImage(url) {
+        if (tinymce.activeEditor) {
+            tinymce.activeEditor.insertContent('<img src="' + url + '" class="img-tiny"/>');
+            $('#selectImageModal').modal('hide');
+        }
+    }
+</script>
 {% endblock %}

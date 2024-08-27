@@ -311,6 +311,14 @@ def marcar_notificaciones_leidas(request):
 @login_required
 @never_cache
 def banners_page(request):
+    # now = functions.timezone.now()
+    # expired_banners = models.Banners.objects.filter(expiracion__lte=now, visible=True)
+
+    # if expired_banners.exists():
+    #     for banner in expired_banners:
+    #         banner.visible = False
+    #         banner.save()
+    
     if request.method == 'POST':
         soloImagenPOST = request.POST.get('soloImagen')
         if soloImagenPOST == None:
@@ -334,7 +342,7 @@ def banners_page(request):
         return JsonResponse({
             'success': True,
             'functions': 'reload',
-            'message': f'El banner "{banner.titulo}" fue creado exitosamente 🥳🎉🎈.'
+            'message': f'El banner <span>{banner.titulo}</span> fue creado exitosamente 🥳🎉🎈.'
         }, status=200)
     
     banners_all = models.Banners.objects.all()
@@ -550,13 +558,15 @@ def upload_image(request):
 @login_required
 @never_cache
 def lista_imagenes(request):
-    imagenes = models.Imagenes.objects.all()
-    imagenes_modificadas = []
+    if request.method == 'GET':
+        imagenes = models.Imagenes.objects.all()
+        imagenes_modificadas = []
 
-    for imagen in imagenes:
-        imagen_url = imagen.imagen.url
-        imagenes_modificadas.append({
-            'id': imagen.id,
-            'url': imagen_url
-        })
-    return render(request, 'admin/blog_imgs.html', {'imagenes': imagenes_modificadas})
+        for imagen in imagenes:
+            imagen_url = imagen.imagen.url
+            imagenes_modificadas.append({
+                'id': imagen.id,
+                'url': imagen_url
+            })
+
+        return JsonResponse({'imagenes': imagenes_modificadas})

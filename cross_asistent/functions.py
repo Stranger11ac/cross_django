@@ -205,24 +205,39 @@ def banner_delete(request):
 def banners_visibility_now(request):
     if request.method == 'POST':        
         banneridPOST = request.POST.get('banner_id')
+        returnJson = None
         if banneridPOST:
+            # Caso 1: Se proporciona un banner_id
             expired_banners = models.Banners.objects.filter(id=banneridPOST)
             update_visibility = request.POST.get('banner_visible')
             update_exp = True
-            returnJson = {'success': True, 'functions':'reload', 'message':f'Se cambió la visibilidad del banner <span>#{banneridPOST}</span> exitosamente 🫡🥳🎉.'}
+            returnJson = {'success': True,'functions': 'reload','message': f'Se cambió la visibilidad del banner <span>#{banneridPOST}</span> exitosamente 🫡🥳🎉.'}
         else:
+            # Caso 2: No se proporciona un banner_id, se buscan banners caducados y visibles
             now = timezone.now()
             expired_banners = models.Banners.objects.filter(expiracion__lte=now, visible=True)
-            update_visibility = False
-            update_exp = False
-            returnJson = {'success': True, 'message':'Visibilidad actualizada', 'position':'top-end'}
-            
-        for banner in expired_banners:
-            banner.visible = update_visibility
-            if update_exp:
-                banner.expiracion = None
-            banner.save()
-    return JsonResponse(returnJson, status=201)
+
+            if expired_banners.exists():
+                update_visibility = False
+                update_exp = False
+                
+                # Solo se devuelve un JsonResponse si se encontraron y actualizaron banners
+                returnJson = {'success': True,'message': 'Se actualizaron los banners caducados','position': 'top-end'}
+        
+        if expired_banners:
+            for banner in expired_banners:
+                banner.visible = update_visibility
+                if update_exp:
+                    banner.expiracion = None
+                banner.save()
+
+        # Si se ha definido `returnJson`, se devuelve la respuesta JSON
+        if returnJson:
+            return JsonResponse(returnJson, status=201)
+
+        # Si no se realiza ninguna actualización, devolvemos un HTTP 204 (No Content)
+        return JsonResponse({}, status=200)
+
 
 # Categorias ----------------------------------------------------------
 @login_required
@@ -282,7 +297,6 @@ def categorias_delete(request):
         except Exception as e:
             return JsonResponse({'success': False, 'message': f'Ocurrió un error 😯😥 <br>{str(e)}'}, status=400)
     return JsonResponse({'error': 'Método no válido'}, status=400)
-
 
 # Base de Datos ----------------------------------------------------------
 @login_required

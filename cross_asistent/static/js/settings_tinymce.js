@@ -21,11 +21,11 @@ if (colorTheme) {
     }
 }
 
-var urlSendImgs = $("[data-upload-imgs]").data('upload-imgs')
-var relativeUrlSend = `../../..${urlSendImgs}`
+var urlSendImgs = $("[data-upload-imgs]").data("upload-imgs");
+var relativeUrlSend = `../../..${urlSendImgs}`;
 
-var urlListImgs = $("[data-list-imgs]").data('list-imgs')
-var relativeUrlImgs = `../../..${urlListImgs}`
+var urlListImgs = $("[data-list-imgs]").data("list-imgs");
+var relativeUrlImgs = `../../..${urlListImgs}`;
 
 const uploadImageTiny = async (blobInfo, progress) => {
     try {
@@ -211,9 +211,45 @@ tinymce.init({
         editor.ui.registry.addButton("gallerycustom", {
             icon: "gallery",
             onAction: function () {
-                window.open(relativeUrlImgs, "Seleccionar Imagen", "width=350,max-height=900");
+                // Cargar imagenes
+                $.ajax({
+                    url: relativeUrlImgs,
+                    method: 'GET',
+                    success: function(response) {
+                        const images = response.imagenes;
+                        const imageContainer = $('#selectImageModal .modal-body .row');
+                        imageContainer.empty();
+            
+                        images.forEach(image => {
+                            const imageElement = `
+                                <div class="mb-4 col-6 col-md-4 col-lg-2">
+                                    <div class="card">
+                                        <img src="${image.url}" alt="Imagen del blog" class="card-img">
+                                        <div class="card-img-overlay p-2">
+                                            <button class="btn btn_detail btn_opacity-hover" onclick="insertImage('${image.url}')">Insertar</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            `;
+                            imageContainer.append(imageElement);
+                        });
+                    },
+                    error: function(error) {
+                        console.error('Error al cargar las imágenes:', error);
+                        alertSToast('center', 80000, 'warning', 'Ocurrio un erro al obtener las imagenes.');
+                    }
+                });
+                
+                // Abre el modal
+                $("#selectImageModal").modal("show");
             },
         });
+
+        // Función selectImage para insertar la imagen en TinyMCE
+        window.selectImage = function (url) {
+            editor.insertContent(`<img src="/media/${url}" class="img-tiny"/>`);
+            $("#selectImageModal").modal("hide");
+        };
 
         editor.on("paste", (event) => {
             const clipboardData = event.clipboardData || window.clipboardData;
