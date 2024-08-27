@@ -516,7 +516,17 @@ class CustomControl {
                     window.open(url, "_blank", "noopener,noreferrer");
                 }
             );
+            const importMap = createButton(
+                "importmap",
+                `<div class="mapboxgl-ctrl-icon"><i class="fa-solid fa-cloud-arrow-up"></i></div>`,
+                "Importar y Exportar",
+                () => {
+                    var modalImport = new mdb.Modal(document.getElementById("importInMap"));
+                    modalImport.show();
+                }
+            );
 
+            this._container.appendChild(importMap);
             this._container.appendChild(OSMgo);
             this._container.appendChild(newBuild);
         }
@@ -634,68 +644,80 @@ fetch(url)
 
             // Agregar Imagen
             // map.loadImage("https://docs.mapbox.com/mapbox-gl-js/assets/cat.png", (error, image) => {
-            map.loadImage("/static/img/Oxxo_Logo.svg.png", (error, image) => {
-                if (error) throw error;
+            function loadImageIfNeeded(map, imageName, imageUrl) {
+                if (!map.hasImage(imageName)) {
+                    map.loadImage(imageUrl, (error, image) => {
+                        if (error) throw error;
+                        map.addImage(imageName, image);
+                    });
+                }
+            }
+            function addSourceIfNeeded(map, sourceId, sourceData) {
+                if (!map.getSource(sourceId)) {
+                    map.addSource(sourceId, sourceData);
+                }
+            }
 
-                map.addImage("oxxo", image);
+            function addLayerIfNeeded(map, layerId, layerConfig) {
+                if (!map.getLayer(layerId)) {
+                    map.addLayer(layerConfig);
+                }
+            }
 
-                map.addSource("otzo", {
-                    type: "geojson",
-                    data: {
-                        type: "FeatureCollection",
-                        features: [
-                            {
-                                type: "Feature",
-                                geometry: {
-                                    type: "Point",
-                                    coordinates: [-100.93596294319065, 25.55775995654966],
-                                },
+            loadImageIfNeeded(map, "oxxo", "/static/img/Oxxo_Logo.svg.png");
+
+            addSourceIfNeeded(map, "otzo", {
+                type: "geojson",
+                data: {
+                    type: "FeatureCollection",
+                    features: [
+                        {
+                            type: "Feature",
+                            geometry: {
+                                type: "Point",
+                                coordinates: [-100.93596294319065, 25.55775995654966],
                             },
-                        ],
-                    },
-                });
-
-                map.addLayer({
-                    id: "pointsoxxo",
-                    type: "symbol",
-                    source: "otzo", // reference the data source
-                    layout: {
-                        "icon-image": "oxxo", // reference the image
-                        "icon-size": 0.10,
-                    },
-                });
+                        },
+                    ],
+                },
             });
-            
-            map.loadImage("/static/img/bannorte_logo.png", (error, image) => {
-                if (error) throw error;
 
-                map.addImage("cajero", image);
+            addLayerIfNeeded(map, "pointsoxxo", {
+                id: "pointsoxxo",
+                type: "symbol",
+                source: "otzo",
+                layout: {
+                    "icon-image": "oxxo",
+                    "icon-size": 0.1,
+                },
+            });
 
-                map.addSource("pointcajero", {
-                    type: "geojson",
-                    data: {
-                        type: "FeatureCollection",
-                        features: [
-                            {
-                                type: "Feature",
-                                geometry: {
-                                    type: "Point",
-                                    coordinates: [-100.93450411941815, 25.556126447750614],
-                                },
+            loadImageIfNeeded(map, "cajero", "/static/img/bannorte_logo.png");
+
+            addSourceIfNeeded(map, "pointcajero", {
+                type: "geojson",
+                data: {
+                    type: "FeatureCollection",
+                    features: [
+                        {
+                            type: "Feature",
+                            geometry: {
+                                type: "Point",
+                                coordinates: [-100.93450411941815, 25.556126447750614],
                             },
-                        ],
-                    },
-                });
+                        },
+                    ],
+                },
+            });
 
-                map.addLayer({
-                    id: "puntocajero",
-                    type: "symbol",
-                    source: "pointcajero", // reference the data source
-                    layout: {
-                        "icon-image": "cajero", // reference the image
-                        "icon-size": 0.05,
-                    },
-                });
+            addLayerIfNeeded(map, "puntocajero", {
+                id: "puntocajero",
+                type: "symbol",
+                source: "pointcajero",
+                layout: {
+                    "icon-image": "cajero",
+                    "icon-size": 0.05,
+                },
             });
         }
 

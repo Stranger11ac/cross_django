@@ -122,8 +122,10 @@ def mostrar_blog(request, Articulos_id):
             firma_autor = f'{userdef.first_name} {userdef.last_name}'
     except models.UserProfile.DoesNotExist:
         firma_autor = autor_username
+        foto_autor = ''
     except User.DoesNotExist:
         firma_autor = autor_username
+        foto_autor = ''
 
     return render(request, 'blog.html', {
         'articulo': articulo,

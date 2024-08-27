@@ -28,18 +28,19 @@
                         <img src="{{imagen_url}}" class="img-fluid" alt="Sunset" />
                         {% endwith %}
                         <div class="carousel-caption">
-                            {% if not oneBanner.onlyImg %}
                             {% autoescape off %}
                             <h5>{{oneBanner.titulo}}</h5>
                             {% endautoescape %}
+
+                            {% if not oneBanner.solo_imagen %}
                             {% if oneBanner.visible %}
                             <p class="mb-0">{{oneBanner.descripcion}}</p>
                             {% endif %}
                             {% endif %}
 
-                            {% if not oneBanner.visible %}
-                            <small class="bg-danger rounded-pill p-1">Banner Invisible</small>
-                            {% endif %}
+                            {% if oneBanner.solo_imagen %}
+                            <small class="bg-success rounded-pill p-1 mt-3">Muestra solo la Imagen y boton</small>{% endif %}
+                            {% if not oneBanner.visible %}<small class="bg-danger rounded-pill p-1 mt-3">Banner Invisible</small>{% endif %}
                         </div>
                     </div>
                     {% endfor %}

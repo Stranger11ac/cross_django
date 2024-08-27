@@ -211,6 +211,8 @@ tinymce.init({
         editor.ui.registry.addButton("gallerycustom", {
             icon: "gallery",
             onAction: function () {
+                // Abre el modal
+                $("#selectImageModal").modal("show");
                 // Cargar imagenes
                 $.ajax({
                     url: relativeUrlImgs,
@@ -239,9 +241,6 @@ tinymce.init({
                         alertSToast('center', 80000, 'warning', 'Ocurrio un erro al obtener las imagenes.');
                     }
                 });
-                
-                // Abre el modal
-                $("#selectImageModal").modal("show");
             },
         });
 

@@ -233,6 +233,37 @@
     </div>
 </div>
 
+<!-- Modal: Importar y exportar -->
+<div class="modal fade" id="importMap" tabindex="-1" aria-labelledby="importMapLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="importMapLabel">Importar y Exportar <i class="fa-solid fa-cloud ms-1"></i></h5>
+                <button type="button" class="btn-close" data-mdb-ripple-init data-mdb-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form action="{% url 'export_mapa' %}" method="get">
+                    <button type="submit" class="btn btn_detail btn-block">
+                        Descargar CSV del Mapa <i class="fa-solid fa-file-arrow-down ms-1"></i>
+                    </button>
+                </form>
+                <div class="mt-5">
+                    <h3 class="text-center mb-4">Importar</h3>
+                    <form method="POST" enctype="multipart/form-data" action="{% url 'import_mapa' %}" data-submit-form>
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <input type="file" name="file" accept=".csv" class="form-control">
+                        </div>
+                        <button type="submit" class="btn btn_detail btn-block">
+                            Importar CSV <i class="fa-solid fa-file-arrow-up ms-1"></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- Modal: Abrir Google Maps -->
 <div class="modal fade" id="beforeSend" tabindex="-1" aria-labelledby="beforeSendLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
