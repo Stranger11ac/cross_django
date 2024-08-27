@@ -644,7 +644,7 @@ if (contOutput && !saludoMostrado) {
 
     RepAudioButton.addEventListener("click", function () {
         if (!saludoMostrado) {
-            playAudio("/static/audio/welcome_message.mp3");
+            playAudio("/static/audio/welcome.mp3");
         }
         saludoMostrado = true;
     });

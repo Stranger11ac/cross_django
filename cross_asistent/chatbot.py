@@ -45,7 +45,7 @@ def speekText():
             print(f"No se pueden solicitar resultados; {e}")
         except sr.UnknownValueError:
             print("Ocurrió un error desconocido")
-    
+
 @csrf_exempt
 def start_recognition(request):
     global is_recognizing, recognition_thread
@@ -147,19 +147,12 @@ def normalize_text(text):
     )
 
 def process_question(pregunta):
-    # Normaliza el texto para eliminar acentos y otros signos diacríticos
     pregunta_normalizada = normalize_text(pregunta.lower().strip())
 
     doc = nlp(pregunta_normalizada)
     tokens = [token.lemma_ for token in doc if (not token.is_stop and token.is_alpha) or token.text in palabras_clave]
     pregunta_procesada = " ".join(tokens)
     
-    print(f"Pregunta procesada: {pregunta_procesada}")
-    return pregunta_procesada
-def process_question(pregunta):
-    doc = nlp(pregunta.lower().strip())
-    tokens = [token.lemma_ for token in doc if (not token.is_stop and token.is_alpha) or token.text in palabras_clave]
-    pregunta_procesada = " ".join(tokens)
     print(f"Pregunta procesada: {pregunta_procesada}")
     return pregunta_procesada
 
