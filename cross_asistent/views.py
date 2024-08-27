@@ -312,15 +312,7 @@ def marcar_notificaciones_leidas(request):
 # Banners ----------------------------------------------------------
 @login_required
 @never_cache
-def banners_page(request):
-    # now = functions.timezone.now()
-    # expired_banners = models.Banners.objects.filter(expiracion__lte=now, visible=True)
-
-    # if expired_banners.exists():
-    #     for banner in expired_banners:
-    #         banner.visible = False
-    #         banner.save()
-    
+def banners_page(request):    
     if request.method == 'POST':
         soloImagenPOST = request.POST.get('soloImagen')
         if soloImagenPOST == None:
