@@ -653,54 +653,6 @@ fetch(dataPleaces)
                 .setLngLat(lngLat)
                 .addTo(mapMapbox);
         }
-        function insertImages() {
-            function loadImageIfNeeded(mapVar, imageName, imageUrl) {
-                if (!mapVar.hasImage(imageName)) {
-                    mapVar.loadImage(imageUrl, (error, image) => {
-                        if (error) throw error;
-                        mapVar.addImage(imageName, image);
-                    });
-                }
-            }
-            function addSourceIfNeeded(mapVar, sourceId, sourceData) {
-                if (!mapVar.getSource(sourceId)) {
-                    mapVar.addSource(sourceId, sourceData);
-                }
-            }
-
-            function addLayerIfNeeded(mapVar, layerId, layerConfig) {
-                if (!mapVar.getLayer(layerId)) {
-                    mapVar.addLayer(layerConfig);
-                }
-            }
-
-            loadImageIfNeeded(mapMapbox, "cajero", "/static/img/bannorte_logo.png");
-            addSourceIfNeeded(mapMapbox, "pointcajero", {
-                type: "geojson",
-                data: {
-                    type: "FeatureCollection",
-                    features: [
-                        {
-                            type: "Feature",
-                            geometry: {
-                                type: "Point",
-                                coordinates: [-100.93450411941815, 25.556126447750614],
-                            },
-                        },
-                    ],
-                },
-            });
-
-            addLayerIfNeeded(mapMapbox, "puntocajero", {
-                id: "puntocajero",
-                type: "symbol",
-                source: "pointcajero",
-                layout: {
-                    "icon-image": "cajero",
-                    "icon-size": 0.05,
-                },
-            });
-        }
         function calcularRuta() {
             const origen = selectOrigin.value;
             const destino = selectDestiny.value;
@@ -934,7 +886,6 @@ fetch(dataPleaces)
             offcanvasOpen = true;
         });
 
-        // Cambiar estilo del Mapa ##########################################
         inputsLayer.forEach((input) => {
             input.addEventListener("click", function (layer) {
                 const layerId = layer.target.id;
@@ -945,7 +896,6 @@ fetch(dataPleaces)
             });
         });
 
-        // Obtener nombres de los edificios y ordenar alfabéticamente
         const nombresEdificios = geojsonEdificios.features.map((feature) => feature.properties.nombre).sort();
         nombresEdificios.forEach((nombre) => {
             const option = new Option(nombre, nombre);
@@ -953,7 +903,6 @@ fetch(dataPleaces)
             document.getElementById("destino").add(option.cloneNode(true));
         });
 
-        // Ejecutar calcularRuta
         selectOrigin.addEventListener("change", function () {
             const seleccionOrigen = this.value;
             selectDestiny.querySelectorAll("option").forEach((option) => {
@@ -983,7 +932,6 @@ fetch(dataPleaces)
             }
         });
 
-        // Resetear ruta
         document.querySelector("[data-reset_form]").addEventListener("click", function () {
             formRoute.querySelectorAll("option").forEach((option) => {
                 option.disabled = false;
@@ -1019,10 +967,8 @@ fetch(dataPleaces)
                 $("#route-info").empty();
             });
         });
-
-        // Ejecuta funciones para que aparezcan los poligonos e imagenes
+        
         createEdificios();
-        insertImages();
     })
     .catch((error) => {
         console.error("Error al obtener los datos del mapa:");
@@ -1035,11 +981,9 @@ fetch(dataMarkers)
     .then((response) => response.json())
     .then((data) => {
         mapMapbox.on("load", () => {
-            // Cargar imágenes y añadir fuentes y capas
             data.forEach((item) => {
                 const nameImage = item.nombre.replace(" ", "");
 
-                // Cargar y añadir la imagen
                 if (!mapMapbox.hasImage(nameImage)) {
                     mapMapbox.loadImage(item.imagen, (error, image) => {
                         if (error) throw error;
@@ -1047,7 +991,6 @@ fetch(dataMarkers)
                     });
                 }
 
-                // Añadir fuente si no existe
                 if (!mapMapbox.getSource(item.uuid)) {
                     mapMapbox.addSource(item.uuid, {
                         type: "geojson",
@@ -1057,7 +1000,11 @@ fetch(dataMarkers)
                                 {
                                     type: "Feature",
                                     properties: {
+                                        uuid: item.uuid,
                                         nombre: item.nombre,
+                                        imagen: item.imagen,
+                                        icon_size: item.icon_size,
+                                        door_coords: item.door_coords,
                                     },
                                     geometry: {
                                         type: "Point",
@@ -1069,7 +1016,6 @@ fetch(dataMarkers)
                     });
                 }
 
-                // Añadir capa si no existe
                 if (!mapMapbox.getLayer(`points${nameImage}`)) {
                     mapMapbox.addLayer({
                         id: `points${nameImage}`,
@@ -1084,7 +1030,6 @@ fetch(dataMarkers)
                 }
             });
 
-            // Añadir el listener de clic para todas las capas
             mapMapbox.on("click", (e) => {
                 const features = mapMapbox.queryRenderedFeatures(e.point, {
                     layers: data.map((item) => `points${item.nombre.replace(" ", "")}`),

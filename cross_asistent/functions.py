@@ -532,8 +532,6 @@ def mapa_markers(request):
             "icon_size": float(mapa.size_marker),
             "door_coords": [float(coord) for coord in mapa.door_cords.split(",")],
         }
-        print(item['icon_size'])
-        print(type(item['icon_size']))
         data.append(item)
 
     return JsonResponse(data, safe=False)
