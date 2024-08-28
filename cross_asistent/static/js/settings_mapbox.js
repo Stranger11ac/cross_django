@@ -21,7 +21,7 @@ const offcanvasInstance =
 
 mapboxgl.accessToken = mapToken;
 
-const map = new mapboxgl.Map({
+const mapMapbox = new mapboxgl.Map({
     container: "map",
     style: "mapbox://styles/mapbox/streets-v12",
     center: [-100.93655, 25.55701],
@@ -207,7 +207,7 @@ if (mapElement.classList.contains("map_editing")) {
         createNew = true;
         formChanges = false;
         initPolygonDrawing();
-        map.on("contextmenu", addMarker);
+        mapMapbox.on("contextmenu", addMarker);
         $("#btnPoligonCancel").slideDown();
         if (window.innerWidth <= 800) {
             setTimeout(() => {
@@ -220,7 +220,7 @@ if (mapElement.classList.contains("map_editing")) {
     drawPolygonCancel.addEventListener("click", () => {
         createNew = "";
         initPolygonDrawing();
-        map.off("contextmenu", addMarker);
+        mapMapbox.off("contextmenu", addMarker);
         $("#btnPoligonCancel").slideUp();
         $("#esquinasPoligono").slideUp("fast");
     });
@@ -229,7 +229,7 @@ if (mapElement.classList.contains("map_editing")) {
             const color = colors[coords.length];
             const marker = new mapboxgl.Marker({ color: color, draggable: true })
                 .setLngLat(e.lngLat)
-                .addTo(map)
+                .addTo(mapMapbox)
                 .on("dragend", updatePolygon);
             markers.push(marker);
             coords.push(e.lngLat);
@@ -239,7 +239,7 @@ if (mapElement.classList.contains("map_editing")) {
         }
 
         if (coords.length === 4) {
-            map.off("contextmenu", addMarker);
+            mapMapbox.off("contextmenu", addMarker);
             drawPolygon();
             drawPolygonButton.classList.add("bg_red-blue");
             drawPolygonButton.classList.remove("bg_purple-blue");
@@ -264,14 +264,14 @@ if (mapElement.classList.contains("map_editing")) {
         }
 
         if (polygonLayer) {
-            if (map.getLayer(polygonLayer.id + "_label")) {
-                map.removeLayer(polygonLayer.id + "_label");
+            if (mapMapbox.getLayer(polygonLayer.id + "_label")) {
+                mapMapbox.removeLayer(polygonLayer.id + "_label");
             }
-            if (map.getLayer(polygonLayer.id)) {
-                map.removeLayer(polygonLayer.id);
+            if (mapMapbox.getLayer(polygonLayer.id)) {
+                mapMapbox.removeLayer(polygonLayer.id);
             }
-            if (map.getSource(polygonLayer.id)) {
-                map.removeSource(polygonLayer.id);
+            if (mapMapbox.getSource(polygonLayer.id)) {
+                mapMapbox.removeSource(polygonLayer.id);
             }
         }
 
@@ -290,19 +290,19 @@ if (mapElement.classList.contains("map_editing")) {
             coords[0].toArray(),
         ];
 
-        if (map.getLayer("polygon_label")) {
-            map.removeLayer("polygon_label");
+        if (mapMapbox.getLayer("polygon_label")) {
+            mapMapbox.removeLayer("polygon_label");
         }
-        if (map.getLayer("polygon")) {
-            map.removeLayer("polygon");
+        if (mapMapbox.getLayer("polygon")) {
+            mapMapbox.removeLayer("polygon");
         }
-        if (map.getSource("polygon")) {
-            map.removeSource("polygon");
+        if (mapMapbox.getSource("polygon")) {
+            mapMapbox.removeSource("polygon");
         }
 
         const polygonId = "polygon";
 
-        map.addSource(polygonId, {
+        mapMapbox.addSource(polygonId, {
             type: "geojson",
             data: {
                 type: "Feature",
@@ -313,7 +313,7 @@ if (mapElement.classList.contains("map_editing")) {
             },
         });
 
-        map.addLayer({
+        mapMapbox.addLayer({
             id: polygonId,
             type: "fill",
             source: polygonId,
@@ -324,7 +324,7 @@ if (mapElement.classList.contains("map_editing")) {
             },
         });
 
-        map.addLayer({
+        mapMapbox.addLayer({
             id: polygonId + "_label",
             type: "symbol",
             source: polygonId,
@@ -360,7 +360,7 @@ if (mapElement.classList.contains("map_editing")) {
         if (addDoorMarker) {
             btnDoor.classList.add("bg_purple-blue");
             btnDoor.classList.remove("btn_detail");
-            map.on("contextmenu", addMarkerDoor);
+            mapMapbox.on("contextmenu", addMarkerDoor);
         }
         addDoorMarker = false;
         if (window.innerWidth <= 800) {
@@ -377,7 +377,7 @@ if (mapElement.classList.contains("map_editing")) {
         }
         doorMarker = new mapboxgl.Marker({ color: "purple", draggable: true })
             .setLngLat(e.lngLat)
-            .addTo(map)
+            .addTo(mapMapbox)
             .on("dragend", updateDoorCords);
 
         puertaCordsEdificio.classList.add("active");
@@ -386,7 +386,7 @@ if (mapElement.classList.contains("map_editing")) {
         btnDoor.classList.add("btn_detail");
         addDoorMarker = true;
 
-        map.off("contextmenu", addMarkerDoor);
+        mapMapbox.off("contextmenu", addMarkerDoor);
     }
     function updateDoorCords(e) {
         const lngLat = doorMarker.getLngLat();
@@ -405,13 +405,13 @@ $("#deletePleace").on("hidden.bs.modal", function (e) {
 });
 
 // Crear nuevo menu de botones personalizados ########################################
-map.addControl(new mapboxgl.NavigationControl());
+mapMapbox.addControl(new mapboxgl.NavigationControl());
 class CustomControl {
     constructor() {
         this._container = null;
     }
 
-    onAdd(map) {
+    onAdd(mapMapbox) {
         this._container = document.createElement("div");
         this._container.className = "mapboxgl-ctrl mapboxgl-ctrl-group";
 
@@ -555,7 +555,7 @@ function updateLabelsAndInputs(varLayer) {
     }
 }
 function setMapStyle(style) {
-    map.setStyle("mapbox://styles/mapbox/" + style);
+    mapMapbox.setStyle("mapbox://styles/mapbox/" + style);
 }
 if (savedLastLayerMap) {
     updateLabelsAndInputs(savedLastLayerMap);
@@ -602,18 +602,16 @@ fetch(url)
             })),
         };
 
-        console.table(geojsonEdificios)
-
         function createEdificios() {
-            if (!map.getSource("places")) {
-                map.addSource("places", {
+            if (!mapMapbox.getSource("places")) {
+                mapMapbox.addSource("places", {
                     type: "geojson",
                     data: geojsonEdificios,
                 });
             }
 
-            if (!map.getLayer("places-layer")) {
-                map.addLayer({
+            if (!mapMapbox.getLayer("places-layer")) {
+                mapMapbox.addLayer({
                     id: "places-layer",
                     type: "fill",
                     source: "places",
@@ -625,8 +623,8 @@ fetch(url)
             }
 
             // Agregar capa para las etiquetas
-            if (!map.getLayer("places-label")) {
-                map.addLayer({
+            if (!mapMapbox.getLayer("places-label")) {
+                mapMapbox.addLayer({
                     id: "places-label",
                     type: "symbol",
                     source: "places",
@@ -640,7 +638,7 @@ fetch(url)
                         "text-color": colorlabels,
                     },
                 });
-                map.moveLayer("places-label");
+                mapMapbox.moveLayer("places-label");
             }
         }
         function createMarker(lngLat) {
@@ -653,31 +651,31 @@ fetch(url)
                 draggable: false,
             })
                 .setLngLat(lngLat)
-                .addTo(map);
+                .addTo(mapMapbox);
         }
         function insertImages() {
-            function loadImageIfNeeded(map, imageName, imageUrl) {
-                if (!map.hasImage(imageName)) {
-                    map.loadImage(imageUrl, (error, image) => {
+            function loadImageIfNeeded(mapVar, imageName, imageUrl) {
+                if (!mapVar.hasImage(imageName)) {
+                    mapVar.loadImage(imageUrl, (error, image) => {
                         if (error) throw error;
-                        map.addImage(imageName, image);
+                        mapVar.addImage(imageName, image);
                     });
                 }
             }
-            function addSourceIfNeeded(map, sourceId, sourceData) {
-                if (!map.getSource(sourceId)) {
-                    map.addSource(sourceId, sourceData);
+            function addSourceIfNeeded(mapVar, sourceId, sourceData) {
+                if (!mapVar.getSource(sourceId)) {
+                    mapVar.addSource(sourceId, sourceData);
                 }
             }
 
-            function addLayerIfNeeded(map, layerId, layerConfig) {
-                if (!map.getLayer(layerId)) {
-                    map.addLayer(layerConfig);
+            function addLayerIfNeeded(mapVar, layerId, layerConfig) {
+                if (!mapVar.getLayer(layerId)) {
+                    mapVar.addLayer(layerConfig);
                 }
             }
 
-            loadImageIfNeeded(map, "oxxo", "/static/img/Oxxo_Logo.svg.png");
-            addSourceIfNeeded(map, "otzo", {
+            loadImageIfNeeded(mapMapbox, "oxxo", "/static/img/Oxxo_Logo.svg.png");
+            addSourceIfNeeded(mapMapbox, "otzo", {
                 type: "geojson",
                 data: {
                     type: "FeatureCollection",
@@ -693,7 +691,7 @@ fetch(url)
                 },
             });
 
-            addLayerIfNeeded(map, "pointsoxxo", {
+            addLayerIfNeeded(mapMapbox, "pointsoxxo", {
                 id: "pointsoxxo",
                 type: "symbol",
                 source: "otzo",
@@ -703,8 +701,8 @@ fetch(url)
                 },
             });
 
-            loadImageIfNeeded(map, "cajero", "/static/img/bannorte_logo.png");
-            addSourceIfNeeded(map, "pointcajero", {
+            loadImageIfNeeded(mapMapbox, "cajero", "/static/img/bannorte_logo.png");
+            addSourceIfNeeded(mapMapbox, "pointcajero", {
                 type: "geojson",
                 data: {
                     type: "FeatureCollection",
@@ -720,7 +718,7 @@ fetch(url)
                 },
             });
 
-            addLayerIfNeeded(map, "puntocajero", {
+            addLayerIfNeeded(mapMapbox, "puntocajero", {
                 id: "puntocajero",
                 type: "symbol",
                 source: "pointcajero",
@@ -775,8 +773,8 @@ fetch(url)
                         }, 4000);
                     }
 
-                    map.addControl(directions, "top-left");
-                    map.moveLayer("places-label");
+                    mapMapbox.addControl(directions, "top-left");
+                    mapMapbox.moveLayer("places-label");
                     addRouteLayer();
                 }
             } else {
@@ -785,8 +783,8 @@ fetch(url)
         }
         function addRouteLayer() {
             if (currentRoute && currentRoute.features && currentRoute.features.length > 0) {
-                if (!map.getSource("directions")) {
-                    map.addSource("directions", {
+                if (!mapMapbox.getSource("directions")) {
+                    mapMapbox.addSource("directions", {
                         type: "geojson",
                         data: currentRoute,
                     });
@@ -796,8 +794,8 @@ fetch(url)
                 const destFeature = currentRoute.features.find((feature) => feature.properties.id === "destination");
 
                 // Agregar capa de línea de ruta
-                if (!map.getLayer("directions-route-line")) {
-                    map.addLayer({
+                if (!mapMapbox.getLayer("directions-route-line")) {
+                    mapMapbox.addLayer({
                         id: "directions-route-line",
                         type: "line",
                         source: "directions",
@@ -814,8 +812,8 @@ fetch(url)
                 }
 
                 // Agregar capa de línea de ruta
-                if (!map.getLayer("directions-route-line-alt")) {
-                    map.addLayer({
+                if (!mapMapbox.getLayer("directions-route-line-alt")) {
+                    mapMapbox.addLayer({
                         id: "directions-route-line-alt",
                         type: "line",
                         source: "directions",
@@ -832,8 +830,8 @@ fetch(url)
                 }
 
                 // Agregar capa de punto de origen
-                if (!map.getLayer("directions-origin-point")) {
-                    map.addLayer({
+                if (!mapMapbox.getLayer("directions-origin-point")) {
+                    mapMapbox.addLayer({
                         id: "directions-origin-point",
                         type: "circle",
                         source: "directions",
@@ -846,8 +844,8 @@ fetch(url)
                 }
 
                 // Agregar capa de punto de destino
-                if (!map.getLayer("directions-destination-point")) {
-                    map.addLayer({
+                if (!mapMapbox.getLayer("directions-destination-point")) {
+                    mapMapbox.addLayer({
                         id: "directions-destination-point",
                         type: "circle",
                         source: "directions",
@@ -860,9 +858,9 @@ fetch(url)
                 }
 
                 // Agregar etiqueta de punto de origen
-                if (!map.getLayer("directions-origin-label")) {
+                if (!mapMapbox.getLayer("directions-origin-label")) {
                     console.log(originFeature.properties["marker-symbol"]);
-                    map.addLayer({
+                    mapMapbox.addLayer({
                         id: "directions-origin-label",
                         type: "symbol",
                         source: "directions",
@@ -879,8 +877,8 @@ fetch(url)
                 }
 
                 // Agregar etiqueta de punto de destino
-                if (!map.getLayer("directions-destination-label")) {
-                    map.addLayer({
+                if (!mapMapbox.getLayer("directions-destination-label")) {
+                    mapMapbox.addLayer({
                         id: "directions-destination-label",
                         type: "symbol",
                         source: "directions",
@@ -896,34 +894,34 @@ fetch(url)
                     });
                 }
 
-                map.moveLayer("places-label");
+                mapMapbox.moveLayer("places-label");
             }
         }
         function saveRouteLayers() {
-            if (map.getSource("directions")) {
-                currentRoute = map.getSource("directions")._data;
+            if (mapMapbox.getSource("directions")) {
+                currentRoute = mapMapbox.getSource("directions")._data;
             }
         }
 
-        map.on("load", function () {
+        mapMapbox.on("load", function () {
             createEdificios();
         });
 
-        map.on("style.load", function () {
+        mapMapbox.on("style.load", function () {
             createEdificios();
             addRouteLayer();
             insertImages();
         });
 
         if (mapElement.classList.contains("map_user")) {
-            map.on("click", function (e) {
+            mapMapbox.on("click", function (e) {
                 const lngLat = e.lngLat;
                 createMarker(lngLat);
             });
         }
 
         // Abrir offcanvas: Informacion del edificio
-        map.on("click", "places-layer", (e) => {
+        mapMapbox.on("click", "places-layer", (e) => {
             const feature = e.features[0];
             const { nombre, informacion, imagen_url, color, door, uuid } = feature.properties;
             const { coordinates } = feature.geometry;
@@ -1034,14 +1032,14 @@ fetch(url)
                 "directions-destination-label",
             ];
             routeLayers.forEach((layer) => {
-                if (map.getLayer(layer)) {
-                    map.removeLayer(layer);
+                if (mapMapbox.getLayer(layer)) {
+                    mapMapbox.removeLayer(layer);
                 }
             });
 
             // Verificar si la fuente de la ruta existe y removerla
-            if (map.getSource("directions")) {
-                map.removeSource("directions");
+            if (mapMapbox.getSource("directions")) {
+                mapMapbox.removeSource("directions");
             }
 
             $("#buttons_route").slideUp("slow");
@@ -1061,16 +1059,16 @@ fetch(url)
     });
 
 // Agregar nuevo menu
-map.addControl(new CustomControl(), "top-right");
+mapMapbox.addControl(new CustomControl(), "top-right");
 
 // Cursor segun el evento ###########################################
-map.getCanvas().style.cursor = "default";
+mapMapbox.getCanvas().style.cursor = "default";
 function setCursor(cursorStyle) {
-    map.getCanvas().style.cursor = cursorStyle;
+    mapMapbox.getCanvas().style.cursor = cursorStyle;
 }
 
-map.on("dragstart", () => setCursor("move"));
-map.on("dragend", () => setCursor("default"));
-map.on("mousedown", () => setCursor("pointer"));
-map.on("mouseup", () => setCursor("default"));
-map.on("mouseover", () => setCursor("default"));
+mapMapbox.on("dragstart", () => setCursor("move"));
+mapMapbox.on("dragend", () => setCursor("default"));
+mapMapbox.on("mousedown", () => setCursor("pointer"));
+mapMapbox.on("mouseup", () => setCursor("default"));
+mapMapbox.on("mouseover", () => setCursor("default"));
