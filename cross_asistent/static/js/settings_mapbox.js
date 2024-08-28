@@ -577,8 +577,8 @@ const directions = new MapboxDirections({
 });
 
 // Cargar datos ##################################################################
-const url = document.querySelector("#map").getAttribute("data-mapa_edif");
-fetch(url)
+const dataPleaces = document.querySelector("#map").getAttribute("data-mapa_edif");
+fetch(dataPleaces)
     .then((response) => response.json())
     .then((data) => {
         const geojsonEdificios = {
@@ -673,33 +673,6 @@ fetch(url)
                     mapVar.addLayer(layerConfig);
                 }
             }
-
-            loadImageIfNeeded(mapMapbox, "oxxo", "/static/img/Oxxo_Logo.svg.png");
-            addSourceIfNeeded(mapMapbox, "otzo", {
-                type: "geojson",
-                data: {
-                    type: "FeatureCollection",
-                    features: [
-                        {
-                            type: "Feature",
-                            geometry: {
-                                type: "Point",
-                                coordinates: [-100.93596294319065, 25.55775995654966],
-                            },
-                        },
-                    ],
-                },
-            });
-
-            addLayerIfNeeded(mapMapbox, "pointsoxxo", {
-                id: "pointsoxxo",
-                type: "symbol",
-                source: "otzo",
-                layout: {
-                    "icon-image": "oxxo",
-                    "icon-size": 0.1,
-                },
-            });
 
             loadImageIfNeeded(mapMapbox, "cajero", "/static/img/bannorte_logo.png");
             addSourceIfNeeded(mapMapbox, "pointcajero", {
@@ -910,7 +883,6 @@ fetch(url)
         mapMapbox.on("style.load", function () {
             createEdificios();
             addRouteLayer();
-            insertImages();
         });
 
         if (mapElement.classList.contains("map_user")) {
@@ -1056,6 +1028,82 @@ fetch(url)
         console.error("Error al obtener los datos del mapa:");
         console.error(error);
         alertSToast("top", 5000, "error", "Ocurrio un error inesperado. verifica la consola. #403");
+    });
+
+const dataMarkers = document.querySelector("#map").getAttribute("data-mapa_markers");
+fetch(dataMarkers)
+    .then((response) => response.json())
+    .then((data) => {
+        mapMapbox.on("load", () => {
+            // Cargar imágenes y añadir fuentes y capas
+            data.forEach((item) => {
+                const nameImage = item.nombre.replace(" ", "");
+
+                // Cargar y añadir la imagen
+                if (!mapMapbox.hasImage(nameImage)) {
+                    mapMapbox.loadImage(item.imagen, (error, image) => {
+                        if (error) throw error;
+                        mapMapbox.addImage(nameImage, image);
+                    });
+                }
+
+                // Añadir fuente si no existe
+                if (!mapMapbox.getSource(item.uuid)) {
+                    mapMapbox.addSource(item.uuid, {
+                        type: "geojson",
+                        data: {
+                            type: "FeatureCollection",
+                            features: [
+                                {
+                                    type: "Feature",
+                                    properties: {
+                                        nombre: item.nombre,
+                                    },
+                                    geometry: {
+                                        type: "Point",
+                                        coordinates: item.door_coords,
+                                    },
+                                },
+                            ],
+                        },
+                    });
+                }
+
+                // Añadir capa si no existe
+                if (!mapMapbox.getLayer(`points${nameImage}`)) {
+                    mapMapbox.addLayer({
+                        id: `points${nameImage}`,
+                        type: "symbol",
+                        source: item.uuid,
+                        layout: {
+                            "icon-image": nameImage,
+                            "icon-size": item.icon_size,
+                            "icon-allow-overlap": true,
+                        },
+                    });
+                }
+            });
+
+            // Añadir el listener de clic para todas las capas
+            mapMapbox.on("click", (e) => {
+                const features = mapMapbox.queryRenderedFeatures(e.point, {
+                    layers: data.map((item) => `points${item.nombre.replace(" ", "")}`),
+                });
+
+                if (features.length) {
+                    const feature = features[0];
+                    const coordinates = feature.geometry.coordinates.slice();
+                    const description = `Nombre: ${feature.properties.nombre}<br>Ubicación: ${coordinates}`;
+
+                    alertSToast("top", 7000, "info", description);
+                }
+            });
+        });
+    })
+    .catch((error) => {
+        console.error("Error al obtener Marcadores del mapa:");
+        console.error(error);
+        alertSToast("top", 5000, "error", "Ocurrio un error inesperado. #403");
     });
 
 // Agregar nuevo menu

@@ -497,7 +497,7 @@ def blog_delete(request):
 
 # Mapa ----------------------------------------------------------
 def mapa_data(request):
-    mapas = models.Mapa.objects.all()
+    mapas = models.Mapa.objects.filter(is_marker=False)
     data = []
     for mapa in mapas:
         imagen_qs = models.Database.objects.filter(uuid=mapa.uuid).values_list('imagen', flat=True)
@@ -517,6 +517,23 @@ def mapa_data(request):
                 [float(coord) for coord in mapa.p4_polygons.split(",")],
             ]
         }
+        data.append(item)
+
+    return JsonResponse(data, safe=False)
+
+def mapa_markers(request):
+    mapas = models.Mapa.objects.filter(is_marker=True)
+    data = []
+    for mapa in mapas:        
+        item = {
+            "uuid": mapa.uuid,
+            "nombre": mapa.nombre,
+            "imagen": mapa.img_marker.url,
+            "icon_size": float(mapa.size_marker),
+            "door_coords": [float(coord) for coord in mapa.door_cords.split(",")],
+        }
+        print(item['icon_size'])
+        print(type(item['icon_size']))
         data.append(item)
 
     return JsonResponse(data, safe=False)

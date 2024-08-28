@@ -12,7 +12,7 @@
     integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
 {% endblock %}
 {% block content %}
-<main class="full_page map_editing" id='map' data-mapa_edif="{% url 'mapa_edificios' %}">
+<main class="full_page map_editing" id='map' data-mapa_edif="{% url 'mapa_edificios' %}" data-mapa_markers="{% url 'mapa_markers' %}">
     <!-- Controles de ruta -->
     <section class="controls_route card m-2 max_w250" id="controlsRoute">
         <div class="card-header d-flex justify-content-between align-items-center p-3">
