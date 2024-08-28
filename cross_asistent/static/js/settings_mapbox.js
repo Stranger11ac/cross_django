@@ -581,7 +581,6 @@ const url = document.querySelector("#map").getAttribute("data-mapa_edif");
 fetch(url)
     .then((response) => response.json())
     .then((data) => {
-        // alertSToast('top', 9000, 'info', data.info)
         const geojsonEdificios = {
             type: "FeatureCollection",
             features: data.map((item) => ({
@@ -602,6 +601,8 @@ fetch(url)
                 },
             })),
         };
+
+        console.table(geojsonEdificios)
 
         function createEdificios() {
             if (!map.getSource("places")) {
@@ -641,9 +642,20 @@ fetch(url)
                 });
                 map.moveLayer("places-label");
             }
-
-            // Agregar Imagen
-            // map.loadImage("https://docs.mapbox.com/mapbox-gl-js/assets/cat.png", (error, image) => {
+        }
+        function createMarker(lngLat) {
+            if (currentMarker) {
+                currentMarker.remove();
+            }
+            let savedColor = localStorage.getItem("data-color_rgb");
+            currentMarker = new mapboxgl.Marker({
+                color: savedColor || "#3b71ca",
+                draggable: false,
+            })
+                .setLngLat(lngLat)
+                .addTo(map);
+        }
+        function insertImages() {
             function loadImageIfNeeded(map, imageName, imageUrl) {
                 if (!map.hasImage(imageName)) {
                     map.loadImage(imageUrl, (error, image) => {
@@ -665,7 +677,6 @@ fetch(url)
             }
 
             loadImageIfNeeded(map, "oxxo", "/static/img/Oxxo_Logo.svg.png");
-
             addSourceIfNeeded(map, "otzo", {
                 type: "geojson",
                 data: {
@@ -693,7 +704,6 @@ fetch(url)
             });
 
             loadImageIfNeeded(map, "cajero", "/static/img/bannorte_logo.png");
-
             addSourceIfNeeded(map, "pointcajero", {
                 type: "geojson",
                 data: {
@@ -720,20 +730,6 @@ fetch(url)
                 },
             });
         }
-
-        function createMarker(lngLat) {
-            if (currentMarker) {
-                currentMarker.remove();
-            }
-            let savedColor = localStorage.getItem("data-color_rgb");
-            currentMarker = new mapboxgl.Marker({
-                color: savedColor || "#3b71ca",
-                draggable: false,
-            })
-                .setLngLat(lngLat)
-                .addTo(map);
-        }
-
         function calcularRuta() {
             const origen = selectOrigin.value;
             const destino = selectDestiny.value;
@@ -787,7 +783,6 @@ fetch(url)
                 alertSToast("center", 5000, "warning", "Por favor, selecciona tanto origen como destino.");
             }
         }
-
         function addRouteLayer() {
             if (currentRoute && currentRoute.features && currentRoute.features.length > 0) {
                 if (!map.getSource("directions")) {
@@ -904,7 +899,6 @@ fetch(url)
                 map.moveLayer("places-label");
             }
         }
-
         function saveRouteLayers() {
             if (map.getSource("directions")) {
                 currentRoute = map.getSource("directions")._data;
@@ -918,6 +912,7 @@ fetch(url)
         map.on("style.load", function () {
             createEdificios();
             addRouteLayer();
+            insertImages();
         });
 
         if (mapElement.classList.contains("map_user")) {
@@ -1054,6 +1049,10 @@ fetch(url)
                 $("#route-info").empty();
             });
         });
+
+        // Ejecuta funciones para que aparezcan los poligonos e imagenes
+        createEdificios();
+        insertImages();
     })
     .catch((error) => {
         console.error("Error al obtener los datos del mapa:");

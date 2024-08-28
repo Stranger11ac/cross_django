@@ -273,6 +273,7 @@ def vista_admin(request):
 def vista_programador(request):
     banners_all = models.Banners.objects.all()
     users = User.objects.all().order_by('-id')
+    configuraciones = obtener_configuraciones()
     contexto = {
         'users':users,
         'user':request.user,
@@ -284,6 +285,7 @@ def vista_programador(request):
         'preguntas_sending':questions_all,
         'num_preguntas':databaseall.count(),
         'num_blogs':models.Articulos.objects.filter(autor=request.user).count(),
+        **configuraciones
     }
      
     if request.method == 'POST':

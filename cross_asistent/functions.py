@@ -497,7 +497,7 @@ def blog_delete(request):
 
 # Mapa ----------------------------------------------------------
 def mapa_data(request):
-    mapas = models.Mapa.objects.filter(is_marker=False)
+    mapas = models.Mapa.objects.all()
     data = []
     for mapa in mapas:
         imagen_qs = models.Database.objects.filter(uuid=mapa.uuid).values_list('imagen', flat=True)
