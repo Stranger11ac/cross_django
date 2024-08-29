@@ -653,7 +653,7 @@ main.main_anchor {
 
 .asistent_group .box_asistent #asistent_model .btn_play-asistent {
     position: absolute;
-    top: 60%;
+    top: 50%;
     left: 5%;
     opacity: 0;
     visibility: hidden;
@@ -678,11 +678,9 @@ main.main_anchor {
 }
 
 .asistent_group.open.open_keyboard .box_asistent #asistent_model {
-    /* height: 30vh; */
-    /* width: 30vw; */
-    /* margin-bottom: 16vh; */
     opacity: 0;
     visibility: hidden;
+    z-index: 2;
 }
 
 .asistent_group .box_asistent .box_asistent_controls {
@@ -691,6 +689,7 @@ main.main_anchor {
     width: 100%;
     display: flex;
     justify-content: center;
+    z-index: 1;
 }
 
 .box_asistent_controls .controls_buttons {

@@ -56,7 +56,8 @@
         <div class="box_asistent">
             <model-viewer id="asistent_model" src="{% static 'models/RobotExpressive.glb' %}" tone-mapping="neutral" camera-orbit="15deg 70deg 60m"
                 poster="{% static 'img/hawky.002.webp' %}" loading="eager" shadow-intensity="1">
-                <button class="btn btn_detail btn-floating btn_play-asistent p-4" id="speak_btn"><i id="speak_btn_icon" class="fa-regular fa-circle-play fs-20"></i></button>
+                <button class="btn btn_detail btn-floating btn_play-asistent p-4" id="speak_btn"><i id="speak_btn_icon"
+                        class="fa-regular fa-circle-play fs-20"></i></button>
             </model-viewer>
             <!-- Controles iniciales -->
             <div class="box_asistent_controls">
@@ -99,8 +100,6 @@
     </section>
 </main>
 
-<select id="voice_select"></select>
-
 <!-- Modal: imagen de QR -->
 <div class="modal fade" id="modalqr" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
@@ -113,6 +112,16 @@
                 <img src="{{img_qr}}" alt="qr" class="img-fluid img-rounded" />
             </div>
         </div>
+    </div>
+</div>
+{% endblock %}
+
+
+{% block moresettings %}
+<div class="text-center mt-5">
+    <h6>Cambiar voz del Asistente</h6>
+    <div class="form-outline">
+        <select class="form-select" id="voice_select"></select>
     </div>
 </div>
 {% endblock %}
