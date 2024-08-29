@@ -254,43 +254,87 @@ recVoice.on("click", function () {
 });
 
 // Dictado de texto ##################################
-
-/* <textarea id="text_input" rows="10" cols="50" placeholder="Escribe el texto aquí..."></textarea><br><br> */
-
 if ("speechSynthesis" in window) {
     const synth = window.speechSynthesis;
     const textInput = document.getElementById("text_input");
     const voiceSelect = document.getElementById("voice_select");
     const speakButton = document.getElementById("speak_btn");
 
-    // Cargar voces disponibles
     let voices = [];
+    let isSpeaking = false;
+    let utterance;
 
     function loadVoices() {
         voices = synth.getVoices();
         voiceSelect.innerHTML = "";
 
+        let defaultOptionAdded = false;
+
         voices.forEach((voice, index) => {
-            const option = document.createElement("option");
-            option.textContent = `${voice.name} (${voice.lang})`;
-            option.value = index;
-            voiceSelect.appendChild(option);
+            if (voice.lang.startsWith("es")) {
+                const option = document.createElement("option");
+                option.textContent = `${voice.name} (${voice.lang})`;
+                option.value = index;
+                voiceSelect.appendChild(option);
+
+                // Check for the specific voice and set it as selected if available
+                if (voice.name.includes("Microsoft Sebastian Online") && voice.lang === "es-VE") {
+                    voiceSelect.value = index;
+                    defaultOptionAdded = true;
+                }
+            }
         });
+
+        // If the default voice is not found, select the first Spanish voice available
+        if (!defaultOptionAdded && voiceSelect.options.length > 0) {
+            voiceSelect.value = 0;
+        }
     }
 
-    // Recargar las voces si están listas
     if (synth.onvoiceschanged !== undefined) {
         synth.onvoiceschanged = loadVoices;
     }
     loadVoices();
 
-    speakButton.onclick = () => {
-        const utterance = new SpeechSynthesisUtterance($('[data-tokeid="initialMessage"]').text());
-        const selectedVoice = voices[voiceSelect.value];
-        utterance.voice = selectedVoice;
-        utterance.lang = "es-MX";
-        synth.speak(utterance);
-    };
+    function removeEmojis(text) {
+        return text
+            .replace(/[\u{1F600}-\u{1F64F}]/gu, "") // Emoticonos
+            .replace(/[\u{1F300}-\u{1F5FF}]/gu, "") // Símbolos y pictogramas
+            .replace(/[\u{1F680}-\u{1F6FF}]/gu, "") // Transporte y símbolos de mapa
+            .replace(/[\u{2600}-\u{26FF}]/gu, "") // Otros símbolos
+            .replace(/[\u{2700}-\u{27BF}]/gu, "") // Símbolos de dingbats
+            .replace(/[\u{1F900}-\u{1F9FF}]/gu, "") // Símbolos suplementarios
+            .replace(/[\u{1FA70}-\u{1FAFF}]/gu, ""); // Objetos misceláneos
+    }
+
+    function ttsCustom(valuetext) {
+        if (isSpeaking) {
+            $("#speak_btn_icon").addClass("fa-regular fa-circle-play").removeClass("fa-solid fa-circle-pause");
+            synth.cancel();
+            isSpeaking = false;
+        } else {
+            $("#speak_btn_icon").removeClass("fa-regular fa-circle-play").addClass("fa-solid fa-circle-pause");
+
+            valuetext = removeEmojis(valuetext);
+            utterance = new SpeechSynthesisUtterance(valuetext);
+            const selectedVoice = voices[voiceSelect.value];
+            utterance.voice = selectedVoice;
+
+            synth.speak(utterance);
+            isSpeaking = true;
+
+            utterance.onend = () => {
+                isSpeaking = false;
+                $("#speak_btn_icon").addClass("fa-regular fa-circle-play").removeClass("fa-solid fa-circle-pause");
+            };
+        }
+    }
+
+    // Espera a que el DOM se cargue para manejar el botón de hablar
+    document.addEventListener("DOMContentLoaded", () => {
+        let initialText = $('[data-tokeid="initialMessage"]').text();
+        speakButton.addEventListener("click", () => ttsCustom(initialText));
+    });
 } else {
     console.warn("Este navegador no soporta API de síntesis de voz");
     alertSToast("center", 7000, "warning", "Al parecer tu navegador no permite la API de síntesis de voz. 😯😥🥲");

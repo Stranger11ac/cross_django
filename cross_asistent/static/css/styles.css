@@ -660,6 +660,10 @@ main.main_anchor {
     transition: all 0.5 ease;
 }
 
+.asistent_group .box_asistent #asistent_model .btn_play-asistent i.fa-solid {
+    min-width: unset !important;
+}
+
 .asistent_group.open .box_asistent #asistent_model {
     width: 90%;
     height: var(--full_page);
@@ -668,7 +672,7 @@ main.main_anchor {
     visibility: visible;
 }
 
-.asistent_group.open .box_asistent #asistent_model .btn_play-asistent{
+.asistent_group.open .box_asistent #asistent_model .btn_play-asistent {
     opacity: 1;
     visibility: visible;
 }
