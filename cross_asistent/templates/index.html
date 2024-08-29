@@ -119,9 +119,16 @@
 
 {% block moresettings %}
 <div class="text-center mt-5">
-    <h6>Cambiar voz del Asistente</h6>
+    <h5>Configuraciones del Asistente</h5>
+    <h6>Voz e idioma</h6>
     <div class="form-outline">
         <select class="form-select" id="voice_select"></select>
+    </div>
+</div>
+<div class="text-center mt-5">
+    <h6>Velocidad</h6>
+    <div class="form-outline" data-mdb-input-init>
+        <input type="number" id="rate_input" name="asistentSpeedd" class="form-control" min="0.1" max="2" step="0.1" value="1.2" />
     </div>
 </div>
 {% endblock %}

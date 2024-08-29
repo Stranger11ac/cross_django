@@ -4,6 +4,7 @@ const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 
 let microphonerecord = false;
 let newMessageChat = false;
+let lastText = ""; // Definir lastText a nivel global
 
 // ##############################################################################################
 // ###################################### Funciones Jquery ######################################
@@ -45,13 +46,9 @@ $(document).ready(function () {
 
         // ChatGPT Submit ####################################################
         $("#chatForm").submit(chatSubmit);
-
-        //
-        //
-        //
     } catch (error) {
         console.error("Error Inesperado: ", error);
-        alertSToast("center", 8000, "error", `😥 Ah ocurrido un error inesperado. codigo: #304`);
+        alertSToast("center", 8000, "error", `😥 Ha ocurrido un error inesperado. código: #304`);
     }
 });
 
@@ -59,7 +56,7 @@ $(document).ready(function () {
 // #################################### Funciones JAVASCRIPT ####################################
 // ##############################################################################################
 
-// Activar y desactivar microfono ###########################################
+// Activar y desactivar micrófono ###########################################
 const recVoice = $(".controls_btn_microphone");
 const textarea = document.getElementById("txtQuestion");
 const submitButton = document.getElementById("chatForm_submit");
@@ -106,7 +103,7 @@ if ("webkitSpeechRecognition" in window) {
     };
 } else {
     console.warn("Este navegador no soporta la Web Speech API");
-    alertSToast("center", 7000, "warning", "Al parecer tu navegador no permite activar el microfono. 🤔😯😥");
+    alertSToast("center", 7000, "warning", "Al parecer tu navegador no permite activar el micrófono. 🤔😯😥");
     $("#btn_controls_icon").addClass("fa-microphone-slash");
 }
 
@@ -131,6 +128,7 @@ recVoice.on("click", function () {
 // Dictado de texto ##################################
 const speakButton = document.getElementById("speak_btn");
 const voiceSelect = document.getElementById("voice_select");
+const rateInput = document.getElementById("rate_input");
 
 if ("speechSynthesis" in window) {
     const synth = window.speechSynthesis;
@@ -146,7 +144,7 @@ if ("speechSynthesis" in window) {
         let defaultOptionAdded = false;
 
         voices.forEach((voice, index) => {
-            if (voice.lang.startsWith("es")) {
+            // if (voice.lang.startsWith("es")) {
                 const option = document.createElement("option");
                 option.textContent = `${voice.name} (${voice.lang})`;
                 option.value = index;
@@ -157,7 +155,7 @@ if ("speechSynthesis" in window) {
                     voiceSelect.value = index;
                     defaultOptionAdded = true;
                 }
-            }
+            // }
         });
 
         // If the default voice is not found, select the first Spanish voice available
@@ -194,6 +192,7 @@ if ("speechSynthesis" in window) {
             utterance = new SpeechSynthesisUtterance(valuetext);
             const selectedVoice = voices[voiceSelect.value];
             utterance.voice = selectedVoice;
+            utterance.rate = parseFloat(rateInput.value) || 1;
 
             synth.speak(utterance);
             isSpeaking = true;
@@ -219,12 +218,12 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 });
 
-// Funcion de preguntar a chatGPT https://platform.openai.com/ #################################
+// Función de preguntar a chatGPT https://platform.openai.com/ #################################
 const contOutput = document.querySelector("#output");
 let audioEnabled = true;
 let saludoMostrado = true;
 
-// Funcion para Mostrar y Mandar la Pregunta del Usuario ################
+// Función para Mostrar y Mandar la Pregunta del Usuario ################
 function chatSubmit(e) {
     newMessageChat = true;
     e.preventDefault();
@@ -233,7 +232,7 @@ function chatSubmit(e) {
     chatForm.reset();
 
     if (!texto3.test(pregunta)) {
-        return alertSToast("center", 6000, "warning", "Por favor, envia al más descriptivo 🧐😯😬");
+        return alertSToast("center", 6000, "warning", "Por favor, envía una pregunta más descriptiva 🧐😯😬");
     }
 
     const tokendid = cadenaRandom(5, alfabetico);
@@ -315,10 +314,10 @@ function displayChatbotResponse(varAnswer) {
     }
 
     if (dataRedirigir && dataRedirigir.trim() !== "") {
-        btnRedir = `<br><br> <a class="btn bg_detail mb-2 max_w300" ${btnBlanck} href="${dataRedirigir}" >Ver Mas <i class="fa-solid fa-arrow-up-right-from-square ms-1"></i></a>`;
+        btnRedir = `<br><br> <a class="btn bg_detail mb-2 max_w300" ${btnBlanck} href="${dataRedirigir}" >Ver Más <i class="fa-solid fa-arrow-up-right-from-square ms-1"></i></a>`;
     }
 
-    var lastText = varAnswer.informacion;
+    lastText = varAnswer.informacion;
     const htmlBlock = `<div class="chat_msg asistent_response" data-tokeid="${valID}">${lastText} ${btnRedir} ${viewImage}</div>`;
 
     contOutput.insertAdjacentHTML("beforeend", htmlBlock);
@@ -343,17 +342,13 @@ speakButton.addEventListener("click", () => {
 
 // Saludo Inicial ######################
 if (contOutput && saludoMostrado) {
-    const initialMessage = `<div class="chat_msg asistent_response" data-tokeid="initialMessage"><span>Hola!!! Soy Hawky 👋😁, tu asistente virtual de la Universidad Tecnologica de Coahuila! <br>¿En qué puedo ayudarte? 🫡🤘😋</span></div>`;
+    const initialMessage = `<div class="chat_msg asistent_response" data-tokeid="initialMessage"><span>¡Hola!!! Soy Hawky 👋😁, tu asistente virtual de la Universidad Tecnológica de Coahuila! <br>¿En qué puedo ayudarte? 🫡🤘😋</span></div>`;
 
     contOutput.insertAdjacentHTML("beforeend", initialMessage);
     const elementInitMsg = document.querySelector(`.asistent_response[data-tokeid="initialMessage"]`);
     setTimeout(function () {
         elementInitMsg.classList.add("visible");
     }, 500);
-}
-
-function scrollToBottom() {
-    contOutput.scrollTop = contOutput.scrollHeight;
 }
 
 // Hacer scroll con un nuevo mensaje en el chat ####################
