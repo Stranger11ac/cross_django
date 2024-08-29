@@ -1,122 +1,21 @@
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
-from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
 from django.conf import settings
-import speech_recognition as sr
 from django.db.models import Q
-from pathlib import Path
-from gtts import gTTS
-from . import models
-import threading
-import openai
-import json
+from .models import Database
 import unicodedata
+import openai
 import spacy
+import json
 
 # ChatBot ----------------------------------------------------------
 # Cargar el modelo de lenguaje español
 # analizar texto en aplicaciones de procesamiento de lenguaje natural.
 nlp = spacy.load("es_core_news_sm")
 # Diccionario de respuestas simples predefinidas
-respuestas_simples = {
-    "contacto": "Puedes contactarnos al teléfono (844)288-38-00 ☎️",
-}
+respuestas_simples = {"contacto": "Puedes contactarnos al teléfono (844)288-38-00 ☎️",}
 palabras_clave = ["hola", "servicios", "escolares", "donde", "esta"]
-recognized_texts = []
-is_recognizing = False
-recognition_thread = None
-
-def speekText():
-    global is_recognizing, recognized_texts
-    r = sr.Recognizer()
-    recognized_texts = []
-    while is_recognizing:
-        try:
-            with sr.Microphone() as source2:
-                r.adjust_for_ambient_noise(source2, duration=0.2)
-                print("Por favor, hable ahora...")
-                audio2 = r.listen(source2)
-                recognized_text = r.recognize_google(audio2, language='es-ES')
-                recognized_text = recognized_text.lower().strip()
-                print("Dijiste:", recognized_text)
-                recognized_texts.append(recognized_text)
-        except sr.RequestError as e:
-            print(f"No se pueden solicitar resultados; {e}")
-        except sr.UnknownValueError:
-            print("Ocurrió un error desconocido")
-
-@csrf_exempt
-def start_recognition(request):
-    global is_recognizing, recognition_thread
-    if request.method == 'POST' and not is_recognizing:
-        is_recognizing = True
-        recognition_thread = threading.Thread(target=speekText)
-        
-        recognition_thread.start()
-        return JsonResponse({'status': 'success'})
-    return JsonResponse({'status': 'error', 'message': 'Recognition already started or invalid request'})
-
-@csrf_exempt
-def stop_recognition(request):
-    global is_recognizing, recognition_thread, recognized_texts
-    if request.method == 'POST' and is_recognizing:
-        is_recognizing = False
-        if recognition_thread:
-            recognition_thread.join()
-
-        if recognized_texts:
-            question = " ".join(recognized_texts)
-
-            class FakeRequest:
-                def __init__(self, body):
-                    self.body = body
-                    self.method = 'POST'
-
-            fake_request = FakeRequest(json.dumps({'question': question}))
-            response = recognized_text(fake_request)
-
-            response_data = json.loads(response.content)
-
-            if isinstance(response_data, dict):
-                answer = response_data.get('answer', {})
-            else:
-                answer = {}
-
-            combined_response = {
-                'status': 'success',
-                'response': {
-                    'question': question,
-                    'chatbot_answer': answer
-                }
-            }
-            
-            return JsonResponse(combined_response)
-        else:
-            return JsonResponse({'status': 'success', 'message': 'No se reconoció ningún texto.'})
-
-    return JsonResponse({'status': 'error', 'message': 'Recognition not started or invalid request'})
-
-@csrf_exempt
-def recognized_text(request):
-    if request.method == 'POST':
-        try:
-            data = json.loads(request.body)
-            question = data.get('question', '').strip()
-
-            if not question:
-                return JsonResponse({'success': False, 'message': 'Pregunta vacía.'})
-            
-            response = chatbot(request)
-
-            return response
-        
-        except json.JSONDecodeError:
-            return JsonResponse({'success': False, 'message': 'Error en el formato del JSON.'})
-        except Exception as e:
-            return JsonResponse({'success': False, 'message': str(e)})
-
-    return JsonResponse({'success': False, 'message': 'Método no permitido.'})
 
 def chatgpt(question, instructions):
     client = openai.OpenAI(api_key=settings.OPENAI_API_KEY)
@@ -133,12 +32,6 @@ def chatgpt(question, instructions):
     print(f"Total:{response.usage.total_tokens}")
     print('')
     return response.choices[0].message.content
-
-def synthesize_speech(text, file_name):
-    tts = gTTS(text=text, lang='es')
-    speech_file_path = Path("cross_asistent/static/audio") / f"{file_name}.mp3"
-    tts.save(speech_file_path)
-    return speech_file_path
 
 def normalize_text(text):
     return ''.join(
@@ -228,7 +121,7 @@ def chatbot(request):
             palabras_clave = pregunta_procesada.split()
             query = create_query(palabras_clave, entidades)
 
-            coincidencias = models.Database.objects.filter(query)
+            coincidencias = Database.objects.filter(query)
             mejor_coincidencia = None
             mejor_puntuacion = -1
 
@@ -240,31 +133,29 @@ def chatbot(request):
 
             if mejor_coincidencia:
                 informacion = mejor_coincidencia.informacion
-                system_prompt = f"Eres Howky, un asistente de la Universidad Tecnologica de Coahuila. Responde la pregunta con esta información: {informacion}"
+                system_prompt = f"Eres Hawky, un asistente de la Universidad Tecnologica de Coahuila. Responde la pregunta con esta información: {informacion}"
                 answer = chatgpt(question, system_prompt)
 
                 respuesta = {
                     "titulo": mejor_coincidencia.titulo,
                     "informacion": answer,
                     "redirigir": mejor_coincidencia.redirigir,
-                    "imagenes": mejor_coincidencia.imagen.url.replace("/cross_asistent", "") if mejor_coincidencia.imagen else None
+                    "blank": True,
+                    "imagenes": mejor_coincidencia.imagen.url if mejor_coincidencia.imagen else None
                 }
-
-                audio_path = synthesize_speech(answer, "respuesta_asistente")
-                respuesta["audio_url"] = f"/static/audio/{audio_path.name}"
 
                 print(f"Respuesta {respuesta}")
                 return JsonResponse({'success': True, 'answer': respuesta})
 
             respuesta_default = {
-                "informacion": "¿Podrías ser más específico en tu pregunta? No logré entender lo que necesitas."
-                if not palabras_clave and not entidades
-                else "Lo siento, no encontré información relevante."
+                "informacion": "Lo siento, no encontre informacion relacionada con lo que me pides 🤔. Puedes buscar mas informacion en la pagina de preguntas frecuentes o, si gustas, tambien puedes enviarnos tus dudas. 😊😁",
+                "redirigir": "preguntas_frecuentes/",
+                "blank": False,
             }
             return JsonResponse({'success': True, 'answer': respuesta_default})
         
         except json.JSONDecodeError:
-            return JsonResponse({'success': False, 'message': 'Error en el formato del JSON.'})
+            return JsonResponse({'success': False, 'message': 'Ocurrio un error, Al parecer no se permite este metodo. Codigo #400'})
         except KeyError as e:
             return JsonResponse({'success': False, 'message': f'Error en la clave del JSON: {str(e)}'})
         except Exception as e:

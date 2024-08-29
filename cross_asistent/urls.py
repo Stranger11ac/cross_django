@@ -17,12 +17,8 @@ urlpatterns = [
     path('mapa/marcadores/', functions.mapa_markers, name='mapa_markers'),
     path('acercade/', views.about, name='about'),
     
-    # Chatbot y texto a voz ----------------------------------------------------------
+    # Chatbot ----------------------------------------------------------
     path('chatbot/', chatbot.chatbot, name='chatbot'),
-    path('speekText/', chatbot.speekText, name='speekText'),
-    path('start/', chatbot.start_recognition, name='start_recognition'),
-    path('stop/', chatbot.stop_recognition, name='stop_recognition'),
-    path('recognized_text/', chatbot.recognized_text, name='recognized_text'),
     
     # Sesion y registro ----------------------------------------------------------
     path('logout/', views.singout, name='singout'),

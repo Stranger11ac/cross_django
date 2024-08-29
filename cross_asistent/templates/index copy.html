@@ -54,13 +54,13 @@
     <!-- Asistente -->
     <section href="#asistente" class="asistent_group">
         <div class="box_asistent">
-            <model-viewer id="asistent_model" src="{% static 'models/RobotExpressive.glb' %}" tone-mapping="neutral" camera-orbit="15deg 70deg 60m"
+            <!-- <model-viewer id="asistent_model" src="{% static 'models/hawky.002.glb' %}" tone-mapping="neutral" camera-orbit="15deg 70deg 60m"
                 poster="{% static 'img/hawky.002.webp' %}" loading="eager" shadow-intensity="1">
-            </model-viewer>
+            </model-viewer> -->
             <!-- Controles iniciales -->
             <div class="box_asistent_controls">
                 <div class="controls_buttons">
-                    <button type="button" class="btn btn_controls btn_secondary controls_btn_keyboard toggle_controls">
+                    <button type="button" id="RepAudio" class="btn btn_controls btn_secondary controls_btn_keyboard toggle_controls">
                         <i class="fa-regular fa-keyboard"></i>
                     </button>
                     <button type="button" class="btn btn_controls btn_detail controls_btn_microphone">
@@ -74,16 +74,21 @@
             <!-- Controles del chat -->
             <form id="chatForm" class="controls_input" method="POST" action="{% url 'chatbot' %}">
                 {% csrf_token %}
+                <!-- Botton para silenciar -->
+                <button type="button" id="toggleAudio" class="btn btn_detail btn-floating position-relative bottom-0 end-0">
+                    <i id="audioIcon" class="fa-solid fa-volume-high"></i>
+                </button>
                 <div class="position-relative bottom-0 end-0">
                     <div class="form-outline" data-mdb-input-init>
-                        <textarea class="form-control bg-body-tertiary" id="txtQuestion" name="question" required rows="4" maxlength="200"></textarea>
+                        <textarea class="form-control bg-body-tertiary" id="txtQuestion" name="question" required maxlength="200"></textarea>
                         <label class="form-label bg-body-tertiary" for="txtQuestion">Haz una pregunta:</label>
                     </div>
                     <div class="controls_input-buttons position-absolute top-0 end-0">
                         <button type="button" id="closeChat" class="btn btn_secondary btn-floating btn-sm controls_btn_close">
                             <i class="fa-solid fa-xmark"></i>
                         </button>
-                        <button type="button" class="btn btn_secondary btn-floating btn-sm controls_btn_audio toggle_controls">
+                        <button type="button" id="recVoice" class="btn btn_secondary btn-floating btn-sm controls_btn_audio"
+                            data-start="{% url 'start_recognition' %}" data-stop="{% url 'stop_recognition' %}">
                             <i class="fa-solid fa-microphone" id="btn_controls_icon"></i>
                         </button>
                         <div class="audio-animation"></div>
@@ -115,6 +120,5 @@
 {% endblock %}
 
 {% block scripts_end %}
-<script src="{% static 'js/settings_chatbot.js' %}"></script>
 <script src="{% static 'js/owl-carousel.min.js' %}"></script>
 {% endblock %}
