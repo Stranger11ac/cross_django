@@ -239,21 +239,27 @@ if ("webkitSpeechRecognition" in window) {
     recognition.continuous = true; // Continúa reconociendo incluso si hay pausas
     recognition.interimResults = true; // Muestra los resultados intermedios
 
+    let finalTranscript = ""; // Variable para almacenar el texto final
+
     recognition.onstart = function () {
         recognizing = true;
     };
 
     recognition.onresult = function (event) {
         let interimTranscript = "";
+
         for (let i = event.resultIndex; i < event.results.length; i++) {
             let transcript = event.results[i][0].transcript;
+
             if (event.results[i].isFinal) {
-                textarea.value += transcript;
+                finalTranscript += transcript; // Agrega el texto final a la variable
             } else {
-                interimTranscript += transcript;
+                interimTranscript += transcript; // Agrega el texto interino
             }
         }
-        textarea.value += interimTranscript;
+
+        // Muestra el texto en el textarea (final + interino)
+        textarea.value = finalTranscript + interimTranscript;
     };
 
     recognition.onerror = function (event) {
@@ -262,6 +268,7 @@ if ("webkitSpeechRecognition" in window) {
 
     recognition.onend = function () {
         recognizing = false;
+        submitButton.click();
     };
 } else {
     console.warn("Este navegador no soporta la Web Speech API");
@@ -280,8 +287,3 @@ recVoice.on("click", function () {
         }
     }
 });
-
-recognition.onend = function () {
-    recognizing = false;
-    submitButton.click();
-};
