@@ -645,16 +645,30 @@ main.main_anchor {
 
 .asistent_group .box_asistent #asistent_model {
     width: 100%;
-    height: 100%;
+    height: 90%;
     transition: all 0.5s ease;
     /* transition: height 0.3s ease, width 0.3s ease, margin 0.2s ease; */
     /* transition-delay: 0s, 0.4s, 0s; */
+}
+
+.asistent_group .box_asistent #asistent_model .btn_play-asistent {
+    position: absolute;
+    top: 60%;
+    left: 5%;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.5 ease;
 }
 
 .asistent_group.open .box_asistent #asistent_model {
     width: 90%;
     height: var(--full_page);
     margin: 0 0 8vh 5%;
+    opacity: 1;
+    visibility: visible;
+}
+
+.asistent_group.open .box_asistent #asistent_model .btn_play-asistent{
     opacity: 1;
     visibility: visible;
 }

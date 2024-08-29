@@ -14,7 +14,7 @@ $(document).ready(function () {
             $("#btn_controls_icon").removeClass("fa-comment").addClass("fa-microphone");
             setTimeout(() => {
                 $(".btn_controls").addClass("readyRecVoice");
-            }, 1500);
+            }, 1100);
         });
         $(".toggle_controls").click(() => {
             $(".asistent_group.open").toggleClass("close_controls open_keyboard open_controls");
@@ -155,7 +155,7 @@ function displayChatbotResponse(varAnswer) {
     }, 20);
 }
 
-// Menejar el Saludo Inicial ######################
+// Saludo Inicial ######################
 if (contOutput && saludoMostrado) {
     const initialMessage = `<div class="chat_msg asistent_response" data-tokeid="initialMessage"><span>Hola!!! Soy Hawky 👋😁, tu asistente virtual de la Universidad Tecnologica de Coahuila! <br>¿En qué puedo ayudarte? 🫡🤘😋</span></div>`;
 
@@ -185,10 +185,10 @@ if (contOutput) {
     observer.observe(contOutput, { childList: true, subtree: true });
 }
 
+// Activar y desactivar microfono ###########################################
 const recVoice = $(".controls_btn_microphone");
 const textarea = document.getElementById("txtQuestion");
 const submitButton = document.getElementById("chatForm_submit");
-
 let recognition;
 let recognizing = false;
 
@@ -219,7 +219,6 @@ if ("webkitSpeechRecognition" in window) {
             }
         }
 
-        // Muestra el texto en el textarea (final + interino)
         textarea.value = finalTranscript + interimTranscript;
     };
 
@@ -229,7 +228,6 @@ if ("webkitSpeechRecognition" in window) {
 
     recognition.onend = function () {
         recognizing = false;
-        submitButton.click();
     };
 } else {
     console.warn("Este navegador no soporta la Web Speech API");
@@ -246,9 +244,63 @@ recVoice.on("click", function () {
     if (recVoice.hasClass("readyRecVoice")) {
         if (recognizing) {
             stopRecording();
+            finalTranscript = "";
+            submitButton.click();
         } else {
             recognition.start();
             $("#btn_controls_icon").addClass("fa-stop").removeClass("fa-microphone");
         }
     }
 });
+
+// Dictado de texto ##################################
+
+/* <textarea id="text_input" rows="10" cols="50" placeholder="Escribe el texto aquí..."></textarea><br><br> */
+
+if ("speechSynthesis" in window) {
+    const synth = window.speechSynthesis;
+    const textInput = document.getElementById("text_input");
+    const voiceSelect = document.getElementById("voice_select");
+    const speakButton = document.getElementById("speak_btn");
+
+    // Cargar voces disponibles
+    let voices = [];
+
+    function loadVoices() {
+        voices = synth.getVoices();
+        voiceSelect.innerHTML = "";
+
+        voices.forEach((voice, index) => {
+            const option = document.createElement("option");
+            option.textContent = `${voice.name} (${voice.lang})`;
+            option.value = index;
+            voiceSelect.appendChild(option);
+        });
+    }
+
+    // Recargar las voces si están listas
+    if (synth.onvoiceschanged !== undefined) {
+        synth.onvoiceschanged = loadVoices;
+    }
+    loadVoices();
+
+    speakButton.onclick = () => {
+        const utterance = new SpeechSynthesisUtterance($('[data-tokeid="initialMessage"]').text());
+        const selectedVoice = voices[voiceSelect.value];
+        utterance.voice = selectedVoice;
+        utterance.lang = "es-MX";
+        synth.speak(utterance);
+    };
+} else {
+    console.warn("Este navegador no soporta API de síntesis de voz");
+    alertSToast("center", 7000, "warning", "Al parecer tu navegador no permite la API de síntesis de voz. 😯😥🥲");
+}
+
+// Manejar clic en el botón de leer texto
+// speakButton.onclick = () => {
+//     const utterance = new SpeechSynthesisUtterance(textInput.value); // define el texto
+//     const selectedVoice = voices[voiceSelect.value];
+//     utterance.voice = selectedVoice;
+//     utterance.lang = "es-MX"; // Configurar idioma a español
+//     synth.speak(utterance);
+// };
