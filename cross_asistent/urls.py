@@ -50,6 +50,7 @@ urlpatterns = [
     # Database ----------------------------------------------------------
     path('administracion/base_de_datos/', views.database_page, name='database_page'),
     path('administracion/database/crear/', functions.database_create, name='create_database'),
+    path('administracion/database/lista/', functions.database_list, name='database_list'),
     path('administracion/database/actualizar/', functions.database_update, name='database_update'),
     path('administracion/database/eliminar/', functions.database_delete, name='database_delete'),
     path('administracion/calendario/', views.calendario_page, name='calendario_page'),

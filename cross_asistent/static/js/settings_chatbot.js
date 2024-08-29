@@ -126,7 +126,7 @@ recVoice.on("click", function () {
 });
 
 // Dictado de texto ##################################
-const speakButton = document.getElementById("speak_btn");
+const speakButton = $(".speak_btn");
 const voiceSelect = document.getElementById("voice_select");
 const rateInput = document.getElementById("rate_input");
 
@@ -211,7 +211,7 @@ if ("speechSynthesis" in window) {
 // Espera a que el DOM se cargue para manejar el botón de hablar
 document.addEventListener("DOMContentLoaded", () => {
     let initialText = $('[data-tokeid="initialMessage"]').text();
-    speakButton.addEventListener("click", () => {
+    speakButton.on("click", () => {
         if (!newMessageChat) {
             ttsCustom(initialText);
         }
@@ -334,7 +334,7 @@ function displayChatbotResponse(varAnswer) {
     }, 20);
 }
 
-speakButton.addEventListener("click", () => {
+speakButton.on("click", () => {
     if (newMessageChat) {
         ttsCustom(lastText);
     }

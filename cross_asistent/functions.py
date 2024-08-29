@@ -6,6 +6,7 @@ from django.shortcuts import get_object_or_404
 from django.contrib.auth.models import User
 from django.http import JsonResponse
 from django.utils import timezone
+from .views import databaseall
 from . import models
 import datetime
 
@@ -298,6 +299,35 @@ def categorias_delete(request):
     return JsonResponse({'error': 'Método no válido'}, status=400)
 
 # Base de Datos ----------------------------------------------------------
+@login_required
+@never_cache
+def database_list(request):
+    datos_modificados = []
+    for dato in databaseall:
+        if dato.imagen:
+            imagen_url = dato.imagen.url
+        else:
+            imagen_url = ''
+        if dato.documento:
+            documento_url = dato.documento.url
+        else:
+            documento_url = ''
+        datos_modificados.append({
+            'id': dato.id,
+            'categoria': dato.categoria.categoria,
+            'titulo': dato.titulo,
+            'informacion': dato.informacion,
+            'redirigir': dato.redirigir,
+            'frecuencia': dato.frecuencia,
+            'documento': documento_url,
+            'imagen': imagen_url,
+            'fecha_modificacion': dato.fecha_modificacion,
+        })
+    # allitemsdb = list(models.Database.objects.values())
+    data = {'infodb': datos_modificados}
+    return JsonResponse(data)
+
+
 @login_required
 @never_cache
 def database_create(request):
