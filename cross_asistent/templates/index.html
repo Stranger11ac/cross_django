@@ -78,17 +78,16 @@
                 {% csrf_token %}
                 <div class="position-relative bottom-0 end-0">
                     <div class="form-outline" data-mdb-input-init>
-                        <textarea class="form-control bg-body-tertiary" id="txtQuestion" name="question" required rows="4" maxlength="200"></textarea>
+                        <textarea class="form-control bg-body-tertiary" id="txtQuestion" name="question" required rows="5" maxlength="200"></textarea>
                         <label class="form-label bg-body-tertiary" for="txtQuestion">Haz una pregunta:</label>
                     </div>
                     <div class="controls_input-buttons position-absolute top-0 end-0">
-                        <button type="button" id="closeChat" class="btn btn_secondary btn-floating btn-sm controls_btn_close">
+                        <button type="button" id="closeChat" class="btn btn_secondary btn-floating controls_btn_close">
                             <i class="fa-solid fa-xmark"></i>
                         </button>
-                        <button type="button" class="btn btn_secondary btn-floating btn-sm controls_btn_audio toggle_controls">
+                        <button type="button" class="btn btn_secondary btn-floating controls_btn_audio toggle_controls">
                             <i class="fa-solid fa-microphone" id="btn_controls_icon"></i>
                         </button>
-                        <div class="audio-animation"></div>
                         <button type="submit" id="chatForm_submit" class="btn btn_detail btn-floating">
                             <i class="fa-solid fa-paper-plane"></i>
                         </button>

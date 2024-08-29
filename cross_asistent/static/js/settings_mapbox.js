@@ -1030,19 +1030,19 @@ fetch(dataMarkers)
                 }
             });
 
-            mapMapbox.on("click", (e) => {
-                const features = mapMapbox.queryRenderedFeatures(e.point, {
-                    layers: data.map((item) => `points${item.nombre.replace(" ", "")}`),
-                });
+            // mapMapbox.on("click", (e) => {
+            //     const features = mapMapbox.queryRenderedFeatures(e.point, {
+            //         layers: data.map((item) => `points${item.nombre.replace(" ", "")}`),
+            //     });
 
-                if (features.length) {
-                    const feature = features[0];
-                    const coordinates = feature.geometry.coordinates.slice();
-                    const description = `Nombre: ${feature.properties.nombre}<br>Ubicación: ${coordinates}`;
+            //     if (features.length) {
+            //         const feature = features[0];
+            //         const coordinates = feature.geometry.coordinates.slice();
+            //         const description = `Nombre: ${feature.properties.nombre}<br>Ubicación: ${coordinates}`;
 
-                    alertSToast("top", 7000, "info", description);
-                }
-            });
+            //         alertSToast("top", 7000, "info", description);
+            //     }
+            // });
         });
     })
     .catch((error) => {

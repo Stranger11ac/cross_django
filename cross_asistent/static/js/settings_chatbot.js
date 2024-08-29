@@ -95,11 +95,28 @@ try {
         };
 
         recognition.onerror = function (event) {
-            console.error(event.error);
+            console.error("Error de reconocimiento:", event.error);
+            if (event.error === "not-allowed") {
+                alertSToast("top",8000,"error","Permiso de micrófono denegado. Por favor, permite el acceso al micrófono.");
+            } else if (event.error === "no-speech") {
+                alertSToast("top", 8000, "error", "No se detectó ninguna voz. Por favor, intenta de nuevo.");
+            } else if (event.error === "network") {
+                alertSToast("top", 8000, "error", "Error de red. Por favor, verifica tu conexión.");
+            }
+
+            console.error("Error de reconocimiento: ", event.error);
+            recognizing = false;
+            microphonerecord = false;
+            $("#btn_controls_icon").removeClass("fa-stop").addClass("fa-microphone");
+            $(".btn_controls").removeClass("readyRecVoice");
         };
 
         recognition.onend = function () {
             recognizing = false;
+            $("#btn_controls_icon").removeClass("fa-stop").addClass("fa-microphone");
+            // if (!finalTranscript.trim()) {
+            //     alertSToast("top", 8000, "warning", "Reconocimiento finalizado sin texto.");
+            // }
         };
     } else {
         console.warn("Este navegador no soporta la Web Speech API");
@@ -113,20 +130,23 @@ try {
         // alertSToast('top', 8000, 'warning', 'stop recording');
     }
 
-    recVoice.on("click", function () {
+    recVoice.on("click touchend", function () {
         if (recVoice.hasClass("readyRecVoice")) {
             if (recognizing) {
                 stopRecording();
-                if (finalTranscript != "") {
-                    alertSToast("top", 8000, "warning", "DIferente de VACIO");
-                    finalTranscript = "";
+                if (finalTranscript.trim() !== "") {
                     submitButton.click();
-                } else {
-                    alertSToast("top", 8000, "error", "Esta Vaciooo");
+                    // } else {
+                    //     alertSToast("top", 8000, "error", "Está vacío.");
                 }
             } else {
-                recognition.start();
-                $("#btn_controls_icon").addClass("fa-stop").removeClass("fa-microphone");
+                try {
+                    recognition.start();
+                    $("#btn_controls_icon").addClass("fa-stop").removeClass("fa-microphone");
+                } catch (error) {
+                    console.error("Error al iniciar el reconocimiento: ", error);
+                    alertSToast("top", 8000, "error", "No se pudo iniciar el reconocimiento de voz.");
+                }
             }
         }
     });

@@ -692,6 +692,10 @@ main.main_anchor {
     z-index: 1;
 }
 
+.asistent_group.open.open_keyboard .box_asistent .box_asistent_controls {
+    z-index: -1;
+}
+
 .box_asistent_controls .controls_buttons {
     height: 60px;
     border-radius: 60px;

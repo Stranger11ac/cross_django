@@ -388,7 +388,6 @@ def database_page(request):
 @login_required
 @never_cache
 def calendario_page(request):
-    
     for oneconfig in settingsall:
         btns_year = oneconfig.calendar_btnsYear
 
