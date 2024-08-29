@@ -11,7 +11,7 @@ $(document).ready(function () {
         $(".controls_btn_microphone").click(() => {
             $(".asistent_group").addClass("open open_controls bg-body-tertiary");
             $(".btn_controls").addClass("text-white");
-            $("#btn_controls_icon").removeClass("fa-comment text_detail").addClass("fa-microphone");
+            $("#btn_controls_icon").removeClass("fa-comment").addClass("fa-microphone");
             setTimeout(() => {
                 $(".btn_controls").addClass("readyRecVoice");
             }, 1500);
@@ -26,8 +26,9 @@ $(document).ready(function () {
         });
         $(".controls_btn_close").click(() => {
             $(".asistent_group").removeClass("open open_controls close_controls open_keyboard bg-body-tertiary");
-            $(".btn_controls").addClass("readyRecVoice");
+            $(".btn_controls").removeClass("readyRecVoice");
             $("#btn_controls_icon").addClass("fa-comment").removeClass("fa-microphone");
+            stopRecording();
         });
 
         // Enviar chat con enter chatGPT ######################################
@@ -184,47 +185,6 @@ if (contOutput) {
     observer.observe(contOutput, { childList: true, subtree: true });
 }
 
-// Funcion para Controlar el Audio ######################
-// function playAudio(audioUrl) {
-//     if (audioUrl && audioEnabled) {
-//         const audio = new Audio(audioUrl);
-//         audio.playbackRate = 1.5;
-
-//         audio.play().catch((error) => {
-//             console.error("Error al reproducir el audio:", error);
-//         });
-//         const checkAudioState = setInterval(function () {
-//             if (!audioEnabled) {
-//                 audio.pause();
-//             }
-//         }, 100);
-//         audio.addEventListener("ended", function () {
-//             clearInterval(checkAudioState);
-//         });
-//     }
-// }
-
-// RepAudioButton.addEventListener("click", function () {
-//     if (saludoMostrado) {
-//         playAudio("/static/audio/welcome.mp3");
-//     }
-//     saludoMostrado = false;
-// });
-
-// Control de Boton de Audio #########################
-// if (toggleAudioButton && audioIcon) {
-//     toggleAudioButton.addEventListener("click", function () {
-//         audioEnabled = !audioEnabled;
-//         if (audioEnabled) {
-//             audioIcon.classList.remove("fa-volume-mute");
-//             audioIcon.classList.add("fa-volume-high");
-//         } else {
-//             audioIcon.classList.remove("fa-volume-high");
-//             audioIcon.classList.add("fa-volume-mute");
-//         }
-//     });
-// }
-
 const recVoice = $(".controls_btn_microphone");
 const textarea = document.getElementById("txtQuestion");
 const submitButton = document.getElementById("chatForm_submit");
@@ -235,14 +195,15 @@ let recognizing = false;
 // Verifica si el navegador soporta la Web Speech API
 if ("webkitSpeechRecognition" in window) {
     recognition = new webkitSpeechRecognition();
-    recognition.lang = "es-MX"; // Configura el idioma a español
-    recognition.continuous = true; // Continúa reconociendo incluso si hay pausas
-    recognition.interimResults = true; // Muestra los resultados intermedios
+    recognition.lang = "es-MX";
+    recognition.continuous = true;
+    recognition.interimResults = true;
 
-    let finalTranscript = ""; // Variable para almacenar el texto final
+    let finalTranscript = "";
 
     recognition.onstart = function () {
         recognizing = true;
+        finalTranscript = "";
     };
 
     recognition.onresult = function (event) {
@@ -252,9 +213,9 @@ if ("webkitSpeechRecognition" in window) {
             let transcript = event.results[i][0].transcript;
 
             if (event.results[i].isFinal) {
-                finalTranscript += transcript; // Agrega el texto final a la variable
+                finalTranscript += transcript;
             } else {
-                interimTranscript += transcript; // Agrega el texto interino
+                interimTranscript += transcript;
             }
         }
 
@@ -273,17 +234,21 @@ if ("webkitSpeechRecognition" in window) {
 } else {
     console.warn("Este navegador no soporta la Web Speech API");
     alertSToast("center", 7000, "warning", "Al parecer tu navegador no permite activar el microfono. 🤔😯😥");
-    recVoice.html('<i class="fa-solid fa-microphone-slash"></i>');
+    $("#btn_controls_icon").addClass("fa-microphone-slash");
+}
+
+function stopRecording() {
+    recognition.stop();
+    $("#btn_controls_icon").addClass("fa-microphone").removeClass("fa-stop");
 }
 
 recVoice.on("click", function () {
     if (recVoice.hasClass("readyRecVoice")) {
         if (recognizing) {
-            recognition.stop();
-            recVoice.html('<i class="fa-solid fa-microphone"></i>');
+            stopRecording();
         } else {
             recognition.start();
-            recVoice.html('<i class="fa-solid fa-stop"></i>');
+            $("#btn_controls_icon").addClass("fa-stop").removeClass("fa-microphone");
         }
     }
 });
