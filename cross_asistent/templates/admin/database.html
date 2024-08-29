@@ -194,7 +194,7 @@
                                     <th class="fw-bold text_detail">Acciones</th>
                                 </tr>
                             </thead>
-                            <tbody id="tbody_database" data-list-table="{% url 'database_list' %}">
+                            <tbody id="tbody_database" data-list-table="{% url 'database_list' %}" data-url-dbupdate="{% url 'database_update' %}" data-url-dbdelete="{% url 'database_update' %}">
                             </tbody>
                         </table>
                     </div>
@@ -369,43 +369,6 @@
         </section>
     </div>
 </main>
-
-<!-- Modal: Edit database -->
-<div class="modal fade" id="editDBModal" tabindex="-1" aria-labelledby="editDBModalLabel" aria-hidden="true"
-    data-mdb-backdrop="static" data-mdb-keyboard="false">
-    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="editDBModalLabel">Editar Informacion</h5>
-                <button type="button" class="btn-close" data-mdb-ripple-init data-mdb-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body text-start">
-                ..........................
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Modal: Eliminar database -->
-<div class="modal fade " id="eliminar_modal" tabindex="-1" aria-labelledby="eliminarlabelModal" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="eliminarlabelModal">
-                    Eliminar dato</h5>
-                <button type="button" class="btn-close" data-mdb-ripple-init data-mdb-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <h3 class="text-center mb-2">¿Quieres eliminar el dato?
-                </h3>
-                <p class="text-center">Se eliminará toda la información relacionada <br> Esta acción es permanente</p>
-            </div>
-            <div class="modal-footer justify-content-between">
-                <button type="button" class="btn btn_detail" data-mdb-ripple-init data-mdb-dismiss="modal">Cancelar</button>
-            </div>
-        </div>
-    </div>
-</div>
 
 {% endblock %}
 
