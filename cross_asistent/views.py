@@ -21,7 +21,11 @@ def obtener_configuraciones():
         return {
             'copyright_settings': oneconfig.copyright_year,
             'website_settings': oneconfig.utc_link,
-            'calendar_btns_year': getattr(oneconfig, 'calendar_btnsYear', None)  # Solo en caso de que se use
+            'calendar_btns_year': getattr(oneconfig, 'calendar_btnsYear', None),
+            'about_imgfirst': getattr(oneconfig, 'about_img_first', None),
+            'about_textfirst': getattr(oneconfig, 'about_text_first', None),
+            'about_imgsecond': getattr(oneconfig, 'about_img_second', None),
+            'about_textsecond': getattr(oneconfig, 'about_text_second', None),
         }
     return {}
 
@@ -164,6 +168,10 @@ def calendario(request):
     return render(request, 'calendario.html', {
         'active_page': 'calendario',
         'show_btns_year': configuraciones.get('calendar_btns_year'),
+        'about_imgfirst': configuraciones.get('about_img_first'),
+        'about_textfirst': configuraciones.get('about_text_first'),
+        'about_imgsecond': configuraciones.get('about_img_second'),
+        'about_textsecond': configuraciones.get('about_text_second'),
         **configuraciones  # Agregar las configuraciones al contexto
     })
 
@@ -196,13 +204,7 @@ def singup(request):
             password1=request.POST.get('password1'),
             password2=request.POST.get('password2'),
         )
-        if response['success']:
-            user = User.objects.get(username=request.POST.get('username'))
-            models.Notificacion.objects.create(
-                usuario=user,
-                tipo='Registro',
-                mensaje=f'{user.username} se ha registrado y necesita activación.',
-            )
+        
         response['functions'] = 'reload'
         status = 200 if response['success'] else 400
         return JsonResponse(response, status=status)
@@ -323,25 +325,6 @@ def ver_perfil(request):
         'pages': functions.pages
     })
 
-@login_required
-@never_cache
-def ver_notis(request):
-    notificaciones = models.Notificacion.objects.all().order_by('-fecha')
-    return render(request, 'admin/notificaciones.html', {'notificaciones': notificaciones, 'pages': functions.pages})
-
-@login_required
-@never_cache
-def marcar_notificaciones_leidas(request):
-    try:
-        data = json.loads(request.body)
-        ids = data.get('ids', [])
-        models.Notificacion.objects.filter(id__in=ids).update(leida=True)
-        # return JsonResponse({'status': 'success'})
-
-        return JsonResponse({'status': 'success', 'message': f'Notificacion {ids}, se marco como leida para todos los usuarios', 'icon': 'info'}, status=200)
-    except Exception as e:
-        return JsonResponse({'status': 'error', 'message': f'Ocurrió un error😯😥 <br>{str(e)}', 'icon': 'error'}, status=400)
-
 # Banners ----------------------------------------------------------
 @login_required
 @never_cache
@@ -372,6 +355,7 @@ def banners_page(request):
             'message': f'El banner <span>{banner.titulo}</span> fue creado exitosamente 🥳🎉🎈.'
         }, status=200)
     
+    configuraciones = obtener_configuraciones()
     banners_all = models.Banners.objects.all()
     banners_modificados = []
 
@@ -387,6 +371,7 @@ def banners_page(request):
             'onlyImg': banner.solo_imagen,
         })
     context = { 'banners': banners_modificados,
+               **configuraciones,
                'active_page': 'banner',
                'pages': functions.pages,
                'banners_cound': banners_all.count() }
@@ -451,14 +436,7 @@ def blog_page(request):
                 if encabezadoImgPOST:
                     blogUpdate.encabezado = encabezadoImgPOST
                 blogUpdate.save()
-                jsonMessage='Excelente 🥳🎈🎉. Tu articulo fue <span>modificado</span> de forma exitosa. 😁🫡'
-                
-                models.Notificacion.objects.create(
-                    usuario=request.user,
-                    tipo='Blog',
-                    mensaje=f'{request.user.username} ha Modificado su blog titulado "{tituloPOST}".',
-                )
-                
+                jsonMessage='Excelente 🥳🎈🎉. Tu articulo fue <span>modificado</span> de forma exitosa. 😁🫡'                
             else:
                 articulo = models.Articulos(
                     autor=autorPOST,
@@ -468,13 +446,7 @@ def blog_page(request):
                 )
                 articulo.save()
                 jsonMessage='Excelente 🥳🎈🎉. Tu artículo ya fue publicado. Puedes editarlo cuando gustes. 🧐😊'
-                
-                models.Notificacion.objects.create(
-                    usuario=request.user,
-                    tipo='Blog',
-                    mensaje=f'{request.user.username} ha subido un nuevo blog titulado "{articulo.titulo}".',
-                )
-                
+                                
             user_perfil = request.user.userprofile
             if request.POST.get('new_firma'):
                 user_perfil.blog_firma = request.POST.get('new_firma')

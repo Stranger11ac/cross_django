@@ -177,13 +177,6 @@ class Imagenes(models.Model):
             self.imagen.delete()
         super(Imagenes, self).delete(*args, **kwargs)
 
-class Notificacion(models.Model):
-    usuario = models.ForeignKey(User, on_delete=models.CASCADE)
-    tipo = models.CharField(max_length=50)
-    mensaje = models.TextField()
-    fecha = models.DateTimeField(auto_now_add=True)
-    leida = models.BooleanField(default=False)
-
 class Preguntas(models.Model):
     pregunta = models.CharField(max_length=150)
     descripcion = models.TextField(blank=True)
@@ -196,18 +189,22 @@ class Configuraciones(models.Model):
     utc_link = models.TextField()
     calendar_btnsYear = models.BooleanField(default=True)
     about_img_first = models.ImageField(upload_to=set_conf_path, max_length=120)
-    about_text_first = models.TextField() # texto de tiny
+    about_text_first = models.TextField()
     about_img_second = models.ImageField(upload_to=set_conf_path, max_length=120)
-    about_text_second = models.TextField() # texto de tiny
+    about_text_second = models.TextField()
     
     def __str__(self):
         return self.copyright_year
     
     def save(self, *args, **kwargs):
         if self.pk:
-            old_profile = Configuraciones.objects.get(pk=self.pk)
-            if old_profile.qr_image and old_profile.qr_image != self.qr_image:
-                old_profile.qr_image.delete(save=False)
+            old_images = Configuraciones.objects.get(pk=self.pk)
+            if old_images.qr_image and old_images.qr_image != self.qr_image:
+                old_images.qr_image.delete(save=False)
+            if old_images.about_img_first and old_images.about_img_first != self.about_img_first:
+                old_images.about_img_first.delete(save=False)
+            if old_images.about_img_second and old_images.about_img_second != self.about_img_second:
+                old_images.about_img_second.delete(save=False)
         super().save(*args, **kwargs)
 
 class UserProfile(models.Model):

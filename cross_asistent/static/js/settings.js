@@ -107,16 +107,18 @@ $(document).ready(function () {
                 $('[data-submit-ready] button[type="submit"]').click();
             }, 2000);
         }
+
         $("[data-submit-blur] .input_blur").on("blur", function () {
-            $("[data-submit-blur] button[type='submit']").click();
+            let formulario = $(this).closest("[data-submit-blur]");
+            let idButton = formulario.data("submit-blur");
+            formulario.find(`button#${idButton}`).click();
         });
         $("[data-submit-blur] .input_change").on("change", function () {
-            $("[data-submit-blur] button[type='submit']").click();
+            let formulario = $(this).closest("[data-submit-blur]");
+            let idButton = formulario.data("submit-blur");
+            formulario.find(`button#${idButton}`).click();
         });
-
-        // $("[id^='btn_frequence']").each(function() {
-        //     console.log($(this).attr('id'));
-        // });
+        
 
         $("[data-submit-click]").on("click", function () {
             const btnSubmitThis = $(this).data("submit-click");

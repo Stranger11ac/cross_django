@@ -75,10 +75,6 @@ urlpatterns = [
     path('administracion/galeria/subir/', views.upload_image, name='send_imgsblog'),
     path('administracion/galeria/lista/', views.lista_imagenes, name='lista_imagenes'),
     
-    # Notificaciones ----------------------------------------------------------
-    path('administracion/notificaciones/', views.ver_notis, name='notificaciones'),
-    path('administracion/notificaciones/notificacion_leida/', views.marcar_notificaciones_leidas, name='marcar_notificaciones_leidas'),
-    
     # configuraciones ----------------------------------------------------------
     path('administracion/configuraciones/actualizar/', functions.settings_update, name='update_settings'),
     
@@ -93,8 +89,4 @@ urlpatterns = [
 
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-    # print('URLs:')
-    # print(urlpatterns)
-    # print()
-    # print(static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT))
     

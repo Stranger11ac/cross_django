@@ -91,6 +91,14 @@ DATABASES = {
         # default='postgresql://postgres:postgres@localhost:5432/mysite',
         conn_max_age=600
     )
+    # 'default': {
+    #     'ENGINE': 'django.db.backends.postgresql',
+    #     'NAME': 'nombre_de_tu_base_de_datos',
+    #     'USER': 'tu_usuario',
+    #     'PASSWORD': 'tu_contraseña',
+    #     'HOST': 'localhost',  # o la dirección IP del servidor de base de datos
+    #     'PORT': '5432', 
+    # }
 }
 
 
