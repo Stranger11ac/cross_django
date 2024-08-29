@@ -20,6 +20,11 @@ FullCalendar.Bootstrap5=function(e,t,o){"use strict";class r extends o.Theme{}r.
 
 // Configurations ###############################################################################
 document.addEventListener("DOMContentLoaded", function () {
+    const showBtnsYear = $('[data-show_btnyear]').data('show_btnyear');
+    var yearButtons = '';
+    if (showBtnsYear == 'True') {
+        yearButtons = "prevYear,nextYear"
+    }
     function formatDate(date) {
         const options = { year: "2-digit", month: "2-digit", day: "2-digit" };
         return date.toLocaleDateString("es-ES", options);
@@ -43,7 +48,7 @@ document.addEventListener("DOMContentLoaded", function () {
         },
         footerToolbar: {
             start: "timeGridDay,timeGridWeek,dayGridMonth,multiMonthYear",
-            end: "prevYear,nextYear",
+            end: yearButtons,
         },
         firstDay: 0, // Domingo
         events: dataEvents,

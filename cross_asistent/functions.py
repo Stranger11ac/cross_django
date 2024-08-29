@@ -521,6 +521,21 @@ def mapa_data(request):
 
     return JsonResponse(data, safe=False)
 
+def mapa_markers(request):
+    mapas = models.Mapa.objects.filter(is_marker=True)
+    data = []
+    for mapa in mapas:        
+        item = {
+            "uuid": mapa.uuid,
+            "nombre": mapa.nombre,
+            "imagen": mapa.img_marker.url,
+            "icon_size": float(mapa.size_marker),
+            "door_coords": [float(coord) for coord in mapa.door_cords.split(",")],
+        }
+        data.append(item)
+
+    return JsonResponse(data, safe=False)
+
 @login_required
 @never_cache
 def delete_pleaceMap(request):
@@ -569,8 +584,8 @@ def settings_update(request):
             config = get_object_or_404(models.Configuraciones, id='1')
             if qrImgPOST:
                 config.qr_image = qrImgPOST
-            print(btnyear_calendar)
-            config.calendar_btnsYear = btnyear_calendar or False
+            
+            config.calendar_btnsYear = True if btnyear_calendar else False
             config.copyright_year = request.POST.get('cr_year')
             config.save()
             

@@ -21,7 +21,7 @@ const offcanvasInstance =
 
 mapboxgl.accessToken = mapToken;
 
-const map = new mapboxgl.Map({
+const mapMapbox = new mapboxgl.Map({
     container: "map",
     style: "mapbox://styles/mapbox/streets-v12",
     center: [-100.93655, 25.55701],
@@ -207,7 +207,7 @@ if (mapElement.classList.contains("map_editing")) {
         createNew = true;
         formChanges = false;
         initPolygonDrawing();
-        map.on("contextmenu", addMarker);
+        mapMapbox.on("contextmenu", addMarker);
         $("#btnPoligonCancel").slideDown();
         if (window.innerWidth <= 800) {
             setTimeout(() => {
@@ -220,7 +220,7 @@ if (mapElement.classList.contains("map_editing")) {
     drawPolygonCancel.addEventListener("click", () => {
         createNew = "";
         initPolygonDrawing();
-        map.off("contextmenu", addMarker);
+        mapMapbox.off("contextmenu", addMarker);
         $("#btnPoligonCancel").slideUp();
         $("#esquinasPoligono").slideUp("fast");
     });
@@ -229,7 +229,7 @@ if (mapElement.classList.contains("map_editing")) {
             const color = colors[coords.length];
             const marker = new mapboxgl.Marker({ color: color, draggable: true })
                 .setLngLat(e.lngLat)
-                .addTo(map)
+                .addTo(mapMapbox)
                 .on("dragend", updatePolygon);
             markers.push(marker);
             coords.push(e.lngLat);
@@ -239,7 +239,7 @@ if (mapElement.classList.contains("map_editing")) {
         }
 
         if (coords.length === 4) {
-            map.off("contextmenu", addMarker);
+            mapMapbox.off("contextmenu", addMarker);
             drawPolygon();
             drawPolygonButton.classList.add("bg_red-blue");
             drawPolygonButton.classList.remove("bg_purple-blue");
@@ -264,14 +264,14 @@ if (mapElement.classList.contains("map_editing")) {
         }
 
         if (polygonLayer) {
-            if (map.getLayer(polygonLayer.id + "_label")) {
-                map.removeLayer(polygonLayer.id + "_label");
+            if (mapMapbox.getLayer(polygonLayer.id + "_label")) {
+                mapMapbox.removeLayer(polygonLayer.id + "_label");
             }
-            if (map.getLayer(polygonLayer.id)) {
-                map.removeLayer(polygonLayer.id);
+            if (mapMapbox.getLayer(polygonLayer.id)) {
+                mapMapbox.removeLayer(polygonLayer.id);
             }
-            if (map.getSource(polygonLayer.id)) {
-                map.removeSource(polygonLayer.id);
+            if (mapMapbox.getSource(polygonLayer.id)) {
+                mapMapbox.removeSource(polygonLayer.id);
             }
         }
 
@@ -290,19 +290,19 @@ if (mapElement.classList.contains("map_editing")) {
             coords[0].toArray(),
         ];
 
-        if (map.getLayer("polygon_label")) {
-            map.removeLayer("polygon_label");
+        if (mapMapbox.getLayer("polygon_label")) {
+            mapMapbox.removeLayer("polygon_label");
         }
-        if (map.getLayer("polygon")) {
-            map.removeLayer("polygon");
+        if (mapMapbox.getLayer("polygon")) {
+            mapMapbox.removeLayer("polygon");
         }
-        if (map.getSource("polygon")) {
-            map.removeSource("polygon");
+        if (mapMapbox.getSource("polygon")) {
+            mapMapbox.removeSource("polygon");
         }
 
         const polygonId = "polygon";
 
-        map.addSource(polygonId, {
+        mapMapbox.addSource(polygonId, {
             type: "geojson",
             data: {
                 type: "Feature",
@@ -313,7 +313,7 @@ if (mapElement.classList.contains("map_editing")) {
             },
         });
 
-        map.addLayer({
+        mapMapbox.addLayer({
             id: polygonId,
             type: "fill",
             source: polygonId,
@@ -324,7 +324,7 @@ if (mapElement.classList.contains("map_editing")) {
             },
         });
 
-        map.addLayer({
+        mapMapbox.addLayer({
             id: polygonId + "_label",
             type: "symbol",
             source: polygonId,
@@ -360,7 +360,7 @@ if (mapElement.classList.contains("map_editing")) {
         if (addDoorMarker) {
             btnDoor.classList.add("bg_purple-blue");
             btnDoor.classList.remove("btn_detail");
-            map.on("contextmenu", addMarkerDoor);
+            mapMapbox.on("contextmenu", addMarkerDoor);
         }
         addDoorMarker = false;
         if (window.innerWidth <= 800) {
@@ -377,7 +377,7 @@ if (mapElement.classList.contains("map_editing")) {
         }
         doorMarker = new mapboxgl.Marker({ color: "purple", draggable: true })
             .setLngLat(e.lngLat)
-            .addTo(map)
+            .addTo(mapMapbox)
             .on("dragend", updateDoorCords);
 
         puertaCordsEdificio.classList.add("active");
@@ -386,7 +386,7 @@ if (mapElement.classList.contains("map_editing")) {
         btnDoor.classList.add("btn_detail");
         addDoorMarker = true;
 
-        map.off("contextmenu", addMarkerDoor);
+        mapMapbox.off("contextmenu", addMarkerDoor);
     }
     function updateDoorCords(e) {
         const lngLat = doorMarker.getLngLat();
@@ -405,13 +405,13 @@ $("#deletePleace").on("hidden.bs.modal", function (e) {
 });
 
 // Crear nuevo menu de botones personalizados ########################################
-map.addControl(new mapboxgl.NavigationControl());
+mapMapbox.addControl(new mapboxgl.NavigationControl());
 class CustomControl {
     constructor() {
         this._container = null;
     }
 
-    onAdd(map) {
+    onAdd(mapMapbox) {
         this._container = document.createElement("div");
         this._container.className = "mapboxgl-ctrl mapboxgl-ctrl-group";
 
@@ -555,7 +555,7 @@ function updateLabelsAndInputs(varLayer) {
     }
 }
 function setMapStyle(style) {
-    map.setStyle("mapbox://styles/mapbox/" + style);
+    mapMapbox.setStyle("mapbox://styles/mapbox/" + style);
 }
 if (savedLastLayerMap) {
     updateLabelsAndInputs(savedLastLayerMap);
@@ -577,11 +577,10 @@ const directions = new MapboxDirections({
 });
 
 // Cargar datos ##################################################################
-const url = document.querySelector("#map").getAttribute("data-mapa_edif");
-fetch(url)
+const dataPleaces = document.querySelector("#map").getAttribute("data-mapa_edif");
+fetch(dataPleaces)
     .then((response) => response.json())
     .then((data) => {
-        // alertSToast('top', 9000, 'info', data.info)
         const geojsonEdificios = {
             type: "FeatureCollection",
             features: data.map((item) => ({
@@ -604,15 +603,15 @@ fetch(url)
         };
 
         function createEdificios() {
-            if (!map.getSource("places")) {
-                map.addSource("places", {
+            if (!mapMapbox.getSource("places")) {
+                mapMapbox.addSource("places", {
                     type: "geojson",
                     data: geojsonEdificios,
                 });
             }
 
-            if (!map.getLayer("places-layer")) {
-                map.addLayer({
+            if (!mapMapbox.getLayer("places-layer")) {
+                mapMapbox.addLayer({
                     id: "places-layer",
                     type: "fill",
                     source: "places",
@@ -624,8 +623,8 @@ fetch(url)
             }
 
             // Agregar capa para las etiquetas
-            if (!map.getLayer("places-label")) {
-                map.addLayer({
+            if (!mapMapbox.getLayer("places-label")) {
+                mapMapbox.addLayer({
                     id: "places-label",
                     type: "symbol",
                     source: "places",
@@ -639,88 +638,9 @@ fetch(url)
                         "text-color": colorlabels,
                     },
                 });
-                map.moveLayer("places-label");
+                mapMapbox.moveLayer("places-label");
             }
-
-            // Agregar Imagen
-            // map.loadImage("https://docs.mapbox.com/mapbox-gl-js/assets/cat.png", (error, image) => {
-            function loadImageIfNeeded(map, imageName, imageUrl) {
-                if (!map.hasImage(imageName)) {
-                    map.loadImage(imageUrl, (error, image) => {
-                        if (error) throw error;
-                        map.addImage(imageName, image);
-                    });
-                }
-            }
-            function addSourceIfNeeded(map, sourceId, sourceData) {
-                if (!map.getSource(sourceId)) {
-                    map.addSource(sourceId, sourceData);
-                }
-            }
-
-            function addLayerIfNeeded(map, layerId, layerConfig) {
-                if (!map.getLayer(layerId)) {
-                    map.addLayer(layerConfig);
-                }
-            }
-
-            loadImageIfNeeded(map, "oxxo", "/static/img/Oxxo_Logo.svg.png");
-
-            addSourceIfNeeded(map, "otzo", {
-                type: "geojson",
-                data: {
-                    type: "FeatureCollection",
-                    features: [
-                        {
-                            type: "Feature",
-                            geometry: {
-                                type: "Point",
-                                coordinates: [-100.93596294319065, 25.55775995654966],
-                            },
-                        },
-                    ],
-                },
-            });
-
-            addLayerIfNeeded(map, "pointsoxxo", {
-                id: "pointsoxxo",
-                type: "symbol",
-                source: "otzo",
-                layout: {
-                    "icon-image": "oxxo",
-                    "icon-size": 0.1,
-                },
-            });
-
-            loadImageIfNeeded(map, "cajero", "/static/img/bannorte_logo.png");
-
-            addSourceIfNeeded(map, "pointcajero", {
-                type: "geojson",
-                data: {
-                    type: "FeatureCollection",
-                    features: [
-                        {
-                            type: "Feature",
-                            geometry: {
-                                type: "Point",
-                                coordinates: [-100.93450411941815, 25.556126447750614],
-                            },
-                        },
-                    ],
-                },
-            });
-
-            addLayerIfNeeded(map, "puntocajero", {
-                id: "puntocajero",
-                type: "symbol",
-                source: "pointcajero",
-                layout: {
-                    "icon-image": "cajero",
-                    "icon-size": 0.05,
-                },
-            });
         }
-
         function createMarker(lngLat) {
             if (currentMarker) {
                 currentMarker.remove();
@@ -731,9 +651,8 @@ fetch(url)
                 draggable: false,
             })
                 .setLngLat(lngLat)
-                .addTo(map);
+                .addTo(mapMapbox);
         }
-
         function calcularRuta() {
             const origen = selectOrigin.value;
             const destino = selectDestiny.value;
@@ -779,19 +698,18 @@ fetch(url)
                         }, 4000);
                     }
 
-                    map.addControl(directions, "top-left");
-                    map.moveLayer("places-label");
+                    mapMapbox.addControl(directions, "top-left");
+                    mapMapbox.moveLayer("places-label");
                     addRouteLayer();
                 }
             } else {
                 alertSToast("center", 5000, "warning", "Por favor, selecciona tanto origen como destino.");
             }
         }
-
         function addRouteLayer() {
             if (currentRoute && currentRoute.features && currentRoute.features.length > 0) {
-                if (!map.getSource("directions")) {
-                    map.addSource("directions", {
+                if (!mapMapbox.getSource("directions")) {
+                    mapMapbox.addSource("directions", {
                         type: "geojson",
                         data: currentRoute,
                     });
@@ -801,8 +719,8 @@ fetch(url)
                 const destFeature = currentRoute.features.find((feature) => feature.properties.id === "destination");
 
                 // Agregar capa de línea de ruta
-                if (!map.getLayer("directions-route-line")) {
-                    map.addLayer({
+                if (!mapMapbox.getLayer("directions-route-line")) {
+                    mapMapbox.addLayer({
                         id: "directions-route-line",
                         type: "line",
                         source: "directions",
@@ -819,8 +737,8 @@ fetch(url)
                 }
 
                 // Agregar capa de línea de ruta
-                if (!map.getLayer("directions-route-line-alt")) {
-                    map.addLayer({
+                if (!mapMapbox.getLayer("directions-route-line-alt")) {
+                    mapMapbox.addLayer({
                         id: "directions-route-line-alt",
                         type: "line",
                         source: "directions",
@@ -837,8 +755,8 @@ fetch(url)
                 }
 
                 // Agregar capa de punto de origen
-                if (!map.getLayer("directions-origin-point")) {
-                    map.addLayer({
+                if (!mapMapbox.getLayer("directions-origin-point")) {
+                    mapMapbox.addLayer({
                         id: "directions-origin-point",
                         type: "circle",
                         source: "directions",
@@ -851,8 +769,8 @@ fetch(url)
                 }
 
                 // Agregar capa de punto de destino
-                if (!map.getLayer("directions-destination-point")) {
-                    map.addLayer({
+                if (!mapMapbox.getLayer("directions-destination-point")) {
+                    mapMapbox.addLayer({
                         id: "directions-destination-point",
                         type: "circle",
                         source: "directions",
@@ -865,9 +783,9 @@ fetch(url)
                 }
 
                 // Agregar etiqueta de punto de origen
-                if (!map.getLayer("directions-origin-label")) {
+                if (!mapMapbox.getLayer("directions-origin-label")) {
                     console.log(originFeature.properties["marker-symbol"]);
-                    map.addLayer({
+                    mapMapbox.addLayer({
                         id: "directions-origin-label",
                         type: "symbol",
                         source: "directions",
@@ -884,8 +802,8 @@ fetch(url)
                 }
 
                 // Agregar etiqueta de punto de destino
-                if (!map.getLayer("directions-destination-label")) {
-                    map.addLayer({
+                if (!mapMapbox.getLayer("directions-destination-label")) {
+                    mapMapbox.addLayer({
                         id: "directions-destination-label",
                         type: "symbol",
                         source: "directions",
@@ -901,34 +819,33 @@ fetch(url)
                     });
                 }
 
-                map.moveLayer("places-label");
+                mapMapbox.moveLayer("places-label");
             }
         }
-
         function saveRouteLayers() {
-            if (map.getSource("directions")) {
-                currentRoute = map.getSource("directions")._data;
+            if (mapMapbox.getSource("directions")) {
+                currentRoute = mapMapbox.getSource("directions")._data;
             }
         }
 
-        map.on("load", function () {
+        mapMapbox.on("load", function () {
             createEdificios();
         });
 
-        map.on("style.load", function () {
+        mapMapbox.on("style.load", function () {
             createEdificios();
             addRouteLayer();
         });
 
         if (mapElement.classList.contains("map_user")) {
-            map.on("click", function (e) {
+            mapMapbox.on("click", function (e) {
                 const lngLat = e.lngLat;
                 createMarker(lngLat);
             });
         }
 
         // Abrir offcanvas: Informacion del edificio
-        map.on("click", "places-layer", (e) => {
+        mapMapbox.on("click", "places-layer", (e) => {
             const feature = e.features[0];
             const { nombre, informacion, imagen_url, color, door, uuid } = feature.properties;
             const { coordinates } = feature.geometry;
@@ -969,7 +886,6 @@ fetch(url)
             offcanvasOpen = true;
         });
 
-        // Cambiar estilo del Mapa ##########################################
         inputsLayer.forEach((input) => {
             input.addEventListener("click", function (layer) {
                 const layerId = layer.target.id;
@@ -980,7 +896,6 @@ fetch(url)
             });
         });
 
-        // Obtener nombres de los edificios y ordenar alfabéticamente
         const nombresEdificios = geojsonEdificios.features.map((feature) => feature.properties.nombre).sort();
         nombresEdificios.forEach((nombre) => {
             const option = new Option(nombre, nombre);
@@ -988,7 +903,6 @@ fetch(url)
             document.getElementById("destino").add(option.cloneNode(true));
         });
 
-        // Ejecutar calcularRuta
         selectOrigin.addEventListener("change", function () {
             const seleccionOrigen = this.value;
             selectDestiny.querySelectorAll("option").forEach((option) => {
@@ -1018,7 +932,6 @@ fetch(url)
             }
         });
 
-        // Resetear ruta
         document.querySelector("[data-reset_form]").addEventListener("click", function () {
             formRoute.querySelectorAll("option").forEach((option) => {
                 option.disabled = false;
@@ -1039,14 +952,14 @@ fetch(url)
                 "directions-destination-label",
             ];
             routeLayers.forEach((layer) => {
-                if (map.getLayer(layer)) {
-                    map.removeLayer(layer);
+                if (mapMapbox.getLayer(layer)) {
+                    mapMapbox.removeLayer(layer);
                 }
             });
 
             // Verificar si la fuente de la ruta existe y removerla
-            if (map.getSource("directions")) {
-                map.removeSource("directions");
+            if (mapMapbox.getSource("directions")) {
+                mapMapbox.removeSource("directions");
             }
 
             $("#buttons_route").slideUp("slow");
@@ -1054,6 +967,8 @@ fetch(url)
                 $("#route-info").empty();
             });
         });
+        
+        createEdificios();
     })
     .catch((error) => {
         console.error("Error al obtener los datos del mapa:");
@@ -1061,17 +976,92 @@ fetch(url)
         alertSToast("top", 5000, "error", "Ocurrio un error inesperado. verifica la consola. #403");
     });
 
+const dataMarkers = document.querySelector("#map").getAttribute("data-mapa_markers");
+fetch(dataMarkers)
+    .then((response) => response.json())
+    .then((data) => {
+        mapMapbox.on("load", () => {
+            data.forEach((item) => {
+                const nameImage = item.nombre.replace(" ", "");
+
+                if (!mapMapbox.hasImage(nameImage)) {
+                    mapMapbox.loadImage(item.imagen, (error, image) => {
+                        if (error) throw error;
+                        mapMapbox.addImage(nameImage, image);
+                    });
+                }
+
+                if (!mapMapbox.getSource(item.uuid)) {
+                    mapMapbox.addSource(item.uuid, {
+                        type: "geojson",
+                        data: {
+                            type: "FeatureCollection",
+                            features: [
+                                {
+                                    type: "Feature",
+                                    properties: {
+                                        uuid: item.uuid,
+                                        nombre: item.nombre,
+                                        imagen: item.imagen,
+                                        icon_size: item.icon_size,
+                                        door_coords: item.door_coords,
+                                    },
+                                    geometry: {
+                                        type: "Point",
+                                        coordinates: item.door_coords,
+                                    },
+                                },
+                            ],
+                        },
+                    });
+                }
+
+                if (!mapMapbox.getLayer(`points${nameImage}`)) {
+                    mapMapbox.addLayer({
+                        id: `points${nameImage}`,
+                        type: "symbol",
+                        source: item.uuid,
+                        layout: {
+                            "icon-image": nameImage,
+                            "icon-size": item.icon_size,
+                            "icon-allow-overlap": true,
+                        },
+                    });
+                }
+            });
+
+            mapMapbox.on("click", (e) => {
+                const features = mapMapbox.queryRenderedFeatures(e.point, {
+                    layers: data.map((item) => `points${item.nombre.replace(" ", "")}`),
+                });
+
+                if (features.length) {
+                    const feature = features[0];
+                    const coordinates = feature.geometry.coordinates.slice();
+                    const description = `Nombre: ${feature.properties.nombre}<br>Ubicación: ${coordinates}`;
+
+                    alertSToast("top", 7000, "info", description);
+                }
+            });
+        });
+    })
+    .catch((error) => {
+        console.error("Error al obtener Marcadores del mapa:");
+        console.error(error);
+        alertSToast("top", 5000, "error", "Ocurrio un error inesperado. #403");
+    });
+
 // Agregar nuevo menu
-map.addControl(new CustomControl(), "top-right");
+mapMapbox.addControl(new CustomControl(), "top-right");
 
 // Cursor segun el evento ###########################################
-map.getCanvas().style.cursor = "default";
+mapMapbox.getCanvas().style.cursor = "default";
 function setCursor(cursorStyle) {
-    map.getCanvas().style.cursor = cursorStyle;
+    mapMapbox.getCanvas().style.cursor = cursorStyle;
 }
 
-map.on("dragstart", () => setCursor("move"));
-map.on("dragend", () => setCursor("default"));
-map.on("mousedown", () => setCursor("pointer"));
-map.on("mouseup", () => setCursor("default"));
-map.on("mouseover", () => setCursor("default"));
+mapMapbox.on("dragstart", () => setCursor("move"));
+mapMapbox.on("dragend", () => setCursor("default"));
+mapMapbox.on("mousedown", () => setCursor("pointer"));
+mapMapbox.on("mouseup", () => setCursor("default"));
+mapMapbox.on("mouseover", () => setCursor("default"));

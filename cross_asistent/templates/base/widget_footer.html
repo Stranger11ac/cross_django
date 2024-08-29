@@ -3,17 +3,11 @@
         <!-- Section: Links  -->
         <section>
             <div class="text-center text-md-start mt-5">
-                <!-- Grid row -->
                 <div class="row mt-3">
-                    <!-- Grid column -->
                     <div class="col-md-3 col-lg-4 col-xl-3 mx-auto mb-4">
-                        <!-- Content -->
                         <h6 class="text-uppercase fw-bold mb-4"><i class="fas fa-gem me-3"></i>Asistente UTC</h6>
                         <p>Una herramienta de la UTC para resolver y atender tus dudas.</p>
                     </div>
-                    <!-- Grid column -->
-
-                    <!-- Grid column -->
                     <div class="col-md-2 col-lg-2 col-xl-2 mx-auto mb-4">
                         <!-- Links -->
                         <h6 class="text-uppercase fw-bold mb-4">
@@ -21,28 +15,12 @@
                         </h6>
                         <div class="d-flex flex-column ">
                             <a href="{% url 'calendario' %}" class="text-reset">Calendario Escolar</a>
-                            <a href="https://utc.edu.mx/index.php/t-escolares/"  target="_blank" rel="noopener noreferrer" class="text-reset">Tramites</a>
-                            <a href="https://utc.edu.mx/index.php/becas/"  target="_blank" rel="noopener noreferrer" class="text-reset">Becas</a>
-                            <a href="https://utc.edu.mx/index.php/322-2/"  target="_blank" rel="noopener noreferrer" class="text-reset">Oferta Educativa</a>
+                            <a href="https://utc.edu.mx/index.php/t-escolares/" target="_blank" rel="noopener noreferrer" class="text-reset">Tramites</a>
+                            <a href="https://utc.edu.mx/index.php/becas/" target="_blank" rel="noopener noreferrer" class="text-reset">Becas</a>
+                            <a href="https://utc.edu.mx/index.php/322-2/" target="_blank" rel="noopener noreferrer" class="text-reset">Oferta Educativa</a>
                         </div>
                     </div>
-                    <!-- Grid column -->
-
-                    <!-- Grid column -->
-                    <div class="col-md-3 col-lg-2 col-xl-2 mx-auto mb-4">
-                        <h6 class="text-uppercase fw-bold mb-4">
-                            Sitio web
-                        </h6>
-                        <!-- Links -->
-                        <div class="d-flex flex-column">
-                            <a href="#!"  class="text-reset">Caja de Comentarios</a>
-                            <a href="{% url 'singin' %}" class="text-reset">Acceder</a>
-                            <a href="{% url 'about' %}" class="text-reset">Acerca de</a>
-                        </div>
-                    </div>
-                    <!-- Grid column -->
                 </div>
-                <!-- Grid row -->
             </div>
         </section>
         <!-- Section: Social media -->
@@ -65,8 +43,8 @@
         </section>
         <!-- Copyright -->
         <div class="text-center p-4">
-            © <span class="text_detail">2021</span> - <span class="text_detail">2024</span> Todos los Derechos reservados:
-            <a class="text-reset fw-bold text-decoration-underline" href="https://www.utc.edu.mx/" target="_blank" rel="noopener noreferrer">Universidad
+            © <span class="text_detail">{{copyright_settings}}</span> Todos los Derechos reservados:
+            <a class="text-reset fw-bold text-decoration-underline" href="{{website_settings}}" target="_blank" rel="noopener noreferrer">Universidad
                 Tecnológica de Coahuila</a>
         </div>
     </div>

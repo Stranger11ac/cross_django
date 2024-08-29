@@ -16,6 +16,16 @@ settingsall = models.Configuraciones.objects.all()
 questions_all = models.Preguntas.objects.all().order_by('-id')
 categoriasFilter = models.Categorias.objects.exclude(categoria__in=['Mapa', 'Calendario'])
 
+def obtener_configuraciones():
+    for oneconfig in settingsall:
+        return {
+            'copyright_settings': oneconfig.copyright_year,
+            'website_settings': oneconfig.utc_link,
+            'calendar_btns_year': getattr(oneconfig, 'calendar_btnsYear', None)  # Solo en caso de que se use
+        }
+    return {}
+
+
 def index(request):
     if not request.user.is_staff:
         logout(request)
@@ -47,11 +57,14 @@ def fqt_questions(request):
     if not request.user.is_staff:
         logout(request)
     
+    configuraciones = obtener_configuraciones()
+    
     categoria_Preguntas = models.Categorias.objects.get(categoria="Preguntas")
     questall = models.Database.objects.filter(frecuencia__gt=0, categoria=categoria_Preguntas).order_by('-frecuencia')
     return render(request, 'frecuentes.html', {
         'quest_all': questall,
-        'active_page': 'faq'
+        'active_page': 'faq',
+        **configuraciones
     })
 
 def fqt_questions_send(request):    
@@ -72,6 +85,9 @@ def fqt_questions_send(request):
 def blogs(request):
     if not request.user.is_staff:
         logout(request)
+    
+    configuraciones = obtener_configuraciones()
+
     blogs = models.Articulos.objects.all().order_by('-id')
     blogs_modificados = []
 
@@ -91,14 +107,18 @@ def blogs(request):
             'imagen': img,
             'class': imgClass,
         })
+
     return render(request, 'blogs_all.html', {
         'blogs_all': blogs_modificados,
-        'active_page': 'blog'
+        'active_page': 'blog',
+        **configuraciones
     })
 
 def mostrar_blog(request, Articulos_id):
     if not request.user.is_staff:
         logout(request)
+    
+    configuraciones = obtener_configuraciones()
     
     articulo = get_object_or_404(models.Articulos, pk=Articulos_id)
     autor_username = articulo.autor
@@ -132,13 +152,19 @@ def mostrar_blog(request, Articulos_id):
         'foto_autor': foto_autor,
         'firma_autor': firma_autor,
         'encabezado_url': encabezado_url,
+        **configuraciones
     })
 
 def calendario(request):
     if not request.user.is_staff:
         logout(request)
+    
+    configuraciones = obtener_configuraciones()
+
     return render(request, 'calendario.html', {
-        'active_page': 'calendario'
+        'active_page': 'calendario',
+        'show_btns_year': configuraciones.get('calendar_btns_year'),
+        **configuraciones  # Agregar las configuraciones al contexto
     })
 
 def map(request):
@@ -151,8 +177,11 @@ def map(request):
 def about(request):
     if not request.user.is_staff:
         logout(request)
+    
+    configuraciones = obtener_configuraciones()
     return render(request, 'about.html', {
-        'active_page': 'about'
+        'active_page': 'about',
+        **configuraciones
     })
 
 # Administracion ----------------------------------------------------------
@@ -211,9 +240,11 @@ def singinpage(request):
         else:
             return JsonResponse({'success': False, 'functions': 'singin', 'message': 'Usuario no registrado 😅. Verifica tu nombre de usuario o correo electrónico'}, status=400)
     else:
+        configuraciones = obtener_configuraciones()
         logout(request)
         return render(request, 'singinup.html', {
-            'active_page': 'singin'
+            'active_page': 'singin',
+            **configuraciones
         })
 
 @login_required
@@ -242,6 +273,7 @@ def vista_admin(request):
 def vista_programador(request):
     banners_all = models.Banners.objects.all()
     users = User.objects.all().order_by('-id')
+    configuraciones = obtener_configuraciones()
     contexto = {
         'users':users,
         'user':request.user,
@@ -253,6 +285,7 @@ def vista_programador(request):
         'preguntas_sending':questions_all,
         'num_preguntas':databaseall.count(),
         'num_blogs':models.Articulos.objects.filter(autor=request.user).count(),
+        **configuraciones
     }
      
     if request.method == 'POST':
@@ -312,15 +345,7 @@ def marcar_notificaciones_leidas(request):
 # Banners ----------------------------------------------------------
 @login_required
 @never_cache
-def banners_page(request):
-    # now = functions.timezone.now()
-    # expired_banners = models.Banners.objects.filter(expiracion__lte=now, visible=True)
-
-    # if expired_banners.exists():
-    #     for banner in expired_banners:
-    #         banner.visible = False
-    #         banner.save()
-    
+def banners_page(request):    
     if request.method == 'POST':
         soloImagenPOST = request.POST.get('soloImagen')
         if soloImagenPOST == None:
@@ -395,12 +420,17 @@ def database_page(request):
     context = { 'active_page':'database','pages':functions.pages, 'preguntas_sending':questions_all, 'categorias':categoriasFilter, 'categoriasall':categoriasall, 'database': datos_modificados }
     return render(request, 'admin/database.html', context)
 
+# Calendario ----------------------------------------------------------
 @login_required
 @never_cache
 def calendario_page(request):
-    context = { 'active_page': 'calendario', 'pages': functions.pages }
-    return render(request, 'admin/calendario.html', context)
     
+    for oneconfig in settingsall:
+        btns_year = oneconfig.calendar_btnsYear
+
+    context = { 'active_page': 'calendario', 'show_btns_year': btns_year, 'pages': functions.pages }
+    return render(request, 'admin/calendario.html', context)
+
 # Blogs ----------------------------------------------------------
 @login_required
 @never_cache

@@ -14,6 +14,7 @@ urlpatterns = [
     path('calendario/eventos/', functions.calendario_eventos, name='calendario_eventos'),
     path('mapa/', views.map, name='map'),
     path('mapa/edificios/', functions.mapa_data, name='mapa_edificios'),
+    path('mapa/marcadores/', functions.mapa_markers, name='mapa_markers'),
     path('acercade/', views.about, name='about'),
     
     # Chatbot y texto a voz ----------------------------------------------------------
