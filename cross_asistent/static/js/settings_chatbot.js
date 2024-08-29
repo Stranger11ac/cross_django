@@ -60,70 +60,79 @@ $(document).ready(function () {
 const recVoice = $(".controls_btn_microphone");
 const textarea = document.getElementById("txtQuestion");
 const submitButton = document.getElementById("chatForm_submit");
+let finalTranscript = "";
 let recognition;
 let recognizing = false;
 
-// Verifica si el navegador soporta la Web Speech API
-if ("webkitSpeechRecognition" in window) {
-    recognition = new webkitSpeechRecognition();
-    recognition.lang = "es-MX";
-    recognition.continuous = true;
-    recognition.interimResults = true;
+try {
+    // Verifica si el navegador soporta la Web Speech API
+    if ("webkitSpeechRecognition" in window) {
+        recognition = new webkitSpeechRecognition();
+        recognition.lang = "es-MX";
+        recognition.continuous = true;
+        recognition.interimResults = true;
 
-    let finalTranscript = "";
+        recognition.onstart = function () {
+            recognizing = true;
+            microphonerecord = true;
+            finalTranscript = "";
+        };
 
-    recognition.onstart = function () {
-        recognizing = true;
-        microphonerecord = true;
-        finalTranscript = "";
-    };
+        recognition.onresult = function (event) {
+            let interimTranscript = "";
 
-    recognition.onresult = function (event) {
-        let interimTranscript = "";
+            for (let i = event.resultIndex; i < event.results.length; i++) {
+                let transcript = event.results[i][0].transcript;
 
-        for (let i = event.resultIndex; i < event.results.length; i++) {
-            let transcript = event.results[i][0].transcript;
+                if (event.results[i].isFinal) {
+                    finalTranscript += transcript;
+                } else {
+                    interimTranscript += transcript;
+                }
+            }
 
-            if (event.results[i].isFinal) {
-                finalTranscript += transcript;
+            textarea.value = finalTranscript + interimTranscript;
+        };
+
+        recognition.onerror = function (event) {
+            console.error(event.error);
+        };
+
+        recognition.onend = function () {
+            recognizing = false;
+        };
+    } else {
+        console.warn("Este navegador no soporta la Web Speech API");
+        alertSToast("center", 7000, "warning", "Al parecer tu navegador no permite activar el micrófono. 🤔😯😥");
+        $("#btn_controls_icon").addClass("fa-microphone-slash");
+    }
+
+    function stopRecording() {
+        recognition.stop();
+        $("#btn_controls_icon").addClass("fa-microphone").removeClass("fa-stop");
+        // alertSToast('top', 8000, 'warning', 'stop recording');
+    }
+
+    recVoice.on("click", function () {
+        if (recVoice.hasClass("readyRecVoice")) {
+            if (recognizing) {
+                stopRecording();
+                if (finalTranscript != "") {
+                    alertSToast("top", 8000, "warning", "DIferente de VACIO");
+                    finalTranscript = "";
+                    submitButton.click();
+                } else {
+                    alertSToast("top", 8000, "error", "Esta Vaciooo");
+                }
             } else {
-                interimTranscript += transcript;
+                recognition.start();
+                $("#btn_controls_icon").addClass("fa-stop").removeClass("fa-microphone");
             }
         }
-
-        textarea.value = finalTranscript + interimTranscript;
-    };
-
-    recognition.onerror = function (event) {
-        console.error(event.error);
-    };
-
-    recognition.onend = function () {
-        recognizing = false;
-    };
-} else {
-    console.warn("Este navegador no soporta la Web Speech API");
-    alertSToast("center", 7000, "warning", "Al parecer tu navegador no permite activar el micrófono. 🤔😯😥");
-    $("#btn_controls_icon").addClass("fa-microphone-slash");
+    });
+} catch (error) {
+    alertSToast("top", 10000, "warning", error);
 }
-
-function stopRecording() {
-    recognition.stop();
-    $("#btn_controls_icon").addClass("fa-microphone").removeClass("fa-stop");
-}
-
-recVoice.on("click", function () {
-    if (recVoice.hasClass("readyRecVoice")) {
-        if (recognizing) {
-            stopRecording();
-            finalTranscript = "";
-            submitButton.click();
-        } else {
-            recognition.start();
-            $("#btn_controls_icon").addClass("fa-stop").removeClass("fa-microphone");
-        }
-    }
-});
 
 // Dictado de texto ##################################
 const speakButton = $(".speak_btn");
@@ -145,16 +154,16 @@ if ("speechSynthesis" in window) {
 
         voices.forEach((voice, index) => {
             // if (voice.lang.startsWith("es")) {
-                const option = document.createElement("option");
-                option.textContent = `${voice.name} (${voice.lang})`;
-                option.value = index;
-                voiceSelect.appendChild(option);
+            const option = document.createElement("option");
+            option.textContent = `${voice.name} (${voice.lang})`;
+            option.value = index;
+            voiceSelect.appendChild(option);
 
-                // Check for the specific voice and set it as selected if available
-                if (voice.name.includes("Microsoft Sebastian Online") && voice.lang === "es-VE") {
-                    voiceSelect.value = index;
-                    defaultOptionAdded = true;
-                }
+            // Check for the specific voice and set it as selected if available
+            if (voice.name.includes("Microsoft Sebastian Online") && voice.lang === "es-VE") {
+                voiceSelect.value = index;
+                defaultOptionAdded = true;
+            }
             // }
         });
 
