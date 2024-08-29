@@ -17,12 +17,8 @@ urlpatterns = [
     path('mapa/marcadores/', functions.mapa_markers, name='mapa_markers'),
     path('acercade/', views.about, name='about'),
     
-    # Chatbot y texto a voz ----------------------------------------------------------
+    # Chatbot ----------------------------------------------------------
     path('chatbot/', chatbot.chatbot, name='chatbot'),
-    path('speekText/', chatbot.speekText, name='speekText'),
-    path('start/', chatbot.start_recognition, name='start_recognition'),
-    path('stop/', chatbot.stop_recognition, name='stop_recognition'),
-    path('recognized_text/', chatbot.recognized_text, name='recognized_text'),
     
     # Sesion y registro ----------------------------------------------------------
     path('logout/', views.singout, name='singout'),
@@ -54,6 +50,7 @@ urlpatterns = [
     # Database ----------------------------------------------------------
     path('administracion/base_de_datos/', views.database_page, name='database_page'),
     path('administracion/database/crear/', functions.database_create, name='create_database'),
+    path('administracion/database/lista/', functions.database_list, name='database_list'),
     path('administracion/database/actualizar/', functions.database_update, name='database_update'),
     path('administracion/database/eliminar/', functions.database_delete, name='database_delete'),
     path('administracion/calendario/', views.calendario_page, name='calendario_page'),
@@ -75,10 +72,6 @@ urlpatterns = [
     path('administracion/galeria/subir/', views.upload_image, name='send_imgsblog'),
     path('administracion/galeria/lista/', views.lista_imagenes, name='lista_imagenes'),
     
-    # Notificaciones ----------------------------------------------------------
-    path('administracion/notificaciones/', views.ver_notis, name='notificaciones'),
-    path('administracion/notificaciones/notificacion_leida/', views.marcar_notificaciones_leidas, name='marcar_notificaciones_leidas'),
-    
     # configuraciones ----------------------------------------------------------
     path('administracion/configuraciones/actualizar/', functions.settings_update, name='update_settings'),
     
@@ -93,8 +86,4 @@ urlpatterns = [
 
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-    # print('URLs:')
-    # print(urlpatterns)
-    # print()
-    # print(static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT))
     

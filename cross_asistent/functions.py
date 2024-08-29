@@ -6,6 +6,7 @@ from django.shortcuts import get_object_or_404
 from django.contrib.auth.models import User
 from django.http import JsonResponse
 from django.utils import timezone
+from .views import databaseall
 from . import models
 import datetime
 
@@ -238,7 +239,6 @@ def banners_visibility_now(request):
         # Si no se realiza ninguna actualización, devolvemos un HTTP 204 (No Content)
         return JsonResponse({}, status=200)
 
-
 # Categorias ----------------------------------------------------------
 @login_required
 @never_cache
@@ -301,6 +301,35 @@ def categorias_delete(request):
 # Base de Datos ----------------------------------------------------------
 @login_required
 @never_cache
+def database_list(request):
+    datos_modificados = []
+    for dato in databaseall:
+        if dato.imagen:
+            imagen_url = dato.imagen.url
+        else:
+            imagen_url = ''
+        if dato.documento:
+            documento_url = dato.documento.url
+        else:
+            documento_url = ''
+        datos_modificados.append({
+            'id': dato.id,
+            'categoria': dato.categoria.categoria,
+            'titulo': dato.titulo,
+            'informacion': dato.informacion,
+            'redirigir': dato.redirigir,
+            'frecuencia': dato.frecuencia,
+            'documento': documento_url,
+            'imagen': imagen_url,
+            'fecha_modificacion': dato.fecha_modificacion,
+        })
+    # allitemsdb = list(models.Database.objects.values())
+    data = {'infodb': datos_modificados}
+    return JsonResponse(data)
+
+
+@login_required
+@never_cache
 def database_create(request):
     if request.method == 'POST':
         try:
@@ -345,9 +374,7 @@ def database_create(request):
                 evento_allDay=evento_allDayPOST if not evento_allDayPOST == None else False,
                 evento_lugar=evento_lugarPOST or '',
                 evento_className=evento_classNamePOST or '',
-            )
-            models.Notificacion.objects.create(usuario=request.user,tipo='Base de Datos',mensaje=f'{request.user.username} ha creado un nuevo registro de categoría "{categoriaIdPOST}".',)
-            
+            )            
             return JsonResponse({'success': True, 'functions':'reload', 'message': dbMessage, 'position':'center'}, status=200)
         
         except Exception as e:
@@ -396,13 +423,7 @@ def database_update(request):
             dbUpdate.evento_lugar = evento_lugarPOST or ''
             dbUpdate.evento_className = evento_classNamePOST or 'event_detail'
             dbUpdate.save()
-            
-            models.Notificacion.objects.create(
-                usuario=request.user,
-                tipo='Base de Datos',
-                mensaje=f'{request.user.username} ha actualizado un registro de categoría "{categoriaIdPOST}".',
-            )
-            
+                        
             dbMessage = f'Se actualizó "{request.POST.get("titulo")}" en la base de datos exitosamente 🫡😁🎉'
             return JsonResponse({'success': True, 'functions': 'reload', 'message': dbMessage, 'position': 'center'}, status=200)
         
@@ -419,8 +440,6 @@ def database_delete(request):
             idPOST = request.POST.get('id')            
             dbDelete = get_object_or_404(models.Database, id=idPOST)
             dbDelete.delete()
-            
-            models.Notificacion.objects.create(usuario=request.user,tipo='Base de Datos',mensaje=f'{request.user.username} elimino el registro numero "{idPOST}", de titulo {dbDelete.titulo}.',)
             
             dbMessage =  f'"{dbDelete.titulo}" Se eliminó de la base de datos 😯🧐😬🫡'
             return JsonResponse({'success': True, 'functions':'reload', 'message': dbMessage, 'icon':'warning'}, status=200)
@@ -579,14 +598,33 @@ def settings_update(request):
     if request.method == 'POST':
         try:
             qrImgPOST = request.FILES.get('qrImage')
+            aboutimgfirst = request.FILES.get('firstimage')
+            aboutimgsecond = request.FILES.get('secondimage')
             btnyear_calendar = request.POST.get('btnsYear')
-            
+            copyryear = request.POST.get('cr_year')
+            utclink = request.POST.get('utclink')
+            firstsection = request.POST.get('firstsection')
+            secondsection = request.POST.get('secondsection')
+            abouttext = request.POST.get('contenidoWord')
+                        
             config = get_object_or_404(models.Configuraciones, id='1')
             if qrImgPOST:
                 config.qr_image = qrImgPOST
-            
-            config.calendar_btnsYear = True if btnyear_calendar else False
-            config.copyright_year = request.POST.get('cr_year')
+            if btnyear_calendar:
+                config.calendar_btnsYear = True if btnyear_calendar else False
+            if copyryear:
+                config.copyright_year = copyryear
+            if utclink:
+                config.utc_link = utclink
+            if firstsection:
+                config.about_text_first = abouttext
+            if secondsection:
+                config.about_text_second = abouttext
+            if aboutimgfirst:
+                config.about_img_first = aboutimgfirst
+            if aboutimgsecond:
+                config.about_img_second = aboutimgsecond
+                
             config.save()
             
             return JsonResponse({'success': True, 'message': f'Configuraciones Actualizadas', 'position':'top-end'}, status=200)

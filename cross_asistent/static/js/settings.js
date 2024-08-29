@@ -28,14 +28,6 @@ function getCSRFToken() {
 // ##############################################################################################
 $(document).ready(function () {
     try {
-        // Detectar cuando se abre cualquier modal
-        $(".modal").on("shown.bs.modal", function (e) {
-            $("body").addClass("body_minus");
-        });
-        $(".modal").on("hidden.bs.modal", function (e) {
-            $("body").removeClass("body_minus");
-        });
-
         // Filtro de busqueda ###################################################################
         var input = $("#searchInput");
         function filtertable() {
@@ -48,30 +40,7 @@ $(document).ready(function () {
         }
         input.on("input", filtertable);
 
-        // abrir menu del asistente ##############################################################
-        $(".controls_btn_microphone").click(() => {
-            $(".asistent_group").addClass("open open_controls bg-body-tertiary");
-            $(".btn_controls").addClass("btn_detail").removeClass("btn_secondary");
-            $("#btn_controls_icon").removeClass("fa-comment text_detail").addClass("fa-microphone");
-        });
-        $(".toggle_controls").click(() => {
-            $(".asistent_group.open").toggleClass("close_controls open_keyboard open_controls");
-            // Detectar si es un dispositivo móvil
-            const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-            // Solo ejecutar el setTimeout si no es un dispositivo móvil
-            if (!isMobile) {
-                setTimeout(function () {
-                    $(".controls_input #question").focus();
-                }, 1000);
-            }
-        });
-        $(".controls_btn_close").click(() => {
-            $(".asistent_group").removeClass("open open_controls close_controls open_keyboard bg-body-tertiary");
-            $(".btn_controls").removeClass("btn_detail").addClass("btn_secondary");
-            $("#btn_controls_icon").addClass("fa-comment text_detail").removeClass("fa-microphone");
-        });
-
-        // Vista de Programador
+        // Vista de Programador y Banners
         // Agrega la clase active al banner con la id mas baja #######################################
         var minIdNumber = Infinity;
         let minIdElement = null;
@@ -87,17 +56,6 @@ $(document).ready(function () {
             minIdElement.addClass("active");
         }
 
-        // Enviar chat con enter chatGPT ######################################
-        $("#txtQuestion").keydown((evento) => {
-            if (evento.keyCode === 13 && !evento.shiftKey) {
-                evento.preventDefault();
-                $("#chatForm_submit").click();
-            }
-        });
-
-        // ChatGPT Submit ####################################################
-        $("#chatForm").submit(chatSubmit);
-
         // iniciar sesion ####################################################
         // Crea usuario nuevo desde programador ##############################
         // Registrar un nuevo articulo con TinyMCE ###########################
@@ -107,16 +65,17 @@ $(document).ready(function () {
                 $('[data-submit-ready] button[type="submit"]').click();
             }, 2000);
         }
+
         $("[data-submit-blur] .input_blur").on("blur", function () {
-            $("[data-submit-blur] button[type='submit']").click();
+            let formulario = $(this).closest("[data-submit-blur]");
+            let idButton = formulario.data("submit-blur");
+            formulario.find(`button#${idButton}`).click();
         });
         $("[data-submit-blur] .input_change").on("change", function () {
-            $("[data-submit-blur] button[type='submit']").click();
+            let formulario = $(this).closest("[data-submit-blur]");
+            let idButton = formulario.data("submit-blur");
+            formulario.find(`button#${idButton}`).click();
         });
-
-        // $("[id^='btn_frequence']").each(function() {
-        //     console.log($(this).attr('id'));
-        // });
 
         $("[data-submit-click]").on("click", function () {
             const btnSubmitThis = $(this).data("submit-click");
@@ -175,7 +134,7 @@ $(document).ready(function () {
         }
         colorizeGoogle();
 
-        // Cerrar alertas ####################################################
+        // Cerrar sweetalert toas con ESC ####################################################
         $(document).on("keydown", function (event) {
             if (event.key === "Escape" || event.keyCode === 27) {
                 Swal.close();
@@ -201,67 +160,6 @@ $(document).ready(function () {
             const dataClear = $(this).attr("data-clear");
             $(`#${dataClear}`).val("");
             $(this).slideUp("fast");
-        });
-
-        // Notificaciones #############################################################
-        // Marcar todas las notificaciones como leídas al hacer clic en el botón
-        $("#markAsReadButton").on("click", function () {
-            $('[id^="notif_"]').each(function () {
-                $(this).removeClass(
-                    "list-group-item-warning list-group-item-info list-group-item-success list-group-item-danger list-group-item-primary"
-                );
-            });
-            $('[id^="notif_"]').each(function () {
-                $(this).addClass("list-group-item-secondary");
-            });
-            // Obtener todas las IDs que quieres guardar
-            var notificationIds = [];
-            $('[id^="notif_"]').each(function () {
-                notificationIds.push($(this).attr("id"));
-            });
-            // guardar JSON
-            localStorage.setItem("notificationIds", JSON.stringify(notificationIds));
-        });
-        // Manejar el evento change de los checkboxes
-        $(".notification-checkbox").on("change", function () {
-            var checkbox = $(this);
-            var id = checkbox.data("id");
-            var valPost = checkbox.data("val-post");
-            var ids = [id];
-            $.ajax({
-                url: valPost,
-                method: "POST",
-                data: JSON.stringify({ ids: ids }),
-                contentType: "application/json",
-                headers: {
-                    "X-CSRFToken": formToken,
-                },
-                success: function (response) {
-                    message = response.message;
-                    if (response.status === "success") {
-                        checkbox
-                            .closest("li")
-                            .removeClass(
-                                "list-group-item-warning list-group-item-info list-group-item-success list-group-item-danger list-group-item-primary"
-                            )
-                            .addClass("list-group-item-secondary");
-                        setTimeout(() => {
-                            checkbox.slideUp();
-                        }, 2000);
-                    } else {
-                        console.error(message);
-                    }
-                    alertSToast("top", 4000, response.icon, message);
-                },
-            });
-        });
-        // Cargar las IDs desde localStorage
-        var storedIds = JSON.parse(localStorage.getItem("notificationIds")) || [];
-        storedIds.forEach(function (id) {
-            $("#" + id).removeClass(
-                "list-group-item-warning list-group-item-info list-group-item-success list-group-item-danger list-group-item-primary"
-            );
-            $("#" + id).addClass("list-group-item-secondary");
         });
 
         // Interfaz #########################################################
@@ -516,254 +414,6 @@ function cadenaRandom(longitud, caracteres) {
     return cadenaAleatoria;
 }
 
-// Funcion de preguntar a chatGPT https://platform.openai.com/ #################################
-const contOutput = document.querySelector("#output");
-const toggleAudioButton = document.querySelector("#toggleAudio");
-const audioIcon = document.querySelector("#audioIcon");
-const RepAudioButton = document.querySelector("#RepAudio");
-let audioEnabled = true;
-let saludoMostrado = false;
-
-// Funcion para Controlar el Audio ######################
-function playAudio(audioUrl) {
-    if (audioUrl && audioEnabled) {
-        const audio = new Audio(audioUrl);
-        audio.playbackRate = 1.5;
-
-        audio.play().catch((error) => {
-            console.error("Error al reproducir el audio:", error);
-        });
-        const checkAudioState = setInterval(function () {
-            if (!audioEnabled) {
-                audio.pause();
-            }
-        }, 100);
-        audio.addEventListener("ended", function () {
-            clearInterval(checkAudioState);
-        });
-    }
-}
-
-// Funcion para Mostrar y Mandar la Pregunta del Usuario ################
-function chatSubmit(e) {
-    e.preventDefault();
-    const pregunta = txtQuestion.value;
-    const chatForm = e.target;
-    chatForm.reset();
-
-    if (!texto3.test(pregunta)) {
-        return alertSToast("center", 6000, "warning", "Por favor, escribe una pregunta 🧐😬");
-    }
-
-    const tokendid = cadenaRandom(5, alfabetico);
-    const valID = `uuid${tokendid}`;
-
-    const htmlBlock = `<div class="output_block"><div class="btn_detail chat_msg user_submit" data-tokeid="${valID}">${pregunta}</div></div>`;
-    contOutput.insertAdjacentHTML("beforeend", htmlBlock);
-    const user_submit = document.querySelector(`.user_submit[data-tokeid="${valID}"]`);
-    setTimeout(() => {
-        user_submit.classList.add("visible");
-        setTimeout(scrollToBottom, 500);
-    }, 20);
-
-    fetch(chatForm.action, {
-        method: "POST",
-        body: JSON.stringify({ question: pregunta }),
-        headers: {
-            "Content-Type": "application/json",
-            "X-Requested-With": "XMLHttpRequest",
-            "X-CSRFToken": chatForm.querySelector("[name=csrfmiddlewaretoken]").value,
-        },
-    })
-        .then((response) => {
-            if (!response.ok) {
-                return response.json().then((data) => {
-                    throw new Error(data.message || "Error desconocido");
-                });
-            }
-            return response.json();
-        })
-        .then((data) => {
-            if (data.success) {
-                displayChatbotResponse(data.answer);
-            } else {
-                alertSToast("top", 8000, "error", `Error: ${data.message}`);
-            }
-        })
-        .catch((error) => {
-            console.error("😥 Error:", error);
-            alertSToast("top", 8000, "warning", "Ocurrió un error. Intente nuevamente. 😥");
-        });
-}
-
-// Función para Manejar y Mostrar la Respuesta del Chatbot #################
-function displayChatbotResponse(answer) {
-    const tokendid = cadenaRandom(5, alfabetico);
-    const valID = `uuid${tokendid}`;
-
-    const dataImage = answer.imagenes;
-    const dataRedirigir = answer.redirigir;
-    const dataAudio = answer.audio_url;
-
-    let viewImage = "";
-    let btnRedir = "";
-
-    if (dataImage != null) {
-        viewImage = `<br><br> <img src="${dataImage}" class="img-rounded max_w300 max_h300">`;
-    }
-
-    if (dataRedirigir && dataRedirigir.trim() !== "") {
-        btnRedir = `<br><br> <a class="btn btn_detail mb-2 max_w300" target="_blank" rel="noopener noreferrer" href="${dataRedirigir}" >Ver Mas <i class="fa-solid fa-arrow-up-right-from-square ms-1"></i></a>`;
-    }
-
-    const htmlBlock = `<div class="chat_msg asistent_response" data-tokeid="${valID}">${answer.informacion} ${btnRedir} ${viewImage}</div>`;
-
-    contOutput.insertAdjacentHTML("beforeend", htmlBlock);
-    const asistent_response = document.querySelector(`.asistent_response[data-tokeid="${valID}"]`);
-
-    setTimeout(function () {
-        asistent_response.classList.add("visible");
-        setTimeout(scrollToBottom, 350);
-
-        playAudio(dataAudio);
-    }, 20);
-}
-
-// Menejar el Saludo Inicial ######################
-if (contOutput && !saludoMostrado) {
-    const valID = `uuid${cadenaRandom(5, alfabetico)}`;
-    const htmlBlock = `<div class="chat_msg asistent_response" data-tokeid="${valID}"><span>Hola!!! Soy Hawky, tu asistente virtual de la Universidad Tecnologica de Coahuila! <br>¿En qué puedo ayudarte?</span></div>`;
-
-    contOutput.insertAdjacentHTML("beforeend", htmlBlock);
-
-    const asistent_response = document.querySelector(`.asistent_response[data-tokeid="${valID}"]`);
-    setTimeout(function () {
-        asistent_response.classList.add("visible");
-        scrollToBottom();
-    }, 220);
-
-    RepAudioButton.addEventListener("click", function () {
-        if (!saludoMostrado) {
-            playAudio("/static/audio/welcome.mp3");
-        }
-        saludoMostrado = true;
-    });
-}
-
-// Función para Actualizar el Chat con la Pregunta del Usuario por Voz###########
-function updateChat(question) {
-    const tokendid = cadenaRandom(5, alfabetico);
-    const valID = `uuid${tokendid}`;
-
-    const htmlBlock = `<div class="output_block"><div class="btn_detail chat_msg user_submit" data-tokeid="${valID}">${question}</div></div>`;
-
-    contOutput.insertAdjacentHTML("beforeend", htmlBlock);
-    const userSubmit = document.querySelector(`.user_submit[data-tokeid="${valID}"]`);
-    setTimeout(() => {
-        userSubmit.classList.add("visible");
-        setTimeout(scrollToBottom, 500);
-    }, 20);
-}
-function scrollToBottom() {
-    contOutput.scrollTop = contOutput.scrollHeight;
-}
-
-// Control de Boton de Audio #########################
-
-if (toggleAudioButton && audioIcon) {
-    toggleAudioButton.addEventListener("click", function () {
-        audioEnabled = !audioEnabled;
-        if (audioEnabled) {
-            audioIcon.classList.remove("fa-volume-mute");
-            audioIcon.classList.add("fa-volume-high");
-        } else {
-            audioIcon.classList.remove("fa-volume-high");
-            audioIcon.classList.add("fa-volume-mute");
-        }
-    });
-}
-
-// Control de Reconocimiento de Voz #########################
-const recVoice = document.getElementById("recVoice");
-let isRecognizing = false;
-
-if (recVoice) {
-    const startRecognitionUrl = recVoice.getAttribute("data-start");
-    const stopRecognitionUrl = recVoice.getAttribute("data-stop");
-
-    recVoice.addEventListener("click", () => {
-        if (isRecognizing) {
-            stopRecognition(stopRecognitionUrl);
-        } else {
-            startRecognition(startRecognitionUrl);
-        }
-    });
-}
-
-function startRecognition(startRecognitionUrl) {
-    fetch(startRecognitionUrl, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-            "X-CSRFToken": "{{ csrf_token }}",
-        },
-    })
-        .then((response) => response.json())
-        .then((data) => {
-            if (data.status === "success") {
-                isRecognizing = true;
-                recVoice.innerHTML = '<i class="fa-solid fa-stop"></i>';
-            } else {
-                console.error("Error:", data.message);
-            }
-        });
-}
-
-function stopRecognition(stopRecognitionUrl) {
-    fetch(stopRecognitionUrl, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-            "X-CSRFToken": "{{ csrf_token }}",
-        },
-    })
-        .then((response) => response.json())
-        .then((data) => {
-            if (data.status === "success") {
-                isRecognizing = false;
-                recVoice.innerHTML = '<i class="fa-solid fa-microphone"></i>';
-
-                if (data.response) {
-                    if (data.response.question) {
-                        const question = data.response.question;
-                        updateChat(question);
-                    }
-                    if (data.response.chatbot_answer) {
-                        const chatbotAnswer = data.response.chatbot_answer;
-                        displayChatbotResponse(chatbotAnswer);
-                    }
-                }
-            } else {
-                console.error("Error:", data.message);
-            }
-        })
-        .catch((error) => console.error("Error en la solicitud:", error));
-}
-
-// Hacer scroll con un nuevo mensaje en el chat ####################
-function scrollToBottom() {
-    contOutput.scrollTop = contOutput.scrollHeight;
-}
-if (contOutput) {
-    function scrollToBottom() {
-        contOutput.scrollTop = contOutput.scrollHeight;
-    }
-    var observer = new MutationObserver(() => {
-        scrollToBottom();
-    });
-    scrollToBottom();
-    observer.observe(contOutput, { childList: true, subtree: true });
-}
 
 // Copiar al portapapeles ######################################################################
 const inputs = document.querySelectorAll("input[data-copy]");
@@ -795,15 +445,6 @@ inputs.forEach((input) => {
 // MaterialBox https://materializecss.com/ ################################################
 var imagesZoom = document.querySelectorAll(".materialBoxed");
 var instances = M.Materialbox.init(imagesZoom);
-
-// $(".materialBoxed").click(function () {
-//     if($(this).hasClass('active')) {
-//         // $(".navbar-collapse").css('z-index', 0);
-//         $(".navbar-collapse").css('background', 'blue');
-//     } else {
-//         $(".navbar-collapse").css('background', 'red');
-//     }
-// })
 
 // Enviar formulario JSON ######################################################################
 function jsonSubmit(e) {

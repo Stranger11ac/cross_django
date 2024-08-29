@@ -121,17 +121,17 @@
                             <tbody>
                                 {% for onebanner in banners %}
                                 <tr class="table_odd_items {% if not onebanner.visible %}table-active{% endif %}">
-                                    <td {% if not onebanner.visible or onebanner.onlyImg %}colspan="2" {% endif %}>
+                                    <td {% if not onebanner.visible or onebanner.onlyImg %}colspan="2"{% endif %}>
                                         {% autoescape off %}{{ onebanner.titulo }}{% endautoescape %}
                                         {% if onebanner.onlyImg %}
-                                        <small class="bg-success rounded-pill p-1 mt-3">Muestra solo la Imagen y boton</small>{% endif %}
+                                        <small class="bg-success rounded-pill p-1 mt-3">Solo Imagen y boton</small>{% endif %}
                                         {% if not onebanner.visible %}<small class="bg-danger rounded-pill p-1 mt-3">Banner Invisible</small>{% endif %}
                                     </td>
                                     {% if onebanner.visible and not onebanner.onlyImg %}
                                     <td>{{ onebanner.descripcion }}</td>
                                     {% endif %}
                                     <td>
-                                        <img src="{{ onebanner.imagen }}" alt="{{ onebanner.titulo }}"
+                                        <img src="{{ onebanner.imagen }}" alt="{{ onebanner.titulo|truncatewords:8}}"
                                             class="img-fluid img-rounded img_mask-dark materialBoxed max_w200 max_h200">
                                     </td>
                                     <td>
@@ -272,6 +272,9 @@
         </section>
     </div>
 </main>
+
+{% include 'base/widget_footer-admin.html' %}
+
 <form method="post" action="{% url 'update_banner_visibility' %}" class="d-none" data-submit-form data-submit-ready>
     {% csrf_token %}
     <button type="submit" class="d-none"> Actualizar Visibilidad</button>

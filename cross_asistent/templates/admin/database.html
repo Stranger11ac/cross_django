@@ -5,6 +5,10 @@
 {% block link_default %}
 {% include 'base/widget_links-admin.html' %}
 {% endblock %}
+{% block extra_head %}
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.1/css/dataTables.bootstrap5.min.css" />
+{% endblock %}
+
 {% block content %}
 <main class="container container-fluid py-5 {% if not user.is_authenticated %}main_container{% endif %}">
     <div class="mb-5">
@@ -178,9 +182,8 @@
             <div class="card mb-4">
                 <div class="card-body text-center">
                     <h4 class="mb-3">Lista de Registros</h4>
-                    {% if database %}
                     <div class="table-responsive rounded" id="table-container">
-                        <table class="table table_odd align-middle m-0">
+                        <table id="datatable_database" class="table table_odd align-middle m-0">
                             <thead>
                                 <tr>
                                     <th class="fw-bold text_detail">id</th>
@@ -191,147 +194,10 @@
                                     <th class="fw-bold text_detail">Acciones</th>
                                 </tr>
                             </thead>
-                            <tbody>
-                                {% for dato in database %}
-                                <tr class="table_odd_items">
-                                    <td>{{ dato.id }}</td>
-                                    <td>{{ dato.categoria.categoria }}</td>
-                                    <td>{% autoescape off %}{{ dato.titulo }}{% endautoescape %}</td>
-                                    <td>
-                                        {% if dato.imagen %}
-                                        <img src="{{ dato.imagen }}" alt="{{ dato.titulo }}" class="img-rounded materialBoxed hover-shadow"
-                                            style="width: 150px;">
-                                        {% endif %}
-                                    </td>
-                                    <td>{{ dato.documento }}</td>
-                                    <td>
-                                        <div class="d-flex flex-column align-items-center gap_10">
-                                            <button type="button" class="btn btn-floating btn-info" data-mdb-ripple-init data-mdb-modal-init
-                                                data-mdb-target="#editDBModal{{ dato.id }}">
-                                                <i class="fa-solid fa-edit fs-12"></i>
-                                            </button>
-                                            {% csrf_token %}
-                                            <button type="button" class="btn btn-floating btn-danger" data-mdb-ripple-init data-mdb-modal-init
-                                                data-mdb-target="#eliminar_modal_{{ dato.id }}">
-                                                <i class="fa-regular fa-trash-can fs-12"></i>
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
-
-                                <!-- Modal: Edit database -->
-                                <div class="modal fade" id="editDBModal{{ dato.id }}" tabindex="-1" aria-labelledby="editDBModalLabel{{ dato.id }}"
-                                    aria-hidden="true" data-mdb-backdrop="static" data-mdb-keyboard="false">
-                                    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
-                                        <div class="modal-content">
-                                            <div class="modal-header">
-                                                <h5 class="modal-title" id="editDBModalLabel{{ dato.id }}">Editar Informacion</h5>
-                                                <button type="button" class="btn-close" data-mdb-ripple-init data-mdb-dismiss="modal"
-                                                    aria-label="Close"></button>
-                                            </div>
-                                            <div class="modal-body text-start">
-                                                <form method="post" action="{% url 'database_update' %}" data-submit-form id="dbUpdate" autocomplete="off">
-                                                    {% csrf_token %}
-                                                    <input type="text" class="d-none" value="{{ dato.id }}" name="id">
-                                                    <div class="row pt-2">
-                                                        <div class="col-md-3">
-                                                            <div class="form-outline mb-4">
-                                                                <select class="form-select" id="categoria{{ dato.id }}" name="categoria" required>
-                                                                    <option selected hidden value="{{ dato.categoria }}">
-                                                                        Categoria: {{ dato.categoria }}</option>
-                                                                    {% for categoria in categorias %}
-                                                                    <option value="{{ categoria.categoria }}">{{ categoria.categoria }}</option>
-                                                                    {% endfor %}
-                                                                </select>
-                                                            </div>
-                                                        </div>
-                                                        <div class="col">
-                                                            <div class="form-outline mb-4" data-mdb-input-init>
-                                                                <i class="fa-solid fa-heading trailing"></i>
-                                                                <input type="text" id="titulo{{ dato.id }}" name="titulo"
-                                                                    class="form-control active form-icon-trailing" value="{{ dato.titulo }}" required />
-                                                                <label class="form-label" for="titulo{{ dato.id }}">Título:</label>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="form-outline mb-4" data-mdb-input-init>
-                                                        <i class="fa-solid fa-keyboard trailing"></i>
-                                                        <textarea class="form-control active form-icon-trailing" id="informacion{{ dato.id }}"
-                                                            name="informacion" rows="5" required>{{ dato.informacion }}</textarea>
-                                                        <label for="informacion{{ dato.id }}" class="form-label">Información:</label>
-                                                    </div>
-                                                    <div class="row">
-                                                        <div class="col-12">
-                                                            <div class="form-outline mb-4" data-mdb-input-init>
-                                                                <i class="fa-solid fa-link trailing"></i>
-                                                                <input type="url" id="redirigir{{ dato.id }}" name="redirigir"
-                                                                    class="form-control active form-icon-trailing" value="{{ dato.redirigir }}" />
-                                                                <label class="form-label" for="redirigir{{ dato.id }}">Redirigir: (url / liga)</label>
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-md-6">
-                                                            <div class="mb-4">
-                                                                <label for="documentos{{ dato.id }}" class="form-label">Cambiar Documento: (PDF)</label>
-                                                                <input type="file" class="form-control" id="documentos{{ dato.id }}" name="documento"
-                                                                    accept="application/pdf">
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-md-6">
-                                                            <div class="mb-4">
-                                                                <label for="imagenes{{ dato.id }}" class="form-label">Cambiar Imágen:</label>
-                                                                <input type="file" class="form-control" id="imagenes{{ dato.id }}" name="imagen"
-                                                                    accept="image/jpeg, image/png, image/webp*">
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="row">
-                                                        <div class="col">
-                                                            <button type="submit" class="btn btn_detail btn-block">Guardar</button>
-                                                        </div>
-                                                    </div>
-                                                </form>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- Modal: Eliminar database -->
-                                <div class="modal fade " id="eliminar_modal_{{ dato.id }}" tabindex="-1" aria-labelledby="labelModal0{{ dato.id }}"
-                                    aria-hidden="true">
-                                    <div class="modal-dialog modal-dialog-centered">
-                                        <div class="modal-content">
-                                            <div class="modal-header">
-                                                <h5 class="modal-title" id="labelModal0{{ dato.id }}">
-                                                    Eliminar dato</h5>
-                                                <button type="button" class="btn-close" data-mdb-ripple-init data-mdb-dismiss="modal"
-                                                    aria-label="Close"></button>
-                                            </div>
-                                            <div class="modal-body">
-                                                <h3 class="text-center mb-2">¿Quieres eliminar el dato <u>{{ dato.titulo }}</u>?
-                                                </h3>
-                                                <h6 class="text-center">"{{ dato.id }} - {{ dato.titulo }}"</h6>
-                                                <p class="text-center">Se eliminará toda la información relacionada <br> Esta acción es permanente</p>
-                                            </div>
-                                            <div class="modal-footer justify-content-between">
-                                                <button type="button" class="btn btn_detail" data-mdb-ripple-init data-mdb-dismiss="modal">Cancelar</button>
-                                                <form method="post" action="{% url 'database_delete' %}" data-submit-form>
-                                                    {% csrf_token %}
-                                                    <input type="text" value="{{ dato.id }}" name="id" class="d-none">
-                                                    <button type="submit" class="btn btn-danger">Eliminar <i class="fa-regular fa-trash-can ms-1"></i></button>
-                                                </form>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                {% endfor %}
+                            <tbody id="tbody_database" data-list-table="{% url 'database_list' %}">
                             </tbody>
                         </table>
                     </div>
-                    {% else %}
-                    <div class="text-center mt-5 mb-4">
-                        <p class="lead">No hay Datos disponibles en este momento 😯.</p>
-                    </div>
-                    {% endif %}
                 </div>
             </div>
         </section>
@@ -503,4 +369,48 @@
         </section>
     </div>
 </main>
+
+<!-- Modal: Edit database -->
+<div class="modal fade" id="editDBModal" tabindex="-1" aria-labelledby="editDBModalLabel" aria-hidden="true"
+    data-mdb-backdrop="static" data-mdb-keyboard="false">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editDBModalLabel">Editar Informacion</h5>
+                <button type="button" class="btn-close" data-mdb-ripple-init data-mdb-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-start">
+                ..........................
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal: Eliminar database -->
+<div class="modal fade " id="eliminar_modal" tabindex="-1" aria-labelledby="eliminarlabelModal" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="eliminarlabelModal">
+                    Eliminar dato</h5>
+                <button type="button" class="btn-close" data-mdb-ripple-init data-mdb-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <h3 class="text-center mb-2">¿Quieres eliminar el dato?
+                </h3>
+                <p class="text-center">Se eliminará toda la información relacionada <br> Esta acción es permanente</p>
+            </div>
+            <div class="modal-footer justify-content-between">
+                <button type="button" class="btn btn_detail" data-mdb-ripple-init data-mdb-dismiss="modal">Cancelar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts_end %}
+<script src="https://cdn.datatables.net/1.13.1/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.1/js/dataTables.bootstrap5.min.js"></script>
+<script src="{% static 'js/settings_datatable.js' %}"></script>
 {% endblock %}

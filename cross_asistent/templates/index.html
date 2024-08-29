@@ -2,6 +2,7 @@
 {% load static filtros %}
 {% block title %}Inicio | Bienvenidos 🦅{% endblock %}
 {% block extra_head %}
+<link rel="preload" href="{% static 'models/hawky.002.glb' %}" as="fetch" type="model/gltf-binary">
 <link rel="stylesheet" href="{% static 'css/swiper-bundle.min.css' %}" />
 <script type="module" src="{% static 'js/model-viewer.min.js' %}"></script>
 {% endblock %}
@@ -54,12 +55,14 @@
     <section href="#asistente" class="asistent_group">
         <div class="box_asistent">
             <model-viewer id="asistent_model" src="{% static 'models/hawky.002.glb' %}" tone-mapping="neutral" camera-orbit="15deg 70deg 60m"
-                poster="{% static 'img/hawky.002.webp' %}" shadow-intensity="1">
+                poster="{% static 'img/hawky.002.webp' %}" loading="eager" shadow-intensity="1">
+                <button class="btn btn_detail btn-floating btn_play-asistent p-4 speak_btn"><i id="speak_btn_icon"
+                        class="fa-regular fa-circle-play fs-20"></i></button>
             </model-viewer>
             <!-- Controles iniciales -->
             <div class="box_asistent_controls">
                 <div class="controls_buttons">
-                    <button type="button" id="RepAudio" class="btn btn_controls btn_secondary controls_btn_keyboard toggle_controls">
+                    <button type="button" class="btn btn_controls btn_secondary controls_btn_keyboard toggle_controls">
                         <i class="fa-regular fa-keyboard"></i>
                     </button>
                     <button type="button" class="btn btn_controls btn_detail controls_btn_microphone">
@@ -73,21 +76,16 @@
             <!-- Controles del chat -->
             <form id="chatForm" class="controls_input" method="POST" action="{% url 'chatbot' %}">
                 {% csrf_token %}
-                <!-- Botton para silenciar -->
-                <button type="button" id="toggleAudio" class="btn btn_detail btn-floating position-relative bottom-0 end-0">
-                    <i id="audioIcon" class="fa-solid fa-volume-high"></i>
-                </button>
                 <div class="position-relative bottom-0 end-0">
                     <div class="form-outline" data-mdb-input-init>
-                        <textarea class="form-control bg-body-tertiary" id="txtQuestion" name="question" required maxlength="200"></textarea>
+                        <textarea class="form-control bg-body-tertiary" id="txtQuestion" name="question" required rows="4" maxlength="200"></textarea>
                         <label class="form-label bg-body-tertiary" for="txtQuestion">Haz una pregunta:</label>
                     </div>
                     <div class="controls_input-buttons position-absolute top-0 end-0">
                         <button type="button" id="closeChat" class="btn btn_secondary btn-floating btn-sm controls_btn_close">
                             <i class="fa-solid fa-xmark"></i>
                         </button>
-                        <button type="button" id="recVoice" class="btn btn_secondary btn-floating btn-sm controls_btn_audio"
-                            data-start="{% url 'start_recognition' %}" data-stop="{% url 'stop_recognition' %}">
+                        <button type="button" class="btn btn_secondary btn-floating btn-sm controls_btn_audio toggle_controls">
                             <i class="fa-solid fa-microphone" id="btn_controls_icon"></i>
                         </button>
                         <div class="audio-animation"></div>
@@ -118,6 +116,24 @@
 </div>
 {% endblock %}
 
+
+{% block moresettings %}
+<div class="text-center mt-5">
+    <h5>Configuraciones del Asistente</h5>
+    <h6>Voz e idioma</h6>
+    <div class="form-outline">
+        <select class="form-select" id="voice_select"></select>
+    </div>
+</div>
+<div class="text-center mt-5">
+    <h6>Velocidad</h6>
+    <div class="form-outline" data-mdb-input-init>
+        <input type="number" id="rate_input" name="asistentSpeedd" class="form-control" min="0.1" max="2" step="0.1" value="1.2" />
+    </div>
+</div>
+{% endblock %}
+
 {% block scripts_end %}
+<script src="{% static 'js/settings_chatbot.js' %}"></script>
 <script src="{% static 'js/owl-carousel.min.js' %}"></script>
 {% endblock %}
