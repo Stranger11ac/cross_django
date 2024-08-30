@@ -565,3 +565,146 @@ function alertSToast(posittionS, timerS, iconS, titleS, didDestroyS) {
 document.oncontextmenu = function () {
     return false;
 };
+
+
+// Función para mostrar la alerta si los campos están vacíos
+function validateAndSubmitForm(e) {
+    e.preventDefault();
+
+    // Selección del formulario
+    const thisForm = e.target.closest('form');
+    const formData = new FormData(thisForm);
+
+    // Validaciones para campos vacíos
+    let isValid = true;
+    let errorMessage = "";
+
+    // Validar campo 'Nombre del Lugar'
+    if (!formData.get("nombreEdificio").trim()) {
+        isValid = false;
+        errorMessage += "Por favor, complete el campo 'Nombre del Lugar'.\n";
+    }
+
+    // Validar campo 'Color'
+    if (!formData.get("namecolor").trim()) {
+        isValid = false;
+        errorMessage += "Por favor, complete el campo 'Color'.\n";
+    }
+
+    // Validar campo 'Punto de Entrada'
+    if (!formData.get("puertaCordsEdificio").trim()) {
+        isValid = false;
+        errorMessage += "Por favor, complete el campo 'Punto de Entrada'.\n";
+    }
+
+    // Validar campos de las esquinas del polígono si el polígono está activo
+    const isPolygonActive = document.querySelector('#esquinasPoligono').classList.contains('d-block');
+    if (isPolygonActive) {
+        for (let i = 1; i <= 4; i++) {
+            const esquina = formData.get(`esquina${i}`).trim();
+            if (!esquina) {
+                isValid = false;
+                errorMessage += `Por favor, complete el campo 'Esquina 0${i}'.\n`;
+            }
+        }
+    }
+
+    if (!isValid) {
+        alertSToast("top", 5000, "warning", errorMessage);
+        return;
+    }
+
+    // Enviar el formulario si todos los campos son válidos
+    fetch(thisForm.action, {
+        method: "POST",
+        body: formData,
+        headers: {
+            "X-Requested-With": "XMLHttpRequest",
+            "X-CSRFToken": formToken,
+        },
+    })
+    .then((response) => {
+        if (!response.ok) {
+            return response.json().then((data) => {
+                throw new Error(data.message || "Error desconocido");
+            });
+        }
+        return response.json();
+    })
+    .then((data) => {
+        let dataMessage = data.message;
+        if (data.success == true) {
+            let dataIcon = "success";
+            if (data.icon) {
+                dataIcon = data.icon;
+            }
+
+            let dataPosition = "center";
+            if (data.position) {
+                dataPosition = data.position;
+            }
+
+            function dataRedirect() {
+                window.location.href = data.redirect_url;
+            }
+
+            if (data.functions == "singin") {
+                dataRedirect();
+                return;
+            } else if (data.functions == "reload") {
+                var alertfunction = function () {
+                    location.reload();
+                };
+            } else if (data.functions == "redirect") {
+                var alertfunction = function () {
+                    dataRedirect();
+                };
+            }
+
+            const passwordInputs = document.querySelectorAll('input[type="password"]');
+            passwordInputs.forEach((input) => (input.value = ""));
+
+            alertSToast(dataPosition, timerOut, dataIcon, dataMessage, alertfunction);
+        } else if (data.success == false) {
+            console.error(dataMessage);
+
+            if (data.valSelector) {
+                console.log(data.valSelector);
+                function addInvalidClass(valueSelector) {
+                    document.querySelector(`[data-selector-input="${valueSelector}"]`).classList.add("is-invalid");
+                    document.querySelector(`[data-selector-input="${valueSelector}"]`).classList.remove("is-valid");
+                }
+                addInvalidClass(data.valSelector);
+            }
+
+            alertSToast("top", timerOut + 6000, "warning", dataMessage);
+        }
+    })
+    .catch((error) => {
+        console.error("😥 Error:", error);
+        let errorMessage = error.message || "Ocurrió un error. Intente nuevamente. 😥";
+        alertSToast("center", timerOut + 8000, "error", errorMessage);
+    });
+}
+
+// Función para manejar el botón de "Dibujar Polígono"
+function togglePolygonInput(isActive) {
+    const polygonSection = document.querySelector('#esquinasPoligono');
+    const btnPoligonCancel = document.querySelector('#btnPoligonCancel');
+    if (isActive) {
+        polygonSection.classList.remove('none');
+        polygonSection.classList.add('d-block');
+        btnPoligonCancel.classList.remove('none');
+    } else {
+        polygonSection.classList.add('none');
+        polygonSection.classList.remove('d-block');
+        btnPoligonCancel.classList.add('none');
+    }
+}
+
+// Asignar el evento al botón de "Guardar Cambios"
+document.querySelector('button[type="submit"]').addEventListener('click', validateAndSubmitForm);
+
+// Asignar los eventos a los botones de "Dibujar Polígono" y "Cancelar"
+document.querySelector('#btnPoligon').addEventListener('click', () => togglePolygonInput(true));
+document.querySelector('#btnPoligonCancel').addEventListener('click', () => togglePolygonInput(false));
