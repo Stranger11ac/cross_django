@@ -135,15 +135,15 @@ try {
         // alertSToast('top', 8000, 'warning', 'stop recording');
     }
 
-    recVoice.on("click touchend", function () {
+    recVoice.on("click", function () {
         if (recVoice.hasClass("readyRecVoice")) {
             if (recognizing) {
                 stopRecording();
-                if (finalTranscript.trim() !== "") {
-                    submitButton.click();
-                    // } else {
-                    //     alertSToast("top", 8000, "error", "Está vacío.");
-                }
+                submitButton.click();
+                // if (finalTranscript.trim() !== "") {
+                //     // } else {
+                //     //     alertSToast("top", 8000, "error", "Está vacío.");
+                // }
             } else {
                 try {
                     recognition.start();
@@ -211,7 +211,8 @@ if ("speechSynthesis" in window) {
             .replace(/[\u{2600}-\u{26FF}]/gu, "") // Otros símbolos
             .replace(/[\u{2700}-\u{27BF}]/gu, "") // Símbolos de dingbats
             .replace(/[\u{1F900}-\u{1F9FF}]/gu, "") // Símbolos suplementarios
-            .replace(/[\u{1FA70}-\u{1FAFF}]/gu, ""); // Objetos misceláneos
+            .replace(/[\u{1FA70}-\u{1FAFF}]/gu, "") // Objetos misceláneos
+            .replace("*", "");
     }
 
     function ttsCustom(valuetext) {
