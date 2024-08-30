@@ -97,7 +97,12 @@ try {
         recognition.onerror = function (event) {
             console.error("Error de reconocimiento:", event.error);
             if (event.error === "not-allowed") {
-                alertSToast("top",8000,"error","Permiso de micrófono denegado. Por favor, permite el acceso al micrófono.");
+                alertSToast(
+                    "top",
+                    8000,
+                    "error",
+                    "Permiso de micrófono denegado. Por favor, permite el acceso al micrófono."
+                );
             } else if (event.error === "no-speech") {
                 alertSToast("top", 8000, "error", "No se detectó ninguna voz. Por favor, intenta de nuevo.");
             } else if (event.error === "network") {
@@ -173,18 +178,18 @@ if ("speechSynthesis" in window) {
         let defaultOptionAdded = false;
 
         voices.forEach((voice, index) => {
-            // if (voice.lang.startsWith("es")) {
-            const option = document.createElement("option");
-            option.textContent = `${voice.name} (${voice.lang})`;
-            option.value = index;
-            voiceSelect.appendChild(option);
+            if (voice.lang.startsWith("es")) {
+                const option = document.createElement("option");
+                option.textContent = `${voice.name} (${voice.lang})`;
+                option.value = index;
+                voiceSelect.appendChild(option);
 
-            // Check for the specific voice and set it as selected if available
-            if (voice.name.includes("Microsoft Sebastian Online") && voice.lang === "es-VE") {
-                voiceSelect.value = index;
-                defaultOptionAdded = true;
+                // Check for the specific voice and set it as selected if available
+                if (voice.name.includes("Microsoft Sebastian Online") && voice.lang === "es-VE") {
+                    voiceSelect.value = index;
+                    defaultOptionAdded = true;
+                }
             }
-            // }
         });
 
         // If the default voice is not found, select the first Spanish voice available
