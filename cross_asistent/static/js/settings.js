@@ -565,3 +565,5 @@ function alertSToast(posittionS, timerS, iconS, titleS, didDestroyS) {
 document.oncontextmenu = function () {
     return false;
 };
+
+
