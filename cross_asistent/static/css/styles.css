@@ -928,6 +928,7 @@ main.main_anchor {
 .card {
     box-shadow: 0 0 8px var(--darkA2) !important;
     overflow: hidden;
+    border: none !important;
 }
 
 .card.card_mxh-450 {
@@ -1038,13 +1039,13 @@ main.main_anchor {
 }
 
 
-.table_odd .table_odd_items:hover .text_detail,
+/* .table_odd .table_odd_items:hover .text_detail,
 .table_odd .table_odd_items.table-active:hover .text_detail {
     background: var(--var-white);
     border-radius: var(--mdb-border-radius-pill) !important;
     border: none;
     padding: 0.1rem;
-}
+} */
 
 
 /*########################### Modal MDB ###########################*/
@@ -1134,6 +1135,10 @@ select.form-select.change_bg {
 
 select.form-select.change_bg option {
     color: var(--mdb-surface-bg) !important;
+}
+
+form button[disabled]{
+    cursor: not-allowed;
 }
 
 /* SWITCH */

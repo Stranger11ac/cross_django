@@ -277,6 +277,12 @@ def vista_programador(request):
     banners_all = models.Banners.objects.all()
     users = User.objects.all().order_by('-id')
     configuraciones = obtener_configuraciones()
+    
+    if request.user.is_staff:
+        num_blogs = models.Articulos.objects.all().count()
+    else:
+        num_blogs = models.Articulos.objects.filter(autor=request.user).count()
+    
     contexto = {
         'users':users,
         'user':request.user,
@@ -287,7 +293,7 @@ def vista_programador(request):
         'categorias':categoriasFilter,
         'preguntas_sending':questions_all,
         'num_preguntas':databaseall.count(),
-        'num_blogs':models.Articulos.objects.filter(autor=request.user).count(),
+        'num_blogs': num_blogs,
         **configuraciones
     }
      

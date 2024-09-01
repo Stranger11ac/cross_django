@@ -91,8 +91,8 @@ def create_newuser(first_name, last_name, username, email, password1, password2=
 
     try:
         new_user = User.objects.create_user(
-            first_name=first_name,
-            last_name=last_name,
+            first_name=first_name.lower(),
+            last_name=last_name.lower(),
             username=username,
             email=email,
             password=password1,
@@ -147,16 +147,24 @@ def editar_usuario(request, user_id):
     if request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password')
-        is_staff = request.POST.get('is_staff') == 'on'
+        is_staffPost = request.POST.get('is_staff') == 'on'
         
-        if username:
-            user.username = username
-        if password:
-            user.set_password(password)
-        user.is_active = True
-        user.is_staff = is_staff
-        user.save()
-        return JsonResponse({'success': True, 'message': f'El usuario <u>{username}</u> fue modificado exitosamente 🥳🎉🎈.'}, status=200)
+        if password or is_staffPost:
+            if username:
+                user.username = username
+            if password:
+                user.set_password(password)
+            user.is_active = True
+            user.is_staff = is_staffPost
+            user.save()
+            
+            iconreturn = 'success'
+            messagereturn = f'El usuario <u>{username}</u> fue modificado exitosamente 🥳🎉🎈.'
+        else:
+            iconreturn = 'info'
+            messagereturn = f'Puede modificar la contraseña o el rol del usuario, por favor envie datos.'
+            
+        return JsonResponse({'success': True, 'icon':iconreturn, 'message': messagereturn}, status=200)
     return JsonResponse({'success': False, 'message': 'Acción no permitida.'}, status=403)
 
 # Banners ----------------------------------------------------------

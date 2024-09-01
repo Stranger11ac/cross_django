@@ -459,7 +459,20 @@ function jsonSubmit(e) {
         formData.set("textTiny", contenidoTextTiny);
     }
 
-    thisForm.querySelector('button[type="submit"]').setAttribute("disabled", "disabled");
+    // document.addEventListener("DOMContentLoaded", function () {
+    // console.info('Form: ',thisForm);
+    // console.info('Submit: ',thisForm.querySelector('button[type="submit"]'));
+    // });
+    try {
+        formSubmitBtn = thisForm.querySelector('button[type="submit"]');
+        if (formSubmitBtn) {
+            formSubmitBtn.setAttribute("disabled", "disabled");
+        }
+    } catch (error) {
+        console.warn("Advertencia: Boton de envio no encontrado...");
+        console.warn(formSubmitBtn);
+        console.error(error);
+    }
 
     fetch(thisForm.action, {
         method: "POST",

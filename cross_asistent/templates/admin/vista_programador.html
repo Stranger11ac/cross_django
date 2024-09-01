@@ -72,7 +72,7 @@
                 <!-- titulo y total -->
                 <div>
                   <i class="fa-solid fa-newspaper position-absolute bottom-0 start-0 opacity-25 text_detail fs-25 m-1"></i>
-                  Tus Blogs:
+                  {{ user.is_staff|yesno:"Blogs,Tus Blogs" }}:
                 </div>
                 <strong class="text_detail ms-auto">{{ num_blogs }}</strong>
               </h6>
@@ -368,108 +368,6 @@
                     </div>
                   </td>
                 </tr>
-                <!-- modal: editar usuario -->
-                <div class="modal fade " id="editar_modal_{{ oneuser.id }}" tabindex="-1" aria-labelledby="labelModal0{{ oneuser.id }}" aria-hidden="true">
-                  <div class="modal-dialog modal-dialog-centered modal-lg">
-                    <div class="modal-content">
-                      <div class="modal-header">
-                        <h5 class="modal-title" id="labelModal0{{ oneuser.id }}">
-                          Editar Usuario</h5>
-                        <button type="button" class="btn-close" data-mdb-ripple-init data-mdb-dismiss="modal" aria-label="Close"></button>
-                      </div>
-                      <div class="modal-body">
-                        <form method="post" action="{% url 'editar_usuario' oneuser.id %}" data-submit-form>
-                          {% csrf_token %}
-                          <!-- Nombre de usuario -->
-                          <div data-mdb-input-init class="form-outline mb-4">
-                            <i class="fa-solid fa-circle-user trailing"></i>
-                            <input type="text" id="createusername_{{oneuser.id}}" name="username" class="form-control form-icon-trailing" autocomplete="off"
-                              placeholder=" " value="{{oneuser.username}}" aria-label="disabled input example" readonly />
-                            <label class="form-label" for="createusername_{{oneuser.id}}">Usuario</label>
-                          </div>
-                          <div class="row">
-                            <div class="col-md-6 mb-4">
-                              <div data-mdb-input-init class="form-outline">
-                                <i class="fa-solid fa-address-card trailing"></i>
-                                <input type="text" id="firstName_{{oneuser.id}}" class="form-control form-icon-trailing" autocomplete="off" placeholder=" "
-                                  value="{{oneuser.first_name}}" aria-label="disabled input example" disabled />
-                                <label class="form-label" for="firstName_{{oneuser.id}}">First
-                                  name</label>
-                              </div>
-                            </div>
-                            <div class="col-md-6 mb-4">
-                              <div data-mdb-input-init class="form-outline">
-                                <i class="fa-regular fa-address-card trailing"></i>
-                                <input type="text" id="lastName_{{oneuser.id}}" class="form-control form-icon-trailing" autocomplete="off" placeholder=" "
-                                  value="{{oneuser.last_name}}" aria-label="disabled input example" disabled />
-                                <label class="form-label" for="lastName_{{oneuser.id}}">Last
-                                  name</label>
-                              </div>
-                            </div>
-                          </div>
-                          <!-- Email input -->
-                          <div data-mdb-input-init class="form-outline mb-4">
-                            <i class="fa-regular fa-envelope trailing"></i>
-                            <input type="email" id="email_{{oneuser.id}}" class="form-control form-icon-trailing" autocomplete="off" placeholder=" "
-                              value="{{oneuser.email}}" aria-label="disabled input example" disabled />
-                            <label class="form-label" for="email_{{oneuser.id}}">Email address</label>
-                          </div>
-                          <!-- Password input -->
-                          <div data-mdb-input-init class="form-outline form_group-btn mb-4">
-                            <input type="text" id="pass_{{oneuser.id}}" name="password" class="form-control pe-5" data-editpass data-copy
-                              data-input_pass="generatePass" aria-label="readonly input example" readonly required />
-                            <label class="form-label" for="pass_{{oneuser.id}}">Contraseña</label>
-                            <!-- botton generar Contraseña -->
-                            <div class="btn_genpass-block">
-                              <button type="button" id="editPass_{{oneuser.id}}" data-editinput="pass_{{oneuser.id}}"
-                                class="btn btn_detail btn-floating btn-sm btn_genpass fs-10">
-                                <i class="fa-solid fa-dice-five"></i>
-                              </button>
-                            </div>
-                          </div>
-                          <!-- Checkbox -->
-                          <div class="form-check d-flex justify-content-start mb-4">
-                            <input {% if oneuser.is_staff %}checked{% endif %} class="form-check-input me-2" type="checkbox" name="is_staff"
-                              id="isActive_{{oneuser.id}}" />
-                            <label class="form-check-label" for="isActive_{{oneuser.id}}">
-                              Programador
-                            </label>
-                          </div>
-                          <hr class="my-4">
-                          <div class="d-flex justify-content-between gap_10">
-                            <button type="button" class="btn btn_detail" data-mdb-ripple-init data-mdb-dismiss="modal">Cancelar</button>
-                            <button type="submit" class="btn btn-warning">Modificar</button>
-                          </div>
-                        </form>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <!-- modal: Eliminar usuario -->
-                <div class="modal fade " id="eliminar_modal_{{ oneuser.id }}" tabindex="-1" aria-labelledby="labelModal0{{ oneuser.id }}" aria-hidden="true">
-                  <div class="modal-dialog modal-dialog-centered modal-lg">
-                    <div class="modal-content">
-                      <div class="modal-header">
-                        <h5 class="modal-title" id="labelModal0{{ oneuser.id }}">
-                          Eliminar Usuario</h5>
-                        <button type="button" class="btn-close" data-mdb-ripple-init data-mdb-dismiss="modal" aria-label="Close"></button>
-                      </div>
-                      <div class="modal-body">
-                        <h3 class="text-center mb-2">Quieres eliminar al usuario <u>{{ oneuser.username }}</u>?</h3>
-                        <h6>"{{ oneuser.first_name }} {{ oneuser.last_name }}"</h6>
-                        <p class="text-center">Se eliminara toda la informacion relacionada <br> Esta acción es permanente</p>
-                        <hr class="my-4">
-                        <form id="eliminarUsuarioForm-{{ oneuser.id }}" action="{% url 'eliminar_usuario' oneuser.id %}" method="post" data-submit-form>
-                          {% csrf_token %}
-                          <div class="d-flex justify-content-between">
-                            <button type="button" class="btn btn_detail" data-mdb-ripple-init data-mdb-dismiss="modal">Cancelar</button>
-                            <button type="submit" class="btn btn-danger">Eliminar</button>
-                          </div>
-                        </form>
-                      </div>
-                    </div>
-                  </div>
-                </div>
                 {% endfor %}
               </tbody>
             </table>
@@ -749,6 +647,110 @@
     </div>
   </div>
 </div>
+
+{% for oneuser in users %}
+<!-- modal: editar usuario -->
+<div class="modal fade " id="editar_modal_{{ oneuser.id }}" tabindex="-1" aria-labelledby="labelModal0{{ oneuser.id }}" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="labelModal0{{ oneuser.id }}">
+          Editar Usuario</h5>
+        <button type="button" class="btn-close" data-mdb-ripple-init data-mdb-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form method="post" action="{% url 'editar_usuario' oneuser.id %}" data-submit-form>
+          {% csrf_token %}
+          <!-- Nombre de usuario -->
+          <div data-mdb-input-init class="form-outline mb-4">
+            <i class="fa-solid fa-circle-user trailing"></i>
+            <input type="text" id="createusername_{{oneuser.id}}" name="username" class="form-control form-icon-trailing" autocomplete="off" placeholder=" "
+              value="{{oneuser.username}}" aria-label="disabled input example" readonly />
+            <label class="form-label" for="createusername_{{oneuser.id}}">Usuario</label>
+          </div>
+          <div class="row">
+            <div class="col-md-6 mb-4">
+              <div data-mdb-input-init class="form-outline">
+                <i class="fa-solid fa-address-card trailing"></i>
+                <input type="text" id="firstName_{{oneuser.id}}" class="form-control form-icon-trailing" autocomplete="off" placeholder=" "
+                  value="{{oneuser.first_name}}" aria-label="disabled input example" disabled />
+                <label class="form-label" for="firstName_{{oneuser.id}}">First
+                  name</label>
+              </div>
+            </div>
+            <div class="col-md-6 mb-4">
+              <div data-mdb-input-init class="form-outline">
+                <i class="fa-regular fa-address-card trailing"></i>
+                <input type="text" id="lastName_{{oneuser.id}}" class="form-control form-icon-trailing" autocomplete="off" placeholder=" "
+                  value="{{oneuser.last_name}}" aria-label="disabled input example" disabled />
+                <label class="form-label" for="lastName_{{oneuser.id}}">Last
+                  name</label>
+              </div>
+            </div>
+          </div>
+          <!-- Email input -->
+          <div data-mdb-input-init class="form-outline mb-4">
+            <i class="fa-regular fa-envelope trailing"></i>
+            <input type="email" id="email_{{oneuser.id}}" class="form-control form-icon-trailing" autocomplete="off" placeholder=" " value="{{oneuser.email}}"
+              aria-label="disabled input example" disabled />
+            <label class="form-label" for="email_{{oneuser.id}}">Email address</label>
+          </div>
+          <!-- Password input -->
+          <div data-mdb-input-init class="form-outline form_group-btn mb-4">
+            <input type="text" id="pass_{{oneuser.id}}" name="password" class="form-control pe-5" data-editpass data-copy data-input_pass="generatePass"
+              aria-label="readonly input example" readonly required />
+            <label class="form-label" for="pass_{{oneuser.id}}">Contraseña</label>
+            <!-- botton generar Contraseña -->
+            <div class="btn_genpass-block">
+              <button type="button" id="editPass_{{oneuser.id}}" data-editinput="pass_{{oneuser.id}}"
+                class="btn btn_detail btn-floating btn-sm btn_genpass fs-10">
+                <i class="fa-solid fa-dice-five"></i>
+              </button>
+            </div>
+          </div>
+          <!-- Checkbox -->
+          <div class="form-check d-flex justify-content-start mb-4">
+            <input {% if oneuser.is_staff %}checked{% endif %} class="form-check-input me-2" type="checkbox" name="is_staff" id="isActive_{{oneuser.id}}" />
+            <label class="form-check-label" for="isActive_{{oneuser.id}}">
+              Programador
+            </label>
+          </div>
+          <hr class="my-4">
+          <div class="d-flex justify-content-between gap_10">
+            <button type="button" class="btn btn_detail" data-mdb-ripple-init data-mdb-dismiss="modal">Cancelar</button>
+            <button type="submit" class="btn btn-warning">Modificar</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- modal: Eliminar usuario -->
+<div class="modal fade " id="eliminar_modal_{{ oneuser.id }}" tabindex="-1" aria-labelledby="labelModal0{{ oneuser.id }}" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="labelModal0{{ oneuser.id }}">
+          Eliminar Usuario</h5>
+        <button type="button" class="btn-close" data-mdb-ripple-init data-mdb-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <h3 class="text-center mb-2">Quieres eliminar al usuario <u>{{ oneuser.username }}</u>?</h3>
+        <h6>"{{ oneuser.first_name }} {{ oneuser.last_name }}"</h6>
+        <p class="text-center">Se eliminara toda la informacion relacionada <br> Esta acción es permanente</p>
+        <hr class="my-4">
+        <form id="eliminarUsuarioForm-{{ oneuser.id }}" action="{% url 'eliminar_usuario' oneuser.id %}" method="post" data-submit-form>
+          {% csrf_token %}
+          <div class="d-flex justify-content-between">
+            <button type="button" class="btn btn_detail" data-mdb-ripple-init data-mdb-dismiss="modal">Cancelar</button>
+            <button type="submit" class="btn btn-danger">Eliminar</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endfor %}
 
 {% include 'base/widget_footer-admin.html' %}
 {% endblock %}
