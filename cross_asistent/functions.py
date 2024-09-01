@@ -390,6 +390,19 @@ def database_create(request):
 
 @login_required
 @never_cache
+def database_getitem(request):
+    idPOST = request.POST.get('id')
+    dbUpdate = get_object_or_404(models.Database, id=idPOST)
+    data = {
+        'categoria':dbUpdate.categoria,
+        'titulo':dbUpdate.titulo,
+        'informacion':dbUpdate.informacion,
+        'redirigir':dbUpdate.redirigir,
+    }
+    return JsonResponse(data)
+
+@login_required
+@never_cache
 def database_update(request):
     if request.method == 'POST':
         try:
@@ -454,7 +467,6 @@ def database_delete(request):
         except Exception as e:
             return JsonResponse({'success': False, 'message': f'Ocurrió un error 😯😥 <br>{str(e)}'}, status=400)
     return JsonResponse({'error': 'Método no válido'}, status=400)
-
 
 def frequesnce_update(request):
     if request.method == 'POST':
