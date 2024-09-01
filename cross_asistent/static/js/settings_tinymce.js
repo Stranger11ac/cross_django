@@ -224,9 +224,9 @@ tinymce.init({
             
                         images.forEach(image => {
                             const imageElement = `
-                                <div class="mb-4 col-6 col-md-4 col-lg-2">
+                                <div class="mb-4 col-6 col-md-4 col-lg-3">
                                     <div class="card">
-                                        <img src="${image.url}" alt="Imagen del blog" class="card-img">
+                                        <img src="${image.url}" alt="Imagen del blog" class="card-img ">
                                         <div class="card-img-overlay p-2">
                                             <button class="btn btn_detail btn_opacity-hover" onclick="insertImage('${image.url}')">Insertar</button>
                                         </div>

@@ -1703,7 +1703,7 @@ input:checked+.slider:before {
 }
 
 .son_p p {
-    word-break: break-all;
+    word-break: break-word;
 }
 
 img.img-rounded {

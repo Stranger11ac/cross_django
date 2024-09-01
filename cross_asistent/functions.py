@@ -102,7 +102,7 @@ def create_newuser(first_name, last_name, username, email, password1, password2=
         new_user.save()
         aviso=''
         if password2 is not None:
-            aviso = '<br>Tu cuenta está <u>Inhabilitada</u> 😯😬'
+            aviso = '<br>Tu cuenta está <u>Desactivada</u> 😯😬'
         return {'success': True, 'message': f'Usuario creado exitosamente 🥳🎈 {aviso}'}
     except IntegrityError:
         return {'success': False, 'message': 'Ocurrió un error durante el registro. Intente nuevamente.'}
@@ -327,7 +327,6 @@ def database_list(request):
     data = {'infodb': datos_modificados}
     return JsonResponse(data)
 
-
 @login_required
 @never_cache
 def database_create(request):
@@ -448,8 +447,7 @@ def database_delete(request):
             return JsonResponse({'success': False, 'message': f'Ocurrió un error 😯😥 <br>{str(e)}'}, status=400)
     return JsonResponse({'error': 'Método no válido'}, status=400)
 
-@login_required
-@never_cache
+
 def frequesnce_update(request):
     if request.method == 'POST':
         try:
@@ -496,7 +494,6 @@ def blog_change(request):
             else:
                 blogEncabezado = ''
             data = {
-                'autor': blogGet.autor,
                 'titulo': blogGet.titulo,
                 'contenido': blogGet.contenido,
                 'encabezado': blogEncabezado,

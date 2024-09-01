@@ -49,9 +49,15 @@
                                 <select class="form-select" id="blogNewUpdate" name="blogNewUpdate" data-get-blog="{% url 'blog_get' %}">
                                     <option selected disabled hidden>Modificar Artículo:</option>
                                     <option value="newBlog">Crear Nuevo Artículo:</option>
+                                    {% if user.is_staff %}
+                                    {% for blog in allblogs %}
+                                    <option value="{{ blog.id }}">({{blog.autor}}): {{ blog.titulo }}</option>
+                                    {% endfor %}
+                                    {% else %}
                                     {% for blog in blogsTiple %}
                                     <option value="{{ blog.id }}">{{ blog.titulo }}</option>
                                     {% endfor %}
+                                    {% endif %}
                                 </select>
                             </div>
 
@@ -108,7 +114,7 @@
 
 <!-- Modal: seleccionar imágenes -->
 <div class="modal fade" id="selectImageModal" tabindex="-1" aria-labelledby="selectImageModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="selectImageModalLabel">Galería, Seleccionar Imagen</h5>
