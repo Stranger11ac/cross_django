@@ -43,6 +43,8 @@ def export_database(request):
                 info.titulo or '',
                 info.informacion or '',
                 info.redirigir or '',
+                info.documento,
+                info.imagen,
                 info.frecuencia,
                 info.uuid or '',
                 info.evento_fecha_inicio or '',
@@ -55,13 +57,31 @@ def export_database(request):
             for info in databaseall
         ]
         return create_csv_response(f"UTC_database_{now}.csv", 
-            ['Categoria', 'Titulo', 'Informacion', 'Redirigir', 'Frecuencia', 'uuid','Evento:fecha de inicio', 'Evento:fecha de fin', 'Evento:Todo el dia','Evento:lugar', 'Evento:className (CSS)', 'Fecha Modificacion'], 
+            ['Categoria', 'Titulo', 'Informacion', 'Redirigir','Documento', 'Imagen', 'Frecuencia', 'uuid','Evento:fecha de inicio', 'Evento:fecha de fin', 'Evento:Todo el dia','Evento:lugar', 'Evento:className (CSS)', 'Fecha Modificacion'], 
             rows
         )
     return JsonResponse({'success': False, 'message': 'Acción no permitida. 🧐😠🤥'}, status=400)
 
 @login_required
 @never_cache
+def import_database(request):
+    return import_csv_data(request, models.Database, {
+        'categoria': lambda row: models.Categorias.objects.get_or_create(categoria=row[0])[0],
+        'titulo': 1,
+        'informacion': 2,
+        'redirigir': 3,
+        'documento': 4,
+        'imagen': 5,
+        'frecuencia': lambda row: int(row[6]) if row[6] else 0,
+        'uuid': 7,
+        'evento_fecha_inicio': lambda row: parse_date(row[8]),
+        'evento_fecha_fin': lambda row: parse_date(row[9]),
+        'evento_allDay': lambda row: parse_all_day(row[10]),
+        'evento_lugar': 11,
+        'evento_className': 12,
+        'fecha_modificacion': lambda row: parse_date(row[13]),
+    }, 'Base de Datos importadas correctamente. 🎉😁🫡')
+
 def export_banner(request):
     now = timezone.localtime(timezone.now()).strftime('%d-%m-%Y_%H%M')
     
