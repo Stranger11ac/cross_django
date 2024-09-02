@@ -53,6 +53,7 @@ urlpatterns = [
     path('administracion/database/lista/', functions.database_list, name='database_list'),
     path('administracion/database/actualizar/', functions.database_update, name='database_update'),
     path('administracion/database/eliminar/', functions.database_delete, name='database_delete'),
+    path('administracion/database/informacion/', functions.database_getitem, name='database_getitem'),
     path('administracion/calendario/', views.calendario_page, name='calendario_page'),
     path('administracion/preguntas/eliminar/', functions.preguntas_deleted, name='question_deleted'),
     path('database/actualizar_frecuencia/', functions.frequesnce_update, name='update_frequencies_database'),

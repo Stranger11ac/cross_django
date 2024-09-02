@@ -201,7 +201,7 @@
                                     <th class="fw-bold text_detail">Acciones</th>
                                 </tr>
                             </thead>
-                            <tbody id="tbody_database" data-list-table="{% url 'database_list' %}">
+                            <tbody id="tbody_database" data-list-table="{% url 'database_list' %}" data-url-info="{% url 'database_getitem' %}">
                             </tbody>
                         </table>
                     </div>
@@ -389,12 +389,12 @@
             <div class="modal-body text-start">
                 <form method="post" action="{% url 'database_update' %}" data-submit-form id="dbUpdate" autocomplete="off">
                     {% csrf_token %}
-                    <input type="text" class="d-none" value="" name="id">
+                    <input type="text" class="d-none" value="" id="editid" name="id">
                     <div class="row pt-2">
                         <div class="col-md-3">
                             <div class="form-outline mb-4">
                                 <select class="form-select" id="categoria" name="categoria" required>
-                                    <option selected hidden value="">Categoria: </option>
+                                    <option selected hidden value="" id="editcateg">Categoria: </option>
                                     {% for categoria in categorias %}
                                     <option value="{{ categoria.categoria }}">{{ categoria.categoria }}</option>
                                     {% endfor %}
@@ -404,22 +404,22 @@
                         <div class="col">
                             <div class="form-outline mb-4" data-mdb-input-init>
                                 <i class="fa-solid fa-heading trailing"></i>
-                                <input type="text" id="titulo" name="titulo" class="form-control active form-icon-trailing" value="" required />
-                                <label class="form-label" for="titulo">Título:</label>
+                                <input type="text" id="edittitulo" name="titulo" class="form-control active form-icon-trailing" value="" required />
+                                <label class="form-label" for="edittitulo">Título:</label>
                             </div>
                         </div>
                     </div>
                     <div class="form-outline mb-4" data-mdb-input-init>
                         <i class="fa-solid fa-keyboard trailing"></i>
-                        <textarea class="form-control active form-icon-trailing" id="informacion" name="informacion" rows="5" required></textarea>
-                        <label for="informacion" class="form-label">Información:</label>
+                        <textarea class="form-control active form-icon-trailing" id="editinfo" name="informacion" rows="5" required></textarea>
+                        <label for="editinfo" class="form-label">Información:</label>
                     </div>
                     <div class="row">
                         <div class="col-12">
                             <div class="form-outline mb-4" data-mdb-input-init>
                                 <i class="fa-solid fa-link trailing"></i>
-                                <input type="url" id="redirigir" name="redirigir" class="form-control active form-icon-trailing" value="" />
-                                <label class="form-label" for="redirigir">Redirigir: (url / liga)</label>
+                                <input type="url" id="editredirigir" name="redirigir" class="form-control active form-icon-trailing" value="" />
+                                <label class="form-label" for="editredirigir">Redirigir: (url / liga)</label>
                             </div>
                         </div>
                         <div class="col-md-6">
@@ -447,25 +447,23 @@
 </div>
 
 <!-- Modal: Eliminar database -->
-<div class="modal fade " id="deleteDBmodal" tabindex="-1" aria-labelledby="deleteDBlabelModal" aria-hidden="true">
+<div class="modal fade " id="deleteDBmodal" tabindex="-1" aria-labelledby="deleteDBmodalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="deleteDBlabelModal">
-                    Eliminar Información------------</h5>
+                <h5 class="modal-title" id="deleteDBmodalLabel">Eliminar Información</h5>
                 <button type="button" class="btn-close" data-mdb-ripple-init data-mdb-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <h3 class="text-center mb-2">¿Quieres eliminar el dato <u></u>?
+                <h3 class="text-center mb-2">¿Quieres eliminar el dato <u id="deltitulo"></u>?
                 </h3>
-                <h6 class="text-center">" - "</h6>
-                <p class="text-center">Se eliminará toda la información relacionada <br> Esta acción es permanente</p>
+                <p class="text-center">Esta acción es permanente ⚠️😯🤔 <br>Se eliminará toda la información relacionada</p>
             </div>
             <div class="modal-footer justify-content-between">
                 <button type="button" class="btn btn_detail" data-mdb-ripple-init data-mdb-dismiss="modal">Cancelar</button>
                 <form method="post" action="{% url 'database_delete' %}" data-submit-form>
                     {% csrf_token %}
-                    <input type="text" value="" name="id" class="d-none">
+                    <input type="text" value="" name="id" class="d-none" id="delid">
                     <button type="submit" class="btn btn-danger">Eliminar <i class="fa-regular fa-trash-can ms-1"></i></button>
                 </form>
             </div>

@@ -9,6 +9,7 @@ from django.utils import timezone
 from .views import databaseall
 from . import models
 import datetime
+import json
 
 # Plantilla links programador / administrador ----------------------------------------------------------
 pages = [
@@ -310,8 +311,10 @@ def categorias_delete(request):
 @login_required
 @never_cache
 def database_list(request):
+    categoriaCalendario = get_object_or_404(models.Categorias, categoria="Calendario")
+    listDatabase = models.Database.objects.exclude(categoria_id=categoriaCalendario.id)
     datos_modificados = []
-    for dato in databaseall:
+    for dato in listDatabase:
         if dato.imagen:
             imagen_url = dato.imagen.url
         else:
@@ -391,15 +394,23 @@ def database_create(request):
 @login_required
 @never_cache
 def database_getitem(request):
-    idPOST = request.POST.get('id')
-    dbUpdate = get_object_or_404(models.Database, id=idPOST)
-    data = {
-        'categoria':dbUpdate.categoria,
-        'titulo':dbUpdate.titulo,
-        'informacion':dbUpdate.informacion,
-        'redirigir':dbUpdate.redirigir,
-    }
-    return JsonResponse(data)
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)            
+            idPOST = data.get('id')
+            dbItem = get_object_or_404(models.Database, id=idPOST)
+            data = {
+                'categoria':dbItem.categoria.categoria,
+                'titulo':dbItem.titulo,
+                'informacion':dbItem.informacion,
+                'redirigir':dbItem.redirigir,
+            }
+            print(dbItem.evento_fecha_fin)
+            return JsonResponse(data)
+        except Exception as e:
+            return JsonResponse({'success': False, 'message': f'Ocurrió un error 😯😥 <br>{str(e)}'}, status=400)
+
+    return JsonResponse({'error': 'Método no válido'}, status=400)
 
 @login_required
 @never_cache
