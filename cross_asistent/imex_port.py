@@ -86,6 +86,116 @@ def import_database(request):
         'fecha_modificacion': lambda row: parse_date(row[11]),
     }, 'Base de Datos importadas correctamente. 🎉😁🫡')
 
+def export_banner(request):
+    now = timezone.localtime(timezone.now()).strftime('%d-%m-%Y_%H%M')
+    
+    if request.user.is_staff:
+        banners = models.Banners.objects.all()  
+        rows = [
+            [
+                banner.titulo or '',
+                banner.descripcion or '',
+                banner.redirigir or '',
+                banner.imagen.url if banner.imagen else '',  # URL de la imagen
+                banner.expiracion.strftime('%d-%m-%Y %H:%M') 
+                if banner.expiracion else '',
+                True if banner.solo_imagen else False,
+                True if banner.visible else False,
+            ]
+            for banner in banners
+        ]
+        
+        return create_csv_response(
+            f"UTC_banner_{now}.csv",
+            ['Titulo', 'Descripcion', 'Redirigir', 'Imagen', 'Expiracion', 'Solo Imagen', 'Visible'],
+            rows
+        )
+    
+    return JsonResponse({'success': False, 'message': 'Acción no permitida.'}, status=400)
+
+@login_required
+@never_cache
+def export_articulos(request):
+    now = timezone.localtime(timezone.now()).strftime('%d-%m-%Y_%H%M')
+
+    if request.user.is_staff:
+        articulos = models.Articulos.objects.all()
+        rows = [
+            [
+                articulo.titulo or '',
+                articulo.contenido or '',
+                articulo.autor or '',
+                articulo.creacion.strftime('%d-%m-%Y'),
+                articulo.actualizacion.strftime('%d-%m-%Y') 
+                if articulo.actualizacion else '',
+                articulo.encabezado.url 
+                if articulo.encabezado else '',
+            ]
+            for articulo in articulos
+        ]
+
+        return create_csv_response(
+            f"UTC_articulos_{now}.csv",
+            ['Titulo', 'Contenido', 'Autor', 'Creación', 'Actualización', 'Encabezado'],
+            rows
+        )
+    
+    return JsonResponse({'success': False, 'message': 'Acción no permitida.'}, status=400)
+
+@login_required
+@never_cache
+def export_preguntas(request):
+    now = timezone.localtime(timezone.now()).strftime('%d-%m-%Y_%H%M')
+
+    if request.user.is_staff:
+        preguntas = models.Preguntas.objects.all()
+        rows = [
+            [
+                pregunta.pregunta,
+                pregunta.descripcion or '',  # Si la descripción está vacía, dejamos un string vacío
+                pregunta.fecha.strftime('%d-%m-%Y %H:%M'),
+            ]
+            for pregunta in preguntas
+        ]
+
+        return create_csv_response(
+            f"UTC_preguntas_{now}.csv",
+            ['Pregunta', 'Descripción', 'Fecha'],
+            rows
+        )
+    
+    return JsonResponse({'success': False, 'message': 'Acción no permitida.'}, status=400)
+
+@login_required
+@never_cache
+def export_configuraciones(request):
+    now = timezone.localtime(timezone.now()).strftime('%d-%m-%Y_%H%M')
+
+    if request.user.is_staff:
+        configuraciones = models.Configuraciones.objects.all()
+        rows = [
+            [
+                conf.qr_image.url if conf.qr_image else '',  # URL de la imagen QR
+                conf.redes_sociales or '',  # Si redes_sociales está vacío o nulo
+                conf.copyright_year,
+                conf.utc_link,
+                'Sí' if conf.calendar_btnsYear else 'No',  # Si el botón de calendario está activado
+                conf.about_img_first.url if conf.about_img_first else '',  # URL de la primera imagen de "about"
+                conf.about_text_first,
+                conf.about_img_second.url if conf.about_img_second else '',  # URL de la segunda imagen de "about"
+                conf.about_text_second,
+            ]
+            for conf in configuraciones
+        ]
+
+        return create_csv_response(
+            f"UTC_configuraciones_{now}.csv",
+            ['QR Imagen', 'Redes Sociales', 'Año Copyright', 'UTC Link', 'Botones Año Calendario', 'Imagen Sobre 1', 'Texto Sobre 1', 'Imagen Sobre 2', 'Texto Sobre 2'],
+            rows
+        )
+
+    return JsonResponse({'success': False, 'message': 'Acción no permitida.'}, status=400)
+
 @login_required
 @never_cache
 def export_mapa(request):
