@@ -76,7 +76,7 @@ def import_database(request):
         'uuid': 7,
         'evento_fecha_inicio': lambda row: parse_date(row[8]),
         'evento_fecha_fin': lambda row: parse_date(row[9]),
-        'evento_allDay': lambda row: parse_all_day(row[10]),
+        'evento_allDay': lambda row: parse_boolean(row[10]),
         'evento_lugar': 11,
         'evento_className': 12,
         'fecha_modificacion': lambda row: parse_date(row[13]),
