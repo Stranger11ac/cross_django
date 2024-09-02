@@ -1027,6 +1027,7 @@ fetch(dataMarkers)
                             "icon-allow-overlap": true,
                         },
                     });
+                    mapMapbox.moveLayer(`points${nameImage}`);
                 }
             });
 
