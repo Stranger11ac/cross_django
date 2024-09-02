@@ -83,6 +83,10 @@ urlpatterns = [
     path('administracion/importar/database/', imex_port.import_database, name='import_database'),
     path('administracion/export/mapa/', imex_port.export_mapa, name='export_mapa'),
     path('administracion/importar/mapa/', imex_port.import_mapa, name='import_mapa'),
+    path('administracion/importar/banners/', imex_port.import_Banners, name='import_Banners'),
+    path('administracion/importar/articulos/', imex_port.import_Articulos, name='import_Articulos'),
+    path('administracion/importar/preguntas/', imex_port.import_Preguntas, name='import_Preguntas'),
+    path('administracion/importar/configuraciones/', imex_port.import_Configuraciones, name='import_Configuraciones'),
 ]
 
 if settings.DEBUG:
