@@ -223,17 +223,27 @@ def export_mapa(request):
 
 @login_required
 @never_cache
-def import_mapa(request):
-    return import_csv_data(request, models.Mapa, {
-        'uuid': 0,
-        'nombre': 1,
-        'informacion': 2,
-        'color': 3,
-        'door_cords': 4,
-        'p1_polygons': 5,
-        'p2_polygons': 6,
-        'p3_polygons': 7,
-        'p4_polygons': 8,
+def import_Banners(request):
+    return import_csv_data(request, models.Banners, {
+        'titulo': 0,
+        'descripcion': 1,
+        'redirigir': 2,
+        'imagen': 3,
+        'expiracion': 4,
+        'solo_imagen': 5,
+        'visible': 6,
+    }, 'Datos Del Mapa importados correctamente. 🎉😁🫡')
+
+@login_required
+@never_cache
+def import_Articulos(request):
+    return import_csv_data(request, models.Articulos, {
+        'encabezado': 0,
+        'titulo': 1,
+        'contenido': 2,
+        'autor': 3,
+        'creacion': 4,
+        'actualizacion': 5,
     }, 'Datos Del Mapa importados correctamente. 🎉😁🫡')
 
 @login_required
@@ -249,6 +259,30 @@ def import_mapa(request):
         'p2_polygons': 6,
         'p3_polygons': 7,
         'p4_polygons': 8,
+    }, 'Datos Del Mapa importados correctamente. 🎉😁🫡')
+
+@login_required
+@never_cache
+def import_Preguntas(request):
+    return import_csv_data(request, models.Preguntas, {
+        'pregunta': 0,
+        'descripcion': 1,
+        'fecha': 2,
+    }, 'Datos Del Mapa importados correctamente. 🎉😁🫡')
+
+@login_required
+@never_cache
+def import_Configuraciones(request):
+    return import_csv_data(request, models.Configuraciones, {
+        'qr_image': 0,
+        'redes_sociales': 1,
+        'copyright_year': 2,
+        'utc_link': 3,
+        'calendar_btnsYear': 4,
+        'about_img_first': 5,
+        'about_text_first': 6,
+        'about_img_second': 7,
+        'about_text_second': 8,
     }, 'Datos Del Mapa importados correctamente. 🎉😁🫡')
 
 """Importa datos desde un archivo CSV para un modelo específico."""
