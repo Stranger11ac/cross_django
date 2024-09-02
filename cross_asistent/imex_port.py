@@ -1,10 +1,10 @@
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.cache import never_cache
 from django.http import JsonResponse, HttpResponse
-from .models import Database, Mapa, Categorias
 from .views import databaseall, mapaall, categoriasall
 from django.utils import timezone
 from .forms import CSVUploadForm
+from . import models
 import csv
 import io
 
@@ -35,7 +35,7 @@ def export_categorias(request):
 @login_required
 @never_cache
 def import_categorias(request):
-    return import_csv_data(request, Categorias, {
+    return import_csv_data(request, models.Categorias, {
         'categoria': 0,
         'descripcion': 1,
     }, 'Categorías importadas correctamente. 🎉😁🫡')
@@ -71,8 +71,8 @@ def export_database(request):
 @login_required
 @never_cache
 def import_database(request):
-    return import_csv_data(request, Database, {
-        'categoria': lambda row: Categorias.objects.get_or_create(categoria=row[0])[0],
+    return import_csv_data(request, models.Database, {
+        'categoria': lambda row: models.Categorias.objects.get_or_create(categoria=row[0])[0],
         'titulo': 1,
         'informacion': 2,
         'redirigir': 3,
@@ -114,7 +114,22 @@ def export_mapa(request):
 @login_required
 @never_cache
 def import_mapa(request):
-    return import_csv_data(request, Mapa, {
+    return import_csv_data(request, models.Mapa, {
+        'uuid': 0,
+        'nombre': 1,
+        'informacion': 2,
+        'color': 3,
+        'door_cords': 4,
+        'p1_polygons': 5,
+        'p2_polygons': 6,
+        'p3_polygons': 7,
+        'p4_polygons': 8,
+    }, 'Datos Del Mapa importados correctamente. 🎉😁🫡')
+
+@login_required
+@never_cache
+def import_mapa(request):
+    return import_csv_data(request, models.Mapa, {
         'uuid': 0,
         'nombre': 1,
         'informacion': 2,
