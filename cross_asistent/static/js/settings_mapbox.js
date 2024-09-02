@@ -260,7 +260,6 @@ if (mapElement.classList.contains("map_editing")) {
             drawPolygonButton.classList.remove("bg_purple-blue", "bg_red-blue");
             drawPolygonButton.classList.add("btn_detail");
             drawPolygonButton.innerHTML = 'Dibujar Poligono <i class="fa-solid fa-draw-polygon ms-1"></i>';
-            // createNew = false;
         }
 
         if (polygonLayer) {
@@ -276,7 +275,6 @@ if (mapElement.classList.contains("map_editing")) {
         }
 
         createNew = false;
-        // createNew = true;
     }
     function drawPolygon() {
         const polygonText = document.getElementById("nombreEdificio").value || "Nuevo Lugar";
@@ -344,7 +342,6 @@ if (mapElement.classList.contains("map_editing")) {
         coords = markers.map((marker) => marker.getLngLat());
         coordInputs.forEach((id, index) => {
             document.getElementById(id).value = `${coords[index].lng}, ${coords[index].lat}`;
-            // document.getElementById(id).setAttribute("data-polygon", `${coords[index].lng}, ${coords[index].lat}`);
         });
 
         drawPolygon();
@@ -358,6 +355,9 @@ if (mapElement.classList.contains("map_editing")) {
     btnDoor.addEventListener("click", () => {
         formChanges = false;
         if (addDoorMarker) {
+            if (coords.length > 4) {
+                drawPolygonCancel.click();
+            }
             btnDoor.classList.add("bg_purple-blue");
             btnDoor.classList.remove("btn_detail");
             mapMapbox.on("contextmenu", addMarkerDoor);
@@ -967,7 +967,7 @@ fetch(dataPleaces)
                 $("#route-info").empty();
             });
         });
-        
+
         createEdificios();
     })
     .catch((error) => {
