@@ -34,14 +34,6 @@ def export_categorias(request):
 
 @login_required
 @never_cache
-def import_categorias(request):
-    return import_csv_data(request, models.Categorias, {
-        'categoria': 0,
-        'descripcion': 1,
-    }, 'Categorías importadas correctamente. 🎉😁🫡')
-
-@login_required
-@never_cache
 def export_database(request):
     now = timezone.localtime(timezone.now()).strftime('%d-%m-%Y_%H%M')
     if request.user.is_staff:
@@ -70,22 +62,6 @@ def export_database(request):
 
 @login_required
 @never_cache
-def import_database(request):
-    return import_csv_data(request, models.Database, {
-        'categoria': lambda row: models.Categorias.objects.get_or_create(categoria=row[0])[0],
-        'titulo': 1,
-        'informacion': 2,
-        'redirigir': 3,
-        'frecuencia': lambda row: int(row[4]) if row[4] else 0,
-        'uuid': 5,
-        'evento_fecha_inicio': lambda row: parse_date(row[6]),
-        'evento_fecha_fin': lambda row: parse_date(row[7]),
-        'evento_allDay': lambda row: parse_all_day(row[8]),
-        'evento_lugar': 9,
-        'evento_className': 10,
-        'fecha_modificacion': lambda row: parse_date(row[11]),
-    }, 'Base de Datos importadas correctamente. 🎉😁🫡')
-
 def export_banner(request):
     now = timezone.localtime(timezone.now()).strftime('%d-%m-%Y_%H%M')
     
@@ -96,7 +72,7 @@ def export_banner(request):
                 banner.titulo or '',
                 banner.descripcion or '',
                 banner.redirigir or '',
-                banner.imagen.url if banner.imagen else '',  # URL de la imagen
+                banner.imagen.url.replace('/media/', '') if banner.imagen else '',
                 banner.expiracion.strftime('%d-%m-%Y %H:%M') 
                 if banner.expiracion else '',
                 True if banner.solo_imagen else False,
@@ -128,7 +104,7 @@ def export_articulos(request):
                 articulo.creacion.strftime('%d-%m-%Y'),
                 articulo.actualizacion.strftime('%d-%m-%Y') 
                 if articulo.actualizacion else '',
-                articulo.encabezado.url 
+                articulo.encabezado.url.replace('/media/', '')
                 if articulo.encabezado else '',
             ]
             for articulo in articulos
@@ -175,14 +151,14 @@ def export_configuraciones(request):
         configuraciones = models.Configuraciones.objects.all()
         rows = [
             [
-                conf.qr_image.url if conf.qr_image else '',  # URL de la imagen QR
-                conf.redes_sociales or '',  # Si redes_sociales está vacío o nulo
+                conf.qr_image.url.replace('/media/', '') if conf.qr_image else '',
+                conf.redes_sociales or '',
                 conf.copyright_year,
                 conf.utc_link,
-                'Sí' if conf.calendar_btnsYear else 'No',  # Si el botón de calendario está activado
-                conf.about_img_first.url if conf.about_img_first else '',  # URL de la primera imagen de "about"
+                True if conf.calendar_btnsYear else False,
+                conf.about_img_first.url.replace('/media/', '') if conf.about_img_first else '',
                 conf.about_text_first,
-                conf.about_img_second.url if conf.about_img_second else '',  # URL de la segunda imagen de "about"
+                conf.about_img_second.url.replace('/media/', '') if conf.about_img_second else '',
                 conf.about_text_second,
             ]
             for conf in configuraciones
@@ -221,6 +197,33 @@ def export_mapa(request):
         )
     return JsonResponse({'success': False, 'message': 'Acción no permitida. 🧐😠🤥'}, status=400)
 
+
+@login_required
+@never_cache
+def import_categorias(request):
+    return import_csv_data(request, models.Categorias, {
+        'categoria': 0,
+        'descripcion': 1,
+    }, 'Categorías importadas correctamente. 🎉😁🫡')
+
+@login_required
+@never_cache
+def import_database(request):
+    return import_csv_data(request, models.Database, {
+        'categoria': lambda row: models.Categorias.objects.get_or_create(categoria=row[0])[0],
+        'titulo': 1,
+        'informacion': 2,
+        'redirigir': 3,
+        'frecuencia': lambda row: int(row[4]) if row[4] else 0,
+        'uuid': 5,
+        'evento_fecha_inicio': lambda row: parse_date(row[6]),
+        'evento_fecha_fin': lambda row: parse_date(row[7]),
+        'evento_allDay': lambda row: parse_boolean(row[8]),
+        'evento_lugar': 9,
+        'evento_className': 10,
+        'fecha_modificacion': lambda row: parse_date(row[11]),
+    }, 'Base de Datos importadas correctamente. 🎉😁🫡')
+
 @login_required
 @never_cache
 def import_Banners(request):
@@ -229,9 +232,9 @@ def import_Banners(request):
         'descripcion': 1,
         'redirigir': 2,
         'imagen': 3,
-        'expiracion': 4,
-        'solo_imagen': 5,
-        'visible': 6,
+        'expiracion': lambda row: parse_date(row[4]),
+        'solo_imagen': lambda row: parse_boolean(row[5]),
+        'visible': lambda row: parse_boolean(row[6]),
     }, 'Datos Del Mapa importados correctamente. 🎉😁🫡')
 
 @login_required
@@ -242,8 +245,8 @@ def import_Articulos(request):
         'titulo': 1,
         'contenido': 2,
         'autor': 3,
-        'creacion': 4,
-        'actualizacion': 5,
+        'creacion': lambda row: parse_boolean(row[4]),
+        'actualizacion': lambda row: parse_boolean(row[5]),
     }, 'Datos Del Mapa importados correctamente. 🎉😁🫡')
 
 @login_required
@@ -267,7 +270,7 @@ def import_Preguntas(request):
     return import_csv_data(request, models.Preguntas, {
         'pregunta': 0,
         'descripcion': 1,
-        'fecha': 2,
+        'fecha': lambda row: parse_date(row[2]),
     }, 'Datos Del Mapa importados correctamente. 🎉😁🫡')
 
 @login_required
@@ -278,7 +281,7 @@ def import_Configuraciones(request):
         'redes_sociales': 1,
         'copyright_year': 2,
         'utc_link': 3,
-        'calendar_btnsYear': 4,
+        'calendar_btnsYear': lambda row: parse_boolean(row[4]),
         'about_img_first': 5,
         'about_text_first': 6,
         'about_img_second': 7,
@@ -311,9 +314,8 @@ def import_csv_data(request, model, field_map, success_message):
         return JsonResponse({'success': False, 'message': 'Formulario no válido.'}, status=400)
     return JsonResponse({'success': False, 'message': 'Método no permitido.'}, status=405)
 
-
 """Convierte el valor en un booleano. Devuelve False si no es "True"."""
-def parse_all_day(value):
+def parse_boolean(value):
     return value.strip().lower() == 'true'
 
 def parse_date(value):
