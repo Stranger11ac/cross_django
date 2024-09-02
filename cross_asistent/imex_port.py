@@ -42,9 +42,9 @@ def export_database(request):
                 info.categoria or '',
                 info.titulo or '',
                 info.informacion or '',
+                info.documento or '',
+                info.imagen or '',
                 info.redirigir or '',
-                info.documento,
-                info.imagen,
                 info.frecuencia,
                 info.uuid or '',
                 info.evento_fecha_inicio or '',
@@ -57,11 +57,13 @@ def export_database(request):
             for info in databaseall
         ]
         return create_csv_response(f"UTC_database_{now}.csv", 
-            ['Categoria', 'Titulo', 'Informacion', 'Redirigir','Documento', 'Imagen', 'Frecuencia', 'uuid','Evento:fecha de inicio', 'Evento:fecha de fin', 'Evento:Todo el dia','Evento:lugar', 'Evento:className (CSS)', 'Fecha Modificacion'], 
+            ['Categoria', 'Titulo', 'Informacion','Documento', 'Imagen', 'Redirigir','Frecuencia', 'uuid','Evento:fecha de inicio', 'Evento:fecha de fin', 'Evento:Todo el dia','Evento:lugar', 'Evento:className (CSS)', 'Fecha Modificacion'], 
             rows
         )
     return JsonResponse({'success': False, 'message': 'Acción no permitida. 🧐😠🤥'}, status=400)
 
+@login_required
+@never_cache
 def export_banner(request):
     now = timezone.localtime(timezone.now()).strftime('%d-%m-%Y_%H%M')
     
@@ -102,10 +104,8 @@ def export_articulos(request):
                 articulo.contenido or '',
                 articulo.autor or '',
                 articulo.creacion.strftime('%d-%m-%Y'),
-                articulo.actualizacion.strftime('%d-%m-%Y') 
-                if articulo.actualizacion else '',
-                articulo.encabezado.url.replace('/media/', '')
-                if articulo.encabezado else '',
+                articulo.actualizacion.strftime('%d-%m-%Y') if articulo.actualizacion else '',
+                articulo.encabezado.url.replace('/media/', '') or '',
             ]
             for articulo in articulos
         ]
@@ -205,9 +205,9 @@ def import_database(request):
         'categoria': lambda row: models.Categorias.objects.get_or_create(categoria=row[0])[0],
         'titulo': 1,
         'informacion': 2,
-        'redirigir': 3,
-        'documento': 4,
-        'imagen': 5,
+        'documento': 3,
+        'imagen': 4,
+        'redirigir': 4,
         'frecuencia': lambda row: int(row[6]) if row[6] else 0,
         'uuid': 7,
         'evento_fecha_inicio': lambda row: parse_date(row[8]),
@@ -243,12 +243,12 @@ def import_Banners(request):
 @never_cache
 def import_Articulos(request):
     return import_csv_data(request, models.Articulos, {
-        'encabezado': 0,
-        'titulo': 1,
-        'contenido': 2,
-        'autor': 3,
-        'creacion': lambda row: parse_boolean(row[4]),
-        'actualizacion': lambda row: parse_boolean(row[5]),
+        'titulo': 0,
+        'contenido': 1,
+        'autor': 2,
+        'creacion': lambda row: parse_boolean(row[3]),
+        'actualizacion': lambda row: parse_boolean(row[4]),
+        'encabezado': 5,
     }, 'Datos Del Mapa importados correctamente. 🎉😁🫡')
 
 @login_required
