@@ -62,26 +62,6 @@ def export_database(request):
         )
     return JsonResponse({'success': False, 'message': 'Acción no permitida. 🧐😠🤥'}, status=400)
 
-@login_required
-@never_cache
-def import_database(request):
-    return import_csv_data(request, models.Database, {
-        'categoria': lambda row: models.Categorias.objects.get_or_create(categoria=row[0])[0],
-        'titulo': 1,
-        'informacion': 2,
-        'redirigir': 3,
-        'documento': 4,
-        'imagen': 5,
-        'frecuencia': lambda row: int(row[6]) if row[6] else 0,
-        'uuid': 7,
-        'evento_fecha_inicio': lambda row: parse_date(row[8]),
-        'evento_fecha_fin': lambda row: parse_date(row[9]),
-        'evento_allDay': lambda row: parse_boolean(row[10]),
-        'evento_lugar': 11,
-        'evento_className': 12,
-        'fecha_modificacion': lambda row: parse_date(row[13]),
-    }, 'Base de Datos importadas correctamente. 🎉😁🫡')
-
 def export_banner(request):
     now = timezone.localtime(timezone.now()).strftime('%d-%m-%Y_%H%M')
     
@@ -220,29 +200,31 @@ def export_mapa(request):
 
 @login_required
 @never_cache
-def import_categorias(request):
-    return import_csv_data(request, models.Categorias, {
-        'categoria': 0,
-        'descripcion': 1,
-    }, 'Categorías importadas correctamente. 🎉😁🫡')
-
-@login_required
-@never_cache
 def import_database(request):
     return import_csv_data(request, models.Database, {
         'categoria': lambda row: models.Categorias.objects.get_or_create(categoria=row[0])[0],
         'titulo': 1,
         'informacion': 2,
         'redirigir': 3,
-        'frecuencia': lambda row: int(row[4]) if row[4] else 0,
-        'uuid': 5,
-        'evento_fecha_inicio': lambda row: parse_date(row[6]),
-        'evento_fecha_fin': lambda row: parse_date(row[7]),
-        'evento_allDay': lambda row: parse_boolean(row[8]),
-        'evento_lugar': 9,
-        'evento_className': 10,
-        'fecha_modificacion': lambda row: parse_date(row[11]),
+        'documento': 4,
+        'imagen': 5,
+        'frecuencia': lambda row: int(row[6]) if row[6] else 0,
+        'uuid': 7,
+        'evento_fecha_inicio': lambda row: parse_date(row[8]),
+        'evento_fecha_fin': lambda row: parse_date(row[9]),
+        'evento_allDay': lambda row: parse_boolean(row[10]),
+        'evento_lugar': 11,
+        'evento_className': 12,
+        'fecha_modificacion': lambda row: parse_date(row[13]),
     }, 'Base de Datos importadas correctamente. 🎉😁🫡')
+
+@login_required
+@never_cache
+def import_categorias(request):
+    return import_csv_data(request, models.Categorias, {
+        'categoria': 0,
+        'descripcion': 1,
+    }, 'Categorías importadas correctamente. 🎉😁🫡')
 
 @login_required
 @never_cache
