@@ -414,7 +414,6 @@ function cadenaRandom(longitud, caracteres) {
     return cadenaAleatoria;
 }
 
-
 // Copiar al portapapeles ######################################################################
 const inputs = document.querySelectorAll("input[data-copy]");
 inputs.forEach((input) => {
@@ -460,6 +459,21 @@ function jsonSubmit(e) {
         formData.set("textTiny", contenidoTextTiny);
     }
 
+    // document.addEventListener("DOMContentLoaded", function () {
+    // console.info('Form: ',thisForm);
+    // console.info('Submit: ',thisForm.querySelector('button[type="submit"]'));
+    // });
+    try {
+        formSubmitBtn = thisForm.querySelector('button[type="submit"]');
+        if (formSubmitBtn) {
+            formSubmitBtn.setAttribute("disabled", "disabled");
+        }
+    } catch (error) {
+        console.warn("Advertencia: Boton de envio no encontrado...");
+        console.warn(formSubmitBtn);
+        console.error(error);
+    }
+
     fetch(thisForm.action, {
         method: "POST",
         body: formData,
@@ -479,7 +493,6 @@ function jsonSubmit(e) {
         .then((data) => {
             dataMessage = data.message;
             if (data.success == true) {
-                // thisForm.reset();
                 dataIcon = "success";
                 if (data.icon) {
                     dataIcon = data.icon;
@@ -490,7 +503,7 @@ function jsonSubmit(e) {
                     dataPosition = data.position;
                 }
 
-                function dataRedirect(params) {
+                function dataRedirect() {
                     window.location.href = data.redirect_url;
                 }
 
@@ -512,24 +525,24 @@ function jsonSubmit(e) {
 
                 alertSToast(dataPosition, timerOut, dataIcon, dataMessage, alertfunction);
             } else if (data.success == false) {
-                console.error(dataMessage);
+                console.waning(dataMessage);
 
                 if (data.valSelector) {
-                    console.log(data.valSelector);
-                    function addInvalidClass(valueSelector) {
-                        document.querySelector(`[data-selector-input="${valueSelector}"]`).classList.add("is-invalid");
-                        document.querySelector(`[data-selector-input="${valueSelector}"]`).classList.remove("is-valid");
-                    }
-                    addInvalidClass(data.valSelector);
+                    thisForm.querySelector(`[data-selector-input="${data.valSelector}"]`).classList.add("is-invalid");
+                    thisForm.querySelector(`[data-selector-input="${data.valSelector}"]`).classList.remove("is-valid");
                 }
 
-                alertSToast("top", timerOut + 6000, "warning", dataMessage);
+                alertSToast("top", timerOut + 6000, "warning", dataMessage, () => {
+                    thisForm.querySelector('button[type="submit"]').removeAttribute("disabled");
+                });
             }
         })
         .catch((error) => {
-            console.error("😥 Error:", error);
+            console.error("😥 Error inesperado:", error);
             errorMessage = error.message || "Ocurrió un error. Intente nuevamente. 😥";
-            alertSToast("center", timerOut + 8000, "error", errorMessage);
+            alertSToast("center", timerOut + 8000, "error", errorMessage, () => {
+                thisForm.querySelector('button[type="submit"]').removeAttribute("disabled");
+            });
         });
 }
 
@@ -565,5 +578,3 @@ function alertSToast(posittionS, timerS, iconS, titleS, didDestroyS) {
 document.oncontextmenu = function () {
     return false;
 };
-
-

@@ -80,11 +80,10 @@ def fqt_questions_send(request):
             pregunta = models.Preguntas(pregunta=preguntaPOST, descripcion=descripcionPOST)
             pregunta.save()
 
-            return JsonResponse({'success': True, 'message': 'Gracias por tu pregunta. ❤️💕😁👍 <br>La responderemos lo mas pronto posible. 😁😊🫡'}, status=200)
+            return JsonResponse({'success': True, 'message': 'Gracias por tu pregunta. ❤️💕😁👍 <br>Te responderemos lo más pronto posible. 😁😊🫡'}, status=200)
         except Exception as e:
             print(f'Hay un error en: {e}')
             return JsonResponse({'error':True, 'success': False, 'message': 'Ups! 😥😯 hubo un error y tu pregunta no se pudo registrar. Por favor intente de nuevo más tarde.'}, status=400)
-    return render(request, 'frecuentes.html', {'quest_all': models.Preguntas.objects.all()})
 
 def blogs(request):
     if not request.user.is_staff:
@@ -141,14 +140,16 @@ def mostrar_blog(request, Articulos_id):
             foto_autor = ''
             
         if user_profile.blog_firma:
-            firma_autor = user_profile.blog_firma
+            firma_autor = user_profile.blog_firma.lower()
         else:
-            firma_autor = f'{userdef.first_name} {userdef.last_name}'
+            firma_autor = f'{userdef.first_name.lower()} {userdef.last_name.lower()}'
     except models.UserProfile.DoesNotExist:
-        firma_autor = autor_username
-        foto_autor = ''
+        # firma_autor = autor_username
+        # foto_autor = ''
+        firma_autor = 'Editorial Universidad Tecnológica de Coahuila'
+        foto_autor = '/static/img/UTC_logo.webp'
     except User.DoesNotExist:
-        firma_autor = autor_username
+        firma_autor = 'Editorial Universidad Tecnológica de Coahuila'
         foto_autor = ''
 
     return render(request, 'blog.html', {
@@ -228,7 +229,7 @@ def singinpage(request):
         
         if user is not None:
             if not user.is_active:
-                return JsonResponse({'success': False, 'functions': 'singin', 'message': '🧐😥😯 UPS! <br> Al parecer tu cuenta esta <u>Inactiva</u>. Tu cuenta será activada si estas autorizado'}, status=400)
+                return JsonResponse({'success': False, 'functions': 'singin', 'message': '🧐😥😯 UPS! <br> Al parecer tu cuenta esta <u>Desactiva</u>. Será activada si estas autorizado'}, status=400)
             
             user = authenticate(request, username=user.username, password=password)
             if user is None:
@@ -240,7 +241,7 @@ def singinpage(request):
                     pageRedirect = reverse('vista_programador')
                 return JsonResponse({'success': True, 'functions': 'singin', 'redirect_url': pageRedirect}, status=200)
         else:
-            return JsonResponse({'success': False, 'functions': 'singin', 'message': 'Usuario no registrado 😅. Verifica tu nombre de usuario o correo electrónico'}, status=400)
+            return JsonResponse({'success': False, 'functions': 'singin', 'message': 'Usuario no registrado 😅. Verifica tu nombre de usuario o contraseña'}, status=400)
     else:
         configuraciones = obtener_configuraciones()
         logout(request)
@@ -276,6 +277,12 @@ def vista_programador(request):
     banners_all = models.Banners.objects.all()
     users = User.objects.all().order_by('-id')
     configuraciones = obtener_configuraciones()
+    
+    if request.user.is_staff:
+        num_blogs = models.Articulos.objects.all().count()
+    else:
+        num_blogs = models.Articulos.objects.filter(autor=request.user).count()
+    
     contexto = {
         'users':users,
         'user':request.user,
@@ -286,7 +293,7 @@ def vista_programador(request):
         'categorias':categoriasFilter,
         'preguntas_sending':questions_all,
         'num_preguntas':databaseall.count(),
-        'num_blogs':models.Articulos.objects.filter(autor=request.user).count(),
+        'num_blogs': num_blogs,
         **configuraciones
     }
      
@@ -381,28 +388,7 @@ def banners_page(request):
 @login_required
 @never_cache
 def database_page(request):
-    datos_modificados = []
-    for dato in databaseall.order_by('-id'):
-        if dato.imagen:
-            imagen_url = dato.imagen.url
-        else:
-            imagen_url = ''
-        if dato.documento:
-            documento_url = dato.documento.url
-        else:
-            documento_url = ''
-        datos_modificados.append({
-            'id': dato.id,
-            'categoria': dato.categoria,
-            'titulo': dato.titulo,
-            'informacion': dato.informacion,
-            'redirigir': dato.redirigir,
-            'frecuencia': dato.frecuencia,
-            'documento': documento_url,
-            'imagen': imagen_url,
-            'fecha_modificacion': dato.fecha_modificacion,
-        })
-    context = { 'active_page':'database','pages':functions.pages, 'preguntas_sending':questions_all, 'categorias':categoriasFilter, 'categoriasall':categoriasall, 'database': datos_modificados }
+    context = { 'active_page':'database','pages':functions.pages, 'preguntas_sending':questions_all, 'categorias':categoriasFilter, 'categoriasall':categoriasall }
     return render(request, 'admin/database.html', context)
 
 # Calendario ----------------------------------------------------------
@@ -455,6 +441,7 @@ def blog_page(request):
         except Exception as e:
             return JsonResponse({'success': False, 'message': f'Ocurrió un error😯😥 <br>{str(e)}'}, status=400)
         
+    allblogs = models.Articulos.objects.all()
     yourBlogs = models.Articulos.objects.filter(autor = request.user)
     blogsTiple=[]
     for oneBlog in yourBlogs:
@@ -463,7 +450,7 @@ def blog_page(request):
             'titulo': oneBlog.titulo,
         })
     
-    return render(request, 'admin/blog.html', {'active_page':'blog','pages':functions.pages, 'blogsTiple':blogsTiple})
+    return render(request, 'admin/blog.html', {'active_page':'blog','pages':functions.pages, 'blogsTiple':blogsTiple, 'allblogs':allblogs})
 
 #Mapa ----------------------------------------------------------
 @login_required

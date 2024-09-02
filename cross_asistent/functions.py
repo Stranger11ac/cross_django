@@ -9,6 +9,7 @@ from django.utils import timezone
 from .views import databaseall
 from . import models
 import datetime
+import json
 
 # Plantilla links programador / administrador ----------------------------------------------------------
 pages = [
@@ -91,8 +92,8 @@ def create_newuser(first_name, last_name, username, email, password1, password2=
 
     try:
         new_user = User.objects.create_user(
-            first_name=first_name,
-            last_name=last_name,
+            first_name=first_name.lower(),
+            last_name=last_name.lower(),
             username=username,
             email=email,
             password=password1,
@@ -102,7 +103,7 @@ def create_newuser(first_name, last_name, username, email, password1, password2=
         new_user.save()
         aviso=''
         if password2 is not None:
-            aviso = '<br>Tu cuenta está <u>Inhabilitada</u> 😯😬'
+            aviso = '<br>Tu cuenta está <u>Desactivada</u> 😯😬'
         return {'success': True, 'message': f'Usuario creado exitosamente 🥳🎈 {aviso}'}
     except IntegrityError:
         return {'success': False, 'message': 'Ocurrió un error durante el registro. Intente nuevamente.'}
@@ -147,16 +148,24 @@ def editar_usuario(request, user_id):
     if request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password')
-        is_staff = request.POST.get('is_staff') == 'on'
+        is_staffPost = request.POST.get('is_staff') == 'on'
         
-        if username:
-            user.username = username
-        if password:
-            user.set_password(password)
-        user.is_active = True
-        user.is_staff = is_staff
-        user.save()
-        return JsonResponse({'success': True, 'message': f'El usuario <u>{username}</u> fue modificado exitosamente 🥳🎉🎈.'}, status=200)
+        if password or is_staffPost:
+            if username:
+                user.username = username
+            if password:
+                user.set_password(password)
+            user.is_active = True
+            user.is_staff = is_staffPost
+            user.save()
+            
+            iconreturn = 'success'
+            messagereturn = f'El usuario <u>{username}</u> fue modificado exitosamente 🥳🎉🎈.'
+        else:
+            iconreturn = 'info'
+            messagereturn = f'Puede modificar la contraseña o el rol del usuario, por favor envie datos.'
+            
+        return JsonResponse({'success': True, 'icon':iconreturn, 'message': messagereturn}, status=200)
     return JsonResponse({'success': False, 'message': 'Acción no permitida.'}, status=403)
 
 # Banners ----------------------------------------------------------
@@ -302,8 +311,10 @@ def categorias_delete(request):
 @login_required
 @never_cache
 def database_list(request):
+    categoriaCalendario = get_object_or_404(models.Categorias, categoria="Calendario")
+    listDatabase = models.Database.objects.exclude(categoria_id=categoriaCalendario.id)
     datos_modificados = []
-    for dato in databaseall:
+    for dato in listDatabase:
         if dato.imagen:
             imagen_url = dato.imagen.url
         else:
@@ -326,7 +337,6 @@ def database_list(request):
     # allitemsdb = list(models.Database.objects.values())
     data = {'infodb': datos_modificados}
     return JsonResponse(data)
-
 
 @login_required
 @never_cache
@@ -379,6 +389,27 @@ def database_create(request):
         
         except Exception as e:
             return JsonResponse({'success': False, 'message': f'Ocurrió un error 😯😥 <br>{str(e)}'}, status=400)
+    return JsonResponse({'error': 'Método no válido'}, status=400)
+
+@login_required
+@never_cache
+def database_getitem(request):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)            
+            idPOST = data.get('id')
+            dbItem = get_object_or_404(models.Database, id=idPOST)
+            data = {
+                'categoria':dbItem.categoria.categoria,
+                'titulo':dbItem.titulo,
+                'informacion':dbItem.informacion,
+                'redirigir':dbItem.redirigir,
+            }
+            print(dbItem.evento_fecha_fin)
+            return JsonResponse(data)
+        except Exception as e:
+            return JsonResponse({'success': False, 'message': f'Ocurrió un error 😯😥 <br>{str(e)}'}, status=400)
+
     return JsonResponse({'error': 'Método no válido'}, status=400)
 
 @login_required
@@ -448,8 +479,6 @@ def database_delete(request):
             return JsonResponse({'success': False, 'message': f'Ocurrió un error 😯😥 <br>{str(e)}'}, status=400)
     return JsonResponse({'error': 'Método no válido'}, status=400)
 
-@login_required
-@never_cache
 def frequesnce_update(request):
     if request.method == 'POST':
         try:
@@ -496,7 +525,6 @@ def blog_change(request):
             else:
                 blogEncabezado = ''
             data = {
-                'autor': blogGet.autor,
                 'titulo': blogGet.titulo,
                 'contenido': blogGet.contenido,
                 'encabezado': blogEncabezado,
