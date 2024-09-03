@@ -27,6 +27,7 @@ SECRET_KEY = env("SECRET_KEY", default="unsafe-secret-key")
 
 # Camibiar debug en produccion IMPORTANTE ---------------------------------------------------------
 # DEBUG = True
+# DEBUG = False
 DEBUG = 'RENDER' not in os.environ
 
 ALLOWED_HOSTS = []
@@ -78,28 +79,28 @@ TEMPLATES = [
 WSGI_APPLICATION = 'cross_project.wsgi.application'
 
 # Base de datos, utilizar PostgreSQL de preferencia -------------------------------------------------------------
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
-}
-
 # DATABASES = {
-#     'default': dj_database_url.config(
-#         default='postgresql://cross_asistent_production_user:3zBDxS8OZ66dvPGsXZ0leTTk1X4o129B@dpg-cr40bbrtq21c73drq1k0-a.oregon-postgres.render.com/cross_asistent_production',
-#         # default='postgresql://postgres:postgres@localhost:5432/mysite',
-#         conn_max_age=600
-#     )
-#     # 'default': {
-#     #     'ENGINE': 'django.db.backends.postgresql',
-#     #     'NAME': 'nombre_de_tu_base_de_datos',
-#     #     'USER': 'tu_usuario',
-#     #     'PASSWORD': 'tu_contraseña',
-#     #     'HOST': 'localhost',  # o la dirección IP del servidor de base de datos
-#     #     'PORT': '5432', 
-#     # }
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
+#     }
 # }
+
+DATABASES = {
+    'default': dj_database_url.config(
+        default='postgresql://cross_asistent_production_user:3zBDxS8OZ66dvPGsXZ0leTTk1X4o129B@dpg-cr40bbrtq21c73drq1k0-a.oregon-postgres.render.com/cross_asistent_production',
+        # default='postgresql://postgres:postgres@localhost:5432/mysite',
+        conn_max_age=600
+    )
+    # 'default': {
+    #     'ENGINE': 'django.db.backends.postgresql',
+    #     'NAME': 'nombre_de_tu_base_de_datos',
+    #     'USER': 'tu_usuario',
+    #     'PASSWORD': 'tu_contraseña',
+    #     'HOST': 'localhost',  # o la dirección IP del servidor de base de datos
+    #     'PORT': '5432', 
+    # }
+}
 
 
 AUTH_PASSWORD_VALIDATORS = [
