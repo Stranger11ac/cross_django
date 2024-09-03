@@ -2,10 +2,6 @@ var alfabetico = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890
 var texto3 = /[a-zA-Z0-9]{3}/;
 const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 
-let microphonerecord = false;
-let newMessageChat = false;
-let lastText = ""; // Definir lastText a nivel global
-
 // ##############################################################################################
 // ###################################### Funciones Jquery ######################################
 // ##############################################################################################
@@ -85,15 +81,14 @@ function chatSubmit(e) {
     }, 20);
 
     const loadInfo = `<div class="chat_msg asistent_response my-4" data-tokeid="loadInfoDelete"><div class="pulse-container"><div class="pulse-bubble bg_detail pulse-bubble-1"></div><div class="pulse-bubble bg_detail pulse-bubble-2"></div><div class="pulse-bubble bg_detail pulse-bubble-3"></div></div></div>`;
+    const loadMsg = document.querySelector(`.asistent_response[data-tokeid="loadInfoDelete"]`);
     contOutput.insertAdjacentHTML("beforeend", loadInfo);
     setTimeout(function () {
-        document.querySelector(`.asistent_response[data-tokeid="loadInfoDelete"]`).classList.add("visible");
+        if (loadMsg) {
+            loadMsg.classList.add("visible");
+        }
         setTimeout(scrollToBottom, 500);
     }, 200);
-
-    if (microphonerecord) {
-        $("#speak_btn_icon").removeClass("fa-regular fa-circle-play").addClass("fa-solid fa-spinner fa-spin-pulse");
-    }
 
     fetch(chatForm.action, {
         method: "POST",
@@ -114,11 +109,6 @@ function chatSubmit(e) {
         })
         .then((data) => {
             if (data.success) {
-                if (microphonerecord) {
-                    $("#speak_btn_icon")
-                        .removeClass("fa-regular fa-circle-play fa-spinner fa-spin-pulse")
-                        .addClass("fa-solid fa-circle-pause");
-                }
                 displayChatbotResponse(data.answer);
             } else {
                 alertSToast("top", 8000, "error", `Error: ${data.message}`);

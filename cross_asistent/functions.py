@@ -6,7 +6,6 @@ from django.shortcuts import get_object_or_404
 from django.contrib.auth.models import User
 from django.http import JsonResponse
 from django.utils import timezone
-from .views import databaseall
 from . import models
 import datetime
 import json
@@ -15,11 +14,10 @@ import json
 pages = [
         {'name': 'banner', 'url': 'upload_banner', 'display_name': 'Banners', 'icon': 'fa-solid fa-image'},
         {'name': 'database', 'url': 'database_page', 'display_name': 'Database', 'icon': 'fa-solid fa-database'},
-        {'name': 'blog', 'url': 'create_blog', 'display_name': 'Blogs', 'icon': 'fa-solid fa-newspaper'},
         {'name': 'mapa', 'url': 'update_mapa', 'display_name': 'Mapa', 'icon': 'fa-solid fa-map-location-dot'},
         {'name': 'calendario', 'url': 'calendario_page', 'display_name': 'Calendario', 'icon': 'fa-solid fa-calendar-days'},
+        {'name': 'blog', 'url': 'create_blog', 'display_name': 'Blogs', 'icon': 'fa-solid fa-newspaper'},
         {'name': 'galería', 'url': 'vista_galeria', 'display_name': 'Galeria', 'icon': 'fa-regular fa-images'},
-
     ]
 
 # Editar Perfil ----------------------------------------------------------
@@ -313,8 +311,7 @@ def categorias_delete(request):
 @login_required
 @never_cache
 def database_list(request):
-    categoriaCalendario = get_object_or_404(models.Categorias, categoria="Calendario")
-    listDatabase = models.Database.objects.exclude(categoria_id=categoriaCalendario.id)
+    listDatabase = models.Database.objects.all()
     datos_modificados = []
     for dato in listDatabase:
         if dato.imagen:
@@ -407,7 +404,6 @@ def database_getitem(request):
                 'informacion':dbItem.informacion,
                 'redirigir':dbItem.redirigir,
             }
-            print(dbItem.evento_fecha_fin)
             return JsonResponse(data)
         except Exception as e:
             return JsonResponse({'success': False, 'message': f'Ocurrió un error 😯😥 <br>{str(e)}'}, status=400)
@@ -444,7 +440,6 @@ def database_update(request):
                 dbUpdate.documento = documento
 
             if imagen:
-                # Validar que la ruta del archivo sea segura y dentro de MEDIA_ROOT
                 if '..' in imagen.name or imagen.name.startswith('/'):
                     return JsonResponse({'success': False, 'message': 'Ruta de archivo inválida.'}, status=400)
                 dbUpdate.imagen = imagen
@@ -458,7 +453,7 @@ def database_update(request):
             dbUpdate.save()
                         
             dbMessage = f'Se actualizó "{request.POST.get("titulo")}" en la base de datos exitosamente 🫡😁🎉'
-            return JsonResponse({'success': True, 'functions': 'reload', 'message': dbMessage, 'position': 'center'}, status=200)
+            return JsonResponse({'success': True, 'message': dbMessage, 'position': 'center'}, status=200)
         
         except Exception as e:
             return JsonResponse({'success': False, 'message': f'Ocurrió un error 😯😥 <br>{str(e)}'}, status=400)
