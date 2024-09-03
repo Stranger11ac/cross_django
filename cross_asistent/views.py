@@ -549,7 +549,7 @@ def upload_image(request):
 @never_cache
 def lista_imagenes(request):
     if request.method == 'GET':
-        imagenes = models.Imagenes.objects.all()
+        imagenes = models.galeria.objects.all()
         imagenes_modificadas = []
 
         for imagen in imagenes:
@@ -560,3 +560,11 @@ def lista_imagenes(request):
             })
 
         return JsonResponse({'imagenes': imagenes_modificadas})
+
+@login_required
+@never_cache
+def vista_galeria(request):
+
+    return render(request, 'admin/vista_galeria.html',{
+                'pages':functions.pages,
+    })
