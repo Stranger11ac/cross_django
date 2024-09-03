@@ -33,28 +33,15 @@ def chatgpt(question, instructions):
     print('')
     return response.choices[0].message.content
 
-def normalize_text(text):
-    return ''.join(
-        c for c in unicodedata.normalize('NFD', text)
-        if unicodedata.category(c) != 'Mn'
-    )
+# Función para calcular la similitud TF-IDF
+def calculate_tfidf_similarity(pregunta, textos):
+    vectorizer = TfidfVectorizer().fit_transform([pregunta] + textos)
+    vectors = vectorizer.toarray()
+    cosine_similarities = cosine_similarity(vectors[0:1], vectors[1:]).flatten()
+    print(f"Similares: {cosine_similarities}")
+    return cosine_similarities
 
-def process_question(pregunta):
-    pregunta_normalizada = normalize_text(pregunta.lower().strip())
-
-    doc = nlp(pregunta_normalizada)
-    tokens = [token.lemma_ for token in doc if (not token.is_stop and token.is_alpha) or token.text in palabras_clave]
-    pregunta_procesada = " ".join(tokens)
-    
-    print(f"Pregunta procesada: {pregunta_procesada}")
-    return pregunta_procesada
-
-def extract_entities(pregunta):
-    doc = nlp(pregunta)
-    entities = [ent.text for ent in doc.ents]
-    print(f"Entidades nombradas: {entities}")
-    return entities
-
+# Función para generar la consulta de la base de datos con palabras clave y entidades
 def create_query(palabras_clave, entities):
     query = Q()
     for palabra in palabras_clave:
@@ -63,13 +50,23 @@ def create_query(palabras_clave, entities):
         query |= Q(titulo__icontains=entidad) | Q(informacion__icontains=entidad)
     return query
 
-def calculate_tfidf_similarity(pregunta, textos):
-    vectorizer = TfidfVectorizer().fit_transform([pregunta] + textos)
-    vectors = vectorizer.toarray()
-    cosine_similarities = cosine_similarity(vectors[0:1], vectors[1:]).flatten()
-    print(f"Similares: {cosine_similarities}")
-    return cosine_similarities
+# Función para extraer las entidades nombradas de la pregunta
+def extract_entities(pregunta):
+    doc = nlp(pregunta)
+    entities = [ent.text for ent in doc.ents]
+    print(f"Entidades nombradas: {entities}")
+    return entities
 
+# Función para procesar la pregunta, eliminando stopwords y lematizando
+def process_question(pregunta):
+    pregunta_normalizada = pregunta.lower().strip()  # Se asume que la normalización ya se hizo en el frontend
+    doc = nlp(pregunta_normalizada)
+    tokens = [token.lemma_ for token in doc if (not token.is_stop and token.is_alpha) or token.text in palabras_clave]
+    pregunta_procesada = " ".join(tokens)
+    print(f"Pregunta procesada: {pregunta_procesada}")
+    return pregunta_procesada
+
+# Función para calcular la puntuación de cada resultado
 def score_result(result, palabras_clave, entities, pregunta_procesada):
     score = 0
     texto_completo = f"{result.titulo.lower()} {result.informacion.lower()}"
@@ -87,35 +84,39 @@ def score_result(result, palabras_clave, entities, pregunta_procesada):
             score += 3
     
     tfidf_sim = calculate_tfidf_similarity(pregunta_procesada, [texto_completo])[0]
-    score += tfidf_sim * 5 
+    score += tfidf_sim * 5
 
-    print(f"score{score}")
+    print(f"Score: {score}")
     return score
 
+# Función para filtrar los resultados de la base de datos
 def filter_results(pregunta):
     palabras_clave = process_question(pregunta)
     entities = extract_entities(pregunta)
     query = create_query(palabras_clave, entities)
 
-    results = Q.objects.filter(query)
+    results = Database.objects.filter(query)
     scored_results = [(result, score_result(result, palabras_clave, entities, process_question(pregunta))) for result in results]
     sorted_results = sorted(scored_results, key=lambda x: x[1], reverse=True)
 
     return sorted_results
 
+# Función principal del chatbot
 def chatbot(request):
     if request.method == 'POST':
         try:
             data = json.loads(request.body)
-            question = data.get('question', '').strip()
+            question = data.get('question', '').strip()  # Se asume que la pregunta ya fue normalizada
 
             if not question:
                 return JsonResponse({'success': False, 'message': 'No puedo responder una pregunta que no existe 🤔🧐😬.'})
 
+            # Verificar si la pregunta tiene una respuesta simple predefinida
             respuesta_simple = next((respuesta for clave, respuesta in respuestas_simples.items() if clave in question), None)
             if respuesta_simple:
                 return JsonResponse({'success': True, 'answer': {'informacion': respuesta_simple}})
 
+            # Procesar la pregunta y buscar coincidencias en la base de datos
             pregunta_procesada = process_question(question)
             entidades = extract_entities(question)
             palabras_clave = pregunta_procesada.split()
@@ -131,9 +132,10 @@ def chatbot(request):
                     mejor_puntuacion = puntuacion
                     mejor_coincidencia = coincidencia
 
+            # Si hay una coincidencia en la base de datos
             if mejor_coincidencia:
                 informacion = mejor_coincidencia.informacion
-                system_prompt = f"Eres Hawky, un asistente de la Universidad Tecnologica de Coahuila. Utiliza alguno emojis sutilmente. Responde la pregunta con esta información pero tu no hagas preguntas: {informacion}"
+                system_prompt = f"Eres Hawky, un asistente de la Universidad Tecnologica de Coahuila. Utiliza algunos emojis sutilmente. Responde la pregunta con esta información pero tú no hagas preguntas: {informacion}"
                 answer = chatgpt(question, system_prompt)
 
                 respuesta = {
@@ -144,22 +146,22 @@ def chatbot(request):
                     "imagenes": mejor_coincidencia.imagen.url if mejor_coincidencia.imagen else None
                 }
 
-                print(f"Respuesta {respuesta}")
+                print(f"Respuesta: {respuesta, question}")
                 return JsonResponse({'success': True, 'answer': respuesta})
 
+            # Respuesta por defecto si no hay coincidencias
             respuesta_default = {
-                "informacion": "Lo siento, no encontre informacion relacionada con lo que me pides 🤔. Puedes buscar mas informacion en la pagina de preguntas frecuentes o, si gustas, tambien puedes enviarnos tus dudas. 😊😁",
+                "informacion": "Lo siento, no encontré información relacionada con lo que me pides 🤔. Puedes buscar más información en la página de preguntas frecuentes o, si gustas, también puedes enviarnos tus dudas. 😊😁",
                 "redirigir": "preguntas_frecuentes/",
                 "blank": False,
             }
             return JsonResponse({'success': True, 'answer': respuesta_default})
-        
+
         except json.JSONDecodeError:
-            return JsonResponse({'success': False, 'message': 'Ocurrio un error, Al parecer no se permite este metodo. Codigo #400'})
+            return JsonResponse({'success': False, 'message': 'Ocurrió un error. Al parecer no se permite este método. Código #400'})
         except KeyError as e:
             return JsonResponse({'success': False, 'message': f'Error en la clave del JSON: {str(e)}'})
         except Exception as e:
             return JsonResponse({'success': False, 'message': f'Error inesperado: {str(e)}'})
 
     return JsonResponse({'success': False, 'message': 'Método no permitido.'})
-
