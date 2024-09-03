@@ -18,6 +18,8 @@ pages = [
         {'name': 'blog', 'url': 'create_blog', 'display_name': 'Blogs', 'icon': 'fa-solid fa-newspaper'},
         {'name': 'mapa', 'url': 'update_mapa', 'display_name': 'Mapa', 'icon': 'fa-solid fa-map-location-dot'},
         {'name': 'calendario', 'url': 'calendario_page', 'display_name': 'Calendario', 'icon': 'fa-solid fa-calendar-days'},
+        {'name': 'galería', 'url': 'vista_galeria', 'display_name': 'Galeria', 'icon': 'fa-regular fa-images'},
+
     ]
 
 # Editar Perfil ----------------------------------------------------------

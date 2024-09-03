@@ -29,7 +29,9 @@ urlpatterns = [
     path('administracion/', views.vista_admin, name='vista_admin'),
     path('administracion/programador/', views.vista_programador, name='vista_programador'),
     path('administracion/perfil/', views.ver_perfil, name='perfil'),
-    path('administracion/perfil/editar_perfil', functions.editar_perfil, name='editprofile'),
+    path('administracion/perfil/editar_perfil/', functions.editar_perfil, name='editprofile'),
+    path('administracion/galeria/', views.vista_galeria, name='vista_galeria'),
+
     
     # Usuarios ----------------------------------------------------------
     path('administracion/usuarios/activacion/', functions.in_active, name='in_active'),
@@ -83,10 +85,10 @@ urlpatterns = [
     path('administracion/importar/database/', imex_port.import_database, name='import_database'),
     path('administracion/export/mapa/', imex_port.export_mapa, name='export_mapa'),
     path('administracion/importar/mapa/', imex_port.import_mapa, name='import_mapa'),
-    path('administracion/export/banners', imex_port.export_banner, name='export_banner'),
-    path('administracion/export/articulo', imex_port.export_articulos, name='export_articulos'),
-    path('administracion/export/preguntas', imex_port.export_preguntas, name='export_preguntas'),
-    path('administracion/export/configuracion', imex_port.export_configuraciones, name='export_configuraciones'),
+    path('administracion/export/banners/', imex_port.export_banner, name='export_banner'),
+    path('administracion/export/articulo/', imex_port.export_articulos, name='export_articulos'),
+    path('administracion/export/preguntas/', imex_port.export_preguntas, name='export_preguntas'),
+    path('administracion/export/configuracion/', imex_port.export_configuraciones, name='export_configuraciones'),
     path('administracion/importar/banners/', imex_port.import_Banners, name='import_Banners'),
     path('administracion/importar/articulos/', imex_port.import_Articulos, name='import_Articulos'),
     path('administracion/importar/preguntas/', imex_port.import_Preguntas, name='import_Preguntas'),

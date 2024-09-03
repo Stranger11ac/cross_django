@@ -166,8 +166,9 @@ class Mapa(models.Model):
             self.img_marker.delete()
         super(Mapa, self).delete(*args, **kwargs)
 
-class Imagenes(models.Model):
+class galeria(models.Model):
     imagen = models.ImageField(upload_to=set_imgs_path, max_length=120, blank=True, null=True)
+    usos = models.TextField(blank=True,null=True)
     
     def __str__(self):
         return self.imagen.name
@@ -175,7 +176,7 @@ class Imagenes(models.Model):
     def delete(self, *args, **kwargs):
         if self.imagen:
             self.imagen.delete()
-        super(Imagenes, self).delete(*args, **kwargs)
+        super(galeria, self).delete(*args, **kwargs)
 
 class Preguntas(models.Model):
     pregunta = models.CharField(max_length=150)
@@ -234,13 +235,13 @@ def delete_files(instance, fields):
 @receiver(pre_delete, sender=Banners)
 @receiver(pre_delete, sender=Database)
 @receiver(pre_delete, sender=Articulos)
-@receiver(pre_delete, sender=Imagenes)
+@receiver(pre_delete, sender=galeria)
 def delete_files_on_object_delete(sender, instance, **kwargs):
     fields_to_delete = {
         Banners: ['imagen'],
         Database: ['imagen', 'documento'],
         Articulos: ['encabezado'],
-        Imagenes: ['imagen'],
+        galeria: ['imagen'],
     }
     delete_files(instance, fields_to_delete[sender])
 
