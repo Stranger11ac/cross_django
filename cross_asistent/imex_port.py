@@ -75,8 +75,7 @@ def export_banner(request):
                 banner.descripcion or '',
                 banner.redirigir or '',
                 banner.imagen.url.replace('/media/', '') if banner.imagen else '',
-                banner.expiracion.strftime('%d-%m-%Y %H:%M') 
-                if banner.expiracion else '',
+                banner.expiracion or '',
                 True if banner.solo_imagen else False,
                 True if banner.visible else False,
             ]
@@ -100,22 +99,16 @@ def export_articulos(request):
         articulos = models.Articulos.objects.all()
         rows = [
             [
+                articulo.encabezado.url.replace('/media/', '') or '',
                 articulo.titulo or '',
                 articulo.contenido or '',
                 articulo.autor or '',
-                articulo.creacion.strftime('%d-%m-%Y'),
-                articulo.actualizacion.strftime('%d-%m-%Y') if articulo.actualizacion else '',
-                articulo.encabezado.url.replace('/media/', '') or '',
+                articulo.creacion or '',
+                articulo.actualizacion or '',
             ]
             for articulo in articulos
         ]
-
-        return create_csv_response(
-            f"UTC_articulos_{now}.csv",
-            ['Titulo', 'Contenido', 'Autor', 'Creación', 'Actualización', 'Encabezado'],
-            rows
-        )
-    
+        return create_csv_response(f"UTC_articulos_{now}.csv",['Encabezado', 'Titulo', 'Contenido', 'Autor', 'Creación', 'Actualización'],rows)
     return JsonResponse({'success': False, 'message': 'Acción no permitida.'}, status=400)
 
 @login_required
@@ -128,18 +121,12 @@ def export_preguntas(request):
         rows = [
             [
                 pregunta.pregunta,
-                pregunta.descripcion or '',  # Si la descripción está vacía, dejamos un string vacío
-                pregunta.fecha.strftime('%d-%m-%Y %H:%M'),
+                pregunta.descripcion or '',
+                pregunta.fecha,
             ]
             for pregunta in preguntas
         ]
-
-        return create_csv_response(
-            f"UTC_preguntas_{now}.csv",
-            ['Pregunta', 'Descripción', 'Fecha'],
-            rows
-        )
-    
+        return create_csv_response(f"UTC_preguntas_{now}.csv",['Pregunta', 'Descripción', 'Fecha'],rows)
     return JsonResponse({'success': False, 'message': 'Acción no permitida.'}, status=400)
 
 @login_required
@@ -163,13 +150,7 @@ def export_configuraciones(request):
             ]
             for conf in configuraciones
         ]
-
-        return create_csv_response(
-            f"UTC_configuraciones_{now}.csv",
-            ['QR Imagen', 'Redes Sociales', 'Año Copyright', 'UTC Link', 'Botones Año Calendario', 'Imagen Sobre 1', 'Texto Sobre 1', 'Imagen Sobre 2', 'Texto Sobre 2'],
-            rows
-        )
-
+        return create_csv_response(f"UTC_configuraciones_{now}.csv",['QR Imagen', 'Redes Sociales', 'Año Copyright', 'UTC Link', 'Botones Año Calendario', 'Imagen Sobre 1', 'Texto Sobre 1', 'Imagen Sobre 2', 'Texto Sobre 2'],rows)
     return JsonResponse({'success': False, 'message': 'Acción no permitida.'}, status=400)
 
 @login_required
@@ -207,7 +188,7 @@ def import_database(request):
         'informacion': 2,
         'documento': 3,
         'imagen': 4,
-        'redirigir': 4,
+        'redirigir': 5,
         'frecuencia': lambda row: int(row[6]) if row[6] else 0,
         'uuid': 7,
         'evento_fecha_inicio': lambda row: parse_date(row[8]),
@@ -237,19 +218,19 @@ def import_Banners(request):
         'expiracion': lambda row: parse_date(row[4]),
         'solo_imagen': lambda row: parse_boolean(row[5]),
         'visible': lambda row: parse_boolean(row[6]),
-    }, 'Datos Del Mapa importados correctamente. 🎉😁🫡')
+    }, 'Banners importados correctamente. 🎉😁🫡')
 
 @login_required
 @never_cache
 def import_Articulos(request):
     return import_csv_data(request, models.Articulos, {
-        'titulo': 0,
-        'contenido': 1,
-        'autor': 2,
-        'creacion': lambda row: parse_boolean(row[3]),
-        'actualizacion': lambda row: parse_boolean(row[4]),
-        'encabezado': 5,
-    }, 'Datos Del Mapa importados correctamente. 🎉😁🫡')
+        'encabezado': 0,
+        'titulo': 1,
+        'contenido': 2,
+        'autor': 3,
+        'creacion': lambda row: parse_date(row[4]),
+        'actualizacion': lambda row: parse_date(row[5]),
+    }, 'Articulos importados correctamente. 🎉😁🫡')
 
 @login_required
 @never_cache
@@ -273,7 +254,7 @@ def import_Preguntas(request):
         'pregunta': 0,
         'descripcion': 1,
         'fecha': lambda row: parse_date(row[2]),
-    }, 'Datos Del Mapa importados correctamente. 🎉😁🫡')
+    }, 'Preguntas importadas correctamente. 🎉😁🫡')
 
 @login_required
 @never_cache
@@ -288,7 +269,8 @@ def import_Configuraciones(request):
         'about_text_first': 6,
         'about_img_second': 7,
         'about_text_second': 8,
-    }, 'Datos Del Mapa importados correctamente. 🎉😁🫡')
+    }, 'Configuraciones importadas correctamente. 🎉😁🫡')
+
 
 """Importa datos desde un archivo CSV para un modelo específico."""
 def import_csv_data(request, model, field_map, success_message):
@@ -324,7 +306,7 @@ def parse_date(value):
     """Convierte una cadena en un objeto datetime o devuelve None si está vacío."""
     if value.strip():
         formats = [
-            '%Y-%m-%d %H:%M:%S%z',      # Fecha con hora y zona horaria
+            '%Y-%m-%d %H:%M:%S%z',       # Fecha con hora y zona horaria
             '%Y-%m-%d %H:%M:%S',         # Fecha con hora
             '%Y-%m-%d',                  # Solo fecha
             '%Y-%m-%d %H:%M:%S.%f',      # Fecha con microsegundos
@@ -337,4 +319,3 @@ def parse_date(value):
                 continue
         raise ValueError(f"Formato de fecha inválido: {value}")
     return None
-
