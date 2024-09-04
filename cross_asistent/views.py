@@ -563,8 +563,28 @@ def lista_imagenes(request):
 @login_required
 @never_cache
 def vista_galeria(request):
-    imagenes = models.galeria.objects.all()  # Recupera todas las imágenes del modelo galeria
+    # Recupera las imágenes de todos los modelos que necesitas
+    imagenes_galeria = models.galeria.objects.all()
+    imagenes_database = models.Database.objects.all()  # Suponiendo que 'Database' también tiene un campo de imagen
+    imagenes_banners = models.Banners.objects.all()    # Suponiendo que 'Banners' también tiene un campo de imagen
+
     return render(request, 'admin/vista_galeria.html', {
         'pages': functions.pages,
-        'imagenes': imagenes,  # Pasa las imágenes al contexto
+        'imagenes_galeria': imagenes_galeria,
+        'imagenes_database': imagenes_database,
+        'imagenes_banners': imagenes_banners,
     })
+
+@never_cache
+@login_required
+def eliminar_imagen(request, imagen_id):
+    if request.method == 'POST':
+        imagen = get_object_or_404(models.galeria, id=imagen_id)
+        imagen.delete()
+        return JsonResponse({
+            'success': True,
+            'functions': 'reload',
+            'message': f'Se eliminó la imagen<u>"{imagen_id}"</u> de la galeria exitosamente. ⚠️😯😬🎉',
+            'icon': 'warning'
+        }, status=200)
+    return JsonResponse({'success': False, 'message': 'Acción no permitida.'}, status=403)
