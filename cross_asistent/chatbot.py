@@ -4,18 +4,20 @@ from django.http import JsonResponse
 from django.utils import timezone
 from django.conf import settings
 from django.db.models import Q
+from django.core.cache import cache
 from .models import Database
 import openai
 import spacy
 import json
 
+# Cargar el modelo de spaCy una sola vez para mejorar el rendimiento
+nlp = spacy.load("es_core_news_sm")
+respuestas_simples = {"contacto": "Puedes contactarnos al teléfono (844)288-38-00 ☎️"}
+palabras_clave = ["hola", "servicios", "escolares", "donde", "esta"]
 
 now = timezone.localtime(timezone.now()).strftime('%d-%m-%Y_%H%M')
 
-nlp = spacy.load("es_core_news_sm")
-respuestas_simples = {"contacto": "Puedes contactarnos al teléfono (844)288-38-00 ☎️",}
-palabras_clave = ["hola", "servicios", "escolares", "donde", "esta"]
-
+# Función para generar la respuesta utilizando OpenAI
 def chatgpt(question, instructions):
     client = openai.OpenAI(api_key=settings.OPENAI_API_KEY)
     response = client.chat.completions.create(
@@ -26,10 +28,10 @@ def chatgpt(question, instructions):
         ],
         temperature=0,
     )
-    print(f"Prompt:{response.usage.prompt_tokens}")
-    print(f"Compl:{response.usage.completion_tokens}")
-    print(f"Total:{response.usage.total_tokens}")
-    print('')
+    print(f"Prompt Tokens: {response.usage.prompt_tokens}")
+    print(f"Completion Tokens: {response.usage.completion_tokens}")
+    print(f"Total Tokens: {response.usage.total_tokens}")
+    print()
     return response.choices[0].message.content
 
 # Función para calcular la similitud TF-IDF
@@ -37,10 +39,10 @@ def calculate_tfidf_similarity(pregunta, textos):
     vectorizer = TfidfVectorizer().fit_transform([pregunta] + textos)
     vectors = vectorizer.toarray()
     cosine_similarities = cosine_similarity(vectors[0:1], vectors[1:]).flatten()
-    print(f"Similares: {cosine_similarities}")
+    print(f"Similitud TF-IDF: {cosine_similarities}")
     return cosine_similarities
 
-# Función para generar la consulta de la base de datos con palabras clave y entidades
+# Función para crear la consulta a la base de datos
 def create_query(palabras_clave, entities):
     query = Q()
     for palabra in palabras_clave:
@@ -49,20 +51,22 @@ def create_query(palabras_clave, entities):
         query |= Q(titulo__icontains=entidad) | Q(informacion__icontains=entidad)
     return query
 
-# Función para extraer las entidades nombradas de la pregunta
+# Función para extraer entidades nombradas de la pregunta
 def extract_entities(pregunta):
     doc = nlp(pregunta)
     entities = [ent.text for ent in doc.ents]
     print(f"Entidades nombradas: {entities}")
+    print()
     return entities
 
-# Función para procesar la pregunta, eliminando stopwords y lematizando
+# Función para procesar la pregunta
 def process_question(pregunta):
-    pregunta_normalizada = pregunta.lower().strip()  # Se asume que la normalización ya se hizo en el frontend
+    pregunta_normalizada = pregunta.lower().strip()
     doc = nlp(pregunta_normalizada)
     tokens = [token.lemma_ for token in doc if (not token.is_stop and token.is_alpha) or token.text in palabras_clave]
     pregunta_procesada = " ".join(tokens)
     print(f"Pregunta procesada: {pregunta_procesada}")
+    print()
     return pregunta_procesada
 
 # Función para calcular la puntuación de cada resultado
@@ -85,10 +89,10 @@ def score_result(result, palabras_clave, entities, pregunta_procesada):
     tfidf_sim = calculate_tfidf_similarity(pregunta_procesada, [texto_completo])[0]
     score += tfidf_sim * 5
 
-    print(f"Score: {score}")
+    print(f"Puntuación del resultado: {score}")
     return score
 
-# Función para filtrar los resultados de la base de datos
+# Función para filtrar y ordenar resultados de la base de datos
 def filter_results(pregunta):
     palabras_clave = process_question(pregunta)
     entities = extract_entities(pregunta)
@@ -105,8 +109,8 @@ def chatbot(request):
     if request.method == 'POST':
         try:
             data = json.loads(request.body)
-            question = data.get('question', '').strip()  # Se asume que la pregunta ya fue normalizada
-
+            question = data.get('question', '').strip()
+            
             if not question:
                 return JsonResponse({'success': False, 'message': 'No puedo responder una pregunta que no existe 🤔🧐😬.'})
 
@@ -115,26 +119,21 @@ def chatbot(request):
             if respuesta_simple:
                 return JsonResponse({'success': True, 'answer': {'informacion': respuesta_simple}})
 
+            # Cachear preguntas frecuentes para mejorar el rendimiento
+            cache_key = f"chatbot_{question}"
+            cached_response = cache.get(cache_key)
+            if cached_response:
+                print(f"Respuesta cacheada: {cached_response}")
+                print()
+                return JsonResponse({'success': True, 'answer': cached_response})
+
             # Procesar la pregunta y buscar coincidencias en la base de datos
-            pregunta_procesada = process_question(question)
-            entidades = extract_entities(question)
-            palabras_clave = pregunta_procesada.split()
-            query = create_query(palabras_clave, entidades)
+            resultados_filtrados = filter_results(question)
+            mejor_coincidencia = resultados_filtrados[0][0] if resultados_filtrados else None
 
-            coincidencias = Database.objects.filter(query)
-            mejor_coincidencia = None
-            mejor_puntuacion = -1
-
-            for coincidencia in coincidencias:
-                puntuacion = score_result(coincidencia, palabras_clave, entidades, pregunta_procesada)
-                if puntuacion > mejor_puntuacion:
-                    mejor_puntuacion = puntuacion
-                    mejor_coincidencia = coincidencia
-
-            # Si hay una coincidencia en la base de datos
             if mejor_coincidencia:
                 informacion = mejor_coincidencia.informacion
-                system_prompt = f"Eres Hawky,asistente de la Universidad Tecnologica de Coahuila.Utiliza emojis al final.no saludar,responde la pregunta con esta información: {informacion}. hoy:{now}."
+                system_prompt = f"Eres Hawky, asistente de la Universidad Tecnologica de Coahuila. Utiliza emojis al final, no saludar. Responde la pregunta con esta información: {informacion}. Hoy: {now}."
                 answer = chatgpt(question, system_prompt)
 
                 respuesta = {
@@ -145,7 +144,11 @@ def chatbot(request):
                     "imagenes": mejor_coincidencia.imagen.url if mejor_coincidencia.imagen else None
                 }
 
-                print(f"Respuesta: {respuesta, question}")
+                # Almacenar en cache la respuesta para preguntas futuras similares
+                cache.set(cache_key, respuesta, timeout=60*60*24)  # Cache de 24 horas
+
+                print(f"Respuesta generada: {respuesta}")
+                print()
                 return JsonResponse({'success': True, 'answer': respuesta})
 
             # Respuesta por defecto si no hay coincidencias

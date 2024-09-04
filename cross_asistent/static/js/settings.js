@@ -459,10 +459,6 @@ function jsonSubmit(e) {
         formData.set("textTiny", contenidoTextTiny);
     }
 
-    // document.addEventListener("DOMContentLoaded", function () {
-    // console.info('Form: ',thisForm);
-    // console.info('Submit: ',thisForm.querySelector('button[type="submit"]'));
-    // });
     try {
         formSubmitBtn = thisForm.querySelector('button[type="submit"]');
         if (formSubmitBtn) {
@@ -522,6 +518,10 @@ function jsonSubmit(e) {
 
                 const passwordInputs = document.querySelectorAll('input[type="password"]');
                 passwordInputs.forEach((input) => (input.value = ""));
+
+                setTimeout(() => {
+                    thisForm.querySelector('button[type="submit"]').removeAttribute("disabled");
+                }, 1000);
 
                 alertSToast(dataPosition, timerOut, dataIcon, dataMessage, alertfunction);
             } else if (data.success == false) {

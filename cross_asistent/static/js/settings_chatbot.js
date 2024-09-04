@@ -56,6 +56,7 @@ $(document).ready(function () {
 const contOutput = document.querySelector("#output");
 let audioEnabled = true;
 let saludoMostrado = true;
+let lastText;
 
 // Función para Mostrar y Mandar la Pregunta del Usuario ################
 function chatSubmit(e) {
@@ -81,12 +82,9 @@ function chatSubmit(e) {
     }, 20);
 
     const loadInfo = `<div class="chat_msg asistent_response my-4" data-tokeid="loadInfoDelete"><div class="pulse-container"><div class="pulse-bubble bg_detail pulse-bubble-1"></div><div class="pulse-bubble bg_detail pulse-bubble-2"></div><div class="pulse-bubble bg_detail pulse-bubble-3"></div></div></div>`;
-    const loadMsg = document.querySelector(`.asistent_response[data-tokeid="loadInfoDelete"]`);
     contOutput.insertAdjacentHTML("beforeend", loadInfo);
     setTimeout(function () {
-        if (loadMsg) {
-            loadMsg.classList.add("visible");
-        }
+        document.querySelector(`.asistent_response[data-tokeid="loadInfoDelete"]`).classList.add("visible")
         setTimeout(scrollToBottom, 500);
     }, 200);
 
@@ -111,6 +109,7 @@ function chatSubmit(e) {
             if (data.success) {
                 displayChatbotResponse(data.answer);
             } else {
+                // console.error("Error:", data.message);
                 alertSToast("top", 8000, "error", `Error: ${data.message}`);
             }
         })
@@ -145,12 +144,19 @@ function displayChatbotResponse(varAnswer) {
         btnRedir = `<br><br> <a class="btn bg_detail mb-2 max_w300" ${btnBlanck} href="${dataRedirigir}" >Ver Más <i class="fa-solid fa-arrow-up-right-from-square ms-1"></i></a>`;
     }
 
-    lastText = varAnswer.informacion;
+    lastText = varAnswer.informacion.replace(/\n/g, "<br>");;
+    console.log(lastText);
     const htmlBlock = `<div class="chat_msg asistent_response" data-tokeid="${valID}">${lastText} ${btnRedir} ${viewImage}</div>`;
 
     contOutput.insertAdjacentHTML("beforeend", htmlBlock);
     const asistent_response = document.querySelector(`.asistent_response[data-tokeid="${valID}"]`);
-    document.querySelector(`.asistent_response[data-tokeid="loadInfoDelete"]`).remove();
+
+    document
+        .querySelectorAll(
+            `.asistent_response[data-tokeid*="loadInfoDelete"], .asistent_response[data-tokeid^="loadInfoDelete"]`
+        )
+        .forEach((element) => element.remove());
+
     setTimeout(function () {
         asistent_response.classList.add("visible");
         setTimeout(scrollToBottom, 350);
