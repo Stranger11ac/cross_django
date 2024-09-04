@@ -406,6 +406,14 @@
                     </div>
                     <button type="submit" class="d-none" id="formqr"></button>
                   </form>
+                  <br>
+                  <form action="{% url 'update_settings' %}" class="form-check" method="post" data-submit-blur="formcalendar" data-submit-form>
+                    {% csrf_token %}
+                    <input type="hidden" id="btnqrpost" name="btnqrpost" value="True" />
+                    <input class="form-check-input input_change" {% if config.qr_button %}checked{% endif %} type="checkbox" id="btnqr" name="btnqr" />
+                    <label class="form-check-label" for="btnqr">Mostrar Imagen del QR</label>
+                    <button type="submit" class="d-none" id="formcalendar"></button>
+                  </form>
                 </div>
               </div>
             </div>
@@ -421,6 +429,7 @@
                 <div class="accordion-body">
                   <form action="{% url 'update_settings' %}" class="form-check" method="post" data-submit-blur="formcalendar" data-submit-form>
                     {% csrf_token %}
+                    <input type="hidden" id="btnsYearpost" name="btnsYearpost" value="True" />
                     <input class="form-check-input input_change" {% if config.calendar_btnsYear %}checked{% endif %} type="checkbox" id="btnsYear"
                       name="btnsYear" />
                     <label class="form-check-label" for="btnsYear">Mostrar Botones para cambiar año</label>

@@ -49,10 +49,12 @@ def index(request):
     
     for oneconfig in settingsall:
         settings_img_qr = oneconfig.qr_image.url
+        settings_qr_btn = oneconfig.qr_button
 
     return render(request, 'index.html', {
         'banners': banners_modificados,
         'img_qr': settings_img_qr,
+        'btn_qr': settings_qr_btn,
         'active_page': 'inicio'
     })
 

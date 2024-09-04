@@ -7,9 +7,11 @@
 <script type="module" src="{% static 'js/model-viewer.min.js' %}"></script>
 {% endblock %}
 {% block qrBTN %}
+{% if btn_qr %}
 <button type="button" class="btn btn_detail btn-floating p-0 me-2 me-md-0 ms-md-2" data-mdb-ripple-init data-mdb-modal-init data-mdb-target="#modalqr">
     <i class="fa-solid fa-qrcode fs-14"></i>
 </button>
+{% endif %}
 {% endblock %}
 {% block content %}
 <main class="main_anchor">

@@ -6,6 +6,7 @@ let microphonerecord = false;
 let newMessageChat = false;
 let lastText = "";
 let microphoneSpeech = true;
+let isSpeaking = false;
 
 // ##############################################################################################
 // ###################################### Funciones Jquery ######################################
@@ -95,7 +96,6 @@ try {
                     interimTranscript += transcript;
                 }
             }
-
             textarea.value = finalTranscript + interimTranscript;
         };
 
@@ -129,22 +129,21 @@ try {
         function stopRecording() {
             recognition.stop();
             $("#btn_controls_icon").addClass("fa-microphone").removeClass("fa-stop");
-            // alertSToast('top', 8000, 'warning', 'stop recording');
         }
 
         recVoice.on("click", function () {
             if (recVoice.hasClass("readyRecVoice")) {
                 if (recognizing) {
                     stopRecording();
-                    if (finalTranscript.trim() !== "") {
+                    setTimeout(() => {
                         submitButton.click();
-                        // } else {
-                        //     alertSToast("top", 8000, "error", "Está vacío.");
-                    }
+                    }, 500);
                 } else {
                     try {
-                        recognition.start();
+                        isSpeaking = true;
+                        speakButton.click();
                         $("#btn_controls_icon").addClass("fa-stop").removeClass("fa-microphone");
+                        recognition.start();
                     } catch (error) {
                         console.error("Error al iniciar el reconocimiento: ", error);
                         alertSToast("top", 8000, "error", "No se pudo iniciar el reconocimiento de voz.");
@@ -171,7 +170,6 @@ if ("speechSynthesis" in window) {
     const synth = window.speechSynthesis;
 
     let voices = [];
-    let isSpeaking = false;
     let utterance;
 
     function loadVoices() {
@@ -208,6 +206,11 @@ if ("speechSynthesis" in window) {
 
     function removeEmojis(text) {
         return text
+            .replace("*", "")
+            .replace("#", "")
+            .replace("(", "")
+            .replace(")", "")
+            .replace("@", "")
             .replace(/[\u{1F600}-\u{1F64F}]/gu, "") // Emoticonos
             .replace(/[\u{1F300}-\u{1F5FF}]/gu, "") // Símbolos y pictogramas
             .replace(/[\u{1F680}-\u{1F6FF}]/gu, "") // Transporte y símbolos de mapa
@@ -354,7 +357,7 @@ function displayChatbotResponse(varAnswer) {
         btnRedir = `<br><br> <a class="btn bg_detail mb-2 max_w300" ${btnBlanck} href="${dataRedirigir}" >Ver Más <i class="fa-solid fa-arrow-up-right-from-square ms-1"></i></a>`;
     }
 
-    lastText = varAnswer.informacion;
+    lastText = varAnswer.informacion.replace(/\n/g, "<br>");
     const htmlBlock = `<div class="chat_msg asistent_response" data-tokeid="${valID}">${lastText} ${btnRedir} ${viewImage}</div>`;
 
     contOutput.insertAdjacentHTML("beforeend", htmlBlock);

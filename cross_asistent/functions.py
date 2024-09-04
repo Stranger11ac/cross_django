@@ -623,8 +623,11 @@ def settings_update(request):
     if request.method == 'POST':
         try:
             qrImgPOST = request.FILES.get('qrImage')
+            qrButtonPOST = request.POST.get('btnqrpost')
+            qrButton = request.POST.get('btnqr')
             aboutimgfirst = request.FILES.get('firstimage')
             aboutimgsecond = request.FILES.get('secondimage')
+            btnyearpost = request.POST.get('btnsYearpost')
             btnyear_calendar = request.POST.get('btnsYear')
             copyryear = request.POST.get('cr_year')
             utclink = request.POST.get('utclink')
@@ -635,7 +638,9 @@ def settings_update(request):
             config = get_object_or_404(models.Configuraciones, id='1')
             if qrImgPOST:
                 config.qr_image = qrImgPOST
-            if btnyear_calendar:
+            if qrButtonPOST:
+                config.qr_button = True if qrButton else False
+            if btnyearpost:
                 config.calendar_btnsYear = True if btnyear_calendar else False
             if copyryear:
                 config.copyright_year = copyryear

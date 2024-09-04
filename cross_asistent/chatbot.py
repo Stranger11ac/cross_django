@@ -60,10 +60,15 @@ def extract_entities(pregunta):
 def process_question(pregunta):
     pregunta_normalizada = pregunta.lower().strip()  # Se asume que la normalización ya se hizo en el frontend
     doc = nlp(pregunta_normalizada)
-    tokens = [token.lemma_ for token in doc if (not token.is_stop and token.is_alpha) or token.text in palabras_clave]
+    
+    # Asegurarse de incluir palabras clave específicas que deseas no eliminar
+    palabras_clave_personalizadas = {"que", "hay", "como", "donde"}
+    tokens = [token.lemma_ for token in doc if (not token.is_stop and token.is_alpha) or token.text in palabras_clave_personalizadas or token.text in palabras_clave]
+    
     pregunta_procesada = " ".join(tokens)
     print(f"Pregunta procesada: {pregunta_procesada}")
     return pregunta_procesada
+
 
 # Función para calcular la puntuación de cada resultado
 def score_result(result, palabras_clave, entities, pregunta_procesada):
@@ -84,8 +89,6 @@ def score_result(result, palabras_clave, entities, pregunta_procesada):
     
     tfidf_sim = calculate_tfidf_similarity(pregunta_procesada, [texto_completo])[0]
     score += tfidf_sim * 5
-
-    print(f"Score: {score}")
     return score
 
 # Función para filtrar los resultados de la base de datos
@@ -134,7 +137,7 @@ def chatbot(request):
             # Si hay una coincidencia en la base de datos
             if mejor_coincidencia:
                 informacion = mejor_coincidencia.informacion
-                system_prompt = f"Eres Hawky,asistente de la Universidad Tecnologica de Coahuila(UTC) .Utiliza emojis.no saludar,responde la pregunta con esta información: {informacion}. hoy:{now}. responde preguntas solamente con relacion a la universidad"
+                system_prompt = f"Eres Hawky,asistente de la Universidad Tecnologica de Coahuila(UTC) .Utiliza emojis.no saludar,responde la pregunta con esta información, respeta la informacion: {informacion}. hoy:{now}. responde preguntas solamente con relacion a la universidad"
                 answer = chatgpt(question, system_prompt)
 
                 respuesta = {

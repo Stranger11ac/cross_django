@@ -185,6 +185,7 @@ class Preguntas(models.Model):
     
 class Configuraciones(models.Model):
     qr_image = models.ImageField(upload_to=set_conf_path, max_length=120)
+    qr_button = models.BooleanField(default=True)
     redes_sociales = models.TextField(blank=True, null=True)
     copyright_year = models.CharField(max_length=50, default='2020')
     utc_link = models.TextField()
