@@ -1,19 +1,18 @@
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 from django.http import JsonResponse
+from django.utils import timezone
 from django.conf import settings
 from django.db.models import Q
 from .models import Database
-import unicodedata
 import openai
 import spacy
 import json
 
-# ChatBot ----------------------------------------------------------
-# Cargar el modelo de lenguaje español
-# analizar texto en aplicaciones de procesamiento de lenguaje natural.
+
+now = timezone.localtime(timezone.now()).strftime('%d-%m-%Y_%H%M')
+
 nlp = spacy.load("es_core_news_sm")
-# Diccionario de respuestas simples predefinidas
 respuestas_simples = {"contacto": "Puedes contactarnos al teléfono (844)288-38-00 ☎️",}
 palabras_clave = ["hola", "servicios", "escolares", "donde", "esta"]
 
@@ -135,7 +134,7 @@ def chatbot(request):
             # Si hay una coincidencia en la base de datos
             if mejor_coincidencia:
                 informacion = mejor_coincidencia.informacion
-                system_prompt = f"Eres Hawky, un asistente de la Universidad Tecnologica de Coahuila. Utiliza algunos emojis sutilmente. Responde la pregunta con esta información pero tú no hagas preguntas: {informacion}"
+                system_prompt = f"Eres Hawky,asistente de la Universidad Tecnologica de Coahuila(UTC) .Utiliza emojis.no saludar,responde la pregunta con esta información: {informacion}. hoy:{now}. responde preguntas solamente con relacion a la universidad"
                 answer = chatgpt(question, system_prompt)
 
                 respuesta = {
@@ -148,13 +147,12 @@ def chatbot(request):
 
                 print(f"Respuesta: {respuesta, question}")
                 return JsonResponse({'success': True, 'answer': respuesta})
-
-            # Respuesta por defecto si no hay coincidencias
-            respuesta_default = {
-                "informacion": "Lo siento, no encontré información relacionada con lo que me pides 🤔. Puedes buscar más información en la página de preguntas frecuentes o, si gustas, también puedes enviarnos tus dudas. 😊😁",
-                "redirigir": "preguntas_frecuentes/",
-                "blank": False,
-            }
+            else:
+                respuesta_default = {
+                    "informacion": "Lo siento, no encontré información relacionada con lo que me pides 🤔. Puedes buscar más información en la página de preguntas frecuentes o, si gustas, también puedes enviarnos tus dudas. 😊😁",
+                    "redirigir": "preguntas_frecuentes/",
+                    "blank": False,
+                }
             return JsonResponse({'success': True, 'answer': respuesta_default})
 
         except json.JSONDecodeError:

@@ -4,7 +4,8 @@ const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 
 let microphonerecord = false;
 let newMessageChat = false;
-let lastText = ""; // Definir lastText a nivel global
+let lastText = "";
+let microphoneSpeech = true;
 
 // ##############################################################################################
 // ###################################### Funciones Jquery ######################################
@@ -15,7 +16,11 @@ $(document).ready(function () {
         $(".controls_btn_microphone").click(() => {
             $(".asistent_group").addClass("open open_controls bg-body-tertiary");
             $(".btn_controls").addClass("text-white");
-            $("#btn_controls_icon").removeClass("fa-comment").addClass("fa-microphone");
+            if (microphoneSpeech) {
+                $("#btn_controls_icon").removeClass("fa-comment").addClass("fa-microphone");
+            } else {
+                $("#btn_controls_icon").removeClass("fa-comment").addClass("fa-microphone-slash");
+            }
             setTimeout(() => {
                 $(".btn_controls").addClass("readyRecVoice");
             }, 1100);
@@ -55,6 +60,200 @@ $(document).ready(function () {
 // ##############################################################################################
 // #################################### Funciones JAVASCRIPT ####################################
 // ##############################################################################################
+
+// Activar y desactivar micrófono ###########################################
+const recVoice = $(".controls_btn_microphone");
+const textarea = document.getElementById("txtQuestion");
+const submitButton = document.getElementById("chatForm_submit");
+let finalTranscript = "";
+let recognition;
+let recognizing = false;
+
+try {
+    // Verifica si el navegador soporta la Web Speech API
+    if ("webkitSpeechRecognition" in window) {
+        recognition = new webkitSpeechRecognition();
+        recognition.lang = "es-MX";
+        recognition.continuous = true;
+        recognition.interimResults = true;
+
+        recognition.onstart = function () {
+            recognizing = true;
+            microphonerecord = true;
+            finalTranscript = "";
+        };
+
+        recognition.onresult = function (event) {
+            let interimTranscript = "";
+
+            for (let i = event.resultIndex; i < event.results.length; i++) {
+                let transcript = event.results[i][0].transcript;
+
+                if (event.results[i].isFinal) {
+                    finalTranscript += transcript;
+                } else {
+                    interimTranscript += transcript;
+                }
+            }
+
+            textarea.value = finalTranscript + interimTranscript;
+        };
+
+        recognition.onerror = function (event) {
+            console.error("Error de reconocimiento:", event.error);
+            if (event.error === "not-allowed") {
+                alertSToast(
+                    "top",
+                    8000,
+                    "error",
+                    "Permiso de micrófono denegado. Por favor, permite el acceso al micrófono."
+                );
+            } else if (event.error === "no-speech") {
+                alertSToast("top", 8000, "error", "No se detectó ninguna voz. Por favor, intenta de nuevo.");
+            } else if (event.error === "network") {
+                alertSToast("top", 8000, "error", "Error de red. Por favor, verifica tu conexión.");
+            }
+
+            console.error("Error de reconocimiento: ", event.error);
+            recognizing = false;
+            microphonerecord = false;
+            $("#btn_controls_icon").removeClass("fa-stop").addClass("fa-microphone");
+            $(".btn_controls").removeClass("readyRecVoice");
+        };
+
+        recognition.onend = function () {
+            recognizing = false;
+            $("#btn_controls_icon").removeClass("fa-stop").addClass("fa-microphone");
+        };
+
+        function stopRecording() {
+            recognition.stop();
+            $("#btn_controls_icon").addClass("fa-microphone").removeClass("fa-stop");
+            // alertSToast('top', 8000, 'warning', 'stop recording');
+        }
+
+        recVoice.on("click", function () {
+            if (recVoice.hasClass("readyRecVoice")) {
+                if (recognizing) {
+                    stopRecording();
+                    if (finalTranscript.trim() !== "") {
+                        submitButton.click();
+                        // } else {
+                        //     alertSToast("top", 8000, "error", "Está vacío.");
+                    }
+                } else {
+                    try {
+                        recognition.start();
+                        $("#btn_controls_icon").addClass("fa-stop").removeClass("fa-microphone");
+                    } catch (error) {
+                        console.error("Error al iniciar el reconocimiento: ", error);
+                        alertSToast("top", 8000, "error", "No se pudo iniciar el reconocimiento de voz.");
+                    }
+                }
+            }
+        });
+    } else {
+        microphoneSpeech = false;
+        console.warn("Este navegador no soporta la Web Speech API");
+        $("#btn_controls_icon").addClass("fa-microphone-slash");
+        alertSToast("center", 9000, "warning", "Al parecer tu navegador no permite activar el micrófono. 🤔😯😥");
+    }
+} catch (error) {
+    alertSToast("top", 10000, "warning", error);
+}
+
+// Dictado de texto ##################################
+const speakButton = $(".speak_btn");
+const voiceSelect = document.getElementById("voice_select");
+const rateInput = document.getElementById("rate_input");
+
+if ("speechSynthesis" in window) {
+    const synth = window.speechSynthesis;
+
+    let voices = [];
+    let isSpeaking = false;
+    let utterance;
+
+    function loadVoices() {
+        voices = synth.getVoices();
+        voiceSelect.innerHTML = "";
+
+        let defaultOptionAdded = false;
+
+        voices.forEach((voice, index) => {
+            if (voice.lang.startsWith("es")) {
+                const option = document.createElement("option");
+                option.textContent = `${voice.name} (${voice.lang})`;
+                option.value = index;
+                voiceSelect.appendChild(option);
+
+                // Check for the specific voice and set it as selected if available
+                if (voice.name.includes("Microsoft Sebastian Online") && voice.lang === "es-VE") {
+                    voiceSelect.value = index;
+                    defaultOptionAdded = true;
+                }
+            }
+        });
+
+        // If the default voice is not found, select the first Spanish voice available
+        if (!defaultOptionAdded && voiceSelect.options.length > 0) {
+            voiceSelect.value = 0;
+        }
+    }
+
+    if (synth.onvoiceschanged !== undefined) {
+        synth.onvoiceschanged = loadVoices;
+    }
+    loadVoices();
+
+    function removeEmojis(text) {
+        return text
+            .replace(/[\u{1F600}-\u{1F64F}]/gu, "") // Emoticonos
+            .replace(/[\u{1F300}-\u{1F5FF}]/gu, "") // Símbolos y pictogramas
+            .replace(/[\u{1F680}-\u{1F6FF}]/gu, "") // Transporte y símbolos de mapa
+            .replace(/[\u{2600}-\u{26FF}]/gu, "") // Otros símbolos
+            .replace(/[\u{2700}-\u{27BF}]/gu, "") // Símbolos de dingbats
+            .replace(/[\u{1F900}-\u{1F9FF}]/gu, "") // Símbolos suplementarios
+            .replace(/[\u{1FA70}-\u{1FAFF}]/gu, ""); // Objetos misceláneos
+    }
+
+    function ttsCustom(valuetext) {
+        if (isSpeaking) {
+            $("#speak_btn_icon").addClass("fa-regular fa-circle-play").removeClass("fa-solid fa-circle-pause");
+            synth.cancel();
+            isSpeaking = false;
+        } else {
+            $("#speak_btn_icon").removeClass("fa-regular fa-circle-play").addClass("fa-solid fa-circle-pause");
+
+            valuetext = removeEmojis(valuetext);
+            utterance = new SpeechSynthesisUtterance(valuetext);
+            const selectedVoice = voices[voiceSelect.value];
+            utterance.voice = selectedVoice;
+            utterance.rate = parseFloat(rateInput.value) || 1;
+
+            synth.speak(utterance);
+            isSpeaking = true;
+
+            utterance.onend = () => {
+                isSpeaking = false;
+                $("#speak_btn_icon").addClass("fa-regular fa-circle-play").removeClass("fa-solid fa-circle-pause");
+            };
+        }
+    }
+} else {
+    console.warn("Este navegador no soporta API de síntesis de voz");
+    alertSToast("center", 7000, "warning", "Al parecer tu navegador no permite la API de síntesis de voz. 😯😥🥲");
+}
+
+// Espera a que el DOM se cargue para manejar el botón de hablar
+document.addEventListener("DOMContentLoaded", () => {
+    let initialText = $('[data-tokeid="initialMessage"]').text();
+    speakButton.on("click", () => {
+        if (!newMessageChat) {
+            ttsCustom(initialText);
+        }
+    });
+});
 
 // Función de preguntar a chatGPT https://platform.openai.com/ #################################
 const contOutput = document.querySelector("#output");
@@ -164,8 +363,19 @@ function displayChatbotResponse(varAnswer) {
     setTimeout(function () {
         asistent_response.classList.add("visible");
         setTimeout(scrollToBottom, 350);
+
+        if (microphonerecord) {
+            let speachText = $(`[data-tokeid="${valID}"]`).text();
+            ttsCustom(speachText);
+        }
     }, 20);
 }
+
+speakButton.on("click", () => {
+    if (newMessageChat) {
+        ttsCustom(lastText);
+    }
+});
 
 // Saludo Inicial ######################
 if (contOutput && saludoMostrado) {
@@ -178,6 +388,7 @@ if (contOutput && saludoMostrado) {
     }, 500);
 }
 
+// Hacer scroll con un nuevo mensaje en el chat ####################
 function scrollToBottom() {
     contOutput.scrollTop = contOutput.scrollHeight;
 }
@@ -190,4 +401,30 @@ if (contOutput) {
     });
     scrollToBottom();
     observer.observe(contOutput, { childList: true, subtree: true });
+}
+
+function alertSToast(posittionS, timerS, iconS, titleS, didDestroyS) {
+    const Toast = Swal.mixin({
+        toast: true,
+        position: posittionS,
+        showConfirmButton: false,
+        showCloseButton: true,
+        timer: timerS,
+        timerProgressBar: true,
+        customClass: {
+            icon: "icon_alert",
+            title: "title_alert",
+            timerProgressBar: "progressbar_alert",
+            closeButton: "close_button_alert",
+        },
+        didOpen: (toast) => {
+            toast.addEventListener("mouseenter", Swal.stopTimer);
+            toast.addEventListener("mouseleave", Swal.resumeTimer);
+        },
+        didDestroy: didDestroyS,
+    });
+    Toast.fire({
+        icon: iconS,
+        title: titleS,
+    });
 }

@@ -7,7 +7,6 @@ from django.db import models, transaction
 from django.http import JsonResponse
 from django.urls import reverse
 from . import functions, models
-import json
 
 mapaall = models.Mapa.objects.all()
 databaseall = models.Database.objects.all()
