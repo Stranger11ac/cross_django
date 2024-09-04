@@ -661,3 +661,24 @@ def settings_update(request):
         except Exception as e:
             return JsonResponse({'success': False, 'message': f'Ocurrio un error. {str(e)}'}, status=404)
     return JsonResponse({'success': False, 'message': 'Acción no permitida.'}, status=400)
+
+@login_required
+@never_cache
+def galeria_create(request):
+    if request.method == 'POST':
+        try:
+            imagenPOST = request.FILES.get('imagen')
+            if imagenPOST:
+                nueva_imagen = models.galeria.objects.create(
+                    imagen=imagenPOST,
+                )
+                nueva_imagen.save()
+                # Enviar URL de la imagen guardada en la respuesta JSON
+                return JsonResponse({'success': True, 'image_url': nueva_imagen.imagen.url, 'message': 'Imagen subida exitosamente.'}, status=200)
+            else:
+                return JsonResponse({'success': False, 'message': 'No se seleccionó ninguna imagen.'}, status=400)
+        
+        except Exception as e:
+            return JsonResponse({'success': False, 'message': f'Ocurrió un error 😯😥 <br>{str(e)}'}, status=400)
+    
+    return JsonResponse({'error': 'Método no válido'}, status=400)

@@ -564,7 +564,8 @@ def lista_imagenes(request):
 @login_required
 @never_cache
 def vista_galeria(request):
-
-    return render(request, 'admin/vista_galeria.html',{
-                'pages':functions.pages,
+    imagenes = models.galeria.objects.all()  # Recupera todas las imágenes del modelo galeria
+    return render(request, 'admin/vista_galeria.html', {
+        'pages': functions.pages,
+        'imagenes': imagenes,  # Pasa las imágenes al contexto
     })

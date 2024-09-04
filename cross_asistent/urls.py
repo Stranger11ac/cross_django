@@ -31,6 +31,8 @@ urlpatterns = [
     path('administracion/perfil/', views.ver_perfil, name='perfil'),
     path('administracion/perfil/editar_perfil/', functions.editar_perfil, name='editprofile'),
     path('administracion/galeria/', views.vista_galeria, name='vista_galeria'),
+    path('administracion/galeria/create/', functions.galeria_create, name='galeria_create'),
+
 
     
     # Usuarios ----------------------------------------------------------
