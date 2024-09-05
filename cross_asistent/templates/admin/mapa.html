@@ -74,13 +74,21 @@
                     Cambiar foto <i class="fa-regular fa-image ms-1"></i></label>
             </div>
             <input type="text" name="isNew" id="isNewEdif" class="d-none">
-            
-            <div class="input-group form-outline my-4 d-none" data-mdb-input-init>
-                <input type="text" name="uuid" id="uuid" class="form-control d-none" data-uuid data-new-uid="{{UID}}" readonly required>
-                <label class="form-label d-none" for="uuid">UUID:</label>
+            <input type="text" name="uuid" id="uuid" class="form-control d-none" data-uuid data-new-uid="{{UID}}" readonly required>
+
+            <!-- Marcador de imagen -->
+            <div class="mb-4">
+                <input class="form-check-input" type="checkbox" id="ismarker" name="ismarker" />
+                <label class="form-check-label" for="ismarker">Marcador de Imagen</label>
             </div>
+            <div class="form-outline none mb-4" data-mdb-input-init id="sizemarkerdiv">
+                <input type="number" id="sizemarker" name="sizemarker" class="form-control active text-end" min="0.01" max="1" step="0.1" value="0.05"
+                    required />
+                <label class="form-label" for="sizemarker">Tamaño:</label>
+            </div>
+
             <!-- Color del poligono -->
-            <section class="row">
+            <section class="row" data-notmarker>
                 <div class="col-10">
                     <div class="form-outline" data-mdb-input-init>
                         <input type="text" class="form-control" id="namecolor" name="namecolor" autocapitalize="off" data-colorName list="colorsList" />
@@ -95,7 +103,8 @@
                 </div>
             </section>
             <!-- Poligonos, boton e inputs -->
-            <button type="button" id="btnPoligon" class="btn btn_detail btn-block text-white mt-4" data-mdb-ripple-init data-mdb-ripple-color="white">
+            <button type="button" id="btnPoligon" class="btn btn_detail btn-block text-white mt-4" data-mdb-ripple-init data-mdb-ripple-color="white"
+                data-notmarker>
                 Dibujar Polígono<i class="fa-solid fa-draw-polygon ms-1"></i>
             </button>
             <button type="button" id="btnPoligonCancel" class="btn btn-danger btn-block mt-4 none" data-mdb-ripple-init data-mdb-ripple-color="white">
@@ -140,7 +149,7 @@
                 </button>
             </div>
             <!-- TinyMCE: Contenido de texto -->
-            <div class="mt-4">
+            <div class="mt-4" data-notmarker>
                 <textarea id="textTiny" class="form-control" name="contenidoWord"
                     placeholder="Escribe a detalle sobre el lugar, puedes hacer listas, encabezados, parrafos y tablas"></textarea>
             </div>

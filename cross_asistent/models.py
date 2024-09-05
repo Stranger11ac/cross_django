@@ -156,15 +156,9 @@ class Mapa(models.Model):
     p4_polygons = models.CharField(max_length=150, blank=True, null=True)
     is_marker = models.BooleanField(default=False)
     size_marker = models.CharField(max_length=4, default='0.05')
-    img_marker = models.ImageField(upload_to=set_imgMarker_path, max_length=120, blank=True, null=True)
     
     def __str__(self):
         return self.nombre
-    
-    def delete(self, *args, **kwargs):
-        if self.img_marker:
-            self.img_marker.delete()
-        super(Mapa, self).delete(*args, **kwargs)
 
 class galeria(models.Model):
     imagen = models.ImageField(upload_to=set_imgs_path, max_length=120, blank=True, null=True)

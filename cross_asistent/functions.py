@@ -333,7 +333,6 @@ def database_list(request):
             'imagen': imagen_url,
             'fecha_modificacion': dato.fecha_modificacion,
         })
-    # allitemsdb = list(models.Database.objects.values())
     data = {'infodb': datos_modificados}
     return JsonResponse(data)
 
@@ -553,6 +552,8 @@ def mapa_data(request):
             "imagen_url": imagen,
             "nombre": mapa.nombre,
             "informacion": mapa.informacion,
+            "ismarker": mapa.is_marker,
+            "sizemarker": mapa.size_marker,
             "door_coords": [float(coord) for coord in mapa.door_cords.split(",")],
             "polygons": [
                 [float(coord) for coord in mapa.p1_polygons.split(",")],
@@ -568,11 +569,14 @@ def mapa_data(request):
 def mapa_markers(request):
     mapas = models.Mapa.objects.filter(is_marker=True)
     data = []
-    for mapa in mapas:        
+    for mapa in mapas:
+        imagen_mark = get_object_or_404(models.Database, uuid=mapa.uuid)
         item = {
             "uuid": mapa.uuid,
             "nombre": mapa.nombre,
-            "imagen": mapa.img_marker.url,
+            "ismarker": mapa.is_marker,
+            "sizemarker": mapa.size_marker,
+            "imagen": imagen_mark.imagen.url,
             "icon_size": float(mapa.size_marker),
             "door_coords": [float(coord) for coord in mapa.door_cords.split(",")],
         }
@@ -662,6 +666,7 @@ def settings_update(request):
             return JsonResponse({'success': False, 'message': f'Ocurrio un error. {str(e)}'}, status=404)
     return JsonResponse({'success': False, 'message': 'Acción no permitida.'}, status=400)
 
+# Galeria ----------------------------------------------------------
 @login_required
 @never_cache
 def galeria_create(request):

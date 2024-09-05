@@ -748,7 +748,7 @@ main.main_anchor {
     bottom: 5vh;
     margin: 0 5%;
     min-height: 80px;
-    width: calc(100% - 10%);
+    width: 90%;
     transform-origin: bottom center;
     opacity: 0;
     transform: scaleY(0);
@@ -780,7 +780,7 @@ main.main_anchor {
 
 /* Caja de Respuestas */
 .asistent_group .box_asistent .output_messages {
-    --bottom_position: 180px;
+    --bottom_position: 200px;
     scroll-snap-type: y proximity;
     scroll-behavior: smooth;
     overflow-y: scroll;
@@ -792,7 +792,7 @@ main.main_anchor {
     transform: scaleY(0);
     bottom: var(--bottom_position);
     transform-origin: bottom center;
-    max-height: calc(88vh - var(--bottom_position));
+    max-height: calc(80vh - var(--bottom_position));
     transition: transform 0.3s ease, opacity 0.3s ease;
 }
 

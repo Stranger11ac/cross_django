@@ -470,6 +470,7 @@ def update_create_pleace_map(request):
         return redirect('update_mapa')
 
     isNewPost = request.POST.get('isNew')
+    is_markerPost = request.POST.get('ismarker')
     uuidPost = request.POST.get('uuid')
     nombrePost = request.POST.get('nombreEdificio')
     colorPost = request.POST.get('colorEdificio')
@@ -478,6 +479,7 @@ def update_create_pleace_map(request):
     p3Post = request.POST.get('esquina3')
     p4Post = request.POST.get('esquina4')
     informacionText = request.POST.get('textTiny')
+    sizemarkerPost = request.POST.get('sizemarker')
     informacionPost = request.POST.get('contenidoWord')
     door_cordsPost = request.POST.get('puertaCordsEdificio')
     imagenPost = request.FILES.get('fotoEdificio')
@@ -493,7 +495,9 @@ def update_create_pleace_map(request):
                 edificio.p3_polygons = p3Post
                 edificio.p4_polygons = p4Post
                 edificio.door_cords = door_cordsPost
+                edificio.size_marker = sizemarkerPost
                 edificio.informacion = informacionPost
+                edificio.is_marker = True if is_markerPost else False
                 edificio.save()
                 success_message = f'Se Actualizaron los datos de <span>"{nombrePost}"</span> en el mapa de forma exitosa 🧐😁🎈'
 
@@ -506,15 +510,17 @@ def update_create_pleace_map(request):
         else:
             # validar si este ya existe en el mapa y en db para que no se repitan
             models.Mapa.objects.create(
-                nombre=nombrePost,
+                uuid=uuidPost,
                 color=colorPost,
+                nombre=nombrePost,
                 p1_polygons=p1Post,
                 p2_polygons=p2Post,
                 p3_polygons=p3Post,
                 p4_polygons=p4Post,
                 door_cords=door_cordsPost,
                 informacion=informacionPost,
-                uuid=uuidPost,
+                size_marker = sizemarkerPost,
+                is_marker=True if is_markerPost else False,
             )
             
             # Verificar notas ToDo
@@ -559,7 +565,6 @@ def lista_imagenes(request):
                 'id': imagen.id,
                 'url': imagen_url
             })
-
         return JsonResponse({'imagenes': imagenes_modificadas})
 
 @login_required

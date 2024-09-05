@@ -62,7 +62,7 @@ def process_question(pregunta):
     doc = nlp(pregunta_normalizada)
     
     # Asegurarse de incluir palabras clave específicas que deseas no eliminar
-    palabras_clave_personalizadas = {"que", "hay", "como", "donde"}
+    palabras_clave_personalizadas = {"que", "hay", "donde", "quien", "creo", "quienes"}
     tokens = [token.lemma_ for token in doc if (not token.is_stop and token.is_alpha) or token.text in palabras_clave_personalizadas or token.text in palabras_clave]
     
     pregunta_procesada = " ".join(tokens)

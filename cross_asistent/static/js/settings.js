@@ -386,6 +386,13 @@ $(document).ready(function () {
             $(this).attr("class", `form-select change_bg ${newClass}`);
         });
 
+        // Formulario en el Mapa ######################################################
+        // if ($("#map")) {
+        //     if ($("#map").hasClass("map_editing")) {
+                
+        //     }
+        // }
+
         //
         //
         //

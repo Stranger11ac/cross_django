@@ -1,8 +1,15 @@
 {% extends 'base/widget.html' %}
 {% load static filtros %}
 {% block title %}Galería de Imágenes{% endblock %}
+{% block link_default %}
+{% include 'base/widget_links-admin.html' with pages=pages %}
+{% endblock %}
 {% block content %}
 <main class="container container-fluid py-5 {% if not user.is_authenticated %}main_container{% endif %}">
+    <div class="mb-5">
+        <h1 class="text-center">Galería <i class="fa-regular fa-images"></i></h1>
+        <hr class="hr_divisor mx-4 mx-md-0" />
+    </div>
     <section id="uploadImageSection" class="d-flex justify-content-center mb-5">
         <div class="card" style="width: 100%; max-width: 500px;">
             <div class="card-body text-center">
@@ -18,11 +25,6 @@
             </div>
         </div>
     </section>
-
-    <div class="mb-5">
-        <h1 class="text-center">Galería <i class="fa-regular fa-images"></i></h1>
-        <hr class="hr_divisor mx-4 mx-md-0" />
-    </div>
 
     <!-- Mostrar Imágenes de Galería -->
     <section id="gallerySectionGaleria" class="mb-5">
@@ -59,11 +61,11 @@
             <div class="mb-4 col-6 col-md-4 col-lg-3">
                 <div class="card">
                     <div class="max_h200">
-                    {% if imagen.imagen %}
-                    <img src="{{ imagen.imagen.url }}" alt="Imagen de base de datos" class="card-img-top">
-                    {% else %}
-                    <p>No hay imagen disponible</p>
-                    {% endif %}
+                        {% if imagen.imagen %}
+                        <img src="{{ imagen.imagen.url }}" alt="Imagen de base de datos" class="card-img-top">
+                        {% else %}
+                        <p>No hay imagen disponible</p>
+                        {% endif %}
                     </div>
                     <div class="card-footer">{{ imagen.titulo }}</div>
                 </div>
@@ -86,15 +88,15 @@
                     <img src="{{ imagen.imagen.url }}" alt="Imagen de banner" class="card-img-top">
                     {% else %}
                     <p>No hay imagen disponible</p>
-                    </div>
-                    {% endif %}
-                    
-                    <div class="card-footer"> {{ imagen.titulo }} </div>
                 </div>
+                {% endif %}
+
+                <div class="card-footer"> {{ imagen.titulo }} </div>
             </div>
-            {% empty %}
-            <p>No hay imágenes de banners disponibles aún.</p>
-            {% endfor %}
+        </div>
+        {% empty %}
+        <p>No hay imágenes de banners disponibles aún.</p>
+        {% endfor %}
         </div>
     </section>
 </main>
