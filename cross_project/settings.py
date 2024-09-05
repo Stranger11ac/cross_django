@@ -22,19 +22,12 @@ OPENAI_API_KEY = env('OPENAI_API_KEY')
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Cambiar la clave secreta en produccion ---------------------------------------------------------
-SECRET_KEY = env("SECRET_KEY", default="unsafe-secret-key")
-# SECRET_KEY = 'django-insecure-32wpj55%1@sy+hqt(v6b87!04o3m2(+1##sf@^%45$0@@fdynj'
+SECRET_KEY = 'django-insecure-32wpj55%1@sy+hqt(v6b87!04o3m2(+1##sf@^%45$0@@fdynj'
 
 # Camibiar debug en produccion IMPORTANTE ---------------------------------------------------------
-# DEBUG = True
-# DEBUG = False
-DEBUG = 'RENDER' not in os.environ
+DEBUG = True
 
 ALLOWED_HOSTS = []
-
-RENDER_EXTERNAL_HOSTNAME = os.environ.get('RENDER_EXTERNAL_HOSTNAME')
-if RENDER_EXTERNAL_HOSTNAME:
-    ALLOWED_HOSTS.append(RENDER_EXTERNAL_HOSTNAME)
 
 INSTALLED_APPS = [
     'cross_asistent',
@@ -79,43 +72,23 @@ TEMPLATES = [
 WSGI_APPLICATION = 'cross_project.wsgi.application'
 
 # Base de datos, utilizar PostgreSQL de preferencia -------------------------------------------------------------
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': BASE_DIR / 'db.sqlite3',
-#     }
-# }
-
 DATABASES = {
     'default': dj_database_url.config(
         default='postgresql://cross_asistent_production_user:3zBDxS8OZ66dvPGsXZ0leTTk1X4o129B@dpg-cr40bbrtq21c73drq1k0-a.oregon-postgres.render.com/cross_asistent_production',
-        # default='postgresql://postgres:postgres@localhost:5432/mysite',
         conn_max_age=600
     )
     # 'default': {
-    #     'ENGINE': 'django.db.backends.postgresql',
-    #     'NAME': 'nombre_de_tu_base_de_datos',
-    #     'USER': 'tu_usuario',
-    #     'PASSWORD': 'tu_contraseña',
-    #     'HOST': 'localhost',  # o la dirección IP del servidor de base de datos
-    #     'PORT': '5432', 
+    #     'ENGINE': 'django.db.backends.sqlite3',
+    #     'NAME': BASE_DIR / 'db.sqlite3',
     # }
 }
 
 
 AUTH_PASSWORD_VALIDATORS = [
-    {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
-    },
+    {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',},
+    {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',},
+    {'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',},
+    {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',},
 ]
 
 

@@ -67,7 +67,7 @@ urlpatterns = [
     path('administracion/blog/eliminar/', functions.blog_delete, name='blog_delete'),
     
     # Mapa ----------------------------------------------------------
-    path('administracion/mapa/editar/', views.map_page, name='update_mapa'),
+    path('administracion/mapa/', views.map_page, name='update_mapa'),
     path('administracion/mapa/modificar/', views.update_create_pleace_map, name='upload_map'),
     path('administracion/mapa/eliminar/', functions.delete_pleaceMap, name='del_pleace_map'),
     path('administracion/mapa/elimiina/database/', functions.delete_pleaceMap_DB, name='del_pleace_mapdb'),
