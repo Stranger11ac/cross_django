@@ -12,12 +12,12 @@ import json
 
 # Plantilla links programador / administrador ----------------------------------------------------------
 pages = [
-        {'name': 'banner', 'url': 'upload_banner', 'display_name': 'Banners', 'icon': 'fa-solid fa-image'},
-        {'name': 'database', 'url': 'database_page', 'display_name': 'Database', 'icon': 'fa-solid fa-database'},
-        {'name': 'mapa', 'url': 'update_mapa', 'display_name': 'Mapa', 'icon': 'fa-solid fa-map-location-dot'},
-        {'name': 'calendario', 'url': 'calendario_page', 'display_name': 'Calendario', 'icon': 'fa-solid fa-calendar-days'},
-        {'name': 'blog', 'url': 'create_blog', 'display_name': 'Blogs', 'icon': 'fa-solid fa-newspaper'},
-        {'name': 'galería', 'url': 'vista_galeria', 'display_name': 'Galeria', 'icon': 'fa-regular fa-images'},
+        {'name': 'banner', 'url': 'upload_banner', 'display_name': 'Banners', 'icon':'fa-solid fa-image', 'access':'all'},
+        {'name': 'database', 'url': 'database_page', 'display_name': 'Database', 'icon':'fa-solid fa-database', 'access':'all'},
+        {'name': 'mapa', 'url': 'update_mapa', 'display_name': 'Mapa', 'icon':'fa-solid fa-map-location-dot', 'access':'staff'},
+        {'name': 'calendario', 'url': 'calendario_page', 'display_name': 'Calendario', 'icon':'fa-solid fa-calendar-days', 'access':'all'},
+        {'name': 'blog', 'url': 'create_blog', 'display_name': 'Blogs', 'icon':'fa-solid fa-newspaper', 'access':'all'},
+        {'name': 'galería', 'url': 'vista_galeria', 'display_name': 'Galeria', 'icon':'fa-regular fa-images', 'access':'staff'},
     ]
 
 # Editar Perfil ----------------------------------------------------------

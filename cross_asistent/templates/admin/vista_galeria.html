@@ -1,6 +1,7 @@
 {% extends 'base/widget.html' %}
 {% load static filtros %}
 {% block title %}Galería de Imágenes{% endblock %}
+{% block link_home %}{% url 'vista_programador' %}{% endblock %}
 {% block link_default %}
 {% include 'base/widget_links-admin.html' with pages=pages %}
 {% endblock %}

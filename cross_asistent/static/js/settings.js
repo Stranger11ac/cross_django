@@ -528,7 +528,7 @@ function jsonSubmit(e) {
 
                 setTimeout(() => {
                     thisForm.querySelector('button[type="submit"]').removeAttribute("disabled");
-                }, 1000);
+                }, 5000);
 
                 alertSToast(dataPosition, timerOut, dataIcon, dataMessage, alertfunction);
             } else if (data.success == false) {

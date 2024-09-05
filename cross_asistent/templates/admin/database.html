@@ -1,7 +1,7 @@
 {% extends 'base/widget.html' %}
-{% load static filtros %}
+{% load static %}
 {% block title %}Base de Datos | Administracion{% endblock %}
-{% block link_home %}{% url user.is_staff|yesno:'vista_programador,vista_admin' %}{% endblock %}
+{% block link_home %}{% url 'vista_programador' %}{% endblock %}
 {% block link_default %}
 {% include 'base/widget_links-admin.html' %}
 {% endblock %}
@@ -208,6 +208,7 @@
                 </div>
             </div>
         </section>
+        {% if user.is_staff %}
         <!-- Formulario: crear Categoria -->
         <section class="col-lg-4">
             <div class="card mb-4">
@@ -374,6 +375,7 @@
                 </div>
             </div>
         </section>
+        {% endif %}
     </div>
 </main>
 

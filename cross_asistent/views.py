@@ -237,9 +237,7 @@ def singinpage(request):
                 return JsonResponse({'success': False, 'functions': 'singin', 'message': 'Revisa el usuario o contraseña 😅.'}, status=400)
             else:
                 login(request, user)
-                pageRedirect = reverse('vista_admin')
-                if user.is_staff:
-                    pageRedirect = reverse('vista_programador')
+                pageRedirect = reverse('vista_programador')
                 return JsonResponse({'success': True, 'functions': 'singin', 'redirect_url': pageRedirect}, status=200)
         else:
             return JsonResponse({'success': False, 'functions': 'singin', 'message': 'Usuario no registrado 😅. Verifica tu nombre de usuario o contraseña'}, status=400)
@@ -256,21 +254,6 @@ def singinpage(request):
 def singout(request):
     logout(request)
     return redirect('singin')
-
-# Perfiles ----------------------------------------------------------
-@login_required
-@never_cache
-def vista_admin(request):
-    blogs_all = models.Articulos.objects.filter()
-    user = request.user
-    context = {
-        'user': user,
-        'num_blogs': blogs_all.count(),
-        'blogs_all': blogs_all,
-        'active_page': 'home',
-        'pages': functions.pages
-    }
-    return render(request, 'admin/vista_admin.html', context)
 
 @login_required
 @never_cache
