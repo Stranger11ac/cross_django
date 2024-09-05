@@ -155,6 +155,7 @@ class Mapa(models.Model):
     p3_polygons = models.CharField(max_length=150, blank=True, null=True)
     p4_polygons = models.CharField(max_length=150, blank=True, null=True)
     is_marker = models.BooleanField(default=False)
+    hide_name = models.BooleanField(default=True)
     size_marker = models.CharField(max_length=4, default='0.05')
     
     def __str__(self):

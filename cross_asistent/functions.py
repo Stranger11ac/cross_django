@@ -551,9 +551,10 @@ def mapa_data(request):
             "color": mapa.color,
             "imagen_url": imagen,
             "nombre": mapa.nombre,
-            "informacion": mapa.informacion,
             "ismarker": mapa.is_marker,
             "sizemarker": mapa.size_marker,
+            "informacion": mapa.informacion,
+            "hidename": True if mapa.hide_name else False,
             "door_coords": [float(coord) for coord in mapa.door_cords.split(",")],
             "polygons": [
                 [float(coord) for coord in mapa.p1_polygons.split(",")],

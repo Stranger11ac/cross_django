@@ -77,12 +77,16 @@
             <input type="text" name="uuid" id="uuid" class="form-control d-none" data-uuid data-new-uid="{{UID}}" readonly required>
 
             <!-- Marcador de imagen -->
+            <div class="mb-4" data-notmarker>
+                <input class="form-check-input" type="checkbox" id="hidename" name="hidename" />
+                <label class="form-check-label" for="hidename">: Mostrar Nombre</label>
+            </div>
             <div class="mb-4">
                 <input class="form-check-input" type="checkbox" id="ismarker" name="ismarker" />
-                <label class="form-check-label" for="ismarker">Marcador de Imagen</label>
+                <label class="form-check-label" for="ismarker">: Marcador de Imagen</label>
             </div>
             <div class="form-outline none mb-4" data-mdb-input-init id="sizemarkerdiv">
-                <input type="number" id="sizemarker" name="sizemarker" class="form-control active text-end" min="0.01" max="1" step="0.1" value="0.05"
+                <input type="number" id="sizemarker" name="sizemarker" class="form-control active text-end" min="0.01" max="1" step="0.01" value="0.05"
                     required />
                 <label class="form-label" for="sizemarker">Tamaño:</label>
             </div>

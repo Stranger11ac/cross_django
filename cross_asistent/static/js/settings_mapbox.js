@@ -525,6 +525,7 @@ class CustomControl {
                         $("#sizemarkerdiv").slideUp();
                         $("[data-notmarker]").slideDown();
                         $('[for="puertaCordsEdificio"]').text("Punto de entrada:");
+                        $("#hidename").slideDown();
                     }
 
                     if (!offcanvasOpen) {
@@ -605,6 +606,118 @@ const directions = new MapboxDirections({
     interactive: false,
 });
 
+// Cargar datos de Marcadores ####################
+const dataMarkers = document.querySelector("#map").getAttribute("data-mapa_markers");
+fetch(dataMarkers)
+    .then((response) => response.json())
+    .then((data) => {
+        function createMarkers() {
+            data.forEach((item) => {
+                const nameImage = item.nombre.replace(" ", "");
+
+                if (!mapMapbox.getSource(item.uuid)) {
+                    mapMapbox.addSource(item.uuid, {
+                        type: "geojson",
+                        data: {
+                            type: "FeatureCollection",
+                            features: [
+                                {
+                                    type: "Feature",
+                                    properties: {
+                                        uuid: item.uuid,
+                                        nombre: item.nombre,
+                                        imagen: item.imagen,
+                                        ismarker: item.ismarker,
+                                        icon_size: item.icon_size,
+                                        sizemarker: item.sizemarker,
+                                    },
+                                    geometry: {
+                                        type: "Point",
+                                        coordinates: item.door_coords,
+                                    },
+                                },
+                            ],
+                        },
+                    });
+                }
+
+                if (!mapMapbox.hasImage(nameImage)) {
+                    mapMapbox.loadImage(item.imagen, (error, image) => {
+                        if (error) throw error;
+                        mapMapbox.addImage(nameImage, image);
+                    });
+                }
+
+                if (!mapMapbox.getLayer(`points${nameImage}`)) {
+                    mapMapbox.addLayer({
+                        id: `points${nameImage}`,
+                        type: "symbol",
+                        source: item.uuid,
+                        layout: {
+                            "icon-image": nameImage,
+                            "icon-size": item.icon_size,
+                            "icon-allow-overlap": true,
+                        },
+                    });
+                    mapMapbox.moveLayer("places-label", `points${nameImage}`);
+                }
+            });
+        }
+        mapMapbox.on("load", () => {
+            createMarkers();
+        });
+        mapMapbox.on("style.load", () => {
+            createMarkers();
+        });
+        mapMapbox.on("click", (e) => {
+            const features = mapMapbox.queryRenderedFeatures(e.point, {
+                layers: data.map((item) => `points${item.nombre.replace(" ", "")}`),
+            });
+
+            if (features.length) {
+                const feature = features[0];
+                const { nombre, imagen, uuid, ismarker, icon_size } = feature.properties;
+                const coordinates = feature.geometry.coordinates.slice();
+
+                if (mapElement.classList.contains("map_editing")) {
+                    const offcanvasContent = document.getElementById("offcanvasContent");
+                    document.getElementById("imagen_actual").src = imagen;
+
+                    $("#btnDeletedPleace").show();
+                    $("[data-namePleace]").text(nombre);
+
+                    offcanvasContent.querySelector("#isNewEdif").value = "notnew";
+
+                    if (ismarker) {
+                        $("#ismarker").attr("checked", "checked");
+                        $("#sizemarkerdiv").slideDown("fast");
+                        $("[data-notmarker]").slideUp();
+                        $('[for="puertaCordsEdificio"]').text("Ubicacion:");
+                    } else {
+                        $("#ismarker").removeAttr("checked");
+                    }
+
+                    $("#hidename").slideUp();
+                    $("[data-uuid]").addClass("active").val(uuid);
+                    $("#nombreEdificio").addClass("active").val(nombre);
+                    $("#sizemarker").addClass("active").val(icon_size);
+                    $("#puertaCordsEdificio").addClass("active").val(`${coordinates}`);
+
+                    $('[for="fotoEdificio"]').html('Cambiar foto <i class="fa-regular fa-image ms-1"></i>');
+                    $("#fotoEdificio").attr("required", false);
+                }
+
+                offcanvasInstance.show();
+                offcanvasOpen = true;
+            }
+        });
+    })
+    .catch((error) => {
+        console.error("Error al obtener Marcadores del mapa:");
+        console.error(error);
+        alertSToast("top", 5000, "error", "Ocurrio un error inesperado. #403");
+    });
+
 // Cargar datos de lugares ##################################################################
 const dataPleaces = document.querySelector("#map").getAttribute("data-mapa_edif");
 fetch(dataPleaces)
@@ -617,11 +730,12 @@ fetch(dataPleaces)
                 properties: {
                     uuid: item.uuid,
                     color: item.color,
-                    imagen_url: item.imagen_url,
+                    label: item.hidename ? item.nombre : "",
                     nombre: item.nombre,
-                    informacion: item.informacion,
                     door: item.door_coords,
                     ismarker: item.ismarker,
+                    imagen_url: item.imagen_url,
+                    informacion: item.informacion,
                 },
                 geometry: {
                     type: "Polygon",
@@ -659,7 +773,7 @@ fetch(dataPleaces)
                     type: "symbol",
                     source: "places",
                     layout: {
-                        "text-field": ["get", "nombre"],
+                        "text-field": ["get", "label"],
                         "text-size": 12,
                         "text-offset": [0, -0.6],
                         "text-anchor": "top",
@@ -877,7 +991,7 @@ fetch(dataPleaces)
         // Abrir offcanvas: Informacion del edificio
         mapMapbox.on("click", "places-layer", (e) => {
             const feature = e.features[0];
-            const { nombre, informacion, imagen_url, color, door, uuid, ismarker } = feature.properties;
+            const { nombre, informacion, imagen_url, color, door, uuid, ismarker, label } = feature.properties;
             const { coordinates } = feature.geometry;
 
             const offcanvasContent = document.getElementById("offcanvasContent");
@@ -903,6 +1017,13 @@ fetch(dataPleaces)
                     $("#ismarker").attr("checked", "checked");
                 } else {
                     $("#ismarker").removeAttr("checked");
+                }
+
+                $("#hidename").slideDown();
+                if (label != "") {
+                    $("#hidename").attr("checked", "checked");
+                } else {
+                    $("#hidename").removeAttr("checked");
                 }
 
                 $("[data-uuid]").addClass("active").val(uuid);
@@ -1015,112 +1136,6 @@ fetch(dataPleaces)
         console.error("Error al obtener los datos del mapa:");
         console.error(error);
         alertSToast("top", 5000, "error", "Ocurrio un error inesperado. verifica la consola. #403");
-    });
-
-// Cargar datos de Marcadores ####################
-const dataMarkers = document.querySelector("#map").getAttribute("data-mapa_markers");
-fetch(dataMarkers)
-    .then((response) => response.json())
-    .then((data) => {
-        mapMapbox.on("load", () => {
-            data.forEach((item) => {
-                const nameImage = item.nombre.replace(" ", "");
-
-                if (!mapMapbox.getSource(item.uuid)) {
-                    mapMapbox.addSource(item.uuid, {
-                        type: "geojson",
-                        data: {
-                            type: "FeatureCollection",
-                            features: [
-                                {
-                                    type: "Feature",
-                                    properties: {
-                                        uuid: item.uuid,
-                                        nombre: item.nombre,
-                                        imagen: item.imagen,
-                                        ismarker: item.ismarker,
-                                        icon_size: item.icon_size,
-                                        sizemarker: item.sizemarker,
-                                    },
-                                    geometry: {
-                                        type: "Point",
-                                        coordinates: item.door_coords,
-                                    },
-                                },
-                            ],
-                        },
-                    });
-                }
-
-                if (!mapMapbox.hasImage(nameImage)) {
-                    mapMapbox.loadImage(item.imagen, (error, image) => {
-                        if (error) throw error;
-                        mapMapbox.addImage(nameImage, image);
-                    });
-                }
-
-                if (!mapMapbox.getLayer(`points${nameImage}`)) {
-                    mapMapbox.addLayer({
-                        id: `points${nameImage}`,
-                        type: "symbol",
-                        source: item.uuid,
-                        layout: {
-                            "icon-image": nameImage,
-                            "icon-size": item.icon_size,
-                            "icon-allow-overlap": true,
-                        },
-                    });
-                    mapMapbox.moveLayer(`points${nameImage}`);
-                }
-            });
-
-            mapMapbox.on("click", (e) => {
-                const features = mapMapbox.queryRenderedFeatures(e.point, {
-                    layers: data.map((item) => `points${item.nombre.replace(" ", "")}`),
-                });
-
-                if (features.length) {
-                    const feature = features[0];
-                    const { nombre, imagen, uuid, ismarker, icon_size } = feature.properties;
-                    const coordinates = feature.geometry.coordinates.slice();
-
-                    if (mapElement.classList.contains("map_editing")) {
-                        const offcanvasContent = document.getElementById("offcanvasContent");
-                        document.getElementById("imagen_actual").src = imagen;
-
-                        $("#btnDeletedPleace").show();
-                        $("[data-namePleace]").text(nombre);
-
-                        offcanvasContent.querySelector("#isNewEdif").value = "notnew";
-
-                        if (ismarker) {
-                            $("#ismarker").attr("checked", "checked");
-                            $("#sizemarkerdiv").slideDown("fast");
-                            $("[data-notmarker]").slideUp();
-                            $('[for="puertaCordsEdificio"]').text("Ubicacion:");
-                        } else {
-                            $("#ismarker").removeAttr("checked");
-                        }
-
-                        $("[data-uuid]").addClass("active").val(uuid);
-                        $("#nombreEdificio").addClass("active").val(nombre);
-                        $("#sizemarker").addClass("active").val(icon_size);
-                        $("#puertaCordsEdificio").addClass("active").val(`${coordinates}`);
-
-                        $('[for="fotoEdificio"]').html('Cambiar foto <i class="fa-regular fa-image ms-1"></i>');
-                        $("#fotoEdificio").attr("required", false);
-                    }
-
-                    offcanvasInstance.show();
-                    offcanvasOpen = true;
-                }
-            });
-        });
-    })
-    .catch((error) => {
-        console.error("Error al obtener Marcadores del mapa:");
-        console.error(error);
-        alertSToast("top", 5000, "error", "Ocurrio un error inesperado. #403");
     });
 
 // Agregar nuevo menu

@@ -471,6 +471,7 @@ def update_create_pleace_map(request):
 
     isNewPost = request.POST.get('isNew')
     is_markerPost = request.POST.get('ismarker')
+    hide_namePost = request.POST.get('hidename')
     uuidPost = request.POST.get('uuid')
     nombrePost = request.POST.get('nombreEdificio')
     colorPost = request.POST.get('colorEdificio')
@@ -498,6 +499,7 @@ def update_create_pleace_map(request):
                 edificio.size_marker = sizemarkerPost
                 edificio.informacion = informacionPost
                 edificio.is_marker = True if is_markerPost else False
+                edificio.hide_name = True if hide_namePost else False
                 edificio.save()
                 success_message = f'Se Actualizaron los datos de <span>"{nombrePost}"</span> en el mapa de forma exitosa 🧐😁🎈'
 
@@ -521,6 +523,7 @@ def update_create_pleace_map(request):
                 informacion=informacionPost,
                 size_marker = sizemarkerPost,
                 is_marker=True if is_markerPost else False,
+                hide_name=True if hide_namePost else False,
             )
             
             # Verificar notas ToDo
