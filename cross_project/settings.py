@@ -10,9 +10,9 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 import os
-from pathlib import Path
 import environ
 import dj_database_url
+from pathlib import Path
 
 env = environ.Env()
 environ.Env.read_env()
