@@ -8,8 +8,8 @@ class CategoriasAdmin(admin.ModelAdmin):
     list_display = ('categoria', 'descripcion')
 
 class DatabaseAdmin(admin.ModelAdmin):
-    list_display = ('titulo', 'categoria')
-    search_fields = ('titulo', 'informacion')
+    list_display = ('titulo', 'categoria', 'uuid')
+    search_fields = ('titulo', 'informacion', 'uuid')
 
 class ArticulosAdmin(admin.ModelAdmin):
     list_display = ('titulo', 'autor', 'creacion')

@@ -211,6 +211,10 @@ if ("speechSynthesis" in window) {
             .replace("(", "")
             .replace(")", "")
             .replace("@", "")
+            .replace(">", "")
+            .replace("<", "")
+            .replace("br", "")
+            .replace("<br>", "")
             .replace(/[\u{1F600}-\u{1F64F}]/gu, "") // Emoticonos
             .replace(/[\u{1F300}-\u{1F5FF}]/gu, "") // Símbolos y pictogramas
             .replace(/[\u{1F680}-\u{1F6FF}]/gu, "") // Transporte y símbolos de mapa
@@ -382,7 +386,7 @@ speakButton.on("click", () => {
 
 // Saludo Inicial ######################
 if (contOutput && saludoMostrado) {
-    const initialMessage = `<div class="chat_msg asistent_response" data-tokeid="initialMessage"><span>¡Hola!!! Soy Hawky 👋😁, tu asistente virtual de la Universidad Tecnológica de Coahuila! <br>¿En qué puedo ayudarte? 🫡🤘😋</span></div>`;
+    const initialMessage = `<div class="chat_msg asistent_response" data-tokeid="initialMessage"><span>¡Hola!!! Soy Hawky 👋😁, tu asistente virtual de la Universidad Tecnológica de Coahuila! Bienvenido a una de las mejores universidades, la mas tecnologica que vas a encontrar. Nuestra mision es formar a los ingeniero, ingenieras, licenciados y liccenciadas del mañana ¿En qué puedo ayudarte? 🫡🤘😋</span></div>`;
 
     contOutput.insertAdjacentHTML("beforeend", initialMessage);
     const elementInitMsg = document.querySelector(`.asistent_response[data-tokeid="initialMessage"]`);

@@ -11,7 +11,6 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 import os
 import environ
-import dj_database_url
 from pathlib import Path
 
 env = environ.Env()
@@ -23,11 +22,16 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Cambiar la clave secreta en produccion ---------------------------------------------------------
 SECRET_KEY = 'django-insecure-32wpj55%1@sy+hqt(v6b87!04o3m2(+1##sf@^%45$0@@fdynj'
+#SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'clave-secreta')
 
 # Camibiar debug en produccion IMPORTANTE ---------------------------------------------------------
+
+#DEBUG = False
 DEBUG = True
 
 ALLOWED_HOSTS = []
+#ALLOWED_HOSTS = ['tu-dominio.com', 'www.tu-dominio.com']
+
 
 INSTALLED_APPS = [
     'cross_asistent',
@@ -41,7 +45,6 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -73,15 +76,23 @@ WSGI_APPLICATION = 'cross_project.wsgi.application'
 
 # Base de datos, utilizar PostgreSQL de preferencia -------------------------------------------------------------
 DATABASES = {
-    'default': dj_database_url.config(
-        default='postgresql://cross_asistent_production_user:3zBDxS8OZ66dvPGsXZ0leTTk1X4o129B@dpg-cr40bbrtq21c73drq1k0-a.oregon-postgres.render.com/cross_asistent_production',
-        conn_max_age=600
-    )
-    # 'default': {
-    #     'ENGINE': 'django.db.backends.sqlite3',
-    #     'NAME': BASE_DIR / 'db.sqlite3',
-    # }
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
+    }
 }
+
+# conect to MySQL ################
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.mysql',
+#         'NAME': 'nombre_base_datos',
+#         'USER': 'usuario',
+#         'PASSWORD': 'contraseña',
+#         'HOST': 'localhost',  # O la dirección IP del servidor
+#         'PORT': '3306',  # Puerto por defecto de MySQL
+#     }
+# }
 
 
 AUTH_PASSWORD_VALIDATORS = [
@@ -92,23 +103,25 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 
+# Internationalization
+# https://docs.djangoproject.com/en/5.0/topics/i18n/
 LANGUAGE_CODE = 'es-mx'
-
 TIME_ZONE = 'America/Mexico_City'
-
 USE_I18N = True
-
 USE_TZ = True
 
+
+# Documentos estaticos ##########################
 MEDIA_URL = '/media/'
+#MEDIA_ROOT = '/var/www/html/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
-STATIC_URL = 'static/'
-if not DEBUG:
-    STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles/')
-    STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+STATIC_URL = '/static/'
+#STATIC_ROOT = '/var/www/html/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
-LOGIN_URL = '/acceder'
-LOGOUT_URL = '/acceder'
+# destruccion de la sesion #######################
+LOGIN_URL = '/acceder/'
+LOGOUT_URL = '/acceder/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
