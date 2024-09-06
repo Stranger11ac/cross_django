@@ -1,5 +1,8 @@
 from django.urls import path
 from . import chatbot, functions, views, imex_port
+from django.conf.urls.static import static
+from django.conf import settings
+
 
 urlpatterns = [
     # Páginas de inicio ----------------------------------------------------------
@@ -93,4 +96,7 @@ urlpatterns = [
     path('administracion/importar/preguntas/', imex_port.import_Preguntas, name='import_Preguntas'),
     path('administracion/importar/configuraciones/', imex_port.import_Configuraciones, name='import_Configuraciones'),
 ]
-    
+
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

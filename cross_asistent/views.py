@@ -37,13 +37,12 @@ def index(request):
 
     for banner in banners_all:
         # imagen_url = banner.imagen.url.replace("cross_asistent/", "")
-        imagen_url = banner.imagen.url
         banners_modificados.append({
             'id': banner.id,
             'titulo': banner.titulo,
             'descripcion': banner.descripcion,
             'redirigir': banner.redirigir,
-            'imagen': imagen_url,
+            'imagen': banner.imagen.url,
             'onlyImg': banner.solo_imagen,
         })
     
