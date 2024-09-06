@@ -247,7 +247,6 @@ def singinpage(request):
             **configuraciones
         })
 
-@login_required
 @never_cache
 def singout(request):
     logout(request)
