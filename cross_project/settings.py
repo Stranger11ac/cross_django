@@ -82,17 +82,17 @@ DATABASES = {
     }
 }
 
-# conect to MySQL ################
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.mysql',
-#         'NAME': 'nombre_base_datos',
-#         'USER': 'usuario',
-#         'PASSWORD': 'contraseña',
-#         'HOST': 'localhost',  # O la dirección IP del servidor
-#         'PORT': '3306',  # Puerto por defecto de MySQL
-#     }
-# }
+#conect to MySQL ################
+#DATABASES = {
+#    'default': {
+#        'ENGINE': 'django.db.backends.mysql',
+#        'NAME': 'nombre_base_datos',
+#        'USER': 'usuario',
+#        'PASSWORD': 'contraseña',
+#        'HOST': 'localhost',  # O la dirección IP del servidor
+#        'PORT': '3306',  # Puerto por defecto de MySQL
+#    }
+#}
 
 
 AUTH_PASSWORD_VALIDATORS = [
