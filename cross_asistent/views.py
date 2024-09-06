@@ -26,7 +26,6 @@ def obtener_configuraciones():
             'about_imgsecond': getattr(oneconfig, 'about_img_second', None),
             'about_textsecond': getattr(oneconfig, 'about_text_second', None),
         }
-    return {}
 
 
 def index(request):
