@@ -143,8 +143,6 @@ def mostrar_blog(request, Articulos_id):
         else:
             firma_autor = f'{userdef.first_name.lower()} {userdef.last_name.lower()}'
     except models.UserProfile.DoesNotExist:
-        # firma_autor = autor_username
-        # foto_autor = ''
         firma_autor = 'Editorial Universidad Tecnológica de Coahuila'
         foto_autor = '/static/img/UTC_logo.webp'
     except User.DoesNotExist:
@@ -553,10 +551,9 @@ def lista_imagenes(request):
 @login_required
 @never_cache
 def vista_galeria(request):
-    # Recupera las imágenes de todos los modelos que necesitas
-    imagenes_galeria = models.galeria.objects.all()
-    imagenes_database = models.Database.objects.all()  # Suponiendo que 'Database' también tiene un campo de imagen
-    imagenes_banners = models.Banners.objects.all()    # Suponiendo que 'Banners' también tiene un campo de imagen
+    imagenes_galeria = models.galeria.objects.exclude(imagen__exact='')
+    imagenes_database = models.Database.objects.exclude(imagen__exact='')
+    imagenes_banners = models.Banners.objects.exclude(imagen__exact='')
 
     return render(request, 'admin/vista_galeria.html', {
         'pages': functions.pages,

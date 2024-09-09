@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 import os
 import environ
+import dj_database_url
 from pathlib import Path
 
 env = environ.Env()
@@ -74,7 +75,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'cross_project.wsgi.application'
 
-# Base de datos, utilizar PostgreSQL de preferencia -------------------------------------------------------------
+# Base de datos local -------------------------------------------------------------
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
@@ -93,6 +94,14 @@ DATABASES = {
 #        'PORT': '3306',  # Puerto por defecto de MySQL
 #    }
 #}
+
+# # Coneccion a base de datos PostgreSQL ------------------------------------------
+# DATABASES = {
+#     'default': dj_database_url.config(
+#         default='postgresql://cross_asistent_production_user:3zBDxS8OZ66dvPGsXZ0leTTk1X4o129B@dpg-cr40bbrtq21c73drq1k0-a.oregon-postgres.render.com/cross_asistent_production',
+#         conn_max_age=600
+#     )
+# }
 
 
 AUTH_PASSWORD_VALIDATORS = [
