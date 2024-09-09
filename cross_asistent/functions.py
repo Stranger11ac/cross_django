@@ -80,7 +80,7 @@ def editar_perfil(request):
         return JsonResponse({'success': False, 'message': 'Acción no permitida.'}, status=400)
 
 # usuarios ----------------------------------------------------------
-def create_newuser(first_name, last_name, username, email, password1, password2=None, is_staff=False, is_active=False):
+def create_newuser(first_name, last_name, username, email, password1, password2=None, is_active=False):
     if not (password1 and username and email):
         return {'success':False, 'message':'Datos incompletos 😅'}
     if password2 is not None and password1 != password2:
@@ -97,7 +97,6 @@ def create_newuser(first_name, last_name, username, email, password1, password2=
             username=username,
             email=email,
             password=password1,
-            is_staff=is_staff,
             is_active=is_active,
         )
         new_user.save()
@@ -146,17 +145,15 @@ def eliminar_usuario(request, user_id):
 def editar_usuario(request, user_id):
     user = get_object_or_404(User, id=user_id)
     if request.method == 'POST':
-        username = request.POST.get('username')
         password = request.POST.get('password')
         is_staffPost = request.POST.get('is_staff') == 'on'
         
         if password or is_staffPost:
-            if username:
-                user.username = username
             if password:
                 user.set_password(password)
             user.is_active = True
             user.is_staff = is_staffPost
+            user.is_superuser = is_staffPost
             user.save()
             
             iconreturn = 'success'
