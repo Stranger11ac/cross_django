@@ -95,7 +95,7 @@ DATABASES = {
 #    }
 #}
 
-# # Coneccion a base de datos PostgreSQL ------------------------------------------
+# # Conexion a base de datos PostgreSQL ------------------------------------------
 # DATABASES = {
 #     'default': dj_database_url.config(
 #         default='postgresql://cross_asistent_production_user:3zBDxS8OZ66dvPGsXZ0leTTk1X4o129B@dpg-cr40bbrtq21c73drq1k0-a.oregon-postgres.render.com/cross_asistent_production',
