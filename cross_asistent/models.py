@@ -8,11 +8,12 @@ import random
 import string
 import os
 
-
+# Crear una cadena aleatoria de letras y numeros
 def generate_random_string(length):
     characters = string.ascii_letters + string.digits
     return ''.join(random.choice(characters) for _ in range(length))
 
+# cambiar nombre del archivo
 def create_filename_path(filename, setname, sufix, length, lenghtrandom, strpath):
     ext = filename.split('.')[-1]
     setname = setname[:length] if len(setname) > length else setname
@@ -126,7 +127,6 @@ class Database(models.Model):
             if old_info.imagen and old_info.imagen != self.imagen:
                 old_info.imagen.delete(save=False)
         super().save(*args, **kwargs)
-        
 
 class Articulos(models.Model):
     encabezado = models.ImageField(upload_to=set_imgBlog_path, max_length=120, blank=True, null=True)
@@ -220,7 +220,7 @@ class UserProfile(models.Model):
         super().save(*args, **kwargs)
 
 
-# Función genérica para eliminar archivos asociados a un objeto
+# Función genérica para eliminar archivos
 def delete_files(instance, fields):
     for field in fields:
         file = getattr(instance, field, None)
