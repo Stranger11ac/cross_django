@@ -274,10 +274,10 @@ def categorias_create(request):
 def categorias_update(request):
     if request.method == 'POST':
         try:
-            idPOST = request.POST.get('id')    
+            idPOST = request.POST.get('id')
             categPOST = request.POST.get('categoria')
             itemUpdate = get_object_or_404(models.Categorias, id=idPOST)
-            itemUpdate.titulo = request.POST.get('descripcion')
+            itemUpdate.descripcion = request.POST.get('descripcion')
             itemUpdate.save()
             
             catMessage = f'Se actualizó la categoria <span>{categPOST}</span> exitosamente 🫡😁🎉'
