@@ -13,7 +13,7 @@ import json
 now = timezone.localtime(timezone.now()).strftime('%d-%m-%Y_%H%M')
 
 nlp = spacy.load("es_core_news_sm")
-respuestas_simples = {"contacto": "Puedes contactarnos al teléfono (844)288-38-00 ☎️",}
+respuestas_simples = {"contacto": "Puedes contactarnos al teléfono (844)288-38-00 ☎️"}
 palabras_clave = ["hola", "servicios", "escolares", "donde", "esta"]
 SIMILARITY_THRESHOLD = 0.03 
 
@@ -30,7 +30,6 @@ def chatgpt(question, instructions):
     print(f"Prompt:{response.usage.prompt_tokens}")
     print(f"Compl:{response.usage.completion_tokens}")
     print(f"Total:{response.usage.total_tokens}")
-    print('')
     return response.choices[0].message.content
 
 # Función para calcular la similitud TF-IDF
@@ -41,20 +40,12 @@ def calculate_tfidf_similarity(pregunta, textos):
     print(f"Similares: {cosine_similarities}")
     return cosine_similarities
 
-# Función para generar la consulta de la base de datos con palabras clave y entidades
-def create_query(palabras_clave, entities):
+# Función para generar la consulta de la base de datos con palabras clave
+def create_query(palabras_clave):
     query = Q()
-    all_keywords = palabras_clave + entities
-    for palabra in all_keywords:
+    for palabra in palabras_clave:
         query |= Q(titulo__icontains=palabra) | Q(informacion__icontains=palabra)
     return query
-
-# Función para extraer las entidades nombradas de la pregunta
-def extract_entities(pregunta):
-    doc = nlp(pregunta)
-    entities = [ent.text for ent in doc.ents]
-    print(f"Entidades nombradas: {entities}")
-    return entities
 
 # Función para procesar la pregunta, eliminando stopwords y lematizando
 def process_question(pregunta):
@@ -69,9 +60,8 @@ def process_question(pregunta):
     print(f"Pregunta procesada: {pregunta_procesada}")
     return pregunta_procesada
 
-
 # Función para calcular la puntuación de cada resultado
-def score_result(result, palabras_clave, entities, pregunta_procesada):
+def score_result(result, palabras_clave, pregunta_procesada):
     score = 0
     texto_completo = f"{result.titulo.lower()} {result.informacion.lower()}"
 
@@ -81,33 +71,16 @@ def score_result(result, palabras_clave, entities, pregunta_procesada):
         if palabra in result.informacion.lower():
             score += 2
 
-    for entidad in entities:
-        if entidad in result.titulo.lower():
-            score += 4
-        if entidad in result.informacion.lower():
-            score += 3
-
     tfidf_sim = calculate_tfidf_similarity(pregunta_procesada, [texto_completo])[0]
     score += tfidf_sim * 5  
     return score, tfidf_sim
-
-# Función para filtrar los resultados de la base de datos
-def filter_results(pregunta):
-    palabras_clave = process_question(pregunta)
-    entities = extract_entities(pregunta)
-    query = create_query(palabras_clave, entities)
-    results = Database.objects.filter(query)[:100] 
-    scored_results = [(result, score_result(result, palabras_clave, entities, process_question(pregunta))) for result in results]
-    sorted_results = sorted(scored_results, key=lambda x: x[1], reverse=True)
-    
-    return sorted_results
 
 # Función principal del chatbot
 def chatbot(request):
     if request.method == 'POST':
         try:
             data = json.loads(request.body)
-            question = data.get('question', '').strip()  # Se asume que la pregunta ya fue normalizada
+            question = data.get('question', '').strip()
 
             if not question:
                 return JsonResponse({'success': False, 'message': 'No puedo responder una pregunta que no existe 🤔🧐😬.'})
@@ -117,28 +90,25 @@ def chatbot(request):
                 return JsonResponse({'success': True, 'answer': {'informacion': respuesta_simple}})
 
             pregunta_procesada = process_question(question)
-            entidades = extract_entities(question)
             palabras_clave = pregunta_procesada.split()
-            query = create_query(palabras_clave, entidades)
+            query = create_query(palabras_clave)
 
             coincidencias = Database.objects.filter(query)
             mejor_coincidencia = None
             mejor_puntuacion = -1
-            mejor_similitud = 0.0  # Nueva variable para seguir la mejor similitud
+            mejor_similitud = 0.0  
 
             for coincidencia in coincidencias:
-                puntuacion, similitud = score_result(coincidencia, palabras_clave, entidades, pregunta_procesada)
+                puntuacion, similitud = score_result(coincidencia, palabras_clave, pregunta_procesada)
                 if puntuacion > mejor_puntuacion:
                     mejor_puntuacion = puntuacion
                     mejor_coincidencia = coincidencia
                     mejor_similitud = similitud
 
-            # Si hay una coincidencia y la similitud es aceptable según el umbral
             if mejor_coincidencia and mejor_similitud >= SIMILARITY_THRESHOLD:
                 informacion = mejor_coincidencia.informacion
-                system_prompt = f"Eres Hawky,asistente de la Universidad Tecnologica de Coahuila(UTC) .Utiliza emojis.no saludar,responde la pregunta con esta información, respeta la informacion: {informacion}. hoy:{now}. responde preguntas solamente con relacion a la universidad"
+                system_prompt = f"Eres Hawky,asistente de la Universidad Tecnologica de Coahuila(UTC). Utiliza emojis. No saludar. Responde la pregunta con esta información, respeta la información: {informacion}. hoy:{now}. Responde preguntas solo relacionadas con la universidad."
                 answer = chatgpt(question, system_prompt)
-
 
                 respuesta = {
                     "titulo": mejor_coincidencia.titulo,
@@ -151,7 +121,6 @@ def chatbot(request):
                 print(f"Respuesta: {respuesta, question}")
                 return JsonResponse({'success': True, 'answer': respuesta})
             else:
-                # Si la similitud es muy baja o no hay coincidencias, enviar la respuesta por defecto
                 print(f"Similitud baja ({mejor_similitud}), descartando resultado.")
                 respuesta_default = {
                     "informacion": "Lo siento, no encontré información relacionada con lo que me pides 🤔. Intenta ser mas claro o puedes buscar más información en la página de preguntas frecuentes o, si gustas, también puedes enviarnos tus dudas. 😊😁",
