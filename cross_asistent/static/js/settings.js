@@ -553,7 +553,7 @@ function jsonSubmit(e) {
         });
 }
 
-// alertSToast('top', 8000, 'success', '<br>lo normal');
+// alertSToast('top', 8000, 'success', '<br>lo normal', ()=>{console.log('alerta activada')});
 // Template Alertas switalert ###################################################
 function alertSToast(posittionS, timerS, iconS, titleS, didDestroyS) {
     const Toast = Swal.mixin({
