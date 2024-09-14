@@ -75,7 +75,6 @@ def score_result(result, palabras_clave, entities, pregunta_procesada):
     score = 0
     texto_completo = f"{result.titulo.lower()} {result.informacion.lower()}"
 
-    # Asignar puntuaciones a palabras clave y entidades
     for palabra in palabras_clave:
         if palabra in result.titulo.lower():
             score += 3
@@ -88,7 +87,6 @@ def score_result(result, palabras_clave, entities, pregunta_procesada):
         if entidad in result.informacion.lower():
             score += 3
 
-    # Calcular la similitud TF-IDF
     tfidf_sim = calculate_tfidf_similarity(pregunta_procesada, [texto_completo])[0]
     score += tfidf_sim * 5  
     return score, tfidf_sim
@@ -98,13 +96,12 @@ def filter_results(pregunta):
     palabras_clave = process_question(pregunta)
     entities = extract_entities(pregunta)
     query = create_query(palabras_clave, entities)
-    results = Database.objects.filter(query)[:100]  # Limitar resultados para rendimiento
+    results = Database.objects.filter(query)[:100] 
     scored_results = [(result, score_result(result, palabras_clave, entities, process_question(pregunta))) for result in results]
     sorted_results = sorted(scored_results, key=lambda x: x[1], reverse=True)
     
     return sorted_results
 
-# Función principal del chatbot
 # Función principal del chatbot
 def chatbot(request):
     if request.method == 'POST':
@@ -115,12 +112,10 @@ def chatbot(request):
             if not question:
                 return JsonResponse({'success': False, 'message': 'No puedo responder una pregunta que no existe 🤔🧐😬.'})
 
-            # Verificar si la pregunta tiene una respuesta simple predefinida
             respuesta_simple = next((respuesta for clave, respuesta in respuestas_simples.items() if clave in question), None)
             if respuesta_simple:
                 return JsonResponse({'success': True, 'answer': {'informacion': respuesta_simple}})
 
-            # Procesar la pregunta y buscar coincidencias en la base de datos
             pregunta_procesada = process_question(question)
             entidades = extract_entities(question)
             palabras_clave = pregunta_procesada.split()
@@ -141,10 +136,13 @@ def chatbot(request):
             # Si hay una coincidencia y la similitud es aceptable según el umbral
             if mejor_coincidencia and mejor_similitud >= SIMILARITY_THRESHOLD:
                 informacion = mejor_coincidencia.informacion
+                system_prompt = f"Eres Hawky,asistente de la Universidad Tecnologica de Coahuila(UTC) .Utiliza emojis.no saludar,responde la pregunta con esta información, respeta la informacion: {informacion}. hoy:{now}. responde preguntas solamente con relacion a la universidad"
+                answer = chatgpt(question, system_prompt)
+
 
                 respuesta = {
                     "titulo": mejor_coincidencia.titulo,
-                    "informacion": informacion,  # Aquí se incluiría la respuesta generada
+                    "informacion": answer,
                     "redirigir": mejor_coincidencia.redirigir,
                     "blank": True,
                     "imagenes": mejor_coincidencia.imagen.url if mejor_coincidencia.imagen else None
