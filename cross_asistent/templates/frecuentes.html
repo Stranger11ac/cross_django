@@ -88,9 +88,12 @@
         <section class="tab-pane fade mt-5" id="pills-create-quest" role="tabpanel" aria-labelledby="pills-create-quest">
             <div class="card col-md-8 mx-auto">
                 <div class="card-body">
-                    <h4 class="text-center mb-4">
+                    <h6 class="text-center mb-4">
                         ¿No hemos resuelto tus dudas?
-                    </h4>
+                    </h6>
+                    <h3 class="text-center mb-4">
+                        Envianos todas tus Preguntas!
+                    </h3>
                     <form method="POST" id="hacerPregunta" action="{% url 'enviar_preguntas' %}" class="text-center" autocomplete="off" data-submit-form>
                         {% csrf_token %}
                         <div class="form-outline mb-4" data-mdb-input-init>

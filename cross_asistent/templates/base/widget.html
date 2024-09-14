@@ -36,7 +36,7 @@
                     {% block qrBTN %}{% endblock %}
                 </div>
                 <button data-mdb-collapse-init class="navbar-toggler" type="button" data-mdb-target="#navbarText" aria-controls="navbarText"
-                    aria-expanded="false" aria-label="Toggle navigation"></button>
+                    aria-expanded="false" aria-label="Toggle navigation" data-btn_closed="overlayMenu"></button>
                 <div class="collapse navbar-collapse position-absolute top-100 navbar-light bg-body-tertiary flex-grow-0" id="navbarText">
                     <ul class="navbar-nav mb-lg-0 px-2 px-lg-0">
                         {% block link_default %}
@@ -153,7 +153,7 @@
             </div>
         </div>
     </div>
-
+    <div id="overlayMenu" class="menu_overlay"></div>
     <script src="{% static 'js/libraries.min.js' %}"></script>
     <script defer src="{% static 'js/settings.js' %}"></script>
     {% block scripts_end %} {% endblock %}

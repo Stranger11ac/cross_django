@@ -386,12 +386,6 @@ $(document).ready(function () {
             $(this).attr("class", `form-select change_bg ${newClass}`);
         });
 
-        // Formulario en el Mapa ######################################################
-        // if ($("#map")) {
-        //     if ($("#map").hasClass("map_editing")) {
-                
-        //     }
-        // }
 
         //
         //
@@ -582,6 +576,6 @@ function alertSToast(posittionS, timerS, iconS, titleS, didDestroyS) {
 }
 
 // context menu disabled ######################################################################
-// document.oncontextmenu = function () {
-//     return false;
-// };
+document.oncontextmenu = function () {
+    return false;
+};

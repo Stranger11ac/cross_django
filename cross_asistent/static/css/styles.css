@@ -214,6 +214,7 @@ i.fa-solid {
 nav {
     height: var(--nav_height);
     padding-block: 5px !important;
+    z-index: 5;
 }
 
 nav .navbar-brand img {
@@ -276,6 +277,23 @@ nav .navbar-collapse {
         box-shadow: none;
         z-index: auto;
     }
+}
+
+.menu_overlay{
+    position: absolute;
+    inset: 0;
+    background: var(--darkA4);
+    backdrop-filter: blur(5px);
+    clip-path: ellipse(100% 0% at 50% 100%);
+    z-index: 0;
+    transition: clip-path 0.5s ease;
+    transition-delay: 0s;
+}
+
+.menu_overlay.show{
+    clip-path: ellipse(100% 130% at 50% 100%);
+    z-index: 4;
+    transition-delay: 0.1s;
 }
 
 /*########################## Carousel / carrusel ##########################*/
