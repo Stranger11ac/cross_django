@@ -4,6 +4,7 @@ from django.utils.text import slugify
 from django.dispatch import receiver
 from django.conf import settings
 from django.db import models
+import unicodedata
 import random
 import string
 import os
@@ -16,15 +17,19 @@ def generate_random_string(length):
 # cambiar nombre del archivo
 def create_filename_path(filename, setname, sufix, length, lenghtrandom, strpath):
     ext = filename.split('.')[-1]
+    texto_normalizado = unicodedata.normalize('NFD', setname)
+    setname = ''.join(c for c in texto_normalizado if unicodedata.category(c) != 'Mn')
     setname = setname[:length] if len(setname) > length else setname
     random_string = generate_random_string(lenghtrandom)
     filename = f"{sufix}_{slugify(setname)}_{random_string}.{ext}"
     return os.path.join(strpath, filename)
 
 
+# Funciones para enviar el archivo a su carpeta correspondiente
 def set_imgBanner_path(instance, filename):
     newName = instance.titulo.strip().replace(' ', '')
     thispath = os.path.join(settings.MEDIA_ROOT, 'imagenes/banners/')
+    filename.replace('_p', '_')
     return create_filename_path(filename, newName, 'banner', 15, 5, thispath)
 
 def set_imgDB_path(instance, filename):
