@@ -15,6 +15,7 @@ now = timezone.localtime(timezone.now()).strftime('%d-%m-%Y_%H%M')
 nlp = spacy.load("es_core_news_sm")
 respuestas_simples = {"contacto": "Puedes contactarnos al teléfono (844)288-38-00 ☎️",}
 palabras_clave = ["hola", "servicios", "escolares", "donde", "esta"]
+SIMILARITY_THRESHOLD = 0.03 
 
 def chatgpt(question, instructions):
     client = openai.OpenAI(api_key=settings.OPENAI_API_KEY)
@@ -87,9 +88,10 @@ def score_result(result, palabras_clave, entities, pregunta_procesada):
         if entidad in result.informacion.lower():
             score += 3
 
+    # Calcular la similitud TF-IDF
     tfidf_sim = calculate_tfidf_similarity(pregunta_procesada, [texto_completo])[0]
     score += tfidf_sim * 5  
-    return score
+    return score, tfidf_sim
 
 # Función para filtrar los resultados de la base de datos
 def filter_results(pregunta):
@@ -103,72 +105,65 @@ def filter_results(pregunta):
     return sorted_results
 
 # Función principal del chatbot
+# Función principal del chatbot
 def chatbot(request):
     if request.method == 'POST':
         try:
-            # Obtener y normalizar la pregunta
             data = json.loads(request.body)
-            question = data.get('question', '').strip()
+            question = data.get('question', '').strip()  # Se asume que la pregunta ya fue normalizada
 
             if not question:
                 return JsonResponse({'success': False, 'message': 'No puedo responder una pregunta que no existe 🤔🧐😬.'})
 
-            # Verificar si la pregunta tiene una respuesta predefinida
-            respuesta_simple = next((respuesta for clave, respuesta in respuestas_simples.items() if clave in question.lower()), None)
+            # Verificar si la pregunta tiene una respuesta simple predefinida
+            respuesta_simple = next((respuesta for clave, respuesta in respuestas_simples.items() if clave in question), None)
             if respuesta_simple:
                 return JsonResponse({'success': True, 'answer': {'informacion': respuesta_simple}})
 
-            # Procesar la pregunta y extraer entidades y palabras clave
+            # Procesar la pregunta y buscar coincidencias en la base de datos
             pregunta_procesada = process_question(question)
             entidades = extract_entities(question)
             palabras_clave = pregunta_procesada.split()
-            
-            # Crear la consulta a la base de datos usando las palabras clave y entidades
             query = create_query(palabras_clave, entidades)
 
-            # Limitar la cantidad de resultados obtenidos de la base de datos para mejorar el rendimiento
-            coincidencias = Database.objects.filter(query)[:100]  # Limitar a los primeros 100 resultados
-            
-            if not coincidencias:
-                respuesta_default = {
-                    "informacion": "Lo siento, no encontré información relacionada con lo que me pides 🤔. Puedes buscar más información en la página de preguntas frecuentes o, si gustas, también puedes enviarnos tus dudas. 😊😁",
-                    "redirigir": "preguntas_frecuentes/",
-                    "blank": False,
-                }
-                return JsonResponse({'success': True, 'answer': respuesta_default})
-
-            # Buscar la mejor coincidencia
+            coincidencias = Database.objects.filter(query)
             mejor_coincidencia = None
             mejor_puntuacion = -1
+            mejor_similitud = 0.0  # Nueva variable para seguir la mejor similitud
 
             for coincidencia in coincidencias:
-                puntuacion = score_result(coincidencia, palabras_clave, entidades, pregunta_procesada)
+                puntuacion, similitud = score_result(coincidencia, palabras_clave, entidades, pregunta_procesada)
                 if puntuacion > mejor_puntuacion:
                     mejor_puntuacion = puntuacion
                     mejor_coincidencia = coincidencia
+                    mejor_similitud = similitud
 
-            # Si hay una coincidencia en la base de datos con buena puntuación
-            if mejor_coincidencia:
+            # Si hay una coincidencia y la similitud es aceptable según el umbral
+            if mejor_coincidencia and mejor_similitud >= SIMILARITY_THRESHOLD:
+                informacion = mejor_coincidencia.informacion
+
                 respuesta = {
                     "titulo": mejor_coincidencia.titulo,
-                    "informacion": mejor_coincidencia.informacion,  # Usar la información directamente
+                    "informacion": informacion,  # Aquí se incluiría la respuesta generada
                     "redirigir": mejor_coincidencia.redirigir,
                     "blank": True,
                     "imagenes": mejor_coincidencia.imagen.url if mejor_coincidencia.imagen else None
                 }
+
                 print(f"Respuesta: {respuesta, question}")
                 return JsonResponse({'success': True, 'answer': respuesta})
             else:
-                # Respuesta por defecto si no se encontró una coincidencia relevante
+                # Si la similitud es muy baja o no hay coincidencias, enviar la respuesta por defecto
+                print(f"Similitud baja ({mejor_similitud}), descartando resultado.")
                 respuesta_default = {
-                    "informacion": "Lo siento, no encontré información relacionada con lo que me pides 🤔. Puedes buscar más información en la página de preguntas frecuentes o, si gustas, también puedes enviarnos tus dudas. 😊😁",
+                    "informacion": "Lo siento, no encontré información relacionada con lo que me pides 🤔. Intenta ser mas claro o puedes buscar más información en la página de preguntas frecuentes o, si gustas, también puedes enviarnos tus dudas. 😊😁",
                     "redirigir": "preguntas_frecuentes/",
                     "blank": False,
                 }
                 return JsonResponse({'success': True, 'answer': respuesta_default})
 
         except json.JSONDecodeError:
-            return JsonResponse({'success': False, 'message': 'Ocurrió un error al procesar el JSON. Código #400'})
+            return JsonResponse({'success': False, 'message': 'Ocurrió un error. Al parecer no se permite este método. Código #400'})
         except KeyError as e:
             return JsonResponse({'success': False, 'message': f'Error en la clave del JSON: {str(e)}'})
         except Exception as e:
