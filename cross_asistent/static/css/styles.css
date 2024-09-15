@@ -1053,6 +1053,17 @@ main.main_anchor {
     color: var(--var-white) !important;
 }
 
+.table_odd .table_odd_items .text_detail {
+    transition: background 0.2s ease;
+    transition-delay: 0s;
+}
+.table_odd .table_odd_items:hover .text_detail {
+    background: white;
+    border: none;
+    border-radius: calc(var(--border-radius)/3);
+    transition-delay: 0.1s;
+}
+
 
 /*########################### Modal MDB ###########################*/
 .modal,

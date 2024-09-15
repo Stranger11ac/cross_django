@@ -128,6 +128,7 @@ const listBanners = async () => {
                     let titleSpan = "";
                     let bannerDesc = "";
                     let bannervisible = "";
+
                     if (dato.solo_imagen == false) {
                         bannertitulo = dato.titulo;
                         bannerDesc = dato.descripcion;
@@ -149,13 +150,25 @@ const listBanners = async () => {
                                     <td ${titleSpan}>${bannerDesc}</td>
                                     <td>${bannerImage}</td>
                                     <td>
-                                        <div class="d-flex flex-column align-items-center gap_10">
-                                            <button type="button" class="btn btn-floating btn-info">
+                                        <div class="d-flex align-items-center gap_10">
+                                            <div>
+                                                <form method="post" action="" data-submit-form>
+                                                    <input type="text" name="banner_id" value="${dato.id}" id="bannerId" class="d-none">
+                                                    <input type="text" name="banner_visible" value="False" class="d-none">
+                                                    <button type="submit" title="Hacer Invisible" class="btn btn-floating btn-warning">
+                                                        <i class="fa-solid fa-eye-slash fs-10"></i>
+                                                    </button>
+                                                </form>
+                                            </div>
+
+                                            <button type="button" class="btn btn-floating btn-info" data-mdb-ripple-init data-mdb-modal-init
+                                                data-mdb-target="#editBannerModal${dato.id}">
                                                 <i class="fa-solid fa-edit fs-12"></i>
                                             </button>
-                                            <button type="button" class="btn btn-floating btn-danger">
-                                                <i class="fa-regular fa-trash-can fs-12">
-                                                </i>
+                                            
+                                            <button type="button" class="btn btn-floating btn-danger" data-mdb-ripple-init data-mdb-modal-init
+                                                data-mdb-target="#eliminarBanner${dato.id}">
+                                                <i class="fa-solid fa-trash fs-12"></i>
                                             </button>
                                         </div>
                                     </td>
