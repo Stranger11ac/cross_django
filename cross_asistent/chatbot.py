@@ -1,3 +1,4 @@
+from nltk.tokenize import word_tokenize
 from django.http import JsonResponse
 from django.utils import timezone
 from nltk.corpus import stopwords
@@ -6,16 +7,16 @@ from .models import Database
 import openai
 import nltk
 import json
+import re
 
 nltk.download('punkt')
-nltk.download('stopwords')
 
 now = timezone.localtime(timezone.now()).strftime('%d-%m-%Y_%H%M')
 allowed_words = {'no', 'más', 'tú', 'yo', 'él', 'ella'}
 stop_words = set(stopwords.words('spanish'))
 
 def tokenize_and_clean(text):
-    tokens = text.lower().split()
+    tokens = re.findall(r'\b\w+\b', text.lower())
     tokens = [word for word in tokens if word.isalnum() and (word not in stop_words or word in allowed_words)]
     return tokens
 
@@ -34,9 +35,11 @@ def chatgpt(question, instructions):
         ],
         temperature=0,
     )
+    
     print(f"Prompt:{response.usage.prompt_tokens}")
     print(f"Compl:{response.usage.completion_tokens}")
     print(f"Total:{response.usage.total_tokens}")
+    print()
     return response.choices[0].message.content
 
 def chatbot(request):
@@ -64,8 +67,7 @@ def chatbot(request):
                     best_match = result
 
             if best_match and best_score > 0:
-                
-                system_prompt = f"Eres Hawky,asistente de la Universidad Tecnologica de Coahuila(UTC). Utiliza emojis. No saludar. Responde la pregunta con esta información, respeta la información: {best_match.informacion}. hoy:{now}. Responde preguntas solo relacionadas con la universidad."
+                system_prompt = f"Eres Hawky, asistente virtual de la Universidad Tecnologica de Coahuila (la UTC). Utiliza emojis. No saludar, No preguntar. Responde con esta información, respeta la información: {best_match.informacion}. hoy:{now}. Responde preguntas solo relacionadas con la universidad."
                 answer = chatgpt(question, system_prompt)
                 
                 respuesta = {
@@ -76,7 +78,12 @@ def chatbot(request):
                     "imagenes": best_match.imagen.url if best_match.imagen else None
                 }
                 
-                print(respuesta)
+                print('titlo: ',best_match.titulo)
+                print()
+                print('Info: ',best_match.informacion)
+                print()
+                print('Imagen: ',best_match.imagen)
+                print()
                 return JsonResponse({'success': True, 'answer': respuesta})
             else:
                 respuesta_default = {"informacion": "Lo siento, no encontré información relacionada con lo que me pides 🤔. Intenta ser mas claro o puedes buscar más información en la página de preguntas frecuentes o, si gustas, también puedes enviarnos tus dudas. 😊😁","redirigir": "preguntas_frecuentes/","blank": False,}

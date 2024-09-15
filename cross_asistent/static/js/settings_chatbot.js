@@ -327,6 +327,7 @@ function chatSubmit(e) {
                 }
                 displayChatbotResponse(data.answer);
             } else {
+                console.error("😥 Error:", data.message);
                 alertSToast("top", 8000, "error", `Error: ${data.message}`);
             }
         })
