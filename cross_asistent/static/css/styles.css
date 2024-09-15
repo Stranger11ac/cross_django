@@ -858,7 +858,8 @@ main.main_anchor {
 }
 
 .asistent_group .box_asistent .output_messages .chat_msg.visible {
-    margin-block: 1rem;
+    margin-top: 1rem;
+    margin-bottom: 2rem;
     padding: 0.3rem 0.8rem;
     transform: scale(1);
 }

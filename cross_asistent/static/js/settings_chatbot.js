@@ -361,8 +361,9 @@ function displayChatbotResponse(varAnswer) {
         btnRedir = `<br><br> <a class="btn bg_detail mb-2 max_w300" ${btnBlanck} href="${dataRedirigir}" >Ver Más <i class="fa-solid fa-arrow-up-right-from-square ms-1"></i></a>`;
     }
 
-    lastText = varAnswer.informacion.replace(/\n/g, "<br>");
-    const htmlBlock = `<div class="chat_msg asistent_response" data-tokeid="${valID}">${lastText} ${btnRedir} ${viewImage}</div>`;
+    lastText = varAnswer.informacion;
+    chatText = varAnswer.informacion.replace(/\n/g, "<br>");
+    const htmlBlock = `<div class="chat_msg asistent_response" data-tokeid="${valID}">${chatText} ${viewImage} ${btnRedir}</div>`;
 
     contOutput.insertAdjacentHTML("beforeend", htmlBlock);
     const asistent_response = document.querySelector(`.asistent_response[data-tokeid="${valID}"]`);
