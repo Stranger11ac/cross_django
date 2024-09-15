@@ -664,7 +664,7 @@
           <div data-mdb-input-init class="form-outline">
             <i class="fa-solid fa-circle-user trailing"></i>
             <input type="text" id="createusername" name="username" class="form-control form-icon-trailing" required />
-            <label class="form-label" for="createusername">Nombre de usuario</label>
+            <label class="form-label" for="createusername">Nombre de usuario:</label>
           </div>
           <!-- Primer Nombre y Apellidos -->
           <div class="row">
@@ -672,14 +672,14 @@
               <div data-mdb-input-init class="form-outline">
                 <i class="fa-solid fa-address-card trailing"></i>
                 <input type="text" id="firstName" name="first_name" class="form-control form-icon-trailing" required />
-                <label class="form-label" for="firstName">Primer Nombre</label>
+                <label class="form-label" for="firstName">Primer Nombre:</label>
               </div>
             </div>
             <div class="col-md-6 mt-4">
               <div data-mdb-input-init class="form-outline">
                 <i class="fa-regular fa-address-card trailing"></i>
                 <input type="text" id="lastName" name="last_name" class="form-control form-icon-trailing" required />
-                <label class="form-label" for="lastName">Apellidos</label>
+                <label class="form-label" for="lastName">Apellidos:</label>
               </div>
             </div>
           </div>
@@ -688,14 +688,14 @@
           <div data-mdb-input-init class="form-outline mt-4">
             <i class="fa-regular fa-envelope trailing"></i>
             <input type="email" id="emailNew" name="email" class="form-control form-icon-trailing" required />
-            <label class="form-label" for="emailNew">Dirección Email</label>
+            <label class="form-label" for="emailNew">Dirección Email:</label>
           </div>
 
           <!-- Password input -->
           <div data-mdb-input-init class="form-outline form_group-btn mt-4">
             <input type="text" id="pass_newuser" name="password" class="form-control" data-editpass data-copy data-input_pass="generatePass"
               aria-label="readonly input example" required />
-            <label class="form-label" for="pass_newuser">Contraseña</label>
+            <label class="form-label" for="pass_newuser">Contraseña:</label>
             <!-- botton generar Contraseña -->
             <div class="btn_genpass-block">
               <button type="button" id="editpass_newuser" data-editinput="pass_newuser" class="btn btn_detail btn-floating btn-sm btn_genpass fs-10">
@@ -706,7 +706,7 @@
 
           <!-- Activar usuario y Usuario Programador checkboxes -->
           <div class="row px-1">
-            <div class="col-md-6 mt-4">
+            <div class="col-md-6 mt-4 none">
               <div class="form-check">
                 <input class="form-check-input me-2" type="checkbox" name="is_active" value="1" id="userIsactive" checked />
                 <label class="form-check-label" for="userIsactive">
@@ -743,47 +743,28 @@
         <button type="button" class="btn-close" data-mdb-ripple-init data-mdb-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
+        <h5 class="text-center my-4">
+          {{oneuser.username}}
+        </h5>
+        <p class="mb-4">
+          <strong>Nombre:</strong>
+          {{oneuser.first_name}}
+          {{oneuser.last_name}}
+          <br><br>
+          <strong>Email:</strong>
+          {{oneuser.email}}
+        </p>
         <form method="post" action="{% url 'editar_usuario' oneuser.id %}" data-submit-form>
           {% csrf_token %}
           <!-- Nombre de usuario -->
-          <div data-mdb-input-init class="form-outline mb-4">
-            <i class="fa-solid fa-circle-user trailing"></i>
-            <input type="text" id="createusername_{{oneuser.id}}" name="username" class="form-control form-icon-trailing" autocomplete="off" placeholder=" "
-              value="{{oneuser.username}}" aria-label="disabled input example" readonly />
-            <label class="form-label" for="createusername_{{oneuser.id}}">Usuario</label>
-          </div>
-          <div class="row">
-            <div class="col-md-6 mb-4">
-              <div data-mdb-input-init class="form-outline">
-                <i class="fa-solid fa-address-card trailing"></i>
-                <input type="text" id="firstName_{{oneuser.id}}" class="form-control form-icon-trailing" autocomplete="off" placeholder=" "
-                  value="{{oneuser.first_name}}" aria-label="disabled input example" disabled />
-                <label class="form-label" for="firstName_{{oneuser.id}}">First
-                  name</label>
-              </div>
-            </div>
-            <div class="col-md-6 mb-4">
-              <div data-mdb-input-init class="form-outline">
-                <i class="fa-regular fa-address-card trailing"></i>
-                <input type="text" id="lastName_{{oneuser.id}}" class="form-control form-icon-trailing" autocomplete="off" placeholder=" "
-                  value="{{oneuser.last_name}}" aria-label="disabled input example" disabled />
-                <label class="form-label" for="lastName_{{oneuser.id}}">Last
-                  name</label>
-              </div>
-            </div>
-          </div>
-          <!-- Email input -->
-          <div data-mdb-input-init class="form-outline mb-4">
-            <i class="fa-regular fa-envelope trailing"></i>
-            <input type="email" id="email_{{oneuser.id}}" class="form-control form-icon-trailing" autocomplete="off" placeholder=" " value="{{oneuser.email}}"
-              aria-label="disabled input example" disabled />
-            <label class="form-label" for="email_{{oneuser.id}}">Email address</label>
+          <div class="none">
+            <input type="text" id="createusername_{{oneuser.id}}" name="username" value="{{oneuser.username}}" readonly />
           </div>
           <!-- Password input -->
           <div data-mdb-input-init class="form-outline form_group-btn mb-4">
             <input type="text" id="pass_{{oneuser.id}}" name="password" class="form-control pe-5" data-editpass data-copy data-input_pass="generatePass"
               aria-label="readonly input example" readonly required />
-            <label class="form-label" for="pass_{{oneuser.id}}">Contraseña</label>
+            <label class="form-label" for="pass_{{oneuser.id}}">Cambiar Contraseña:</label>
             <!-- botton generar Contraseña -->
             <div class="btn_genpass-block">
               <button type="button" id="editPass_{{oneuser.id}}" data-editinput="pass_{{oneuser.id}}"
@@ -796,7 +777,7 @@
           <div class="form-check d-flex justify-content-start mb-4">
             <input {% if oneuser.is_staff %}checked{% endif %} class="form-check-input me-2" type="checkbox" name="is_staff" id="isActive_{{oneuser.id}}" />
             <label class="form-check-label" for="isActive_{{oneuser.id}}">
-              Programador
+              Usuario Staff
             </label>
           </div>
           <hr class="my-4">

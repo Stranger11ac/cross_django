@@ -158,13 +158,9 @@ def editar_usuario(request, user_id):
             user.is_superuser = is_staffPost
             user.save()
             
-            iconreturn = 'success'
             messagereturn = f'El usuario <u>{username}</u> fue modificado exitosamente 🥳🎉🎈.'
-        else:
-            iconreturn = 'info'
-            messagereturn = f'Puede modificar la contraseña o el rol del usuario, por favor envie datos.'
             
-        return JsonResponse({'success': True, 'icon':iconreturn, 'message': messagereturn}, status=200)
+        return JsonResponse({'success': True, 'message': messagereturn}, status=200)
     return JsonResponse({'success': False, 'message': 'Acción no permitida.'}, status=403)
 
 # Banners ----------------------------------------------------------
@@ -173,6 +169,7 @@ def editar_usuario(request, user_id):
 def banner_update(request):
     if request.method == 'POST':
         banner_id = request.POST.get('banner_id')
+        tituloPOST = request.POST.get('contenidoWord')
         banner = get_object_or_404(models.Banners, id=banner_id)
         banner.solo_imagen = request.POST.get('soloImagen')
         if banner.solo_imagen == None:
@@ -181,7 +178,7 @@ def banner_update(request):
         new_image = request.FILES.get('imagen')
         if not new_image == None:
             banner.imagen = new_image
-        banner.titulo = request.POST.get('contenidoWord')
+        banner.titulo = tituloPOST
         banner.descripcion = request.POST.get('descripcion')
         banner.redirigir = request.POST.get('redirigir')
         
@@ -193,7 +190,7 @@ def banner_update(request):
         return JsonResponse({
             'success': True,
             'functions': 'reload',
-            'message': f'El banner <u>{banner.titulo}</u> fue modificado exitosamente 🥳🎉🎈.'
+            'message': f'El banner <u>{tituloPOST}</u> fue modificado exitosamente 🥳🎉🎈.'
         }, status=200)
     
     return JsonResponse({'success': False, 'message': 'Acción no permitida.'}, status=403)
@@ -638,7 +635,9 @@ def settings_update(request):
             firstsection = request.POST.get('firstsection')
             secondsection = request.POST.get('secondsection')
             abouttext = request.POST.get('contenidoWord')
-                        
+            print(qrButtonPOST)
+            print(qrButton)
+
             config = get_object_or_404(models.Configuraciones, id='1')
             if qrImgPOST:
                 config.qr_image = qrImgPOST

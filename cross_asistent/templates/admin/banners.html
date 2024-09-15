@@ -61,7 +61,7 @@
                 {% endif %}
             </div>
         </section>
-
+        <!-- Crear nuevo banner -->
         <section class="col-lg-4">
             <div class="card mb-4">
                 <div class="card-body">
@@ -102,7 +102,7 @@
                 </div>
             </div>
         </section>
-
+        <!-- Lista de banners registrados -->
         <section class="col-lg-8">
             <div class="card">
                 <div class="card-body text-center">
@@ -121,7 +121,7 @@
                             <tbody>
                                 {% for onebanner in banners %}
                                 <tr class="table_odd_items {% if not onebanner.visible %}table-active{% endif %}">
-                                    <td {% if not onebanner.visible or onebanner.onlyImg %}colspan="2"{% endif %}>
+                                    <td {% if not onebanner.visible or onebanner.onlyImg %}colspan="2" {% endif %}>
                                         {% autoescape off %}{{ onebanner.titulo }}{% endautoescape %}
                                         {% if onebanner.onlyImg %}
                                         <small class="bg-success rounded-pill p-1 mt-3">Solo Imagen y boton</small>{% endif %}

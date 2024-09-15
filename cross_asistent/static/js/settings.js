@@ -100,7 +100,7 @@ $(document).ready(function () {
                 $(this).removeClass("active");
             }, 1000);
             $("#" + editInputId)
-                .val(`UTC${newRandomPass}`)
+                .val(`UTC#${newRandomPass}`)
                 .addClass("active");
         }
 
@@ -386,7 +386,6 @@ $(document).ready(function () {
             $(this).attr("class", `form-select change_bg ${newClass}`);
         });
 
-
         //
         //
         //
@@ -456,8 +455,11 @@ function jsonSubmit(e) {
     if (formData.has("contenidoWord")) {
         const contenidoTiny = tinymce.activeEditor.getContent();
         formData.set("contenidoWord", contenidoTiny);
+        alert(contenidoTiny);
+
         const contenidoTextTiny = tinymce.activeEditor.getContent({ format: "text" });
         formData.set("textTiny", contenidoTextTiny);
+        alert(contenidoTextTiny);
     }
 
     try {
