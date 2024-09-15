@@ -12,7 +12,7 @@ import re
 nltk.download('punkt')
 
 now = timezone.localtime(timezone.now()).strftime('%d-%m-%Y_%H%M')
-allowed_words = {'no', 'más', 'tú', 'yo', 'él', 'ella'}
+allowed_words = {'más', 'una', 'un', 'como'}
 stop_words = set(stopwords.words('spanish'))
 
 def tokenize_and_clean(text):
@@ -48,7 +48,7 @@ def chatbot(request):
             data = json.loads(request.body)
             question = data.get('question', '').strip()
             input_tokens = tokenize_and_clean(question)
-            results = Database.objects.all()
+            results_in_db = Database.objects.all()
             
             best_match = None
             best_score = 0
@@ -58,7 +58,7 @@ def chatbot(request):
             print('Tokens: ',input_tokens)
             print()
             
-            for result in results:
+            for result in results_in_db:
                 title_tokens = tokenize_and_clean(result.titulo)
                 score = similarity_score(input_tokens, title_tokens)
 
