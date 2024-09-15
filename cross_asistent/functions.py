@@ -244,6 +244,53 @@ def banners_visibility_now(request):
         # Si no se realiza ninguna actualización, devolvemos un HTTP 204 (No Content)
         return JsonResponse({}, status=200)
 
+@login_required
+@never_cache
+def banners_list(request):
+    listBanners = models.Banners.objects.all()
+    datos_modificados = []
+    for dato in listBanners:
+        if dato.imagen:
+            imagen_url = dato.imagen.url
+        else:
+            imagen_url = ''
+            
+        datos_modificados.append({
+            'id': dato.id,
+            'titulo': dato.titulo,
+            'descripcion': dato.descripcion,
+            'redirigir': dato.redirigir,
+            'imagen': imagen_url,
+            'expiracion': dato.expiracion,
+            'solo_imagen': dato.solo_imagen,
+            'visible': dato.visible,
+        })
+    data = {'infobanners': datos_modificados}
+    return JsonResponse(data)
+
+@login_required
+@never_cache
+def banners_getitem(request):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)            
+            idPOST = data.get('id')
+            dbItem = get_object_or_404(models.Banners, id=idPOST)
+            data = {
+                'titulo':dbItem.titulo,
+                'descripcion':dbItem.descripcion,
+                'redirigir':dbItem.redirigir,
+                'expiracion':dbItem.expiracion,
+                'solo_imagen':dbItem.solo_imagen,
+                'visible':dbItem.visible,
+            }
+            return JsonResponse(data)
+        except Exception as e:
+            return JsonResponse({'success': False, 'message': f'Ocurrió un error 😯😥 <br>{str(e)}'}, status=400)
+
+    return JsonResponse({'error': 'Método no válido'}, status=400)
+
+
 # Categorias ----------------------------------------------------------
 @login_required
 @never_cache

@@ -182,14 +182,14 @@
             <div class="card mb-4">
                 <div class="card-body text-center">
                     <h4 class="mb-3">Lista de Registros</h4>
-                    <div class="d-flex flex-column align-items-center" data-table-load="tbody_database">
+                    <div class="d-flex flex-column align-items-center" data-table-load="tbodyDatabase">
                         <div class="pulse-container my-5">
                             <div class="pulse-bubble bg_detail pulse-bubble-1"></div>
                             <div class="pulse-bubble bg_detail pulse-bubble-2"></div>
                             <div class="pulse-bubble bg_detail pulse-bubble-3"></div>
                         </div>
                     </div>
-                    <div class="table-responsive rounded d-none" id="table-container" data-table-container="tbody_database">
+                    <div class="d-none" id="table-container" data-table-container="tbodyDatabase">
                         <table id="datatable_database" class="table table_odd align-middle m-0">
                             <thead>
                                 <tr>
@@ -201,7 +201,7 @@
                                     <th class="fw-bold text_detail">Acciones</th>
                                 </tr>
                             </thead>
-                            <tbody id="tbody_database" data-list-table="{% url 'database_list' %}" data-url-info="{% url 'database_getitem' %}">
+                            <tbody id="tbodyDatabase" data-list-table="{% url 'database_list' %}" data-url-info="{% url 'database_getitem' %}">
                             </tbody>
                         </table>
                     </div>

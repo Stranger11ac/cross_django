@@ -1043,10 +1043,6 @@ main.main_anchor {
     transform: scale(1.4) translateX(1px);
 }
 
-/* .table_odd .table_odd_items:nth-child(even) {
-    --mdb-table-bg: var(--var-secondary);
-} */
-
 .table_odd .table_odd_items:hover,
 .table_odd .table_odd_items.table-active:hover {
     --mdb-table-bg: var(--var-detail) !important;
@@ -1056,15 +1052,6 @@ main.main_anchor {
     background: var(--var-detail) !important;
     color: var(--var-white) !important;
 }
-
-
-/* .table_odd .table_odd_items:hover .text_detail,
-.table_odd .table_odd_items.table-active:hover .text_detail {
-    background: var(--var-white);
-    border-radius: var(--mdb-border-radius-pill) !important;
-    border: none;
-    padding: 0.1rem;
-} */
 
 
 /*########################### Modal MDB ###########################*/

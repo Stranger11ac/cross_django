@@ -42,8 +42,10 @@ urlpatterns = [
     
     # Banners ----------------------------------------------------------
     path('administracion/banners/', views.banners_page, name='upload_banner'),
+    path('administracion/banners/lista/', functions.banners_list, name='list_banners'),
     path('administracion/banners/editar/', functions.banner_update, name='edit_banner'),
     path('administracion/banners/eliminar/', functions.banner_delete, name='delete_banner'),
+    path('administracion/banners/informacion/', functions.banners_getitem, name='getitem_banner'),
     path('administracion/banners/actualizar_visibilidad/', functions.banners_visibility_now, name='update_banner_visibility'),
 
     # Categorias ----------------------------------------------------------

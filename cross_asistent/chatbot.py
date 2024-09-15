@@ -1,4 +1,3 @@
-from nltk.tokenize import word_tokenize
 from django.http import JsonResponse
 from django.utils import timezone
 from nltk.corpus import stopwords
