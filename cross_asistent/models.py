@@ -168,6 +168,7 @@ class Mapa(models.Model):
 
 class galeria(models.Model):
     imagen = models.ImageField(upload_to=set_imgs_path, max_length=120, blank=True, null=True)
+    uuid = models.CharField(max_length=25)
     usos = models.TextField(blank=True,null=True)
     
     def __str__(self):

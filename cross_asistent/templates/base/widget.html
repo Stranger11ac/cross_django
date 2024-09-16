@@ -99,7 +99,6 @@
                 <div class="modal-body p-4">
                     <section class="px-4">
                         <div class="text-center mb-4">
-                            <h6 class="mb-3">Cambiar Tema</h6>
                             <div class="d-flex justify-content-between align-items-center gap_10">
                                 <p class="m-0">Tema: <span id="switchText">Claro</span></p>
                                 <div>
@@ -111,45 +110,22 @@
                             </div>
                         </div>
                         <h6 class="text-center mb-3">Color de la Interfaz</h6>
-                        <div class="row mb-3">
-                            <div class="col text-center">
-                                <button type="button" class="btn btn-floating btn-success" data-change-color="green" data-rgb="#02913c"></button>
-                            </div>
-                            <div class="col text-center">
-                                <button type="button" class="btn btn-floating btn-primary" data-change-color="blue" data-rgb="#3b71ca"></button>
-                            </div>
-                            <div class="col text-center">
-                                <button type="button" class="btn btn-floating btn_purple" data-change-color="purple" data-rgb="#723bca"></button>
-                            </div>
+                        <div class="d-flex justify-content-around mb-3">
+                            <button class="btn btn-floating btn-success" data-change-color="green" data-rgb="#02913c"></button>
+                            <button class="btn btn-floating btn-primary" data-change-color="blue" data-rgb="#3b71ca"></button>
+                            <button class="btn btn-floating btn_purple" data-change-color="purple" data-rgb="#723bca"></button>
                         </div>
-                        <div class="row">
-                            <div class="col text-center">
-                                <button type="button" class="btn btn-floating btn_gradient_green" data-change-color="gradient_green" " data-rgb=" #02913c">
-                                </button>
-                            </div>
-                            <div class="col text-center">
-                                <button type="button" class="btn btn-floating btn_gradient_blue" data-change-color="gradient_blue" data-rgb="#3b71ca"></button>
-                            </div>
-                            <div class="col text-center">
-                                <button type="button" class="btn btn-floating btn_cyan-purple" data-change-color="gradient_blue-purple" data-rgb="#3b71ca">
-                                </button>
-                            </div>
-                            <div class="col text-center">
-                                <button type="button" class="btn btn-floating btn_gradient_purple" data-change-color="gradient_purple" data-rgb="#723bca">
-                                </button>
-                            </div>
-                            <div class="col text-center">
-                                <button type="button" class="btn btn-floating btn_gradient_orange" data-change-color="gradient_orange" data-rgb="#d29c15">
-                                </button>
-                            </div>
+                        <div class="d-flex justify-content-between">
+                            <button class="btn btn-floating btn_gradient_green" data-change-color="gradient_green" data-rgb=" #02913c"></button>
+                            <button class="btn btn-floating btn_gradient_blue" data-change-color="gradient_blue" data-rgb="#3b71ca"></button>
+                            <button class="btn btn-floating btn_cyan-purple" data-change-color="gradient_blue-purple" data-rgb="#3b71ca"></button>
+                            <button class="btn btn-floating btn_gradient_purple" data-change-color="gradient_purple" data-rgb="#723bca"></button>
+                            <button class="btn btn-floating btn_gradient_orange" data-change-color="gradient_orange" data-rgb="#d29c15"></button>
                         </div>
                         {% block moresettings %}{% endblock %}
                     </section>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn_detail" data-mdb-ripple-init data-mdb-dismiss="modal">Listo <i
-                            class="fa-regular fa-circle-check ms-1"></i></button>
-                </div>
+                <div class="modal-footer"></div>
             </div>
         </div>
     </div>

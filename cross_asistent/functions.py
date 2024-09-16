@@ -619,6 +619,12 @@ def mapa_markers(request):
             "imagen": imagen_mark.imagen.url,
             "icon_size": float(mapa.size_marker),
             "door_coords": [float(coord) for coord in mapa.door_cords.split(",")],
+            "edges": [
+                [mapa.p1_polygons],
+                [mapa.p2_polygons],
+                [mapa.p3_polygons],
+                [mapa.p4_polygons],
+            ]
         }
         data.append(item)
 

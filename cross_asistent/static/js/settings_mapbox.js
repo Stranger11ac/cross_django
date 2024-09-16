@@ -1082,11 +1082,10 @@ fetch(dataMarkers)
                                         sizemarker: item.sizemarker,
                                         edges: [
                                             [
-                                                item.polygons[0],
-                                                item.polygons[1],
-                                                item.polygons[2],
-                                                item.polygons[3],
-                                                item.polygons[0],
+                                                item.edges[0],
+                                                item.edges[1],
+                                                item.edges[2],
+                                                item.edges[3],
                                             ],
                                         ],
                                     },
@@ -1166,10 +1165,10 @@ fetch(dataMarkers)
                         $('[for="fotoEdificio"]').html('Cambiar foto <i class="fa-regular fa-image ms-1"></i>');
                         $("#fotoEdificio").attr("required", false);
 
-                        $("#esquina1").addClass("active").val(edges[0][0]);
-                        $("#esquina2").addClass("active").val(edges[0][1]);
-                        $("#esquina3").addClass("active").val(edges[0][2]);
-                        $("#esquina4").addClass("active").val(edges[0][3]);
+                        $("#esquina1").addClass("active").val(edges[0]);
+                        $("#esquina2").addClass("active").val(edges[1]);
+                        $("#esquina3").addClass("active").val(edges[2]);
+                        $("#esquina4").addClass("active").val(edges[3]);
                     }
 
                     offcanvasInstance.show();
