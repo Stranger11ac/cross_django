@@ -80,7 +80,7 @@ class Banners(models.Model):
     descripcion = models.CharField(max_length=350, null=True, blank=True)
     redirigir = models.TextField(null=True, blank=True)
     imagen = models.ImageField(upload_to=set_imgBanner_path, max_length=120, blank=True, null=True)
-    expiracion = models.DateTimeField(blank=True, null=True)
+    expiracion = models.DateField(blank=True, null=True)
     solo_imagen = models.BooleanField(default=False)
     visible = models.BooleanField(default=True)
         

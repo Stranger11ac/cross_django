@@ -72,6 +72,7 @@ tinymce.init({
     promotion: false,
     skin: tinyTheme,
     content_css: tinyThemeCss,
+    content_style: 'strong { color: #3b71ca; }',
     forced_root_block: "",
     setup: function (editor) {
         editor.on("NodeChange", function (e) {

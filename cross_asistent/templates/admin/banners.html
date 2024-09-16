@@ -93,8 +93,8 @@
                             <label class="form-check-label" for="soloImagen">Mostrar solo la imagen</label>
                         </div>
                         <div class="mt-4">
-                            <label for="expiracion" class="form-label">visible hasta el... <small>(Opcional)</small></label>
-                            <input type="datetime-local" class="form-control" id="expiracion" name="expiracion">
+                            <label for="expiracion" class="form-label">visible hasta: <small>(Opcional)</small></label>
+                            <input type="date" class="form-control" id="expiracion" name="expiracion">
                         </div>
                         <button type="submit" class="btn btn_detail btn-block mt-4" data-mdb-ripple-init data-mdb-ripple-color="white">
                             Registrar <i class="fa-solid fa-paper-plane ms-1"></i></button>
@@ -124,7 +124,8 @@
                                     <th>Acciones</th>
                                 </tr>
                             </thead>
-                            <tbody id="tbodyBanners" data-list-table="{% url 'list_banners' %}" data-url-info="{% url 'getitem_banner' %}">
+                            <tbody id="tbodyBanners" data-list-table="{% url 'list_banners' %}" data-url-info="{% url 'getitem_banner' %}"
+                                data-url-visible="{% url 'update_banner_visibility' %}">
                             </tbody>
                         </table>
                     </div>
@@ -148,14 +149,14 @@
             <div class="modal-body text-start">
                 <form method="post" action="{% url 'edit_banner' %}" data-submit-form autocomplete="off">
                     {% csrf_token %}
-                    <input type="hidden" value="" name="banner_id">
+                    <input type="hidden" name="banner_id" id="banner_id">
                     <div>
                         <label for="editImagen" class="form-label">Cambiar Imagen:</label>
                         <input type="file" class="form-control" id="editImagen" name="imagen" accept="image/*">
                     </div>
                     <label for="editTitulo" class="form-label mt-4">Titulo:</label>
                     <div class="border border-1 border-secondary rounded">
-                        <input type="text" id="editTitulo" name="contenidoWord" class="form-control form-icon-trailing bannerTitle" value="" />
+                        <input type="text" id="editTitulo" name="contenidoWord" class="form-control bannerTitle" />
                     </div>
                     <div data-mdb-input-init class="form-outline position-relative mt-4">
                         <button type="button" class="position-absolute top-0 end-0 btn p-0 fs-12 m-2 mt-1 none" data-clear="editDescripcion"><i
@@ -166,18 +167,17 @@
                     <div data-mdb-input-init class="form-outline position-relative mt-4">
                         <button type="button" class="position-absolute top-0 end-0 btn p-0 fs-12 m-2 mt-1 none" data-clear="editRedirigir"><i
                                 class="fa-solid fa-xmark m-0 p-0"></i></button>
-                        <input type="url" id="editRedirigir" name="redirigir" class="form-control form-icon-trailing" data-init-clear value="" />
+                        <input type="url" id="editRedirigir" name="redirigir" class="form-control form-icon-trailing" data-init-clear />
                         <label class="form-label" for="editRedirigir">liga / url:
                             <small>(Opcional)</small></label>
                     </div>
                     <div class="form-check mt-4 mb-0">
-                        <input class="form-check-input" type="checkbox" value="True" id="soloImagen" name="soloImagen" />
-                        <label class="form-check-label" for="soloImagen">Mostrar solo la imagen</label>
+                        <input class="form-check-input" type="checkbox" value="True" id="editsoloImagen" name="soloImagen" />
+                        <label class="form-check-label" for="editsoloImagen">Mostrar solo la imagen</label>
                     </div>
                     <div class="mt-4">
-                        <label for="editExpiracion" class="form-label">visible hasta el dia:
-                            <small>(Opcional)</small></label>
-                        <input type="datetime-local" class="form-control" id="editExpiracion" name="expiracion" value="">
+                        <label for="editExpiracion" class="form-label">visible hasta el dia: <small>(Opcional)</small></label>
+                        <input type="date" class="form-control" id="editExpiracion" name="expiracion">
                     </div>
                     <button type="submit" class="btn btn_detail btn-block mt-4" data-mdb-ripple-init data-mdb-ripple-color="white">
                         Guardar Cambios <i class="fa-solid fa-paper-plane ms-1"></i></button>
@@ -196,18 +196,18 @@
                 <button type="button" class="btn-close" data-mdb-ripple-init data-mdb-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <h3 class="text-center mb-2">¿Quieres eliminar el banner?</h3>
-                <p class="text-center">Se eliminará toda la información relacionada <br> Esta acción es
+                <h3 class="text-center mb-2">¿Quieres eliminar el banner <u id="deletebannername"></u>?</h3>
+                <p class="text-center">Esta acción es
                     permanente</p>
                 <hr class="my-4">
-                <form id="eliminarBannerForm-" action="{% url 'delete_banner' %}" method="post" data-submit-form>
-                    {% csrf_token %}
-                    <input type="hidden" value="" name="banner_id">
-                    <div class="d-flex justify-content-between">
-                        <button type="button" class="btn btn_detail" data-mdb-ripple-init data-mdb-dismiss="modal">Cancelar</button>
+                <div class="d-flex justify-content-between">
+                    <button type="button" class="btn btn_detail" data-mdb-ripple-init data-mdb-dismiss="modal">Cancelar</button>
+                    <form id="eliminarBannerForm-" action="{% url 'delete_banner' %}" method="post" data-submit-form>
+                        {% csrf_token %}
+                        <input type="hidden" name="banner_id" id="deletebannerid">
                         <button type="submit" class="btn btn-danger">Eliminar</button>
-                    </div>
-                </form>
+                    </form>
+                </div>
             </div>
         </div>
     </div>

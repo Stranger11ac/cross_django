@@ -306,11 +306,11 @@ def parse_date(value):
     """Convierte una cadena en un objeto datetime o devuelve None si está vacío."""
     if value.strip():
         formats = [
-            '%Y-%m-%d %H:%M:%S%z',       # Fecha con hora y zona horaria
-            '%Y-%m-%d %H:%M:%S',         # Fecha con hora
-            '%Y-%m-%d',                  # Solo fecha
-            '%Y-%m-%d %H:%M:%S.%f',      # Fecha con microsegundos
-            '%Y-%m-%d %H:%M:%S.%f%z'     # Fecha con microsegundos y zona horaria
+            '%Y-%m-%d %H:%M:%S%z',   # Fecha con hora y zona horaria
+            '%Y-%m-%d %H:%M:%S',     # Fecha con hora
+            '%Y-%m-%d',              # Solo fecha
+            '%Y-%m-%d %H:%M:%S.%f',  # Fecha con microsegundos
+            '%Y-%m-%d %H:%M:%S.%f%z' # Fecha con microsegundos y zona horaria
         ]
         for date_format in formats:
             try:

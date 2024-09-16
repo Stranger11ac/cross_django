@@ -316,30 +316,35 @@ def ver_perfil(request):
 @never_cache
 def banners_page(request):    
     if request.method == 'POST':
+        tituloPOST = request.POST.get('contenidoWord')
         soloImagenPOST = request.POST.get('soloImagen')
+        expiracionPOST = request.POST.get('expiracion')
         if soloImagenPOST == None:
             soloImagenPOST = False
-        expiracionPOST = request.POST.get('expiracion')
-        if expiracionPOST:
-            expiracionPOST = expiracionPOST
-        else:
+        if not expiracionPOST:
             expiracionPOST = None
-            
-        banner = models.Banners(
-            titulo = request.POST.get('contenidoWord'),
-            descripcion = request.POST.get('descripcion'),
-            redirigir = request.POST.get('redirigir'),
-            imagen = request.FILES.get('imagen'),
-            solo_imagen = soloImagenPOST,
-            expiracion = expiracionPOST
-        )
-        banner.save()
         
-        return JsonResponse({
-            'success': True,
-            'functions': 'reload',
-            'message': f'El banner <span>{banner.titulo}</span> fue creado exitosamente 🥳🎉🎈.'
-        }, status=200)
+        if tituloPOST:
+            banner = models.Banners(
+                titulo = request.POST.get('contenidoWord'),
+                descripcion = request.POST.get('descripcion'),
+                redirigir = request.POST.get('redirigir'),
+                imagen = request.FILES.get('imagen'),
+                solo_imagen = soloImagenPOST,
+                expiracion = expiracionPOST
+            )
+            banner.save()
+            
+            return JsonResponse({
+                'success': True,
+                'functions': 'reload',
+                'message': f'El banner <span>{tituloPOST}</span> fue creado exitosamente 🥳🎉🎈.'
+            }, status=200)
+        else:
+            return JsonResponse({
+                'success': False,
+                'message': f'El parecer no se envio contenido ⚠️😯🤔😥.'
+            }, status=400)
     
     configuraciones = obtener_configuraciones()
     banners_all = models.Banners.objects.all()
@@ -351,7 +356,7 @@ def banners_page(request):
             'titulo': banner.titulo,
             'descripcion': banner.descripcion,
             'redirigir': banner.redirigir,
-            'imagen': banner.imagen.url,
+            'imagen': banner.imagen.url or '/static/img/default_image.webp',
             'expiracion': banner.expiracion if not banner.expiracion == None else '',
             'visible': banner.visible,
             'onlyImg': banner.solo_imagen,

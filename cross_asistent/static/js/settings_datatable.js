@@ -107,8 +107,10 @@ const listDatabase = async () => {
 const listBanners = async () => {
     try {
         const tableId = "tbodyBanners";
-        const databaseList = $(`#${tableId}`).data("list-table");
-        await fetch(databaseList)
+        const bannersUrlList = $(`#${tableId}`).data("list-table");
+        const bannersUrlVIsible = $(`#${tableId}`).data("url-visible");
+
+        await fetch(bannersUrlList)
             .then((response) => {
                 if (!response.ok) {
                     return response.json().then((data) => {
@@ -123,58 +125,45 @@ const listBanners = async () => {
 
                 let content = ``;
                 data.infobanners.map((dato) => {
-                    let bannertitulo = "";
+                    let bannertitulo = dato.titulo;
                     let cellSpan = "";
                     let titleSpan = "";
                     let bannerDesc = "";
-                    let bannervisible = "";
 
                     if (dato.solo_imagen == false) {
-                        bannertitulo = dato.titulo;
                         bannerDesc = dato.descripcion;
                     } else {
-                        if (dato.visible == false) {
-                            bannervisible = '<small class="bg-danger rounded-pill p-1 mt-3">Banner Invisible</small>';
-                        }
-                        bannertitulo = `${dato.titulo} <small class="bg-success rounded-pill p-1 mt-3">Solo Imagen y boton</small> ${bannervisible}`;
+                        bannertitulo +=
+                            '<div class="bg-success rounded-pill p-2 py-1 m-2 mb-0 d-inline-block fs-6">Solo Imagen y boton</div>';
                         cellSpan = 'colspan="2"';
                         titleSpan = 'class="d-none"';
+                    }
+
+                    if (dato.visible) {
+                        bannerDesc = dato.descripcion;
+                        visibleInput = "False";
+                        visibleColor = "btn-warning";
+                        visibleIcon = "fa-eye-slash";
+                    } else {
+                        bannertitulo +=
+                            '<div class="bg-danger rounded-pill p-2 py-1 m-2 mb-0 d-inline-block fs-6">Banner Invisible</div>';
+                        cellSpan = 'colspan="2"';
+                        titleSpan = 'class="d-none"';
+                        visibleInput = "True";
+                        visibleColor = "btn_purple";
+                        visibleIcon = "fa-eye";
                     }
 
                     let bannerImage = "";
                     if (dato.imagen) {
                         bannerImage = `<img src="${dato.imagen}" loading="lazy" class="img-rounded max_w150">`;
                     }
-                    content += `<tr class="table_odd_items">
-                                    <td ${cellSpan}>${bannertitulo}</td>
-                                    <td ${titleSpan}>${bannerDesc}</td>
-                                    <td>${bannerImage}</td>
-                                    <td>
-                                        <div class="d-flex align-items-center gap_10">
-                                            <div>
-                                                <form method="post" action="" data-submit-form>
-                                                    <input type="text" name="banner_id" value="${dato.id}" id="bannerId" class="d-none">
-                                                    <input type="text" name="banner_visible" value="False" class="d-none">
-                                                    <button type="submit" title="Hacer Invisible" class="btn btn-floating btn-warning">
-                                                        <i class="fa-solid fa-eye-slash fs-10"></i>
-                                                    </button>
-                                                </form>
-                                            </div>
-
-                                            <button type="button" class="btn btn-floating btn-info" data-mdb-ripple-init data-mdb-modal-init
-                                                data-mdb-target="#editBannerModal${dato.id}">
-                                                <i class="fa-solid fa-edit fs-12"></i>
-                                            </button>
-                                            
-                                            <button type="button" class="btn btn-floating btn-danger" data-mdb-ripple-init data-mdb-modal-init
-                                                data-mdb-target="#eliminarBanner${dato.id}">
-                                                <i class="fa-solid fa-trash fs-12"></i>
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>`;
+                    content += `<tr class="table_odd_items"><td ${cellSpan}>${bannertitulo}</td><td ${titleSpan}>${bannerDesc}</td><td>${bannerImage}</td><td><div class="d-flex align-items-center gap_10"><form method="post" action="${bannersUrlVIsible}" data-submit-dt><input type="text" name="banner_id" value="${dato.id}" class="d-none"><input type="text" name="banner_visible" value="${visibleInput}" class="d-none"><button type="submit" class="btn btn-floating ${visibleColor}"><i class="fa-solid ${visibleIcon} text-white fs-10"></i></button></form><button type="button" class="btn btn-floating btn-info" onclick="openModal('#editBannerModal',${dato.id})"><i class="fa-solid fa-edit fs-12"></i></button><button type="button" class="btn btn-floating btn-danger" onclick="openModal('#eliminarBanner',${dato.id})"><i class="fa-solid fa-trash fs-12"></i></button></div></td></tr>`;
                 });
+                4;
                 tbodyBanners.innerHTML = content;
+
+                $("[data-submit-dt]").submit(jsonSubmit);
             })
             .catch((error) => {
                 console.error("😥 Error:", error);
@@ -201,91 +190,123 @@ function openModal(idMdbModal, dataid) {
     $(idMdbModal).modal("show");
 }
 
-if (tableBannersObj) {
-    // Para el modal de edición
+function fetchData(modal, dataPost, dataid, errorMsg, successCallback) {
+    $.ajax({
+        url: dataPost,
+        method: "POST",
+        data: JSON.stringify({ id: dataid }),
+        contentType: "application/json; charset=utf-8",
+        dataType: "json",
+        async: true,
+        headers: {
+            "X-Requested-With": "XMLHttpRequest",
+            "X-CSRFToken": formToken,
+        },
+        success: successCallback,
+        error: function (jqXHR, textStatus, errorThrown) {
+            console.error("Error:...", textStatus, errorThrown);
+            alertSToast("center", 9000, "error", errorMsg);
+        },
+    });
+}
+
+if (tableDatabaseObj) {
+    const postUrlDatabase = $("#tbodyDatabase").data("url-info");
+
+    // Modal edición Database
     $("#editDBModal").on("show.bs.modal", function () {
         const thisdataid = $(this).data("get-info");
-        const postUrl = $("#tbodyDatabase").data("url-info");
-        $.ajax({
-            url: postUrl,
-            method: "POST",
-            data: JSON.stringify({ id: thisdataid }),
-            contentType: "application/json; charset=utf-8",
-            dataType: "json",
-            async: true,
-            headers: {
-                "X-Requested-With": "XMLHttpRequest",
-                "X-CSRFToken": formToken,
-            },
-            success: function (data) {
-                const thisModal = $("#editDBModal");
-                thisModal.find("#editid").val(thisdataid);
-                thisModal.find("#editcateg").val(data.categoria);
-                thisModal.find("#editcateg").text(data.categoria);
-                thisModal.find("#edittitulo").val(data.titulo);
-                thisModal.find("#editinfo").val(data.informacion);
+        const thisModal = $(this);
+        const errorMsg = "Ocurrio un error al obtener los datos";
 
-                if (data.redirigir != null || data.redirigir != "") {
-                    thisModal.find("#editredirigir").val(data.redirigir);
-                }
-            },
-            error: function (jqXHR, textStatus, errorThrown) {
-                console.error("Error:", textStatus, errorThrown);
-                alertSToast(
-                    "center",
-                    9000,
-                    "error",
-                    "Ocurrio un error al obtener los datos. intente de nuevo mas tarde."
-                );
-            },
+        fetchData(thisModal, postUrlDatabase, thisdataid, errorMsg, function (data) {
+            const thisModal = $("#editDBModal");
+            thisModal.find("#editid").val(thisdataid);
+            thisModal.find("#editcateg").val(data.categoria);
+            thisModal.find("#editcateg").text(data.categoria);
+            thisModal.find("#edittitulo").val(data.titulo);
+            thisModal.find("#editinfo").val(data.informacion);
+
+            if (data.redirigir != null || data.redirigir != "") {
+                thisModal.find("#editredirigir").val(data.redirigir);
+            }
         });
     });
-
     $("#editDBModal").on("hidden.bs.modal", function () {
         const thisModal = $(this);
-        thisModal.find("#editid").val("");
-        thisModal.find("#editcateg").val("");
-        thisModal.find("#editcateg").text("");
-        thisModal.find("#edittitulo").val("");
-        thisModal.find("#editinfo").val("");
-        thisModal.find("#editredirigir").val("");
+        thisModal.find("input").val("");
+        thisModal.find("textarea").text("");
     });
 
-    // Para el modal de eliminación
+    // Modal eliminación Database
     $("#deleteDBmodal").on("show.bs.modal", function () {
         const thisdataid = $(this).data("get-info");
-        const postUrl = $("#tbodyDatabase").data("url-info");
-        $.ajax({
-            url: postUrl,
-            method: "POST",
-            data: JSON.stringify({ id: thisdataid }),
-            contentType: "application/json; charset=utf-8",
-            dataType: "json",
-            async: true,
-            headers: {
-                "X-Requested-With": "XMLHttpRequest",
-                "X-CSRFToken": formToken,
-            },
-            success: function (data) {
-                const thisModal = $("#deleteDBmodal");
-                thisModal.find("#deltitulo").text(data.titulo);
-                thisModal.find("#delid").val(thisdataid);
-            },
-            error: function (jqXHR, textStatus, errorThrown) {
-                console.error("Error:", textStatus, errorThrown);
-                alertSToast(
-                    "center",
-                    9000,
-                    "error",
-                    "Ocurrio un error al obtener los datos. intente de nuevo mas tarde."
-                );
-            },
+        const thisModal = $(this);
+        const errorMsg = "Ocurrio un error al obtener los datos";
+
+        fetchData(thisModal, postUrlDatabase, thisdataid, errorMsg, function (data) {
+            thisModal.find("#deltitulo").text(data.titulo);
+            thisModal.find("#delid").val(thisdataid);
         });
     });
-
     $("#deleteDBmodal").on("hidden.bs.modal", function () {
         const thisModal = $(this);
         thisModal.find("#deltitulo").text("");
         thisModal.find("#delid").val("");
+    });
+}
+
+if (tableBannersObj) {
+    const postUrlBanners = $("#tbodyBanners").data("url-info");
+
+    // Modal edición Banners
+    $("#editBannerModal").on("show.bs.modal", function () {
+        const thisdataid = $(this).data("get-info");
+        const thisModal = $(this);
+        const errorMsg = "Ocurrio un error al obtener los datos del Banner";
+
+        fetchData(thisModal, postUrlBanners, thisdataid, errorMsg, function (data) {
+            if (data.solo_imagen) {
+                thisModal.find("#editsoloImagen").attr("checked", "checked");
+            } else {
+                thisModal.find("#editsoloImagen").removeAttr("checked");
+            }
+
+            thisModal.find("#banner_id").val(thisdataid);
+            thisModal.find("#editDescripcion").text(data.descripcion);
+            thisModal.find("#editRedirigir").val(data.redirigir);
+
+            if (data.expiracion != null || data.expiracion == "") {
+                const formattedDate = convertToDateInputFormat(data.expiracion);
+                thisModal.find("#editExpiracion").val(formattedDate);
+            }
+
+            var editor = tinymce.get("editTitulo");
+            editor.setContent(data.titulo);
+        });
+    });
+    $("#editBannerModal").on("hidden.bs.modal", function () {
+        const thisModal = $(this);
+        thisModal.find("input").val("");
+        thisModal.find("textarea").text("");
+        var editor = tinymce.get("editTitulo");
+        editor.setContent("");
+    });
+
+    // Modal eliminación Banners
+    $("#eliminarBanner").on("show.bs.modal", function () {
+        const thisdataid = $(this).data("get-info");
+        const thisModal = $(this);
+        const errorMsg = "Ocurrio un error al obtener los datos del Banner";
+
+        fetchData(thisModal, postUrlBanners, thisdataid, errorMsg, function (data) {
+            thisModal.find("#deletebannername").html(data.titulo);
+            thisModal.find("#deletebannerid").val(thisdataid);
+        });
+    });
+    $("#eliminarBanner").on("hidden.bs.modal", function () {
+        const thisModal = $(this);
+        thisModal.find("#deletebannername").html("");
+        thisModal.find("input").val("");
     });
 }

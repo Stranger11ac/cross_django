@@ -455,11 +455,11 @@ function jsonSubmit(e) {
     if (formData.has("contenidoWord")) {
         const contenidoTiny = tinymce.activeEditor.getContent();
         formData.set("contenidoWord", contenidoTiny);
-        alert(contenidoTiny);
+        // alert(contenidoTiny);
 
         const contenidoTextTiny = tinymce.activeEditor.getContent({ format: "text" });
         formData.set("textTiny", contenidoTextTiny);
-        alert(contenidoTextTiny);
+        // alert(contenidoTextTiny);
     }
 
     try {
@@ -549,7 +549,17 @@ function jsonSubmit(e) {
         });
 }
 
-// alertSToast('top', 8000, 'success', '<br>lo normal', ()=>{console.log('alerta activada')});
+// Formatear fecha de Django a HTML
+function convertToDateInputFormat(isoDateString) {
+    const date = new Date(isoDateString);
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+
+    return `${year}-${month}-${day}`;
+}
+
+
 // Template Alertas switalert ###################################################
 function alertSToast(posittionS, timerS, iconS, titleS, didDestroyS) {
     const Toast = Swal.mixin({

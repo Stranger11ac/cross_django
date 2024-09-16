@@ -1,6 +1,7 @@
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.hashers import check_password
 from django.views.decorators.cache import never_cache
+from django.views.decorators.csrf import csrf_exempt
 from django.db import IntegrityError, transaction
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.models import User
@@ -170,21 +171,24 @@ def banner_update(request):
     if request.method == 'POST':
         banner_id = request.POST.get('banner_id')
         tituloPOST = request.POST.get('contenidoWord')
+        
         banner = get_object_or_404(models.Banners, id=banner_id)
-        banner.solo_imagen = request.POST.get('soloImagen')
-        if banner.solo_imagen == None:
-            banner.solo_imagen = False
+        banner.solo_imagen = request.POST.get('soloImagen', 'False') == 'True'
             
         new_image = request.FILES.get('imagen')
         if not new_image == None:
             banner.imagen = new_image
-        banner.titulo = tituloPOST
-        banner.descripcion = request.POST.get('descripcion')
-        banner.redirigir = request.POST.get('redirigir')
         
         new_expir = request.POST.get('expiracion')
         if new_expir:
             banner.expiracion = new_expir
+            banner.visible = True
+        else:
+            banner.expiracion = None
+        
+        banner.titulo = tituloPOST
+        banner.descripcion = request.POST.get('descripcion')
+        banner.redirigir = request.POST.get('redirigir')
         banner.save()
         
         return JsonResponse({
@@ -208,40 +212,32 @@ def banner_delete(request):
 
 @login_required
 @never_cache
+@csrf_exempt
 def banners_visibility_now(request):
     if request.method == 'POST':        
         banneridPOST = request.POST.get('banner_id')
         returnJson = None
         if banneridPOST:
-            # Caso 1: Se proporciona un banner_id
             expired_banners = models.Banners.objects.filter(id=banneridPOST)
             update_visibility = request.POST.get('banner_visible')
             update_exp = True
             returnJson = {'success': True,'functions': 'reload','message': f'Se cambió la visibilidad del banner <span>#{banneridPOST}</span> exitosamente 🫡🥳🎉.'}
         else:
-            # Caso 2: No se proporciona un banner_id, se buscan banners caducados y visibles
             now = timezone.now()
             expired_banners = models.Banners.objects.filter(expiracion__lte=now, visible=True)
 
             if expired_banners.exists():
                 update_visibility = False
-                update_exp = False
-                
-                # Solo se devuelve un JsonResponse si se encontraron y actualizaron banners
+                update_exp = False                
                 returnJson = {'success': True,'message': 'Se actualizaron los banners caducados','position': 'top-end'}
-        
         if expired_banners:
             for banner in expired_banners:
                 banner.visible = update_visibility
                 if update_exp:
                     banner.expiracion = None
                 banner.save()
-
-        # Si se ha definido `returnJson`, se devuelve la respuesta JSON
         if returnJson:
             return JsonResponse(returnJson, status=201)
-
-        # Si no se realiza ninguna actualización, devolvemos un HTTP 204 (No Content)
         return JsonResponse({}, status=200)
 
 @login_required
