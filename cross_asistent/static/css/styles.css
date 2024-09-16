@@ -279,7 +279,7 @@ nav .navbar-collapse {
     }
 }
 
-.menu_overlay{
+.menu_overlay {
     position: absolute;
     inset: 0;
     background: var(--darkA4);
@@ -290,7 +290,7 @@ nav .navbar-collapse {
     transition-delay: 0s;
 }
 
-.menu_overlay.show{
+.menu_overlay.show {
     clip-path: ellipse(100% 130% at 50% 100%);
     z-index: 4;
     transition-delay: 0.1s;
@@ -1057,6 +1057,7 @@ main.main_anchor {
     transition: background 0.2s ease;
     transition-delay: 0s;
 }
+
 .table_odd .table_odd_items:hover .text_detail {
     background: white;
     border: none;
@@ -1154,7 +1155,7 @@ select.form-select.change_bg option {
     color: var(--mdb-surface-bg) !important;
 }
 
-form button[disabled]{
+form button[disabled] {
     cursor: not-allowed;
 }
 
@@ -1257,6 +1258,7 @@ input:checked+.slider:before {
     font-size: 1.2rem !important;
 }
 
+.controls_indications,
 .controls_route {
     position: absolute;
     z-index: 1;
@@ -1267,10 +1269,24 @@ input:checked+.slider:before {
     transition-delay: 0s, 0.1s;
 }
 
+.controls_indications.show,
 .controls_route.show {
     left: 0;
     opacity: 1;
     transition-delay: 0s, 0s;
+}
+
+.controls_indications {
+    top: unset;
+    bottom: 2dvh;
+    left: unset;
+    right: -110%;
+    transition: right 0.6s ease, opacity 0.5s ease;
+}
+
+.controls_indications.show {
+    left: unset;
+    right: 0;
 }
 
 .position-absolute {

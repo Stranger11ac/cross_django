@@ -198,6 +198,7 @@ if (mapElement.classList.contains("map_editing")) {
     const drawPolygonCancel = document.getElementById("btnPoligonCancel");
     const coordInputs = ["esquina1", "esquina2", "esquina3", "esquina4"];
     const colors = ["tomato", "#3b71ca", "lime", "#d29c15"];
+    let rightClicks = 4;
     let markers = [];
     let coords = [];
     let polygonLayer = null;
@@ -207,6 +208,13 @@ if (mapElement.classList.contains("map_editing")) {
         createNew = true;
         formChanges = false;
         initPolygonDrawing();
+        $("#controlsIndic .card-header h6").html('<i class="fa-solid fa-draw-polygon me-1"></i>Dibujar Poligono:');
+        $("#controlsIndic .card-body p").html(
+            'Da <strong id="poligonClicks">4</strong> cliks derechos en el mapa... <br> Dibuja el poligono en sentido <u>Horario</u> <i class="fa-solid fa-arrow-rotate-right ms-1"></i>'
+        );
+        $("#controlsIndic").addClass("show");
+        mapMapbox.on("contextmenu", countClicks);
+
         mapMapbox.on("contextmenu", addMarker);
         $("#btnPoligonCancel").slideDown();
         if (window.innerWidth <= 800) {
@@ -221,6 +229,8 @@ if (mapElement.classList.contains("map_editing")) {
         createNew = "";
         initPolygonDrawing();
         mapMapbox.off("contextmenu", addMarker);
+        mapMapbox.off("contextmenu", countClicks);
+        $("#controlsIndic").removeClass("show");
         $("#btnPoligonCancel").slideUp();
         $("#esquinasPoligono").slideUp("fast");
     });
@@ -346,6 +356,19 @@ if (mapElement.classList.contains("map_editing")) {
 
         drawPolygon();
     }
+    function countClicks() {
+        rightClicks--;
+        if (rightClicks > 0) {
+            document.getElementById("poligonClicks").textContent = rightClicks;
+        } else {
+            mapMapbox.off("contextmenu", countClicks);
+            setTimeout(() => {
+                $("#controlsIndic").removeClass("show");
+                rightClicks = 4;
+                document.getElementById("poligonClicks").textContent = rightClicks;
+            }, 2000);
+        }
+    }
 
     // Colocar puerta
     const btnDoor = document.getElementById("inputBtnDoor");
@@ -361,6 +384,12 @@ if (mapElement.classList.contains("map_editing")) {
             btnDoor.classList.add("bg_purple-blue");
             btnDoor.classList.remove("btn_detail");
             mapMapbox.on("contextmenu", addMarkerDoor);
+
+            $("#controlsIndic .card-header h6").html('<i class="fa-solid fa-location-dot me-1"></i>Punto de Entrada:');
+            $("#controlsIndic .card-body p").html(
+                "Da <strong>1</strong> clik derecho en el mapa... <br> Debe esta ubicada en el <strong>borde</strong>  del poligono y conectada con algun <strong>camino</strong>"
+            );
+            $("#controlsIndic").addClass("show");
         }
         addDoorMarker = false;
         if (window.innerWidth <= 800) {
@@ -387,6 +416,9 @@ if (mapElement.classList.contains("map_editing")) {
         addDoorMarker = true;
 
         mapMapbox.off("contextmenu", addMarkerDoor);
+        setTimeout(() => {
+            $("#controlsIndic").removeClass("show");
+        }, 2000);
     }
     function updateDoorCords(e) {
         const lngLat = doorMarker.getLngLat();
