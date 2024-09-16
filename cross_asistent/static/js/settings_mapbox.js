@@ -1080,6 +1080,15 @@ fetch(dataMarkers)
                                         ismarker: item.ismarker,
                                         icon_size: item.icon_size,
                                         sizemarker: item.sizemarker,
+                                        edges: [
+                                            [
+                                                item.polygons[0],
+                                                item.polygons[1],
+                                                item.polygons[2],
+                                                item.polygons[3],
+                                                item.polygons[0],
+                                            ],
+                                        ],
                                     },
                                     geometry: {
                                         type: "Point",
@@ -1127,7 +1136,7 @@ fetch(dataMarkers)
 
                 if (features.length) {
                     const feature = features[0];
-                    const { nombre, imagen, uuid, ismarker, icon_size } = feature.properties;
+                    const { nombre, imagen, uuid, ismarker, icon_size, edges } = feature.properties;
                     const coordinates = feature.geometry.coordinates.slice();
 
                     if (mapElement.classList.contains("map_editing")) {
@@ -1156,6 +1165,11 @@ fetch(dataMarkers)
 
                         $('[for="fotoEdificio"]').html('Cambiar foto <i class="fa-regular fa-image ms-1"></i>');
                         $("#fotoEdificio").attr("required", false);
+
+                        $("#esquina1").addClass("active").val(edges[0][0]);
+                        $("#esquina2").addClass("active").val(edges[0][1]);
+                        $("#esquina3").addClass("active").val(edges[0][2]);
+                        $("#esquina4").addClass("active").val(edges[0][3]);
                     }
 
                     offcanvasInstance.show();
