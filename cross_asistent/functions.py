@@ -11,6 +11,8 @@ from . import models
 import datetime
 import json
 
+ALLOWED_EXTENSIONS = ['jpg', 'jpeg', 'png']
+
 # Plantilla links programador / administrador ----------------------------------------------------------
 pages = [
         {'name': 'banner', 'url': 'upload_banner', 'display_name': 'Banners', 'icon':'fa-solid fa-image', 'access':'all'},
@@ -582,9 +584,9 @@ def mapa_data(request):
     mapas = models.Mapa.objects.filter(is_marker=False)
     data = []
     for mapa in mapas:
-        imagen_qs = models.Database.objects.filter(uuid=mapa.uuid).values_list('imagen', flat=True)
-        imagen = imagen_qs.first() if imagen_qs.exists() else None
-        
+        imagenQuery = models.Database.objects.filter(uuid=mapa.uuid).values_list('imagen', flat=True)
+        imagen = imagenQuery.first() if imagenQuery.exists() else None
+        galeryQuery = models.galeria.objects.filter(uuid=mapa.uuid).count()
         item = {
             "uuid": mapa.uuid,
             "color": mapa.color,
@@ -593,6 +595,7 @@ def mapa_data(request):
             "ismarker": mapa.is_marker,
             "sizemarker": mapa.size_marker,
             "informacion": mapa.informacion,
+            "galery_count": galeryQuery,
             "hidename": True if mapa.hide_name else False,
             "door_coords": [float(coord) for coord in mapa.door_cords.split(",")],
             "polygons": [
@@ -722,16 +725,84 @@ def galeria_create(request):
         try:
             imagenPOST = request.FILES.get('imagen')
             if imagenPOST:
-                nueva_imagen = models.galeria.objects.create(
-                    imagen=imagenPOST,
-                )
+                nueva_imagen = models.galeria.objects.create(imagen=imagenPOST)
                 nueva_imagen.save()
-                # Enviar URL de la imagen guardada en la respuesta JSON
                 return JsonResponse({'success': True, 'image_url': nueva_imagen.imagen.url, 'message': 'Imagen subida exitosamente.'}, status=200)
             else:
                 return JsonResponse({'success': False, 'message': 'No se seleccionó ninguna imagen.'}, status=400)
-        
         except Exception as e:
             return JsonResponse({'success': False, 'message': f'Ocurrió un error 😯😥 <br>{str(e)}'}, status=400)
     
     return JsonResponse({'error': 'Método no válido'}, status=400)
+
+@login_required
+@never_cache
+def upload_image(request):
+    if request.method == 'POST':
+        try:
+            image_file = request.FILES['file']
+            imagen_articulo = models.galeria(imagen=image_file)
+            imagen_articulo.save()
+            image_url = imagen_articulo.imagen.url
+
+            return JsonResponse({'location': image_url})
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=400)
+    return JsonResponse({'error': 'Error al subir la imagen'}, status=400)
+
+@login_required
+@never_cache
+def lista_imagenes(request):
+    if request.method == 'GET':
+        try:
+            imagenes = models.galeria.objects.all()
+            imagenes_modificadas = []
+
+            for imagen in imagenes:
+                imagen_url = imagen.imagen.url
+                imagenes_modificadas.append({
+                    'id': imagen.id,
+                    'url': imagen_url
+                })
+            return JsonResponse({'imagenes': imagenes_modificadas})
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=400)
+
+@never_cache
+@login_required
+def galeria_delete(request, imagen_id):
+    if request.method == 'POST':
+        try:
+            imagen = get_object_or_404(models.galeria, id=imagen_id)
+            imagen.delete()
+            return JsonResponse({
+                'success': True,
+                'functions': 'reload',
+                'message': f'Se eliminó la imagen<u>"{imagen_id}"</u> de la galeria exitosamente. ⚠️😯😬🎉',
+                'icon': 'warning'
+            }, status=200)
+            
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=400)
+    return JsonResponse({'success': False, 'message': 'Acción no permitida.'}, status=403)
+
+
+@login_required
+@never_cache
+def galeria_upload_images(request):
+    if request.method == 'POST':
+        try:
+            uuidPOST = request.POST.get('uuid')
+            imagesPOST = request.FILES.getlist('images')
+            for image in imagesPOST:
+                galeria_instance = models.galeria.objects.create(
+                    uuid=uuidPOST,
+                    image=image,
+                )
+                galeria_instance.save()
+                
+            return JsonResponse({'success': True, 'message': 'Imágenes subidas exitosamente.'}, status=200)
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=400)
+    return JsonResponse({'success': False, 'message': 'Método no permitido.'}, status=405)
+

@@ -1295,7 +1295,6 @@ input:checked+.slider:before {
 
 /* offcanvas / panel lateral */
 .offcanvas-header .btn-close {
-    position: absolute;
     top: 0;
     right: 0;
     z-index: 3;
@@ -1450,6 +1449,49 @@ input:checked+.slider:before {
     margin-block: 2px !important;
     color: white;
     overflow: hidden;
+}
+
+/*########################### Sistema Drag and Drop ###########################*/
+#drop-area {
+    border-radius: var(--border-radius);
+    border: 2px dashed var(--mdb-surface-color);
+    width: 100%;
+    max-width: 500px;
+    padding: 50px 20px;
+    text-align: center;
+    position: relative;
+    cursor: pointer;
+    transition: border 0.3s ease, box-shadow 0.3s ease;
+}
+
+#drop-area:hover {
+    cursor: pointer;
+}
+
+#drop-area.hover {
+    border: 3px dashed var(--mdb-surface-color);
+    cursor: progress;
+    box-shadow: 0 0 10px var(--mdb-surface-color) inset;
+}
+
+#image-list {
+    flex-direction: column-reverse;
+}
+
+.image-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-block: 10px;
+    padding: 10px;
+    border-radius: var(--border-radius);
+    background: var(--mdb-surface-bg);
+}
+
+.image-item img {
+    max-width: 150px;
+    max-height: 100px;
+    margin-right: 10px;
 }
 
 /*########################### Sistema de grid ###########################*/
@@ -1847,8 +1889,8 @@ img.img-rounded {
     transform: scale(1.4);
 }
 
-.tscale-1-4 {
-    transform: scale(1.4);
+.tscale-1-5 {
+    transform: scale(1.5);
 }
 
 .tscale-1-6 {

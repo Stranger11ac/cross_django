@@ -12,7 +12,8 @@
     integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
 {% endblock %}
 {% block content %}
-<main class="full_page map_editing {% if not user.is_staff %}main_container{% endif %}" id='map' data-mapa_edif="{% url 'mapa_edificios' %}" data-mapa_markers="{% url 'mapa_markers' %}">
+<main class="full_page map_editing {% if not user.is_staff %}main_container{% endif %}" id='map' data-mapa_edif="{% url 'mapa_edificios' %}"
+    data-mapa_markers="{% url 'mapa_markers' %}">
     <!-- Controles de ruta -->
     <section class="controls_route card m-2 max_w250" id="controlsRoute">
         <div class="card-header d-flex justify-content-between align-items-center p-3">
@@ -64,7 +65,7 @@
 <form class="offcanvas offcanvas-start" data-bs-scroll="true" data-bs-backdrop="false" tabindex="-1" id="infoLateral" aria-labelledby="infoLateralLabel"
     method="post" action="{% url 'upload_map' %}" data-submit-form autocomplete="off">
     <div class="offcanvas-header position-relative p-0">
-        <button type="button" class="btn-close p-3 m-1 m-md-2 me-3" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        <button type="button" class="btn-close p-3 m-1 m-2 position-absolute" data-bs-dismiss="offcanvas" aria-label="Close"></button>
     </div>
     <div class="offcanvas-body p-0" id="offcanvasContent">
         <div class="position-relative min_h100">
@@ -72,7 +73,7 @@
             <div class="mask mask_white">
                 <div class="d-flex align-items-end h-100 px-3">
                     <div class="form-outline" data-mdb-input-init>
-                        <input type="text" id="nombreEdificio" name="nombreEdificio" class="form-control" required />
+                        <input type="text" id="nombreEdificio" name="nombreEdificio" class="form-control name_pleace" required />
                         <label class="form-label" for="nombreEdificio">Nombre del Lugar:</label>
                     </div>
                 </div>
@@ -91,7 +92,7 @@
 
             <!-- Marcador de imagen -->
             <div class="mb-4" data-notmarker>
-                <input class="form-check-input" type="checkbox" id="hidename" name="hidename" />
+                <input class="form-check-input" type="checkbox" id="hidename" name="hidename" checked />
                 <label class="form-check-label" for="hidename">: Mostrar Nombre</label>
             </div>
             <div class="mb-4">
@@ -165,12 +166,19 @@
                     <i class="fa-solid fa-location-dot fs-10"></i>
                 </button>
             </div>
+            <button id="btnOpenGalery" class="btn btn_detail btn-block mt-4 none" data-notmarker type="button" data-bs-toggle="offcanvas"
+                data-bs-target="#pleaceGalery" aria-controls="pleaceGalery">
+                <div class="d-flex justify-content-between">
+                    <div><i class="fa-regular fa-images me-1"></i> Galeria:</div>
+                    <div><span id="galeryCount">2</span> Imagenes</div>
+                </div>
+            </button>
             <!-- TinyMCE: Contenido de texto -->
             <div class="mt-4" data-notmarker>
                 <textarea id="textTiny" class="form-control" name="contenidoWord"
                     placeholder="Escribe a detalle sobre el lugar, puedes hacer listas, encabezados, parrafos y tablas"></textarea>
             </div>
-            <div id="submitEdificio" class="offcanvas-footer mt-4 row">
+            <div id="submitEdificio" class="mt-4 row">
                 <div class="col-2 none" id="btnDeletedPleace">
                     <button title="Borrar lugar" type="button" class="btn btn-danger btn-block px-1" data-mdb-ripple-init data-mdb-ripple-color="white"
                         data-bs-dismiss="offcanvas" data-mdb-ripple-init data-mdb-modal-init data-mdb-target="#deletePleace">
@@ -207,6 +215,139 @@
         </div>
     </div>
 </form>
+
+<!-- OffCanvas: Galeria de imagenes -->
+<section class="offcanvas offcanvas-end show" data-bs-scroll="true" data-bs-backdrop="false" tabindex="-1" id="pleaceGalery"
+    aria-labelledby="pleaceGaleryLabel">
+    <div class="offcanvas-header">
+        <h5 class="offcanvas-title" id="offcanvasLabel">Galeria de <span class="name_pleace"></span></h5>    
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body" id="offcanvasContent">
+        <div id="drop-area">
+            Arrastra y suelta tus imágenes aquí o haz clic para seleccionarlas.
+            <form action="" method="post">
+                <input type="text" name="uuid" id="uuid" class="d-none" data-uuid data-new-uid="{{UID}}" readonly required>
+                <input type="file" id="file-input" class="d-none" accept="image/jpeg, image/png, image/jpg" multiple>
+            </form>
+        </div>
+        <section id="image-list" class="d-flex my-3"></section>
+
+        <script>
+            // Elementos HTML
+            const dropArea = document.getElementById("drop-area");
+            const fileInput = document.getElementById("file-input");
+            const imageList = document.getElementById("image-list");
+
+            // Prevenir comportamiento predeterminado (abrir archivo)
+            ["dragenter", "dragover", "dragleave", "drop"].forEach(eventName => {
+                dropArea.addEventListener(eventName, preventDefaults, false);
+            });
+
+            // Agregar y quitar clases en los eventos de arrastre
+            ["dragenter", "dragover"].forEach(eventName => {
+                dropArea.addEventListener(eventName, () => dropArea.classList.add("hover"), false);
+            });
+
+            ["dragleave", "drop"].forEach(eventName => {
+                dropArea.addEventListener(eventName, () => dropArea.classList.remove("hover"), false);
+            });
+
+            // Manejo del drop (arrastre)
+            dropArea.addEventListener("drop", handleDrop, false);
+            dropArea.addEventListener("click", () => fileInput.click(), false);
+            fileInput.addEventListener("change", handleFiles, false);
+
+            function preventDefaults(e) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+
+            function handleDrop(e) {
+                let dt = e.dataTransfer;
+                let files = dt.files;
+                handleFiles({ target: { files } });
+            }
+
+            // Manejo de los archivos seleccionados
+            function handleFiles(e) {
+                let files = e.target.files;
+                let validFiles = [];
+
+                [...files].forEach(file => {
+                    if (validateImage(file)) {
+                        validFiles.push(file);
+                        previewImage(file);
+                    }
+                });
+
+                if (validFiles.length > 0) {
+                    Swal.fire({
+                        toast: true,
+                        position: 'top-end',
+                        icon: 'success',
+                        title: `${validFiles.length} imágenes cargadas <br>correctamente 😋🤘🥳`,
+                        showConfirmButton: false,
+                        timer: 4000
+                    });
+                } else {
+                    Swal.fire({
+                        toast: true,
+                        position: 'top-end',
+                        icon: 'error',
+                        title: 'No se admite este tipo de archivo ⚠️😯😥',
+                        showConfirmButton: false,
+                        timer: 4000
+                    });
+                }
+            }
+
+            // Validar si el archivo es una imagen (jpg, jpeg, png)
+            function validateImage(file) {
+                const acceptedImageTypes = ['image/jpeg', 'image/png', 'image/jpg'];
+                return acceptedImageTypes.includes(file.type);
+            }
+
+            // Mostrar imagen en la lista
+            function previewImage(file) {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+
+                reader.onloadend = function () {
+                    // Crear el elemento de la imagen y la fila
+                    const li = document.createElement('div');
+                    li.classList.add('image-item');
+
+                    // Imagen en miniatura
+                    const img = document.createElement('img');
+                    img.classList = 'img-rounded';
+                    img.src = reader.result;
+                    img.alt = file.name;
+
+                    // Información del archivo
+                    const fileInfo = document.createElement('p');
+                    fileInfo.classList = 'm-0'
+                    fileInfo.innerText = `(${(file.size / 1024).toFixed(2)} KB)`;
+                    // fileInfo.innerText = `${file.name} (${(file.size / 1024).toFixed(2)} KB)`;
+
+                    // Botón para eliminar
+                    const removeButton = document.createElement('button');
+                    removeButton.classList = 'btn btn-danger btn-floating'
+                    removeButton.innerHTML = '<i class="fa-regular fa-trash-can tscale-1-6"></i>';
+                    removeButton.addEventListener('click', () => li.remove());
+
+                    // Añadir los elementos al li
+                    li.appendChild(img);
+                    li.appendChild(fileInfo);
+                    li.appendChild(removeButton);
+
+                    // Añadir el li a la lista de imágenes
+                    imageList.appendChild(li);
+                };
+            }
+        </script>
+    </div>
+</section>
 
 <!-- OffCanvas: Cambiar estilo -->
 <div class="offcanvas offcanvas-bottom" tabindex="-1" id="offcanvasBottom" aria-labelledby="offcanvasBottomLabel">

@@ -525,36 +525,6 @@ def update_create_pleace_map(request):
 #Galeria ----------------------------------------------------------
 @login_required
 @never_cache
-def upload_image(request):
-    if request.method == 'POST':
-        try:
-            image_file = request.FILES['file']
-            imagen_articulo = models.Imagenes(imagen=image_file)
-            imagen_articulo.save()
-            image_url = imagen_articulo.imagen.url
-
-            return JsonResponse({'location': image_url})
-        except Exception as e:
-            return JsonResponse({'error': str(e)}, status=400)
-    return JsonResponse({'error': 'Error al subir la imagen'}, status=400)
-
-@login_required
-@never_cache
-def lista_imagenes(request):
-    if request.method == 'GET':
-        imagenes = models.galeria.objects.all()
-        imagenes_modificadas = []
-
-        for imagen in imagenes:
-            imagen_url = imagen.imagen.url
-            imagenes_modificadas.append({
-                'id': imagen.id,
-                'url': imagen_url
-            })
-        return JsonResponse({'imagenes': imagenes_modificadas})
-
-@login_required
-@never_cache
 def vista_galeria(request):
     imagenes_galeria = models.galeria.objects.exclude(imagen__exact='')
     imagenes_database = models.Database.objects.exclude(imagen__exact='')
@@ -566,17 +536,3 @@ def vista_galeria(request):
         'imagenes_database': imagenes_database,
         'imagenes_banners': imagenes_banners,
     })
-
-@never_cache
-@login_required
-def eliminar_imagen(request, imagen_id):
-    if request.method == 'POST':
-        imagen = get_object_or_404(models.galeria, id=imagen_id)
-        imagen.delete()
-        return JsonResponse({
-            'success': True,
-            'functions': 'reload',
-            'message': f'Se eliminó la imagen<u>"{imagen_id}"</u> de la galeria exitosamente. ⚠️😯😬🎉',
-            'icon': 'warning'
-        }, status=200)
-    return JsonResponse({'success': False, 'message': 'Acción no permitida.'}, status=403)

@@ -30,10 +30,6 @@ urlpatterns = [
     path('administracion/', views.vista_programador, name='vista_programador'),
     path('administracion/perfil/', views.ver_perfil, name='perfil'),
     path('administracion/perfil/editar_perfil/', functions.editar_perfil, name='editprofile'),
-    path('administracion/galeria/', views.vista_galeria, name='vista_galeria'),
-    path('administracion/galeria/create/', functions.galeria_create, name='galeria_create'),
-    path('administracion/galeria/delete/<int:imagen_id>/', views.eliminar_imagen, name='eliminar_imagen'),
-
     
     # Usuarios ----------------------------------------------------------
     path('administracion/usuarios/activacion/', functions.in_active, name='in_active'),
@@ -60,7 +56,9 @@ urlpatterns = [
     path('administracion/database/actualizar/', functions.database_update, name='database_update'),
     path('administracion/database/eliminar/', functions.database_delete, name='database_delete'),
     path('administracion/database/informacion/', functions.database_getitem, name='database_getitem'),
+    
     path('administracion/calendario/', views.calendario_page, name='calendario_page'),
+    
     path('administracion/preguntas/eliminar/', functions.preguntas_deleted, name='question_deleted'),
     path('database/actualizar_frecuencia/', functions.frequesnce_update, name='update_frequencies_database'),
 
@@ -76,8 +74,11 @@ urlpatterns = [
     path('administracion/mapa/elimiina/database/', functions.delete_pleaceMap_DB, name='del_pleace_mapdb'),
     
     # Galeria ----------------------------------------------------------
-    path('administracion/galeria/subir/', views.upload_image, name='send_imgsblog'),
-    path('administracion/galeria/lista/', views.lista_imagenes, name='lista_imagenes'),
+    path('administracion/galeria/', views.vista_galeria, name='vista_galeria'),
+    path('administracion/galeria/subir/', functions.upload_image, name='send_imgsblog'),
+    path('administracion/galeria/lista/', functions.lista_imagenes, name='lista_imagenes'),
+    path('administracion/galeria/create/', functions.galeria_create, name='galeria_create'),
+    path('administracion/galeria/delete/<int:imagen_id>/', functions.galeria_delete, name='eliminar_imagen'),
     
     # configuraciones ----------------------------------------------------------
     path('administracion/configuraciones/actualizar/', functions.settings_update, name='update_settings'),

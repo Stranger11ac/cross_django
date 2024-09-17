@@ -425,7 +425,7 @@ if (mapElement.classList.contains("map_editing")) {
         puertaCordsEdificio.value = `${lngLat.lng}, ${lngLat.lat}`;
     }
 
-    // Detectar si es marcador o no
+    // Detectar si es marcador
     $("#ismarker").change(function () {
         if ($(this).is(":checked")) {
             $("#sizemarkerdiv").slideDown("fast");
@@ -498,9 +498,6 @@ class CustomControl {
                 myModal.show();
             }
         );
-        const btn3d = createButton("virtual", '<i class="fa-solid fa-cube"></i>', "Recorrido Virtual", () => {
-            console.log("Alerta 1 activada");
-        });
         const layers = createButton("styles", '<i class="fa-solid fa-layer-group"></i>', "Cambiar Aspecto", () => {
             document.querySelectorAll(".offcanvas.show").forEach((openOffcanvasElement) => {
                 const openOffcanvasInstance = bootstrap.Offcanvas.getInstance(openOffcanvasElement);
@@ -558,6 +555,7 @@ class CustomControl {
                         $("[data-notmarker]").slideDown();
                         $('[for="puertaCordsEdificio"]').text("Punto de entrada:");
                         $("#hidename").slideDown();
+                        $("#btnOpenGalery").slideUp();
                     }
 
                     if (!offcanvasOpen) {
@@ -656,6 +654,7 @@ fetch(dataPleaces)
                     ismarker: item.ismarker,
                     imagen_url: item.imagen_url,
                     informacion: item.informacion,
+                    galery_count: item.galery_count,
                 },
                 geometry: {
                     type: "Polygon",
@@ -895,7 +894,6 @@ fetch(dataPleaces)
         mapMapbox.on("load", function () {
             createEdificios();
         });
-
         mapMapbox.on("style.load", function () {
             createEdificios();
             addRouteLayer();
@@ -911,7 +909,8 @@ fetch(dataPleaces)
         // Abrir offcanvas: Informacion del edificio
         mapMapbox.on("click", "places-layer", (e) => {
             const feature = e.features[0];
-            const { nombre, informacion, imagen_url, color, door, uuid, ismarker, label } = feature.properties;
+            const { nombre, informacion, imagen_url, color, door, uuid, ismarker, label, galery_count } =
+                feature.properties;
             const { coordinates } = feature.geometry;
 
             const offcanvasContent = document.getElementById("offcanvasContent");
@@ -920,18 +919,17 @@ fetch(dataPleaces)
             if (mapElement.classList.contains("map_user")) {
                 document.getElementById("lateralTitle").innerText = nombre;
                 offcanvasContent.innerHTML = `<div class="feature-info"><p>${informacion}</p></div>`;
-            }
-
-            if (mapElement.classList.contains("map_editing")) {
+            } else if (mapElement.classList.contains("map_editing")) {
                 if ($("#ismarker").is(":checked")) {
                     $("#sizemarkerdiv").slideUp();
                     $("[data-notmarker]").slideDown();
                     $('[for="puertaCordsEdificio"]').text("Punto de entrada:");
                 }
                 $("#btnDeletedPleace").show();
+                $("#btnOpenGalery").slideDown();
                 $("[data-namePleace]").text(nombre);
-
-                offcanvasContent.querySelector("#isNewEdif").value = "notnew";
+                $("#galeryCount").text(galery_count);
+                $("#isNewEdif").val("notnew");
 
                 if (ismarker) {
                     $("#ismarker").attr("checked", "checked");
@@ -948,10 +946,9 @@ fetch(dataPleaces)
 
                 $("[data-uuid]").addClass("active").val(uuid);
                 $("#nombreEdificio").addClass("active").val(nombre);
+                $(".name_pleace").text(nombre);
                 $("#namecolor").addClass("active").val(color);
-
-                const numeros = door.slice(1, -1).split(",");
-                $("#puertaCordsEdificio").addClass("active").val(`${numeros[0]},${numeros[1]}`);
+                $("#puertaCordsEdificio").addClass("active").val(door);
 
                 $("#esquina1").addClass("active").val(coordinates[0][0]);
                 $("#esquina2").addClass("active").val(coordinates[0][1]);
@@ -962,6 +959,17 @@ fetch(dataPleaces)
                 $("#fotoEdificio").attr("required", false);
                 tinymce.get("textTiny").setContent(informacion);
                 setColorInput();
+
+                // Cerrar Galeria
+                if (window.innerWidth <= 800) {
+                    setTimeout(() => {
+                        var canvasGalery = document.getElementById("pleaceGalery");
+                        var bsOffcanvasGalery = bootstrap.Offcanvas.getInstance(canvasGalery);
+                        if (bsOffcanvasGalery) {
+                            bsOffcanvasGalery.hide();
+                        }
+                    }, 100);
+                }
             }
 
             offcanvasInstance.show();
@@ -977,7 +985,6 @@ fetch(dataPleaces)
                 setMapStyle(layerId);
             });
         });
-
         const nombresEdificios = geojsonEdificios.features.map((feature) => feature.properties.nombre).sort();
         nombresEdificios.forEach((nombre) => {
             const option = new Option(nombre, nombre);
@@ -1080,14 +1087,7 @@ fetch(dataMarkers)
                                         ismarker: item.ismarker,
                                         icon_size: item.icon_size,
                                         sizemarker: item.sizemarker,
-                                        edges: [
-                                            [
-                                                item.edges[0],
-                                                item.edges[1],
-                                                item.edges[2],
-                                                item.edges[3],
-                                            ],
-                                        ],
+                                        edges: [[item.edges[0], item.edges[1], item.edges[2], item.edges[3]]],
                                     },
                                     geometry: {
                                         type: "Point",
@@ -1169,6 +1169,12 @@ fetch(dataMarkers)
                         $("#esquina2").addClass("active").val(edges[1]);
                         $("#esquina3").addClass("active").val(edges[2]);
                         $("#esquina4").addClass("active").val(edges[3]);
+
+                        var canvasGalery = document.getElementById("pleaceGalery");
+                        var bsOffcanvasGalery = bootstrap.Offcanvas.getInstance(canvasGalery);
+                        if (bsOffcanvasGalery) {
+                            bsOffcanvasGalery.hide();
+                        }
                     }
 
                     offcanvasInstance.show();
