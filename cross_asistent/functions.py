@@ -586,7 +586,10 @@ def mapa_data(request):
     for mapa in mapas:
         imagenQuery = models.Database.objects.filter(uuid=mapa.uuid).values_list('imagen', flat=True)
         imagen = imagenQuery.first() if imagenQuery.exists() else None
-        galeryQuery = models.galeria.objects.filter(uuid=mapa.uuid).count()
+        
+        galeryQuery = models.galeria.objects.filter(uuid=mapa.uuid).values('id', 'imagen')
+        # galeryQuery = models.galeria.objects.filter(uuid=mapa.uuid).values_list('imagen', flat=True)
+        
         item = {
             "uuid": mapa.uuid,
             "color": mapa.color,
@@ -595,7 +598,8 @@ def mapa_data(request):
             "ismarker": mapa.is_marker,
             "sizemarker": mapa.size_marker,
             "informacion": mapa.informacion,
-            "galery_count": galeryQuery,
+            "galery_items": list(galeryQuery),
+            "galery_count": galeryQuery.count(),
             "hidename": True if mapa.hide_name else False,
             "door_coords": [float(coord) for coord in mapa.door_cords.split(",")],
             "polygons": [
@@ -770,10 +774,12 @@ def lista_imagenes(request):
 
 @never_cache
 @login_required
-def galeria_delete(request, imagen_id):
+def galeria_delete(request):
     if request.method == 'POST':
         try:
-            imagen = get_object_or_404(models.galeria, id=imagen_id)
+            imagen_id = request.POST.get('id')
+            uuidPOST = request.POST.get('uuid')
+            imagen = get_object_or_404(models.galeria, id=imagen_id, uuid=uuidPOST)
             imagen.delete()
             return JsonResponse({
                 'success': True,
@@ -786,7 +792,6 @@ def galeria_delete(request, imagen_id):
             return JsonResponse({'error': str(e)}, status=400)
     return JsonResponse({'success': False, 'message': 'Acción no permitida.'}, status=403)
 
-
 @login_required
 @never_cache
 def galeria_upload_images(request):
@@ -794,14 +799,18 @@ def galeria_upload_images(request):
         try:
             uuidPOST = request.POST.get('uuid')
             imagesPOST = request.FILES.getlist('images')
-            for image in imagesPOST:
-                galeria_instance = models.galeria.objects.create(
-                    uuid=uuidPOST,
-                    image=image,
-                )
-                galeria_instance.save()
-                
-            return JsonResponse({'success': True, 'message': 'Imágenes subidas exitosamente.'}, status=200)
+                        
+            if imagesPOST:
+                for oneimage in imagesPOST:
+                    galeria_instance = models.galeria.objects.create(
+                        uuid=uuidPOST,
+                        imagen=oneimage,
+                    )
+                    galeria_instance.save()
+                    
+                return JsonResponse({'message': 'Imágenes subidas exitosamente'}, status=200)
+            else:
+                return JsonResponse({'success': False, 'message': 'No se Enviaron datos. ⚠️⚠️⚠️😯😥🤔'}, status=200)
         except Exception as e:
             return JsonResponse({'error': str(e)}, status=400)
     return JsonResponse({'success': False, 'message': 'Método no permitido.'}, status=405)

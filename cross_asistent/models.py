@@ -56,8 +56,9 @@ def set_imgMarker_path(instance, filename):
 
 def set_imgs_path(instance, filename):
     newName = filename.strip().replace(' ', '')
+    theName, _  = os.path.splitext(newName)
     thispath = os.path.join(settings.MEDIA_ROOT, 'imagenes/')
-    return create_filename_path(filename, newName, 'cross_image', 22, 11, thispath)
+    return create_filename_path(filename, theName, 'cross_image', 22, 11, thispath)
 
 def set_conf_path(instance, filename):
     newName = filename.strip().replace(' ', '')

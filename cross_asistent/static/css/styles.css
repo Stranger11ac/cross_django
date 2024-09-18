@@ -1476,6 +1476,7 @@ input:checked+.slider:before {
 
 #image-list {
     flex-direction: column-reverse;
+    transition: all 0.5s ease;
 }
 
 .image-item {
@@ -1484,14 +1485,37 @@ input:checked+.slider:before {
     align-items: center;
     margin-block: 10px;
     padding: 10px;
+    box-shadow: 0 0 5px var(--mdb-surface-color);
     border-radius: var(--border-radius);
     background: var(--mdb-surface-bg);
+    opacity: 0;
+    transform: scale(0.5);
+    overflow: hidden;
+    transition: var(--transitionCubic);
+}
+
+.image-item.visible {
+    opacity: 1;
+    transform: scale(1);
 }
 
 .image-item img {
-    max-width: 150px;
+    max-width: 120px;
     max-height: 100px;
-    margin-right: 10px;
+    transition: filter 0.3s ease;
+}
+
+.image-item .name-file {
+    max-width: 130px;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+.image-item .size-file {
+    letter-spacing: 1px;
+    font-family: 'Courier New', Courier, monospace;
+    opacity: 0.9;
 }
 
 /*########################### Sistema de grid ###########################*/
@@ -1823,6 +1847,38 @@ img.img-rounded {
     --img-size: 300px;
     width: var(--img-size);
     height: var(--img-size);
+}
+
+.unfocus-1 {
+    filter: blur(1px);
+}
+
+.unfocus-2 {
+    filter: blur(2px);
+}
+
+.unfocus-3 {
+    filter: blur(3px);
+}
+
+.unfocus-4 {
+    filter: blur(4px);
+}
+
+.unfocus-5 {
+    filter: blur(5px);
+}
+
+.unfocus-6 {
+    filter: blur(6px);
+}
+
+.unfocus-7 {
+    filter: blur(7px);
+}
+
+.unfocus-8 {
+    filter: blur(8px);
 }
 
 .max_w100 {

@@ -74,7 +74,9 @@ $(document).ready(function () {
         $("[data-submit-blur] .input_change").on("change", function () {
             let formulario = $(this).closest("[data-submit-blur]");
             let idButton = formulario.data("submit-blur");
-            formulario.find(`button#${idButton}`).click();
+            setTimeout(() => {
+                formulario.find(`button#${idButton}`).click();
+            }, 1000);
         });
 
         $("[data-submit-click]").on("click", function () {
@@ -484,7 +486,7 @@ function jsonSubmit(e) {
         .then((response) => {
             if (!response.ok) {
                 return response.json().then((data) => {
-                    throw new Error(data.message || "Error desconocido");
+                    throw new Error(data.error || "Error desconocido");
                 });
             }
             return response.json();
@@ -549,16 +551,131 @@ function jsonSubmit(e) {
         });
 }
 
-// Formatear fecha de Django a HTML
+// Formatear fecha de Django a HTML ###################################################
 function convertToDateInputFormat(isoDateString) {
     const date = new Date(isoDateString);
     const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
 
     return `${year}-${month}-${day}`;
 }
 
+// Drag and Drop ###################################################
+const dropArea = document.getElementById("drop-area");
+if (dropArea) {
+    const fileInput = document.getElementById("file-input");
+    const imageList = document.getElementById("image-list");
+
+    const formatBytes = (bytes, decimals = 2) => {
+        if (bytes === 0) return "0 Bytes";
+        const k = 1024;
+        const dm = decimals < 0 ? 0 : decimals;
+        const sizes = ["Bytes", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + sizes[i];
+    };
+
+    ["dragenter", "dragover", "dragleave", "drop"].forEach((eventName) => {
+        dropArea.addEventListener(eventName, preventDefaults, false);
+    });
+    ["dragenter", "dragover"].forEach((eventName) => {
+        dropArea.addEventListener(eventName, () => dropArea.classList.add("hover"), false);
+    });
+    ["dragleave", "drop"].forEach((eventName) => {
+        dropArea.addEventListener(eventName, () => dropArea.classList.remove("hover"), false);
+    });
+
+    dropArea.addEventListener("drop", handleDrop, false);
+    dropArea.addEventListener("click", () => fileInput.click(), false);
+    fileInput.addEventListener("change", handleFiles, false);
+
+    function preventDefaults(e) {
+        e.preventDefault();
+        e.stopPropagation();
+    }
+    function handleDrop(e) {
+        let dt = e.dataTransfer;
+        let files = dt.files;
+        handleFiles({ target: { files } });
+    }
+    function handleFiles(e) {
+        let files = e.target.files;
+        let validFiles = [];
+
+        [...files].forEach((file) => {
+            if (validateImage(file)) {
+                validFiles.push(file);
+                previewImage(file);
+            }
+        });
+
+        if (validFiles.length > 0) {
+            Swal.fire({
+                toast: true,
+                position: "top-end",
+                icon: "success",
+                title: `${validFiles.length} imágenes cargadas <br>correctamente 😋🤘🥳`,
+                showConfirmButton: false,
+                timer: 4000,
+            });
+        } else {
+            Swal.fire({
+                toast: true,
+                position: "top-end",
+                icon: "error",
+                title: "No se admite este tipo de archivo ⚠️😯😥",
+                showConfirmButton: false,
+                timer: 4000,
+            });
+        }
+    }
+    function validateImage(file) {
+        const acceptedImageTypes = ["image/jpeg", "image/png", "image/jpg"];
+        return acceptedImageTypes.includes(file.type);
+    }
+    function previewImage(file) {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+
+        reader.onloadend = function () {
+            const imageItem = document.createElement("div");
+            imageItem.classList.add("image-item");
+
+            const img = document.createElement("img");
+            img.classList = "img-rounded unfocus-5";
+            img.src = reader.result;
+            img.alt = file.name;
+
+            const fileInfo = document.createElement("div");
+            fileInfo.classList = "fs-8";
+
+            const infoName = document.createElement("p");
+            infoName.classList = "name-file m-0";
+            const fileName = file.name;
+            infoName.innerText = fileName;
+            fileInfo.appendChild(infoName);
+
+            const infoSize = document.createElement("p");
+            infoSize.classList = "size-file m-0";
+            let fileType = fileName.lastIndexOf(".");
+            fileType = fileName.substring(fileType + 1);
+            infoSize.innerHTML = `(${fileType}) ${formatBytes(file.size)}`;
+            fileInfo.appendChild(infoSize);
+
+            imageItem.appendChild(img);
+            imageItem.appendChild(fileInfo);
+            imageList.appendChild(imageItem);
+
+            setTimeout(() => {
+                imageItem.classList.add("visible");
+                setTimeout(() => {
+                    img.classList.remove("unfocus-5");
+                }, 1200);
+            }, 100);
+        };
+    }
+}
 
 // Template Alertas switalert ###################################################
 function alertSToast(posittionS, timerS, iconS, titleS, didDestroyS) {

@@ -78,7 +78,8 @@ urlpatterns = [
     path('administracion/galeria/subir/', functions.upload_image, name='send_imgsblog'),
     path('administracion/galeria/lista/', functions.lista_imagenes, name='lista_imagenes'),
     path('administracion/galeria/create/', functions.galeria_create, name='galeria_create'),
-    path('administracion/galeria/delete/<int:imagen_id>/', functions.galeria_delete, name='eliminar_imagen'),
+    path('administracion/galeria/eliminar/', functions.galeria_delete, name='eliminar_imagen'),
+    path('administracion/galeria/subir_multiples_imagenes/', functions.galeria_upload_images, name='galery_up_images'),
     
     # configuraciones ----------------------------------------------------------
     path('administracion/configuraciones/actualizar/', functions.settings_update, name='update_settings'),

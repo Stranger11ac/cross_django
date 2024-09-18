@@ -217,135 +217,21 @@
 </form>
 
 <!-- OffCanvas: Galeria de imagenes -->
-<section class="offcanvas offcanvas-end show" data-bs-scroll="true" data-bs-backdrop="false" tabindex="-1" id="pleaceGalery"
-    aria-labelledby="pleaceGaleryLabel">
+<section class="offcanvas offcanvas-end" data-bs-scroll="true" data-bs-backdrop="false" tabindex="-1" id="pleaceGalery" aria-labelledby="pleaceGaleryLabel">
     <div class="offcanvas-header">
-        <h5 class="offcanvas-title" id="offcanvasLabel">Galeria de <span class="name_pleace"></span></h5>    
+        <h5 class="offcanvas-title" id="offcanvasLabel">Galeria de <span class="name_pleace"></span></h5>
         <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
     </div>
     <div class="offcanvas-body" id="offcanvasContent">
-        <div id="drop-area">
-            Arrastra y suelta tus imágenes aquí o haz clic para seleccionarlas.
-            <form action="" method="post">
+        <form action="{% url 'galery_up_images' %}" method="post" data-submit-form data-submit-blur="galeryUpImages">
+            <div id="drop-area">
+                Arrastra y suelta tus imágenes aquí o haz clic para seleccionarlas.
                 <input type="text" name="uuid" id="uuid" class="d-none" data-uuid data-new-uid="{{UID}}" readonly required>
-                <input type="file" id="file-input" class="d-none" accept="image/jpeg, image/png, image/jpg" multiple>
-            </form>
-        </div>
-        <section id="image-list" class="d-flex my-3"></section>
-
-        <script>
-            // Elementos HTML
-            const dropArea = document.getElementById("drop-area");
-            const fileInput = document.getElementById("file-input");
-            const imageList = document.getElementById("image-list");
-
-            // Prevenir comportamiento predeterminado (abrir archivo)
-            ["dragenter", "dragover", "dragleave", "drop"].forEach(eventName => {
-                dropArea.addEventListener(eventName, preventDefaults, false);
-            });
-
-            // Agregar y quitar clases en los eventos de arrastre
-            ["dragenter", "dragover"].forEach(eventName => {
-                dropArea.addEventListener(eventName, () => dropArea.classList.add("hover"), false);
-            });
-
-            ["dragleave", "drop"].forEach(eventName => {
-                dropArea.addEventListener(eventName, () => dropArea.classList.remove("hover"), false);
-            });
-
-            // Manejo del drop (arrastre)
-            dropArea.addEventListener("drop", handleDrop, false);
-            dropArea.addEventListener("click", () => fileInput.click(), false);
-            fileInput.addEventListener("change", handleFiles, false);
-
-            function preventDefaults(e) {
-                e.preventDefault();
-                e.stopPropagation();
-            }
-
-            function handleDrop(e) {
-                let dt = e.dataTransfer;
-                let files = dt.files;
-                handleFiles({ target: { files } });
-            }
-
-            // Manejo de los archivos seleccionados
-            function handleFiles(e) {
-                let files = e.target.files;
-                let validFiles = [];
-
-                [...files].forEach(file => {
-                    if (validateImage(file)) {
-                        validFiles.push(file);
-                        previewImage(file);
-                    }
-                });
-
-                if (validFiles.length > 0) {
-                    Swal.fire({
-                        toast: true,
-                        position: 'top-end',
-                        icon: 'success',
-                        title: `${validFiles.length} imágenes cargadas <br>correctamente 😋🤘🥳`,
-                        showConfirmButton: false,
-                        timer: 4000
-                    });
-                } else {
-                    Swal.fire({
-                        toast: true,
-                        position: 'top-end',
-                        icon: 'error',
-                        title: 'No se admite este tipo de archivo ⚠️😯😥',
-                        showConfirmButton: false,
-                        timer: 4000
-                    });
-                }
-            }
-
-            // Validar si el archivo es una imagen (jpg, jpeg, png)
-            function validateImage(file) {
-                const acceptedImageTypes = ['image/jpeg', 'image/png', 'image/jpg'];
-                return acceptedImageTypes.includes(file.type);
-            }
-
-            // Mostrar imagen en la lista
-            function previewImage(file) {
-                const reader = new FileReader();
-                reader.readAsDataURL(file);
-
-                reader.onloadend = function () {
-                    // Crear el elemento de la imagen y la fila
-                    const li = document.createElement('div');
-                    li.classList.add('image-item');
-
-                    // Imagen en miniatura
-                    const img = document.createElement('img');
-                    img.classList = 'img-rounded';
-                    img.src = reader.result;
-                    img.alt = file.name;
-
-                    // Información del archivo
-                    const fileInfo = document.createElement('p');
-                    fileInfo.classList = 'm-0'
-                    fileInfo.innerText = `(${(file.size / 1024).toFixed(2)} KB)`;
-                    // fileInfo.innerText = `${file.name} (${(file.size / 1024).toFixed(2)} KB)`;
-
-                    // Botón para eliminar
-                    const removeButton = document.createElement('button');
-                    removeButton.classList = 'btn btn-danger btn-floating'
-                    removeButton.innerHTML = '<i class="fa-regular fa-trash-can tscale-1-6"></i>';
-                    removeButton.addEventListener('click', () => li.remove());
-
-                    // Añadir los elementos al li
-                    li.appendChild(img);
-                    li.appendChild(fileInfo);
-                    li.appendChild(removeButton);
-
-                    // Añadir el li a la lista de imágenes
-                    imageList.appendChild(li);
-                };
-            }
-        </script>
+                <input type="file" name="images" id="file-input" class="d-none input_change" accept="image/jpeg, image/png, image/jpg" multiple required>
+            </div>
+            <button type="submit" id="galeryUpImages" class="d-none">Enviar</button>
+        </form>
+        <section id="image-list" class="d-flex my-3" data-galery-del="{% url 'eliminar_imagen' %}"></section>
     </div>
 </section>
 
