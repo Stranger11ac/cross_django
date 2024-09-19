@@ -50,14 +50,15 @@
         <div class="bg-image">
             <img src="{% static 'img/default_image.webp' %}" id="imagen_actual" class="img-fluid" />
             <div class="mask mask_white">
-                <div class="d-flex align-items-end h-100 px-3">
+                <div class="d-flex align-items-end h-100 p-3 pt-0">
                     <h3 class="fw-bold mb-0" id="lateralTitle"></h3>
                 </div>
             </div>
         </div>
     </div>
-    <div class="offcanvas-body pt-4" id="offcanvasContent">
-        <!-- Aquí se insertará dinámicamente el contenido -->
+    <div class="offcanvas-body">
+        <div class="rounded" id="offcanvasContent"></div>
+        <div class="d-flex flex-column mt-4 gap_10" id="offcanvasGalery"></div>
     </div>
 </div>
 

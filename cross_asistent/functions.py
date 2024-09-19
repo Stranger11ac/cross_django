@@ -583,12 +583,19 @@ def blog_delete(request):
 def mapa_data(request):
     mapas = models.Mapa.objects.filter(is_marker=False)
     data = []
+    
     for mapa in mapas:
         imagenQuery = models.Database.objects.filter(uuid=mapa.uuid).values_list('imagen', flat=True)
         imagen = imagenQuery.first() if imagenQuery.exists() else None
-        
-        galeryQuery = models.galeria.objects.filter(uuid=mapa.uuid).values('id', 'imagen')
-        # galeryQuery = models.galeria.objects.filter(uuid=mapa.uuid).values_list('imagen', flat=True)
+
+        galeryQuery = models.galeria.objects.filter(uuid=mapa.uuid)
+        galery_items = []
+        for galeria_item in galeryQuery:
+            galery_items.append({
+                "id": galeria_item.id,
+                "imagen": galeria_item.imagen.url,
+                "img_size": galeria_item.imagen.size
+            })
         
         item = {
             "uuid": mapa.uuid,
@@ -598,7 +605,7 @@ def mapa_data(request):
             "ismarker": mapa.is_marker,
             "sizemarker": mapa.size_marker,
             "informacion": mapa.informacion,
-            "galery_items": list(galeryQuery),
+            "galery_items": galery_items,
             "galery_count": galeryQuery.count(),
             "hidename": True if mapa.hide_name else False,
             "door_coords": [float(coord) for coord in mapa.door_cords.split(",")],
@@ -773,6 +780,7 @@ def lista_imagenes(request):
             return JsonResponse({'error': str(e)}, status=400)
 
 @never_cache
+@csrf_exempt
 @login_required
 def galeria_delete(request):
     if request.method == 'POST':
@@ -783,9 +791,9 @@ def galeria_delete(request):
             imagen.delete()
             return JsonResponse({
                 'success': True,
-                'functions': 'reload',
-                'message': f'Se eliminó la imagen<u>"{imagen_id}"</u> de la galeria exitosamente. ⚠️😯😬🎉',
-                'icon': 'warning'
+                'message': f'Se eliminó la imagen <u>"#{imagen_id}"</u> de la galeria exitosamente. ⚠️😯😬🎉',
+                'icon': 'warning',
+                'position': 'top',
             }, status=200)
             
         except Exception as e:
@@ -808,7 +816,7 @@ def galeria_upload_images(request):
                     )
                     galeria_instance.save()
                     
-                return JsonResponse({'message': 'Imágenes subidas exitosamente'}, status=200)
+                return JsonResponse({'functions': 'submit'}, status=200)
             else:
                 return JsonResponse({'success': False, 'message': 'No se Enviaron datos. ⚠️⚠️⚠️😯😥🤔'}, status=200)
         except Exception as e:

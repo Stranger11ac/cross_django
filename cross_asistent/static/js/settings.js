@@ -494,7 +494,11 @@ function jsonSubmit(e) {
         .then((data) => {
             dataMessage = data.message;
             if (data.success == true) {
-                dataIcon = "success";
+                let dataIcon = "success";
+                function dataRedirect() {
+                    window.location.href = data.redirect_url;
+                }
+                
                 if (data.icon) {
                     dataIcon = data.icon;
                 }
@@ -504,13 +508,8 @@ function jsonSubmit(e) {
                     dataPosition = data.position;
                 }
 
-                function dataRedirect() {
-                    window.location.href = data.redirect_url;
-                }
-
                 if (data.functions == "singin") {
-                    dataRedirect();
-                    return;
+                    return dataRedirect();
                 } else if (data.functions == "reload") {
                     var alertfunction = function () {
                         location.reload();
@@ -521,17 +520,13 @@ function jsonSubmit(e) {
                     };
                 }
 
+                setTimeout(() => thisForm.querySelector('button[type="submit"]').removeAttribute("disabled"), 8000);
+                alertSToast(dataPosition, timerOut, dataIcon, dataMessage, alertfunction);
                 const passwordInputs = document.querySelectorAll('input[type="password"]');
                 passwordInputs.forEach((input) => (input.value = ""));
 
-                setTimeout(() => {
-                    thisForm.querySelector('button[type="submit"]').removeAttribute("disabled");
-                }, 5000);
-
-                alertSToast(dataPosition, timerOut, dataIcon, dataMessage, alertfunction);
             } else if (data.success == false) {
                 console.waning(dataMessage);
-
                 if (data.valSelector) {
                     thisForm.querySelector(`[data-selector-input="${data.valSelector}"]`).classList.add("is-invalid");
                     thisForm.querySelector(`[data-selector-input="${data.valSelector}"]`).classList.remove("is-valid");
@@ -540,6 +535,10 @@ function jsonSubmit(e) {
                 alertSToast("top", timerOut + 6000, "warning", dataMessage, () => {
                     thisForm.querySelector('button[type="submit"]').removeAttribute("disabled");
                 });
+            } else {
+                if (data.functions == "submit") {
+                    thisForm.querySelector('button[type="submit"]').removeAttribute("disabled");
+                }
             }
         })
         .catch((error) => {
@@ -567,7 +566,7 @@ if (dropArea) {
     const fileInput = document.getElementById("file-input");
     const imageList = document.getElementById("image-list");
 
-    const formatBytes = (bytes, decimals = 2) => {
+    function formatBytes(bytes, decimals = 2) {
         if (bytes === 0) return "0 Bytes";
         const k = 1024;
         const dm = decimals < 0 ? 0 : decimals;
@@ -602,77 +601,46 @@ if (dropArea) {
     function handleFiles(e) {
         let files = e.target.files;
         let validFiles = [];
+        let i = 1;
 
         [...files].forEach((file) => {
             if (validateImage(file)) {
                 validFiles.push(file);
-                previewImage(file);
+                previewImage(file, i);
+                ++i
+                console.log(++i)
             }
         });
 
         if (validFiles.length > 0) {
-            Swal.fire({
-                toast: true,
-                position: "top-end",
-                icon: "success",
-                title: `${validFiles.length} imágenes cargadas <br>correctamente 😋🤘🥳`,
-                showConfirmButton: false,
-                timer: 4000,
-            });
+            alertSToast('top-end', 6000, 'success', `${validFiles.length} imágenes cargadas <br>correctamente 😋🤘🥳`);
         } else {
-            Swal.fire({
-                toast: true,
-                position: "top-end",
-                icon: "error",
-                title: "No se admite este tipo de archivo ⚠️😯😥",
-                showConfirmButton: false,
-                timer: 4000,
-            });
+            alertSToast('center', 6000, 'error', "No se admite este tipo de archivo ⚠️😯😥");
         }
     }
     function validateImage(file) {
         const acceptedImageTypes = ["image/jpeg", "image/png", "image/jpg"];
         return acceptedImageTypes.includes(file.type);
     }
-    function previewImage(file) {
+    function previewImage(file, itemId) {
         const reader = new FileReader();
         reader.readAsDataURL(file);
 
         reader.onloadend = function () {
-            const imageItem = document.createElement("div");
-            imageItem.classList.add("image-item");
-
-            const img = document.createElement("img");
-            img.classList = "img-rounded unfocus-5";
-            img.src = reader.result;
-            img.alt = file.name;
-
-            const fileInfo = document.createElement("div");
-            fileInfo.classList = "fs-8";
-
-            const infoName = document.createElement("p");
-            infoName.classList = "name-file m-0";
             const fileName = file.name;
-            infoName.innerText = fileName;
-            fileInfo.appendChild(infoName);
-
-            const infoSize = document.createElement("p");
-            infoSize.classList = "size-file m-0";
             let fileType = fileName.lastIndexOf(".");
             fileType = fileName.substring(fileType + 1);
-            infoSize.innerHTML = `(${fileType}) ${formatBytes(file.size)}`;
-            fileInfo.appendChild(infoSize);
+            const imgID = cadenaRandom(5, alfanumerico);
 
-            imageItem.appendChild(img);
-            imageItem.appendChild(fileInfo);
-            imageList.appendChild(imageItem);
+            const imageItem = `<div id="img_${imgID}" class="image-item"><img src="${reader.result}" class="img-rounded unfocus-5"><div class="fs-8"><p class="name-file m-0">${fileName}</p><p class="size-file m-0">(${fileType}) ${formatBytes(file.size)}</p></div></div>`;
+            imageList.insertAdjacentHTML("beforeend", imageItem);
 
             setTimeout(() => {
-                imageItem.classList.add("visible");
+                document.querySelector(`#img_${imgID}`).classList.add("visible");
                 setTimeout(() => {
-                    img.classList.remove("unfocus-5");
-                }, 1200);
-            }, 100);
+                    document.querySelector(`#img_${imgID} img`).classList.remove("unfocus-5");
+                }, (itemId)*110);
+            }, (itemId)*90);
         };
     }
 }
