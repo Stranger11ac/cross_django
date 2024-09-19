@@ -29,7 +29,7 @@ function getCSRFToken() {
 $(document).ready(function () {
     try {
         $('#overlayMenu').click(()=>{
-            $('button[data-mdb-collapse-init]').click();
+            $('nav button.navbar-toggler').click();
         })
         // Filtro de busqueda ###################################################################
         var input = $("#searchInput");
