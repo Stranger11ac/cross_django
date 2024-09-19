@@ -441,7 +441,7 @@
                     <input type="hidden" id="btnsYearpost" name="btnsYearpost" value="True" />
                     <input class="form-check-input input_change" {% if config.calendar_btnsYear %}checked{% endif %} type="checkbox" id="btnsYear"
                       name="btnsYear" />
-                    <label class="form-check-label" for="btnsYear">Mostrar Botones para cambiar año</label>
+                    <label class="form-check-label" for="btnsYear">Mostrar Botones de año (<i class="fa-solid fa-angles-left"></i>|<i class="fa-solid fa-angles-right"></i>)</label>
                     <button type="submit" class="d-none" id="formcalendar"></button>
                   </form>
                 </div>
@@ -458,14 +458,14 @@
                   <form action="{% url 'update_settings' %}" class="row" method="post" data-submit-blur="formfooter" data-submit-form>
                     {% csrf_token %}
                     <div class="col-md-6">
-                      <div data-mdb-input-init class="form-outline">
+                      <div data-mdb-input-init class="form-outline mt-4">
                         <input type="text" id="cr_year" name="cr_year" class="form-control input_blur active text-end" value="{{config.copyright_year}}"
                           required />
                         <label class="form-label" for="cr_year">Copyright:</label>
                       </div>
                     </div>
                     <div class="col-md-6">
-                      <div data-mdb-input-init class="form-outline">
+                      <div data-mdb-input-init class="form-outline mt-4">
                         <input type="text" id="utclink" name="utclink" class="form-control input_blur active text-end" value="{{config.utc_link}}" required />
                         <label class="form-label" for="utclink">Sitio web Oficial:</label>
                       </div>
