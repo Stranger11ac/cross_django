@@ -6,7 +6,7 @@
 {% include 'base/widget_links-admin.html' with pages=pages %}
 {% endblock %}
 {% block content %}
-<main class="container container-fluid py-5 {% if not user.is_authenticated %}main_container{% endif %}">
+<main class="container container-fluid pt-4 pb-5 {% if not user.is_authenticated %}main_container{% endif %}">
   <section class="row">
     <!-- carrusel -->
     <div class="col-md-6 col-xl-4 mb-4 mb-md-0">
@@ -37,8 +37,8 @@
               {% endif %}
 
               {% if oneBanner.solo_imagen %}
-              <small class="bg-success rounded-pill p-1 mt-3">Muestra solo la Imagen y boton</small>{% endif %}
-              {% if not oneBanner.visible %}<small class="bg-danger rounded-pill p-1 mt-3">Banner Invisible</small>{% endif %}
+              <small class="bg-success rounded-pill p-1 mt-3 fs-7">Muestra solo la Imagen y boton</small>{% endif %}
+              {% if not oneBanner.visible %}<small class="bg-danger rounded-pill p-1 mt-3 fs-7">Banner Invisible</small>{% endif %}
             </div>
           </div>
           {% endfor %}
@@ -383,15 +383,25 @@
           <h4 class="text-center mb-4"><span class="text_detail">Mas</span> Configuraciones</h4>
           {% for config in settingsall %}
           <div class="accordion accordion-borderless row" id="settingsAccordion">
+            <!-- Hawky -->
+            <div class="accordion-item mb-3 col-12 col-md-6">
+              <h5 class="accordion-header" id="flush-headingHawky">
+                <button data-mdb-collapse-init class="accordion-button" type="button" data-mdb-toggle="collapse" data-mdb-target="#flush-collapseHawky"
+                  aria-expanded="true" aria-controls="flush-collapseHawky">Hawky</button>
+              </h5>
+              <div id="flush-collapseHawky" class="accordion-collapse collapse" aria-labelledby="flush-headingHawky" data-mdb-parent="#settingsAccordion">
+                <div class="accordion-body">
+                  <p class="m-0">...</p>
+                </div>
+              </div>
+            </div>
             <!-- Qr -->
-            <div class="accordion-item col-12 col-md-6 px-0">
+            <div class="accordion-item mb-3 col-12 col-md-6">
               <h5 class="accordion-header" id="flush-headingqrimage">
                 <button data-mdb-collapse-init class="accordion-button" type="button" data-mdb-toggle="collapse" data-mdb-target="#flush-collapseqrimage"
-                  aria-expanded="true" aria-controls="flush-collapseqrimage">
-                  Imagen QR
-                </button>
+                  aria-expanded="true" aria-controls="flush-collapseqrimage">Imagen QR</button>
               </h5>
-              <div id="flush-collapseqrimage" class="accordion-collapse collapse show" aria-labelledby="flush-headingqrimage"
+              <div id="flush-collapseqrimage" class="accordion-collapse collapse" aria-labelledby="flush-headingqrimage"
                 data-mdb-parent="#settingsAccordion">
                 <div class="accordion-body">
                   <form action="{% url 'update_settings' %}" class="row" method="post" enctype="multipart/form-data" data-submit-blur="formqr" data-submit-form>
@@ -419,12 +429,10 @@
               </div>
             </div>
             <!-- calendario -->
-            <div class="accordion-item col-12 col-md-6 px-0">
+            <div class="accordion-item mb-3 col-12 col-md-6">
               <h5 class="accordion-header" id="flush-headingcalendar">
                 <button data-mdb-collapse-init class="accordion-button" type="button" data-mdb-toggle="collapse" data-mdb-target="#flush-collapsecalendar"
-                  aria-expanded="true" aria-controls="flush-collapsecalendar">
-                  Calendario
-                </button>
+                  aria-expanded="true" aria-controls="flush-collapsecalendar">Calendario</button>
               </h5>
               <div id="flush-collapsecalendar" class="accordion-collapse collapse" aria-labelledby="flush-headingcalendar" data-mdb-parent="#settingsAccordion">
                 <div class="accordion-body">
@@ -439,13 +447,38 @@
                 </div>
               </div>
             </div>
+            <!-- Footer -->
+            <div class="accordion-item mb-3 col-12 col-md-6">
+              <h5 class="accordion-header" id="flush-headingfooter">
+                <button data-mdb-collapse-init class="accordion-button" type="button" data-mdb-toggle="collapse" data-mdb-target="#flush-collapsefooter"
+                  aria-expanded="true" aria-controls="flush-collapsefooter">Footer</button>
+              </h5>
+              <div id="flush-collapsefooter" class="accordion-collapse collapse" aria-labelledby="flush-headingfooter" data-mdb-parent="#settingsAccordion">
+                <div class="accordion-body">
+                  <form action="{% url 'update_settings' %}" class="row" method="post" data-submit-blur="formfooter" data-submit-form>
+                    {% csrf_token %}
+                    <div class="col-md-6">
+                      <div data-mdb-input-init class="form-outline">
+                        <input type="text" id="cr_year" name="cr_year" class="form-control input_blur active text-end" value="{{config.copyright_year}}"
+                          required />
+                        <label class="form-label" for="cr_year">Copyright:</label>
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <div data-mdb-input-init class="form-outline">
+                        <input type="text" id="utclink" name="utclink" class="form-control input_blur active text-end" value="{{config.utc_link}}" required />
+                        <label class="form-label" for="utclink">Sitio web Oficial:</label>
+                      </div>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
             <!-- About -->
-            <div class="accordion-item col-12 px-0">
+            <div class="accordion-item mb-3 col-12">
               <h5 class="accordion-header" id="flush-headingabout">
                 <button data-mdb-collapse-init class="accordion-button" type="button" data-mdb-toggle="collapse" data-mdb-target="#flush-collapseabout"
-                  aria-expanded="true" aria-controls="flush-collapseabout">
-                  Acerca de...
-                </button>
+                  aria-expanded="true" aria-controls="flush-collapseabout">Seccion Acerca de...</button>
               </h5>
               <div id="flush-collapseabout" class="accordion-collapse collapse" aria-labelledby="flush-headingabout" data-mdb-parent="#settingsAccordion">
                 <div class="accordion-body">
@@ -503,145 +536,125 @@
                 </div>
               </div>
             </div>
-            <!-- Footer -->
-            <div class="accordion-item col-12 col-md-6 px-0">
-              <h5 class="accordion-header" id="flush-headingfooter">
-                <button data-mdb-collapse-init class="accordion-button" type="button" data-mdb-toggle="collapse" data-mdb-target="#flush-collapsefooter"
-                  aria-expanded="true" aria-controls="flush-collapsefooter">
-                  Footer
-                </button>
+            <!-- Inportar y Exportar -->
+            <div class="accordion-item mb-3 col-12">
+              <h5 class="accordion-header" id="flush-headingimport">
+                <button data-mdb-collapse-init class="accordion-button" type="button" data-mdb-toggle="collapse" data-mdb-target="#flush-collapseImport"
+                  aria-expanded="true" aria-controls="flush-collapseImport">Inportar y Exportar</button>
               </h5>
-              <div id="flush-collapsefooter" class="accordion-collapse collapse" aria-labelledby="flush-headingfooter" data-mdb-parent="#settingsAccordion">
-                <div class="accordion-body">
-                  <form action="{% url 'update_settings' %}" class="row" method="post" data-submit-blur="formfooter" data-submit-form>
-                    {% csrf_token %}
-                    <div class="col-md-6">
-                      <div data-mdb-input-init class="form-outline mt-4">
-                        <input type="text" id="cr_year" name="cr_year" class="form-control input_blur active text-end" value="{{config.copyright_year}}"
-                          required />
-                        <label class="form-label" for="cr_year">Copyright:</label>
+              <div id="flush-collapseImport" class="accordion-collapse collapse" aria-labelledby="flush-headingimport" data-mdb-parent="#settingsAccordion">
+                <div class="accordion-body px-1">
+                  <div class="row px-0">
+                    <!-- Banner -->
+                    <div class="col-12 col-md-6 mb-4">
+                      <div class="card">
+                        <div class="card-body">
+                          <h3 class="text-center mb-4">Descargar Banners CSV</h3>
+                          <form action="{% url 'export_banner' %}" method="get">
+                            <button type="submit" class="btn btn_detail btn-block">
+                              Descargar Banners <i class="fa-solid fa-file-arrow-down ms-1"></i>
+                            </button>
+                          </form>
+
+                          <div class="mt-4">
+                            <h3 class="text-center mb-4">Importar Banners CSV</h3>
+                            <form method="POST" enctype="multipart/form-data" action="{% url 'import_Banners' %}" data-submit-form>
+                              {% csrf_token %}
+                              <div class="mb-3">
+                                <input type="file" name="file" accept=".csv" class="form-control">
+                              </div>
+                              <button type="submit" class="btn btn_detail btn-block">
+                                Enviar a la Base de Datos <i class="fa-solid fa-file-arrow-up ms-1"></i>
+                              </button>
+                            </form>
+                          </div>
+                        </div>
                       </div>
                     </div>
-                    <div class="col-md-6">
-                      <div data-mdb-input-init class="form-outline mt-4">
-                        <input type="text" id="utclink" name="utclink" class="form-control input_blur active text-end" value="{{config.utc_link}}" required />
-                        <label class="form-label" for="utclink">Sitio web Oficial:</label>
+                    <!-- Articulos -->
+                    <div class="col-12 col-md-6 mb-4">
+                      <div class="card">
+                        <div class="card-body">
+                          <h3 class="text-center mb-4">Descargar Articulos CSV</h3>
+                          <form action="{% url 'export_articulos' %}" method="get">
+                            <button type="submit" class="btn btn_detail btn-block">
+                              Descargar Base de Datos <i class="fa-solid fa-file-arrow-down ms-1"></i>
+                            </button>
+                          </form>
+
+                          <div class="mt-4">
+                            <h3 class="text-center mb-4">Importar Articulos CSV</h3>
+                            <form method="POST" enctype="multipart/form-data" action="{% url 'import_Articulos' %}" data-submit-form>
+                              {% csrf_token %}
+                              <div class="mb-3">
+                                <input type="file" name="file" accept=".csv" class="form-control">
+                              </div>
+                              <button type="submit" class="btn btn_detail btn-block">
+                                Enviar a la Base de Datos <i class="fa-solid fa-file-arrow-up ms-1"></i>
+                              </button>
+                            </form>
+                          </div>
+                        </div>
                       </div>
                     </div>
-                  </form>
+                    <!-- Preguntas -->
+                    <div class="col-12 col-md-6 mb-4">
+                      <div class="card">
+                        <div class="card-body">
+                          <h3 class="text-center mb-4">Descargar Preguntas CSV</h3>
+                          <form action="{% url 'export_preguntas' %}" method="get">
+                            <button type="submit" class="btn btn_detail btn-block">
+                              Descargar Base de Datos <i class="fa-solid fa-file-arrow-down ms-1"></i>
+                            </button>
+                          </form>
+
+                          <div class="mt-4">
+                            <h3 class="text-center mb-4">Importar Preguntas CSV</h3>
+                            <form method="POST" enctype="multipart/form-data" action="{% url 'import_Preguntas' %}" data-submit-form>
+                              {% csrf_token %}
+                              <div class="mb-3">
+                                <input type="file" name="file" accept=".csv" class="form-control">
+                              </div>
+                              <button type="submit" class="btn btn_detail btn-block">
+                                Enviar a la Base de Datos <i class="fa-solid fa-file-arrow-up ms-1"></i>
+                              </button>
+                            </form>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <!-- Configuraciones -->
+                    <div class="col-12 col-md-6 mb-4">
+                      <div class="card">
+                        <div class="card-body">
+                          <h3 class="text-center mb-4">Descargar Configuraciones CSV</h3>
+                          <form action="{% url 'export_configuraciones' %}" method="get">
+                            <button type="submit" class="btn btn_detail btn-block">
+                              Descargar Base de Datos <i class="fa-solid fa-file-arrow-down ms-1"></i>
+                            </button>
+                          </form>
+
+                          <div class="mt-4">
+                            <h3 class="text-center mb-4">Importar Configuraciones CSV</h3>
+                            <form method="POST" enctype="multipart/form-data" action="{% url 'import_Configuraciones' %}" data-submit-form>
+                              {% csrf_token %}
+                              <div class="mb-3">
+                                <input type="file" name="file" accept=".csv" class="form-control">
+                              </div>
+                              <button type="submit" class="btn btn_detail btn-block">
+                                Enviar a la Base de Datos <i class="fa-solid fa-file-arrow-up ms-1"></i>
+                              </button>
+                            </form>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
           {% endfor %}
-        </div>
-      </div>
-    </div>
-    <!-- Importar y exportar -->
-    <div class="row pe-0">
-      <!-- Import and Export -->
-      <!-- Banner -->
-      <div class="col-12 pe-0 pe-md-2 col-md-6 mb-4">
-        <div class="card">
-          <div class="card-body">
-            <h3 class="text-center mb-4">Descargar Banners CSV</h3>
-            <form action="{% url 'export_banner' %}" method="get">
-              <button type="submit" class="btn btn_detail btn-block">
-                Descargar Banners <i class="fa-solid fa-file-arrow-down ms-1"></i>
-              </button>
-            </form>
-
-            <div class="mt-4">
-              <h3 class="text-center mb-4">Importar Banners CSV</h3>
-              <form method="POST" enctype="multipart/form-data" action="{% url 'import_Banners' %}" data-submit-form>
-                {% csrf_token %}
-                <div class="mb-3">
-                  <input type="file" name="file" accept=".csv" class="form-control">
-                </div>
-                <button type="submit" class="btn btn_detail btn-block">
-                  Enviar a la Base de Datos <i class="fa-solid fa-file-arrow-up ms-1"></i>
-                </button>
-              </form>
-            </div>
-          </div>
-        </div>
-      </div>
-      <!-- Articulos -->
-      <div class="col-12 pe-0 col-md-6 mb-4">
-        <div class="card">
-          <div class="card-body">
-            <h3 class="text-center mb-4">Descargar Articulos CSV</h3>
-            <form action="{% url 'export_articulos' %}" method="get">
-              <button type="submit" class="btn btn_detail btn-block">
-                Descargar Base de Datos <i class="fa-solid fa-file-arrow-down ms-1"></i>
-              </button>
-            </form>
-
-            <div class="mt-4">
-              <h3 class="text-center mb-4">Importar Articulos CSV</h3>
-              <form method="POST" enctype="multipart/form-data" action="{% url 'import_Articulos' %}" data-submit-form>
-                {% csrf_token %}
-                <div class="mb-3">
-                  <input type="file" name="file" accept=".csv" class="form-control">
-                </div>
-                <button type="submit" class="btn btn_detail btn-block">
-                  Enviar a la Base de Datos <i class="fa-solid fa-file-arrow-up ms-1"></i>
-                </button>
-              </form>
-            </div>
-          </div>
-        </div>
-      </div>
-      <!-- Preguntas -->
-      <div class="col-12 pe-0 pe-md-2 col-md-6 mb-4">
-        <div class="card">
-          <div class="card-body">
-            <h3 class="text-center mb-4">Descargar Preguntas CSV</h3>
-            <form action="{% url 'export_preguntas' %}" method="get">
-              <button type="submit" class="btn btn_detail btn-block">
-                Descargar Base de Datos <i class="fa-solid fa-file-arrow-down ms-1"></i>
-              </button>
-            </form>
-
-            <div class="mt-4">
-              <h3 class="text-center mb-4">Importar Preguntas CSV</h3>
-              <form method="POST" enctype="multipart/form-data" action="{% url 'import_Preguntas' %}" data-submit-form>
-                {% csrf_token %}
-                <div class="mb-3">
-                  <input type="file" name="file" accept=".csv" class="form-control">
-                </div>
-                <button type="submit" class="btn btn_detail btn-block">
-                  Enviar a la Base de Datos <i class="fa-solid fa-file-arrow-up ms-1"></i>
-                </button>
-              </form>
-            </div>
-          </div>
-        </div>
-      </div>
-      <!-- Configuraciones -->
-      <div class="col-12 pe-0 col-md-6 mb-4">
-        <div class="card">
-          <div class="card-body">
-            <h3 class="text-center mb-4">Descargar Configuraciones CSV</h3>
-            <form action="{% url 'export_configuraciones' %}" method="get">
-              <button type="submit" class="btn btn_detail btn-block">
-                Descargar Base de Datos <i class="fa-solid fa-file-arrow-down ms-1"></i>
-              </button>
-            </form>
-
-            <div class="mt-4">
-              <h3 class="text-center mb-4">Importar Configuraciones CSV</h3>
-              <form method="POST" enctype="multipart/form-data" action="{% url 'import_Configuraciones' %}" data-submit-form>
-                {% csrf_token %}
-                <div class="mb-3">
-                  <input type="file" name="file" accept=".csv" class="form-control">
-                </div>
-                <button type="submit" class="btn btn_detail btn-block">
-                  Enviar a la Base de Datos <i class="fa-solid fa-file-arrow-up ms-1"></i>
-                </button>
-              </form>
-            </div>
-          </div>
         </div>
       </div>
     </div>

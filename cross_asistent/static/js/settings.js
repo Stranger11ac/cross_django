@@ -28,6 +28,9 @@ function getCSRFToken() {
 // ##############################################################################################
 $(document).ready(function () {
     try {
+        $('#overlayMenu').click(()=>{
+            $('button[data-mdb-collapse-init]').click();
+        })
         // Filtro de busqueda ###################################################################
         var input = $("#searchInput");
         function filtertable() {

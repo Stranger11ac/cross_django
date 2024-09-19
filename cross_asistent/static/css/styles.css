@@ -267,6 +267,24 @@ nav .navbar-collapse {
     /* Esto interfiere con el z-index de materialBoxed*/
 }
 
+.menu_overlay {
+    position: absolute;
+    inset: 0;
+    background: var(--darkA4);
+    backdrop-filter: blur(5px);
+    clip-path: ellipse(100% 0% at 50% 100%);
+    z-index: 0;
+    cursor: pointer;
+    transition: clip-path 0.5s ease;
+    transition-delay: 0s;
+}
+
+.menu_overlay.show {
+    clip-path: ellipse(100% 130% at 50% 100%);
+    z-index: 4;
+    transition-delay: 0.1s;
+}
+
 @media (min-width: 992px) {
     nav .navbar-collapse {
         background-color: transparent;
@@ -277,23 +295,10 @@ nav .navbar-collapse {
         box-shadow: none;
         z-index: auto;
     }
-}
-
-.menu_overlay {
-    position: absolute;
-    inset: 0;
-    background: var(--darkA4);
-    backdrop-filter: blur(5px);
-    clip-path: ellipse(100% 0% at 50% 100%);
-    z-index: 0;
-    transition: clip-path 0.5s ease;
-    transition-delay: 0s;
-}
-
-.menu_overlay.show {
-    clip-path: ellipse(100% 130% at 50% 100%);
-    z-index: 4;
-    transition-delay: 0.1s;
+    .menu_overlay.show {
+        clip-path: ellipse(100% 0% at 50% 100%);
+        z-index: 0;
+    }
 }
 
 /*########################## Carousel / carrusel ##########################*/
@@ -422,7 +427,7 @@ nav .navbar-collapse {
     background-color: var(--darkA6);
     backdrop-filter: blur(3px);
     text-shadow: 0 0 15px var(--whiteA9) !important;
-    padding: 5px !important;
+    padding: 10px !important;
 }
 
 
@@ -1065,6 +1070,10 @@ main.main_anchor {
     transition-delay: 0.1s;
 }
 
+.table_odd .table_odd_items:hover div .text_detail{
+    background: unset !important;
+}
+
 
 /*########################### Modal MDB ###########################*/
 .modal,
@@ -1215,6 +1224,22 @@ input:checked+.slider:before {
     border-color: transparent;
     background: transparent;
     transition: 0.2s ease;
+}
+
+/*########################### Acordiones / accordion ###########################*/
+#settingsAccordion.accordion .accordion-item {
+    background: var(--mdb-surface-bg) !important;
+}
+
+#settingsAccordion.accordion .accordion-button {
+    background: var(--var-detail);
+    color: white;
+    transition: all 0.3s ease;
+}
+
+#settingsAccordion.accordion .accordion-button.collapsed {
+    background: var(--var-secondary);
+    color: black;
 }
 
 /*########################### Mapa - MapBox ###########################*/
