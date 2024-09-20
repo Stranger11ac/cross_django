@@ -1101,7 +1101,7 @@ img.img-tiny {
 
 /*########################### Formulario / forms ###########################*/
 .was-validated .form-control:valid,
-.form-control.is-valid {
+.form-control {
     margin: 0 !important;
 }
 
@@ -1144,6 +1144,12 @@ label {
 
 .form-control-color {
     height: 35.83px;
+}
+
+.form-outline .form-control:disabled, .form-outline .form-control.disabled, .form-outline .form-control[readonly] {
+    background-color: none !important;
+    background: none !important;
+    cursor: progress;
 }
 
 /* Checkbox MDB */

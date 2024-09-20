@@ -9,6 +9,8 @@ var expressions = {
     username: /^(?![0-9_-])[a-zA-Z0-9_-]+$/,
     email: /^([a-zA-Z0-9_\.\-\+])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/,
     password: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*.?&])[A-Za-z\d@$!%*.?&]{8,}$/,
+    title: /^[a-zA-ZÀ-ÿ][a-zA-ZÀ-ÿ0-9\s\-_#]*$/
+,
 };
 
 function getCSRFToken() {
