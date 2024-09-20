@@ -271,6 +271,7 @@ def vista_programador(request):
         'settingsall':settingsall,
         'categorias':categoriasFilter,
         'preguntas_sending':questions_all[:8], # limitar a los primeros 8 registros
+        'preguntas_count':questions_all.count(),
         'num_preguntas':databaseall.count(),
         'num_blogs': num_blogs,
         **configuraciones

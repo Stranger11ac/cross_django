@@ -114,6 +114,13 @@ $(document).ready(function () {
             var targetId = $(this).data("btn_closed");
             $("#" + targetId).toggleClass("show");
         });
+        
+        // Transferir Cick #####################################
+        $("[data-transfer-click]").on("click", function () {
+            const btnThisId = $(this).data("transfer-click");
+            const btnClickId = $("#" + btnThisId);
+            btnClickId.click();
+        })
 
         // Resetear formulario / vaciar todo el formulario
         $("[data-reset_form]").on("click", function () {

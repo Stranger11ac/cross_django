@@ -223,13 +223,13 @@
         <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
     </div>
     <div class="offcanvas-body" id="offcanvasContent">
-        <form action="{% url 'galery_up_images' %}" method="post" data-submit-form data-submit-blur="galeryUpImages">
+        <form action="{% url 'galery_up_images' %}" method="post" id="formToGalery" data-submit-form data-submit-blur="galeryUpImages">
             <div id="drop-area">
                 Arrastra y suelta tus imágenes aquí o haz clic para seleccionarlas.
                 <input type="text" name="uuid" id="uuid" class="d-none" data-uuid data-new-uid="{{UID}}" readonly required>
                 <input type="file" name="images" id="file-input" class="d-none input_change" accept="image/jpeg, image/png, image/jpg" multiple required>
             </div>
-            <button type="submit" id="galeryUpImages" class="d-none">Enviar</button>
+            <button type="submit" id="galeryUpImages" class="d-none" data-reset_form="formToGalery">Enviar</button>
         </form>
         <section id="image-list" class="image-list d-flex my-3"></section>
         <section id="image-list-galery" class="image-list d-flex my-3" data-galery-del="{% url 'eliminar_imagen' %}"></section>

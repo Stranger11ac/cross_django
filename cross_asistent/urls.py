@@ -92,13 +92,13 @@ urlpatterns = [
     path('administracion/export/mapa/', imex_port.export_mapa, name='export_mapa'),
     path('administracion/importar/mapa/', imex_port.import_mapa, name='import_mapa'),
     path('administracion/export/banners/', imex_port.export_banner, name='export_banner'),
-    path('administracion/export/articulo/', imex_port.export_articulos, name='export_articulos'),
+    path('administracion/importar/banners/', imex_port.import_Banners, name='import_banners'),
     path('administracion/export/preguntas/', imex_port.export_preguntas, name='export_preguntas'),
+    path('administracion/importar/preguntas/', imex_port.import_Preguntas, name='import_preguntas'),
+    path('administracion/export/articulo/', imex_port.export_articulos, name='export_articulos'),
+    path('administracion/importar/articulos/', imex_port.import_Articulos, name='import_articulos'),
     path('administracion/export/configuracion/', imex_port.export_configuraciones, name='export_configuraciones'),
-    path('administracion/importar/banners/', imex_port.import_Banners, name='import_Banners'),
-    path('administracion/importar/articulos/', imex_port.import_Articulos, name='import_Articulos'),
-    path('administracion/importar/preguntas/', imex_port.import_Preguntas, name='import_Preguntas'),
-    path('administracion/importar/configuraciones/', imex_port.import_Configuraciones, name='import_Configuraciones'),
+    path('administracion/importar/configuraciones/', imex_port.import_Configuraciones, name='import_configuraciones'),
 ]
 
 

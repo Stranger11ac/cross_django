@@ -119,7 +119,7 @@
                   <i class="fa-solid fa-clipboard-question position-absolute bottom-0 start-0 opacity-25 text_detail fs-25 m-1"></i>
                   Preguntas<span class="d-none d-xl-inline"> Enviadas</span>:
                 </div>
-                <strong class="text_detail ms-auto">{{ preguntas_sending.count }}</strong>
+                <strong class="text_detail ms-auto">{{ preguntas_count }}</strong>
               </h6>
             </div>
           </a>
@@ -169,7 +169,7 @@
             </div>
             <div class="form-outline mb-4" data-mdb-input-init>
               <i class="fa-solid fa-keyboard trailing"></i>
-              <textarea class="form-control form-icon-trailing" id="informacion" name="informacion" rows="3" required></textarea>
+              <textarea class="form-control form-icon-trailing" id="informacion" name="informacion" rows="5" required></textarea>
               <label for="informacion" class="form-label">Información:</label>
             </div>
             <div class="row">
@@ -382,10 +382,10 @@
       <div class="card">
         <div class="card-body mx-2">
           <h4 class="text-center mb-4"><span class="text_detail">Mas</span> Configuraciones</h4>
-          {% for config in settingsall %}
           <div class="accordion accordion-borderless row" id="settingsAccordion">
+            {% for config in settingsall %}
             <!-- Hawky -->
-            <div class="accordion-item mb-3 col-12 col-md-6">
+            <div class="accordion-item mb-3 col-12 col-lg-6">
               <h5 class="accordion-header" id="flush-headingHawky">
                 <button data-mdb-collapse-init class="accordion-button" type="button" data-mdb-toggle="collapse" data-mdb-target="#flush-collapseHawky"
                   aria-expanded="true" aria-controls="flush-collapseHawky">Hawky</button>
@@ -397,14 +397,14 @@
               </div>
             </div>
             <!-- Qr -->
-            <div class="accordion-item mb-3 col-12 col-md-6">
+            <div class="accordion-item mb-3 col-12 col-lg-6">
               <h5 class="accordion-header" id="flush-headingqrimage">
                 <button data-mdb-collapse-init class="accordion-button" type="button" data-mdb-toggle="collapse" data-mdb-target="#flush-collapseqrimage"
                   aria-expanded="true" aria-controls="flush-collapseqrimage">Imagen QR</button>
               </h5>
               <div id="flush-collapseqrimage" class="accordion-collapse collapse" aria-labelledby="flush-headingqrimage" data-mdb-parent="#settingsAccordion">
                 <div class="accordion-body">
-                  <form action="{% url 'update_settings' %}" class="d-flex justify-content-center align-items-center gap_20" method="post"
+                  <form action="{% url 'update_settings' %}" class="d-flex justify-content-center align-items-center gap_15 flex-column flex-lg-row" method="post"
                     enctype="multipart/form-data" data-submit-blur="formqr" data-submit-form>
                     {% csrf_token %}
                     <div class="mb-3">
@@ -423,14 +423,14 @@
                     {% csrf_token %}
                     <input type="hidden" id="btnqrpost" name="btnqrpost" value="True" />
                     <input class="form-check-input input_change" {% if config.qr_button %}checked{% endif %} type="checkbox" id="btnqr" name="btnqr" />
-                    <label class="form-check-label" for="btnqr">Mostrar Imagen del QR</label>
+                    <label class="form-check-label" for="btnqr">Mostrar en pagina de Inicio</label>
                     <button type="submit" class="d-none" id="formcalendar"></button>
                   </form>
                 </div>
               </div>
             </div>
             <!-- calendario -->
-            <div class="accordion-item mb-3 col-12 col-md-6">
+            <div class="accordion-item mb-3 col-12 col-lg-4">
               <h5 class="accordion-header" id="flush-headingcalendar">
                 <button data-mdb-collapse-init class="accordion-button" type="button" data-mdb-toggle="collapse" data-mdb-target="#flush-collapsecalendar"
                   aria-expanded="true" aria-controls="flush-collapsecalendar">Calendario</button>
@@ -450,7 +450,7 @@
               </div>
             </div>
             <!-- Footer -->
-            <div class="accordion-item mb-3 col-12 col-md-6">
+            <div class="accordion-item mb-3 col-12 col-lg-8">
               <h5 class="accordion-header" id="flush-headingfooter">
                 <button data-mdb-collapse-init class="accordion-button" type="button" data-mdb-toggle="collapse" data-mdb-target="#flush-collapsefooter"
                   aria-expanded="true" aria-controls="flush-collapsefooter">Footer</button>
@@ -538,6 +538,7 @@
                 </div>
               </div>
             </div>
+            {% endfor %}
             <!-- Importar y Exportar -->
             <div class="accordion-item mb-3 col-12">
               <h5 class="accordion-header" id="flush-headingimport">
@@ -545,109 +546,113 @@
                   aria-expanded="true" aria-controls="flush-collapseImport">Importar y Exportar</button>
               </h5>
               <div id="flush-collapseImport" class="accordion-collapse collapse" aria-labelledby="flush-headingimport" data-mdb-parent="#settingsAccordion">
-                <div class="accordion-body px-1">
+                <div class="accordion-body px-1 pb-0">
                   <div class="row px-0">
-                    <!-- Banner -->
-                    <div class="col-12 col-md-6 mb-4">
+                    <!-- Banners -->
+                    <div class="col-12 col-md-6 mt-4 mt-lg-0">
                       <div class="card">
                         <div class="card-body">
-                          <h3 class="text-center mb-4">Descargar Banners CSV</h3>
-                          <form action="{% url 'export_banner' %}" method="get">
-                            <button type="submit" class="btn btn_detail btn-block">
-                              Descargar Banners <i class="fa-solid fa-file-arrow-down ms-1"></i>
-                            </button>
-                          </form>
-                          <hr class="hr_divisor mb-4 mt-5 bg_detail">
-                          <div class="mt-4">
-                            <h3 class="text-center mb-4">Importar Banners CSV</h3>
-                            <form method="POST" enctype="multipart/form-data" action="{% url 'import_Banners' %}" data-submit-form>
-                              {% csrf_token %}
-                              <div class="mb-3">
-                                <input type="file" name="file" accept=".csv" class="form-control">
+                          <h3 class="text-center">Banners</h3>
+                          <hr class="hr_divisor my-4 bg_detail">
+                          <form method="POST" enctype="multipart/form-data" action="{% url 'import_banners' %}" data-submit-form>
+                            {% csrf_token %}
+                            <input type="file" name="file" accept=".csv" class="form-control">
+                            <div class="row">
+                              <div class="col-12 col-lg order-2 order-lg-1 mt-3">
+                                <button type="button" class="btn btn-secondary btn-block" data-transfer-click="bannersDownload">
+                                  <i class="fa-solid fa-cloud-arrow-down"></i> Descargar CSV
+                                </button>
                               </div>
-                              <button type="submit" class="btn btn_detail btn-block">
-                                Enviar a la Base de Datos <i class="fa-solid fa-file-arrow-up ms-1"></i>
-                              </button>
-                            </form>
-                          </div>
+                              <div class="col-12 col-lg order-1 order-lg-2 mt-3">
+                                <button type="submit" class="btn btn_detail btn-block">Enviar CSV <i class="fa-solid fa-cloud-arrow-up"></i></button>
+                              </div>
+                            </div>
+                          </form>
+
+                          <form action="{% url 'export_banner' %}" method="get" class="d-none">
+                            <button type="submit" id="bannersDownload">Descargar</button>
+                          </form>
                         </div>
                       </div>
                     </div>
                     <!-- Articulos -->
-                    <div class="col-12 col-md-6 mb-4">
+                    <div class="col-12 col-md-6 mt-4 mt-lg-0">
                       <div class="card">
                         <div class="card-body">
-                          <h3 class="text-center mb-4">Descargar Articulos CSV</h3>
-                          <form action="{% url 'export_articulos' %}" method="get">
-                            <button type="submit" class="btn btn_detail btn-block">
-                              Descargar Base de Datos <i class="fa-solid fa-file-arrow-down ms-1"></i>
-                            </button>
-                          </form>
-                          <hr class="hr_divisor mb-4 mt-5 bg_detail">
-                          <div class="mt-4">
-                            <h3 class="text-center mb-4">Importar Articulos CSV</h3>
-                            <form method="POST" enctype="multipart/form-data" action="{% url 'import_Articulos' %}" data-submit-form>
-                              {% csrf_token %}
-                              <div class="mb-3">
-                                <input type="file" name="file" accept=".csv" class="form-control">
+                          <h3 class="text-center">Articulos</h3>
+                          <hr class="hr_divisor my-4 bg_detail">
+                          <form method="POST" enctype="multipart/form-data" action="{% url 'import_articulos' %}" data-submit-form>
+                            {% csrf_token %}
+                            <input type="file" name="file" accept=".csv" class="form-control">
+                            <div class="row">
+                              <div class="col-12 col-lg order-2 order-lg-1 mt-3">
+                                <button type="button" class="btn btn-secondary btn-block" data-transfer-click="bannersDownload">
+                                  <i class="fa-solid fa-cloud-arrow-down"></i> Descargar CSV
+                                </button>
                               </div>
-                              <button type="submit" class="btn btn_detail btn-block">
-                                Enviar a la Base de Datos <i class="fa-solid fa-file-arrow-up ms-1"></i>
-                              </button>
-                            </form>
-                          </div>
+                              <div class="col-12 col-lg order-1 order-lg-2 mt-3">
+                                <button type="submit" class="btn btn_detail btn-block">Enviar CSV <i class="fa-solid fa-cloud-arrow-up"></i></button>
+                              </div>
+                            </div>
+                          </form>
+
+                          <form action="{% url 'export_articulos' %}" method="get" class="d-none">
+                            <button type="submit" id="bannersDownload">Descargar</button>
+                          </form>
                         </div>
                       </div>
                     </div>
-                    <!-- Preguntas -->
-                    <div class="col-12 col-md-6 mb-4">
+                    <!-- Preguntas Enviadas -->
+                    <div class="col-12 col-md-6 mt-4">
                       <div class="card">
                         <div class="card-body">
-                          <h3 class="text-center mb-4">Descargar Preguntas CSV</h3>
-                          <form action="{% url 'export_preguntas' %}" method="get">
-                            <button type="submit" class="btn btn_detail btn-block">
-                              Descargar Base de Datos <i class="fa-solid fa-file-arrow-down ms-1"></i>
-                            </button>
-                          </form>
-                          <hr class="hr_divisor mb-4 mt-5 bg_detail">
-                          <div class="mt-4">
-                            <h3 class="text-center mb-4">Importar Preguntas CSV</h3>
-                            <form method="POST" enctype="multipart/form-data" action="{% url 'import_Preguntas' %}" data-submit-form>
-                              {% csrf_token %}
-                              <div class="mb-3">
-                                <input type="file" name="file" accept=".csv" class="form-control">
+                          <h3 class="text-center">Preguntas Enviadas</h3>
+                          <hr class="hr_divisor my-4 bg_detail">
+                          <form method="POST" enctype="multipart/form-data" action="{% url 'import_preguntas' %}" data-submit-form>
+                            {% csrf_token %}
+                            <input type="file" name="file" accept=".csv" class="form-control">
+                            <div class="row">
+                              <div class="col-12 col-lg order-2 order-lg-1 mt-3">
+                                <button type="button" class="btn btn-secondary btn-block" data-transfer-click="bannersDownload">
+                                  <i class="fa-solid fa-cloud-arrow-down"></i> Descargar CSV
+                                </button>
                               </div>
-                              <button type="submit" class="btn btn_detail btn-block">
-                                Enviar a la Base de Datos <i class="fa-solid fa-file-arrow-up ms-1"></i>
-                              </button>
-                            </form>
-                          </div>
+                              <div class="col-12 col-lg order-1 order-lg-2 mt-3">
+                                <button type="submit" class="btn btn_detail btn-block">Enviar CSV <i class="fa-solid fa-cloud-arrow-up"></i></button>
+                              </div>
+                            </div>
+                          </form>
+
+                          <form action="{% url 'export_preguntas' %}" method="get" class="d-none">
+                            <button type="submit" id="bannersDownload">Descargar</button>
+                          </form>
                         </div>
                       </div>
                     </div>
                     <!-- Configuraciones -->
-                    <div class="col-12 col-md-6 mb-4">
+                    <div class="col-12 col-md-6 mt-4">
                       <div class="card">
                         <div class="card-body">
-                          <h3 class="text-center mb-4">Descargar Configuraciones CSV</h3>
-                          <form action="{% url 'export_configuraciones' %}" method="get">
-                            <button type="submit" class="btn btn_detail btn-block">
-                              Descargar Base de Datos <i class="fa-solid fa-file-arrow-down ms-1"></i>
-                            </button>
-                          </form>
-                          <hr class="hr_divisor mb-4 mt-5 bg_detail">
-                          <div class="mt-4">
-                            <h3 class="text-center mb-4">Importar Configuraciones CSV</h3>
-                            <form method="POST" enctype="multipart/form-data" action="{% url 'import_Configuraciones' %}" data-submit-form>
-                              {% csrf_token %}
-                              <div class="mb-3">
-                                <input type="file" name="file" accept=".csv" class="form-control">
+                          <h3 class="text-center">Otras Configuraciones</h3>
+                          <hr class="hr_divisor my-4 bg_detail">
+                          <form method="POST" enctype="multipart/form-data" action="{% url 'import_configuraciones' %}" data-submit-form>
+                            {% csrf_token %}
+                            <input type="file" name="file" accept=".csv" class="form-control">
+                            <div class="row">
+                              <div class="col-12 col-lg order-2 order-lg-1 mt-3">
+                                <button type="button" class="btn btn-secondary btn-block" data-transfer-click="bannersDownload">
+                                  <i class="fa-solid fa-cloud-arrow-down"></i> Descargar CSV
+                                </button>
                               </div>
-                              <button type="submit" class="btn btn_detail btn-block">
-                                Enviar a la Base de Datos <i class="fa-solid fa-file-arrow-up ms-1"></i>
-                              </button>
-                            </form>
-                          </div>
+                              <div class="col-12 col-lg order-1 order-lg-2 mt-3">
+                                <button type="submit" class="btn btn_detail btn-block">Enviar CSV <i class="fa-solid fa-cloud-arrow-up"></i></button>
+                              </div>
+                            </div>
+                          </form>
+
+                          <form action="{% url 'export_configuraciones' %}" method="get" class="d-none">
+                            <button type="submit" id="bannersDownload">Descargar</button>
+                          </form>
                         </div>
                       </div>
                     </div>
@@ -656,7 +661,6 @@
               </div>
             </div>
           </div>
-          {% endfor %}
         </div>
       </div>
     </div>
