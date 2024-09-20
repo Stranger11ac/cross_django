@@ -213,6 +213,7 @@
       <div class="card">
         <div class="card-body">
           <h3 class="text-center mb-4">Preguntas de los Usuarios</h3>
+          <h5 class="text-center mb-4">(8 ultimas preguntas)</h5>
 
           {% if preguntas_sending %}
           <!-- tabla de usuarios -->
@@ -401,15 +402,15 @@
                 <button data-mdb-collapse-init class="accordion-button" type="button" data-mdb-toggle="collapse" data-mdb-target="#flush-collapseqrimage"
                   aria-expanded="true" aria-controls="flush-collapseqrimage">Imagen QR</button>
               </h5>
-              <div id="flush-collapseqrimage" class="accordion-collapse collapse" aria-labelledby="flush-headingqrimage"
-                data-mdb-parent="#settingsAccordion">
+              <div id="flush-collapseqrimage" class="accordion-collapse collapse" aria-labelledby="flush-headingqrimage" data-mdb-parent="#settingsAccordion">
                 <div class="accordion-body">
-                  <form action="{% url 'update_settings' %}" class="row" method="post" enctype="multipart/form-data" data-submit-blur="formqr" data-submit-form>
+                  <form action="{% url 'update_settings' %}" class="d-flex justify-content-center align-items-center gap_20" method="post"
+                    enctype="multipart/form-data" data-submit-blur="formqr" data-submit-form>
                     {% csrf_token %}
-                    <div class="col mb-3 d-flex align-items-center justify-content-center">
+                    <div class="mb-3">
                       <img src="{{config.qr_image.url}}" alt="Imagen QR del sitio web" id="qrImgDom" class="img-fluid img-rounded materialBoxed max_w200">
                     </div>
-                    <div class="col-md-4 d-flex align-items-center">
+                    <div class="mb-3">
                       <label class="btn btn-block btn_cyan-purple text-white" for="qrImage">
                         Cambiar imagen <i class="fa-solid fa-camera-rotate ms-1"></i>
                       </label>
@@ -441,7 +442,8 @@
                     <input type="hidden" id="btnsYearpost" name="btnsYearpost" value="True" />
                     <input class="form-check-input input_change" {% if config.calendar_btnsYear %}checked{% endif %} type="checkbox" id="btnsYear"
                       name="btnsYear" />
-                    <label class="form-check-label" for="btnsYear">Mostrar Botones de año (<i class="fa-solid fa-angles-left"></i>|<i class="fa-solid fa-angles-right"></i>)</label>
+                    <label class="form-check-label" for="btnsYear">Mostrar Botones de año (<i class="fa-solid fa-angles-left"></i>|<i
+                        class="fa-solid fa-angles-right"></i>)</label>
                     <button type="submit" class="d-none" id="formcalendar"></button>
                   </form>
                 </div>
@@ -536,11 +538,11 @@
                 </div>
               </div>
             </div>
-            <!-- Inportar y Exportar -->
+            <!-- Importar y Exportar -->
             <div class="accordion-item mb-3 col-12">
               <h5 class="accordion-header" id="flush-headingimport">
                 <button data-mdb-collapse-init class="accordion-button" type="button" data-mdb-toggle="collapse" data-mdb-target="#flush-collapseImport"
-                  aria-expanded="true" aria-controls="flush-collapseImport">Inportar y Exportar</button>
+                  aria-expanded="true" aria-controls="flush-collapseImport">Importar y Exportar</button>
               </h5>
               <div id="flush-collapseImport" class="accordion-collapse collapse" aria-labelledby="flush-headingimport" data-mdb-parent="#settingsAccordion">
                 <div class="accordion-body px-1">
@@ -555,7 +557,7 @@
                               Descargar Banners <i class="fa-solid fa-file-arrow-down ms-1"></i>
                             </button>
                           </form>
-
+                          <hr class="hr_divisor mb-4 mt-5 bg_detail">
                           <div class="mt-4">
                             <h3 class="text-center mb-4">Importar Banners CSV</h3>
                             <form method="POST" enctype="multipart/form-data" action="{% url 'import_Banners' %}" data-submit-form>
@@ -581,7 +583,7 @@
                               Descargar Base de Datos <i class="fa-solid fa-file-arrow-down ms-1"></i>
                             </button>
                           </form>
-
+                          <hr class="hr_divisor mb-4 mt-5 bg_detail">
                           <div class="mt-4">
                             <h3 class="text-center mb-4">Importar Articulos CSV</h3>
                             <form method="POST" enctype="multipart/form-data" action="{% url 'import_Articulos' %}" data-submit-form>
@@ -607,7 +609,7 @@
                               Descargar Base de Datos <i class="fa-solid fa-file-arrow-down ms-1"></i>
                             </button>
                           </form>
-
+                          <hr class="hr_divisor mb-4 mt-5 bg_detail">
                           <div class="mt-4">
                             <h3 class="text-center mb-4">Importar Preguntas CSV</h3>
                             <form method="POST" enctype="multipart/form-data" action="{% url 'import_Preguntas' %}" data-submit-form>
@@ -633,7 +635,7 @@
                               Descargar Base de Datos <i class="fa-solid fa-file-arrow-down ms-1"></i>
                             </button>
                           </form>
-
+                          <hr class="hr_divisor mb-4 mt-5 bg_detail">
                           <div class="mt-4">
                             <h3 class="text-center mb-4">Importar Configuraciones CSV</h3>
                             <form method="POST" enctype="multipart/form-data" action="{% url 'import_Configuraciones' %}" data-submit-form>
