@@ -295,6 +295,7 @@ nav .navbar-collapse {
         box-shadow: none;
         z-index: auto;
     }
+
     .menu_overlay.show {
         clip-path: ellipse(100% 0% at 50% 100%);
         z-index: 0;
@@ -670,17 +671,16 @@ main.main_anchor {
     width: 100%;
     height: 90%;
     transition: all 0.5s ease;
-    /* transition: height 0.3s ease, width 0.3s ease, margin 0.2s ease; */
-    /* transition-delay: 0s, 0.4s, 0s; */
 }
 
 .asistent_group .box_asistent #asistent_model .btn_play-asistent {
     position: absolute;
     top: 50%;
-    left: 5%;
+    left: 0;
     opacity: 0;
     visibility: hidden;
     transition: all 0.5 ease;
+    transform: translateY(-50%);
 }
 
 .asistent_group .box_asistent #asistent_model .btn_play-asistent i.fa-solid {
@@ -688,9 +688,9 @@ main.main_anchor {
 }
 
 .asistent_group.open .box_asistent #asistent_model {
-    width: 90%;
+    width: 100%;
     height: var(--full_page);
-    margin: 0 0 8vh 5%;
+    margin: 0 5%;
     opacity: 1;
     visibility: visible;
 }
@@ -708,11 +708,19 @@ main.main_anchor {
 
 .asistent_group .box_asistent .box_asistent_controls {
     position: absolute;
+    left: 50%;
     bottom: 5vh;
-    width: 100%;
-    display: flex;
-    justify-content: center;
     z-index: 1;
+    transform: translateX(-50%);
+    transition: var(--transitionEase);
+}
+
+.asistent_group .box_asistent .box_asistent_controls.controls_vertical {
+    top: 50%;
+    right: 5%;
+    left: initial;
+    bottom: initial;
+    transform: translateY(-50%);
 }
 
 .asistent_group.open.open_keyboard .box_asistent .box_asistent_controls {
@@ -720,15 +728,21 @@ main.main_anchor {
 }
 
 .box_asistent_controls .controls_buttons {
-    height: 60px;
+    min-width: 60px;
+    min-height: 60px;
     border-radius: 60px;
     background: transparent;
     transition: var(--transitionEase);
 }
 
+.box_asistent_controls.controls_vertical .controls_buttons {
+    display: flex;
+    flex-direction: column;
+}
+
 .box_asistent_controls .controls_buttons .btn_controls {
-    height: 60px;
-    width: 60px;
+    min-height: 60px;
+    min-width: 60px;
     border: none;
     font-size: 2rem;
     border-radius: 50%;
@@ -888,12 +902,6 @@ main.main_anchor {
         justify-content: flex-end;
     }
 
-    .asistent_group.open .box_asistent #asistent_model {
-        height: 80vh;
-        width: 100%;
-        margin: 0 0 5vh 0;
-    }
-
     .asistent_group.open.open_keyboard .box_asistent #asistent_model {
         position: absolute;
         left: 5%;
@@ -903,14 +911,6 @@ main.main_anchor {
         margin-bottom: 0;
         visibility: visible;
         opacity: 1;
-    }
-
-    .asistent_group .box_asistent .box_asistent_controls {
-        transition: width 0.3s ease;
-    }
-
-    .asistent_group.open .box_asistent .box_asistent_controls {
-        width: 100%;
     }
 
     .asistent_group.open.open_controls .controls_buttons {
@@ -1070,7 +1070,7 @@ main.main_anchor {
     transition-delay: 0.1s;
 }
 
-.table_odd .table_odd_items:hover div .text_detail{
+.table_odd .table_odd_items:hover div .text_detail {
     background: unset !important;
 }
 
@@ -1146,7 +1146,9 @@ label {
     height: 35.83px;
 }
 
-.form-outline .form-control:disabled, .form-outline .form-control.disabled, .form-outline .form-control[readonly] {
+.form-outline .form-control:disabled,
+.form-outline .form-control.disabled,
+.form-outline .form-control[readonly] {
     background-color: none !important;
     background: none !important;
     cursor: progress;

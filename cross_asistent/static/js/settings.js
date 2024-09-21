@@ -9,8 +9,7 @@ var expressions = {
     username: /^(?![0-9_-])[a-zA-Z0-9_-]+$/,
     email: /^([a-zA-Z0-9_\.\-\+])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/,
     password: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*.?&])[A-Za-z\d@$!%*.?&]{8,}$/,
-    title: /^[a-zA-ZÀ-ÿ][a-zA-ZÀ-ÿ0-9\s\-_#]*$/
-,
+    title: /^[a-zA-ZÀ-ÿ][a-zA-ZÀ-ÿ0-9\s\-_#]*$/,
 };
 
 function getCSRFToken() {
@@ -30,9 +29,9 @@ function getCSRFToken() {
 // ##############################################################################################
 $(document).ready(function () {
     try {
-        $('#overlayMenu').click(()=>{
-            $('nav button.navbar-toggler').click();
-        })
+        $("#overlayMenu").click(() => {
+            $("nav button.navbar-toggler").click();
+        });
         // Filtro de busqueda ###################################################################
         var input = $("#searchInput");
         function filtertable() {
@@ -116,13 +115,13 @@ $(document).ready(function () {
             var targetId = $(this).data("btn_closed");
             $("#" + targetId).toggleClass("show");
         });
-        
+
         // Transferir Cick #####################################
         $("[data-transfer-click]").on("click", function () {
             const btnThisId = $(this).data("transfer-click");
             const btnClickId = $("#" + btnThisId);
             btnClickId.click();
-        })
+        });
 
         // Resetear formulario / vaciar todo el formulario
         $("[data-reset_form]").on("click", function () {
@@ -197,32 +196,41 @@ $(document).ready(function () {
             $("html").attr("data-color_prefer", "blue");
         }
         // Cambiar tema
-        $("#switchTheme").on("click", function () {
-            if ($("#switchTheme").is(":checked")) {
-                $("#switchText").text("Claro");
-                $("html").attr("data-mdb-theme", "light");
-                localStorage.setItem("data-mdb-theme", "light");
-                localStorage.setItem("mapbox-last_layer", "light-v11");
-            } else {
-                $("#switchText").text("Oscuro");
-                $("html").attr("data-mdb-theme", "dark");
-                localStorage.setItem("data-mdb-theme", "dark");
-                localStorage.setItem("mapbox-last_layer", "dark-v11");
-            }
+        const switchTheme = $("#switchTheme");
+        const switchText = $("#switchText");
+        const htmlElement = $("html");
+
+        const applyTheme = (theme) => {
+            const themeConfig = {
+                light: {
+                    text: "Claro",
+                    dataAttr: "light",
+                    lastLayer: "light-v11",
+                },
+                dark: {
+                    text: "Oscuro",
+                    dataAttr: "dark",
+                    lastLayer: "dark-v11",
+                },
+            };
+
+            const config = themeConfig[theme];
+            switchText.text(config.text);
+            htmlElement.attr("data-mdb-theme", config.dataAttr);
+            localStorage.setItem("data-mdb-theme", config.dataAttr);
+            localStorage.setItem("mapbox-last_layer", config.lastLayer);
+            switchTheme.prop("checked", theme === "light");
+        };
+
+        // Manejar el evento de click del switch
+        switchTheme.on("click", function () {
+            applyTheme(switchTheme.is(":checked") ? "light" : "dark");
         });
+
+        // Cargar el tema desde localStorage al iniciar
         const colorTheme = localStorage.getItem("data-mdb-theme");
         if (colorTheme) {
-            if (colorTheme == "light") {
-                $("#switchText").text("Claro");
-                $("#switchTheme").prop("checked", true);
-                $("html").attr("data-mdb-theme", "light");
-                localStorage.setItem("mapbox-last_layer", "light-v11");
-            } else if (colorTheme == "dark") {
-                $("#switchText").text("Oscuro");
-                $("#switchTheme").prop("checked", false);
-                $("html").attr("data-mdb-theme", "dark");
-                localStorage.setItem("mapbox-last_layer", "dark-v11");
-            }
+            applyTheme(colorTheme);
         }
 
         // Firma del blog ##################################################
@@ -508,7 +516,7 @@ function jsonSubmit(e) {
                 function dataRedirect() {
                     window.location.href = data.redirect_url;
                 }
-                
+
                 if (data.icon) {
                     dataIcon = data.icon;
                 }
@@ -534,7 +542,6 @@ function jsonSubmit(e) {
                 alertSToast(dataPosition, timerOut, dataIcon, dataMessage, alertfunction);
                 const passwordInputs = document.querySelectorAll('input[type="password"]');
                 passwordInputs.forEach((input) => (input.value = ""));
-
             } else if (data.success == false) {
                 console.waning(dataMessage);
                 if (data.valSelector) {
@@ -583,7 +590,7 @@ if (dropArea) {
         const sizes = ["Bytes", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"];
         const i = Math.floor(Math.log(bytes) / Math.log(k));
         return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + sizes[i];
-    };
+    }
 
     ["dragenter", "dragover", "dragleave", "drop"].forEach((eventName) => {
         dropArea.addEventListener(eventName, preventDefaults, false);
@@ -617,15 +624,15 @@ if (dropArea) {
             if (validateImage(file)) {
                 validFiles.push(file);
                 previewImage(file, i);
-                ++i
-                console.log(++i)
+                ++i;
+                console.log(++i);
             }
         });
 
         if (validFiles.length > 0) {
-            alertSToast('top-end', 6000, 'success', `${validFiles.length} imágenes cargadas <br>correctamente 😋🤘🥳`);
+            alertSToast("top-end", 6000, "success", `${validFiles.length} imágenes cargadas <br>correctamente 😋🤘🥳`);
         } else {
-            alertSToast('center', 6000, 'error', "No se admite este tipo de archivo ⚠️😯😥");
+            alertSToast("center", 6000, "error", "No se admite este tipo de archivo ⚠️😯😥");
         }
     }
     function validateImage(file) {
@@ -642,15 +649,19 @@ if (dropArea) {
             fileType = fileName.substring(fileType + 1);
             const imgID = cadenaRandom(5, alfanumerico);
 
-            const imageItem = `<div id="img_${imgID}" class="image-item"><img src="${reader.result}" class="img-rounded unfocus-5"><div class="fs-8"><p class="name-file m-0">${fileName}</p><p class="size-file m-0">(${fileType}) ${formatBytes(file.size)}</p></div></div>`;
+            const imageItem = `<div id="img_${imgID}" class="image-item"><img src="${
+                reader.result
+            }" class="img-rounded unfocus-5"><div class="fs-8"><p class="name-file m-0">${fileName}</p><p class="size-file m-0">(${fileType}) ${formatBytes(
+                file.size
+            )}</p></div></div>`;
             imageList.insertAdjacentHTML("beforeend", imageItem);
 
             setTimeout(() => {
                 document.querySelector(`#img_${imgID}`).classList.add("visible");
                 setTimeout(() => {
                     document.querySelector(`#img_${imgID} img`).classList.remove("unfocus-5");
-                }, (itemId)*110);
-            }, (itemId)*90);
+                }, itemId * 110);
+            }, itemId * 90);
         };
     }
 }

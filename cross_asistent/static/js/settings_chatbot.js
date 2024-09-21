@@ -50,6 +50,20 @@ $(document).ready(function () {
             }
         });
 
+        // Posicion de controles del asistente ######################################
+        const verticalCtrlsCheckbox = $("#vesticalCtrls");
+        const boxControls = $(".box_asistent_controls");
+
+        const isVertical = localStorage.getItem("Vertical-controls") === "true";
+        boxControls.toggleClass("controls_vertical", isVertical);
+        verticalCtrlsCheckbox.prop("checked", isVertical);
+
+        verticalCtrlsCheckbox.on("click", function () {
+            const isChecked = verticalCtrlsCheckbox.is(":checked");
+            boxControls.toggleClass("controls_vertical", isChecked);
+            localStorage.setItem("Vertical-controls", isChecked);
+        });
+
         // ChatGPT Submit ####################################################
         $("#chatForm").submit(chatSubmit);
     } catch (error) {
@@ -186,7 +200,10 @@ if ("speechSynthesis" in window) {
                 voiceSelect.appendChild(option);
 
                 // Check for the specific voice and set it as selected if available
-                if (voice.name.includes("Microsoft Sebastian Online") && voice.lang === "es-VE") {
+                if (voice.name.includes("Microsoft Sebastian") && voice.lang === "es-VE") {
+                    voiceSelect.value = index;
+                    defaultOptionAdded = true;
+                } else if (voice.name.includes("Microsoft Raul") && voice.lang === "es-Mx") {
                     voiceSelect.value = index;
                     defaultOptionAdded = true;
                 }
@@ -210,7 +227,6 @@ if ("speechSynthesis" in window) {
             .replace("#", "")
             .replace("(", "")
             .replace(")", "")
-            .replace("@", "")
             .replace(">", "")
             .replace("<", "")
             .replace("br", "")
