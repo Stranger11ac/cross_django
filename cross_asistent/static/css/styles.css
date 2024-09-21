@@ -728,6 +728,8 @@ main.main_anchor {
 }
 
 .box_asistent_controls .controls_buttons {
+    display: flex;
+    gap: 10px;
     min-width: 60px;
     min-height: 60px;
     border-radius: 60px;
@@ -736,7 +738,6 @@ main.main_anchor {
 }
 
 .box_asistent_controls.controls_vertical .controls_buttons {
-    display: flex;
     flex-direction: column;
 }
 

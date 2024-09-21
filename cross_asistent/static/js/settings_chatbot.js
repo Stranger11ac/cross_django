@@ -8,6 +8,19 @@ let lastText = "";
 let microphoneSpeech = true;
 let isSpeaking = false;
 
+// Activar y desactivar micrófono ###########################################
+const recVoice = $(".controls_btn_microphone");
+const textarea = document.getElementById("txtQuestion");
+const submitButton = document.getElementById("chatForm_submit");
+let finalTranscript = "";
+let recognition;
+let recognizing = false;
+
+// Dictado de texto ##################################
+const speakButton = $(".speak_btn");
+const voiceSelect = document.getElementById("voice_select");
+const rateInput = document.getElementById("rate_input");
+
 // ##############################################################################################
 // ###################################### Funciones Jquery ######################################
 // ##############################################################################################
@@ -39,7 +52,9 @@ $(document).ready(function () {
             $(".asistent_group").removeClass("open open_controls close_controls open_keyboard bg-body-tertiary");
             $(".btn_controls").removeClass("readyRecVoice");
             $("#btn_controls_icon").addClass("fa-comment").removeClass("fa-microphone");
-            stopRecording();
+            if (recognizing) {
+                stopRecording();
+            }
         });
 
         // Enviar chat con enter chatGPT ######################################
@@ -77,13 +92,6 @@ $(document).ready(function () {
 // ##############################################################################################
 
 // Activar y desactivar micrófono ###########################################
-const recVoice = $(".controls_btn_microphone");
-const textarea = document.getElementById("txtQuestion");
-const submitButton = document.getElementById("chatForm_submit");
-let finalTranscript = "";
-let recognition;
-let recognizing = false;
-
 try {
     // Verifica si el navegador soporta la Web Speech API
     if ("webkitSpeechRecognition" in window) {
@@ -176,10 +184,6 @@ try {
 }
 
 // Dictado de texto ##################################
-const speakButton = $(".speak_btn");
-const voiceSelect = document.getElementById("voice_select");
-const rateInput = document.getElementById("rate_input");
-
 if ("speechSynthesis" in window) {
     const synth = window.speechSynthesis;
 
