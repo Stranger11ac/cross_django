@@ -468,6 +468,9 @@ def update_create_pleace_map(request):
     informacionPost = request.POST.get('contenidoWord')
     door_cordsPost = request.POST.get('puertaCordsEdificio')
     imagenPost = request.FILES.get('fotoEdificio')
+    
+    if not nombrePost:
+        return JsonResponse({'success': False, 'message': 'Al parecer no se enviaron datos. 😯🤔⚠️😥'}, status=400)
 
     with transaction.atomic():
         if isNewPost == 'notnew':
@@ -492,7 +495,7 @@ def update_create_pleace_map(request):
                 map_database.imagen = imagenPost
                 map_database.save()
                 success_message += '<br>Se actualizó su imagen en la Base de datos 😁🎉🎈'
-            return JsonResponse({'success': True, 'message': success_message, 'functions':'reload'}, status=200)
+            return JsonResponse({'success': True, 'message': success_message}, status=200)
         else:
             # validar si este ya existe en el mapa y en db para que no se repitan
             models.Mapa.objects.create(
