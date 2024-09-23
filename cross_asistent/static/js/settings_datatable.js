@@ -158,7 +158,7 @@ const listBanners = async () => {
                     if (dato.imagen) {
                         bannerImage = `<img src="${dato.imagen}" loading="lazy" class="img-rounded max_w150">`;
                     }
-                    content += `<tr class="table_odd_items"><td ${cellSpan}>${bannertitulo}</td><td ${titleSpan}>${bannerDesc}</td><td>${bannerImage}</td><td><div class="d-flex align-items-center gap_10"><form method="post" action="${bannersUrlVIsible}" data-submit-dt><input type="text" name="banner_id" value="${dato.id}" class="d-none"><input type="text" name="banner_visible" value="${visibleInput}" class="d-none"><button type="submit" class="btn btn-floating ${visibleColor}"><i class="fa-solid ${visibleIcon} text-white fs-10"></i></button></form><button type="button" class="btn btn-floating btn-info" onclick="openModal('#editBannerModal',${dato.id})"><i class="fa-solid fa-edit fs-12"></i></button><button type="button" class="btn btn-floating btn-danger" onclick="openModal('#eliminarBanner',${dato.id})"><i class="fa-solid fa-trash fs-12"></i></button></div></td></tr>`;
+                    content += `<tr id="row-banners_${dato.id}" class="table_odd_items"><td ${cellSpan}>${bannertitulo}</td><td ${titleSpan}>${bannerDesc}</td><td>${bannerImage}</td><td><div class="d-flex align-items-center gap_10"><form method="post" action="${bannersUrlVIsible}" data-submit-dt><input type="text" name="banner_id" value="${dato.id}" class="d-none"><input type="text" name="banner_visible" value="${visibleInput}" class="d-none"><button type="submit" class="btn btn-floating ${visibleColor}"><i class="fa-solid ${visibleIcon} text-white fs-10"></i></button></form><button type="button" class="btn btn-floating btn-info" onclick="openModal('#editBannerModal',${dato.id})"><i class="fa-solid fa-edit fs-12"></i></button><button type="button" class="btn btn-floating btn-danger" onclick="openModal('#eliminarBanner',${dato.id})"><i class="fa-solid fa-trash fs-12"></i></button></div></td></tr>`;
                 });
                 4;
                 tbodyBanners.innerHTML = content;
@@ -302,6 +302,14 @@ if (tableBannersObj) {
         fetchData(thisModal, postUrlBanners, thisdataid, errorMsg, function (data) {
             thisModal.find("#deletebannername").html(data.titulo);
             thisModal.find("#deletebannerid").val(thisdataid);
+            
+            const deleteItemBanner = thisModal.find("button[type='submit']");
+            deleteItemBanner.on("click", function () {
+                let thisItemtId = $(`#row-banners_${data.id}`);
+                setTimeout(() => {
+                    thisItemtId.remove();
+                }, 500);
+            });
         });
     });
     $("#eliminarBanner").on("hidden.bs.modal", function () {

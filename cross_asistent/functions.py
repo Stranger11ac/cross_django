@@ -208,8 +208,7 @@ def banner_delete(request):
         banner_id = request.POST.get('banner_id')
         banner = get_object_or_404(models.Banners, id=banner_id)
         banner.delete()
-        icon = 'warning'
-        return JsonResponse({'success': True, 'functions': 'reload', 'message': 'Banner eliminado exitosamente.', 'icon': icon}, status=200)
+        return JsonResponse({'success': True, 'message': 'Banner eliminado exitosamente.', 'icon': 'warning', 'position':'top'}, status=200)
     return JsonResponse({'success': False, 'message': 'Acción no permitida.'}, status=403)
 
 @login_required
@@ -275,6 +274,7 @@ def banners_getitem(request):
             idPOST = data.get('id')
             dbItem = get_object_or_404(models.Banners, id=idPOST)
             data = {
+                'id':dbItem.id,
                 'titulo':dbItem.titulo,
                 'descripcion':dbItem.descripcion,
                 'redirigir':dbItem.redirigir,
@@ -287,7 +287,6 @@ def banners_getitem(request):
             return JsonResponse({'success': False, 'message': f'Ocurrió un error 😯😥 <br>{str(e)}'}, status=400)
 
     return JsonResponse({'error': 'Método no válido'}, status=400)
-
 
 # Categorias ----------------------------------------------------------
 @login_required

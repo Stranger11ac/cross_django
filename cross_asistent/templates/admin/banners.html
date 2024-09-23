@@ -205,7 +205,7 @@
                     <form id="eliminarBannerForm-" action="{% url 'delete_banner' %}" method="post" data-submit-form>
                         {% csrf_token %}
                         <input type="hidden" name="banner_id" id="deletebannerid">
-                        <button type="submit" class="btn btn-danger">Eliminar</button>
+                        <button type="submit" class="btn btn-danger" data-mdb-ripple-init data-mdb-dismiss="modal">Eliminar</button>
                     </form>
                 </div>
             </div>
