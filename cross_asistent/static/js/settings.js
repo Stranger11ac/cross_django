@@ -8,7 +8,7 @@ var expressions = {
     name: /^[a-zA-ZÀ-ÿ\s]+$/,
     username: /^(?![0-9_-])[a-zA-Z0-9_-]+$/,
     email: /^([a-zA-Z0-9_\.\-\+])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/,
-    password: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*.?&])[A-Za-z\d@$!%*.?&]{8,}$/,
+    password: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*.?&])[A-Za-z\d@#<>:;$!%*.?&]{8,}$/,
     title: /^[a-zA-ZÀ-ÿ][a-zA-ZÀ-ÿ0-9\s\-_#]*$/,
 };
 
@@ -114,6 +114,17 @@ $(document).ready(function () {
         $("[data-btn_closed]").on("click", function () {
             var targetId = $(this).data("btn_closed");
             $("#" + targetId).toggleClass("show");
+        });
+
+        // Remover item #####################################
+        $("[data-remove-item]").on("click", function () {
+            var thisItemtId = $(this).data("remove-item");
+            setTimeout(() => {
+                $("#" + thisItemtId).slideUp("slow");
+                setTimeout(() => {
+                    $("#" + thisItemtId).remove();
+                }, 500);
+            }, 1000);
         });
 
         // Transferir Cick #####################################
@@ -694,6 +705,6 @@ function alertSToast(posittionS, timerS, iconS, titleS, didDestroyS) {
 }
 
 // context menu disabled ######################################################################
-document.oncontextmenu = function () {
-    return false;
-};
+// document.oncontextmenu = function () {
+//     return false;
+// };

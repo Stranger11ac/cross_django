@@ -228,7 +228,7 @@
               </thead>
               <tbody>
                 {% for question in preguntas_sending %}
-                <tr class="results_item table_odd_items">
+                <tr id="row-question_{{question.id}}" class="results_item table_odd_items">
                   <td class="text-center d-none d-md-table-cell">{{question.id}}</td>
                   <td>
                     <div class="accordion" id="questionList">
@@ -259,7 +259,7 @@
                     <div class="d-flex justify-content-center align-items-center">
                       <form method="post" action="{% url 'question_deleted' %}" data-submit-form>
                         <input type="text" name="question_id" value="{{question.id}}" class="d-none">
-                        <button title="Editar Usuario" type="submit" class="btn btn-floating btn-danger">
+                        <button title="Editar Usuario" type="submit" class="btn btn-floating btn-danger" data-remove-item="row-question_{{question.id}}">
                           <i class="fa-regular fa-trash-can fs-12"></i>
                         </button>
                       </form>
@@ -318,7 +318,7 @@
               </thead>
               <tbody>
                 {% for oneuser in users %}
-                <tr class="results_item table_odd_items table_users">
+                <tr id="row-user_{{oneuser.id}}" class="results_item table_odd_items table_users">
                   <td>{{ oneuser.id }}</td>
                   <td>
                     <strong>{{ oneuser.username }}</strong>
@@ -385,7 +385,7 @@
           <div class="accordion accordion-borderless row" id="settingsAccordion">
             {% for config in settingsall %}
             <!-- Hawky -->
-            <div class="accordion-item mb-3 col-12 col-lg-6">
+            <div class="accordion-item mb-3 col-12 px-2 col-lg-6">
               <h5 class="accordion-header" id="flush-headingHawky">
                 <button data-mdb-collapse-init class="accordion-button" type="button" data-mdb-toggle="collapse" data-mdb-target="#flush-collapseHawky"
                   aria-expanded="true" aria-controls="flush-collapseHawky">Hawky</button>
@@ -397,15 +397,15 @@
               </div>
             </div>
             <!-- Qr -->
-            <div class="accordion-item mb-3 col-12 col-lg-6">
+            <div class="accordion-item mb-3 col-12 px-2 col-lg-6">
               <h5 class="accordion-header" id="flush-headingqrimage">
                 <button data-mdb-collapse-init class="accordion-button" type="button" data-mdb-toggle="collapse" data-mdb-target="#flush-collapseqrimage"
                   aria-expanded="true" aria-controls="flush-collapseqrimage">Imagen QR</button>
               </h5>
               <div id="flush-collapseqrimage" class="accordion-collapse collapse" aria-labelledby="flush-headingqrimage" data-mdb-parent="#settingsAccordion">
                 <div class="accordion-body">
-                  <form action="{% url 'update_settings' %}" class="d-flex justify-content-center align-items-center gap_15 flex-column flex-lg-row" method="post"
-                    enctype="multipart/form-data" data-submit-blur="formqr" data-submit-form>
+                  <form action="{% url 'update_settings' %}" class="d-flex justify-content-center align-items-center gap_15 flex-column flex-lg-row"
+                    method="post" enctype="multipart/form-data" data-submit-blur="formqr" data-submit-form>
                     {% csrf_token %}
                     <div class="mb-3">
                       <img src="{{config.qr_image.url}}" alt="Imagen QR del sitio web" id="qrImgDom" class="img-fluid img-rounded materialBoxed max_w200">
@@ -430,7 +430,7 @@
               </div>
             </div>
             <!-- calendario -->
-            <div class="accordion-item mb-3 col-12 col-lg-4">
+            <div class="accordion-item mb-3 col-12 px-2 col-lg-4">
               <h5 class="accordion-header" id="flush-headingcalendar">
                 <button data-mdb-collapse-init class="accordion-button" type="button" data-mdb-toggle="collapse" data-mdb-target="#flush-collapsecalendar"
                   aria-expanded="true" aria-controls="flush-collapsecalendar">Calendario</button>
@@ -450,7 +450,7 @@
               </div>
             </div>
             <!-- Footer -->
-            <div class="accordion-item mb-3 col-12 col-lg-8">
+            <div class="accordion-item mb-3 col-12 px-2 col-lg-8">
               <h5 class="accordion-header" id="flush-headingfooter">
                 <button data-mdb-collapse-init class="accordion-button" type="button" data-mdb-toggle="collapse" data-mdb-target="#flush-collapsefooter"
                   aria-expanded="true" aria-controls="flush-collapsefooter">Footer</button>
@@ -477,7 +477,7 @@
               </div>
             </div>
             <!-- About -->
-            <div class="accordion-item mb-3 col-12">
+            <div class="accordion-item mb-3 col-12 px-2">
               <h5 class="accordion-header" id="flush-headingabout">
                 <button data-mdb-collapse-init class="accordion-button" type="button" data-mdb-toggle="collapse" data-mdb-target="#flush-collapseabout"
                   aria-expanded="true" aria-controls="flush-collapseabout">Seccion Acerca de...</button>
@@ -540,7 +540,7 @@
             </div>
             {% endfor %}
             <!-- Importar y Exportar -->
-            <div class="accordion-item mb-3 col-12">
+            <div class="accordion-item col-12 px-2">
               <h5 class="accordion-header" id="flush-headingimport">
                 <button data-mdb-collapse-init class="accordion-button" type="button" data-mdb-toggle="collapse" data-mdb-target="#flush-collapseImport"
                   aria-expanded="true" aria-controls="flush-collapseImport">Importar y Exportar</button>
@@ -669,7 +669,8 @@
 </main>
 
 <!-- Modal: Crea ususrio nuevo -->
-<div class="modal fade" id="createUserModal" tabindex="-1" aria-labelledby="createUserModalLabel" aria-hidden="true">
+<div class="modal fade" id="createUserModal" tabindex="-1" aria-labelledby="createUserModalLabel" data-mdb-backdrop="static" data-mdb-keyboard="false"
+  aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered modal-lg">
     <div class="modal-content">
       <div class="modal-header">
@@ -712,7 +713,7 @@
 
           <!-- Password input -->
           <div data-mdb-input-init class="form-outline form_group-btn mt-4">
-            <input type="text" id="pass_newuser" name="password" class="form-control" data-editpass data-copy data-input_pass="generatePass"
+            <input type="text" id="pass_newuser" name="password" class="form-control" data-editpass data-input_pass="generatePass"
               aria-label="readonly input example" required />
             <label class="form-label" for="pass_newuser">Contraseña:</label>
             <!-- botton generar Contraseña -->
@@ -755,7 +756,7 @@
 <!-- modal: editar usuario -->
 <div class="modal fade " id="editar_modal_{{ oneuser.id }}" tabindex="-1" aria-labelledby="labelModal0{{ oneuser.id }}" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered modal-lg">
-    <div class="modal-content">
+    <form method="post" action="{% url 'editar_usuario' oneuser.id %}" data-submit-form class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title" id="labelModal0{{ oneuser.id }}">
           Editar Usuario</h5>
@@ -773,40 +774,38 @@
           <strong>Email:</strong>
           {{oneuser.email}}
         </p>
-        <form method="post" action="{% url 'editar_usuario' oneuser.id %}" data-submit-form>
-          {% csrf_token %}
-          <!-- Nombre de usuario -->
-          <div class="none">
-            <input type="text" id="createusername_{{oneuser.id}}" name="username" value="{{oneuser.username}}" readonly />
+
+        {% csrf_token %}
+        <!-- Nombre de usuario -->
+        <div class="none">
+          <input type="text" id="createusername_{{oneuser.id}}" name="username" value="{{oneuser.username}}" readonly />
+        </div>
+        <!-- Password input -->
+        <div data-mdb-input-init class="form-outline form_group-btn mb-4">
+          <input type="text" id="pass_{{oneuser.id}}" name="password" class="form-control pe-5" data-editpass data-copy data-input_pass="generatePass"
+            aria-label="readonly input example" readonly required />
+          <label class="form-label" for="pass_{{oneuser.id}}">Cambiar Contraseña:</label>
+          <!-- botton generar Contraseña -->
+          <div class="btn_genpass-block">
+            <button type="button" id="editPass_{{oneuser.id}}" data-editinput="pass_{{oneuser.id}}"
+              class="btn btn_detail btn-floating btn-sm btn_genpass fs-10">
+              <i class="fa-solid fa-dice-five"></i>
+            </button>
           </div>
-          <!-- Password input -->
-          <div data-mdb-input-init class="form-outline form_group-btn mb-4">
-            <input type="text" id="pass_{{oneuser.id}}" name="password" class="form-control pe-5" data-editpass data-copy data-input_pass="generatePass"
-              aria-label="readonly input example" readonly required />
-            <label class="form-label" for="pass_{{oneuser.id}}">Cambiar Contraseña:</label>
-            <!-- botton generar Contraseña -->
-            <div class="btn_genpass-block">
-              <button type="button" id="editPass_{{oneuser.id}}" data-editinput="pass_{{oneuser.id}}"
-                class="btn btn_detail btn-floating btn-sm btn_genpass fs-10">
-                <i class="fa-solid fa-dice-five"></i>
-              </button>
-            </div>
-          </div>
-          <!-- Checkbox -->
-          <div class="form-check d-flex justify-content-start mb-4">
-            <input {% if oneuser.is_staff %}checked{% endif %} class="form-check-input me-2" type="checkbox" name="is_staff" id="isActive_{{oneuser.id}}" />
-            <label class="form-check-label" for="isActive_{{oneuser.id}}">
-              Usuario Staff
-            </label>
-          </div>
-          <hr class="my-4">
-          <div class="d-flex justify-content-between gap_10">
-            <button type="button" class="btn btn_detail" data-mdb-ripple-init data-mdb-dismiss="modal">Cancelar</button>
-            <button type="submit" class="btn btn-warning">Modificar</button>
-          </div>
-        </form>
+        </div>
+        <!-- Checkbox -->
+        <div class="form-check d-flex justify-content-start mb-4">
+          <input {% if oneuser.is_staff %}checked{% endif %} class="form-check-input me-2" type="checkbox" name="is_staff" id="isActive_{{oneuser.id}}" />
+          <label class="form-check-label" for="isActive_{{oneuser.id}}">
+            Usuario Staff
+          </label>
+        </div>
       </div>
-    </div>
+      <div class="modal-footer d-flex justify-content-between gap_10">
+        <button type="button" class="btn btn_detail" data-mdb-ripple-init data-mdb-dismiss="modal">Cancelar</button>
+        <button type="submit" class="btn btn-warning">Modificar</button>
+      </div>
+    </form>
   </div>
 </div>
 <!-- modal: Eliminar usuario -->
@@ -822,15 +821,13 @@
         <h3 class="text-center mb-2">Quieres eliminar al usuario <u>{{ oneuser.username }}</u>?</h3>
         <h6>"{{ oneuser.first_name }} {{ oneuser.last_name }}"</h6>
         <p class="text-center">Se eliminara toda la informacion relacionada <br> Esta acción es permanente</p>
-        <hr class="my-4">
-        <form id="eliminarUsuarioForm-{{ oneuser.id }}" action="{% url 'eliminar_usuario' oneuser.id %}" method="post" data-submit-form>
-          {% csrf_token %}
-          <div class="d-flex justify-content-between">
-            <button type="button" class="btn btn_detail" data-mdb-ripple-init data-mdb-dismiss="modal">Cancelar</button>
-            <button type="submit" class="btn btn-danger">Eliminar</button>
-          </div>
-        </form>
       </div>
+      <form class="modal-footer d-flex justify-content-between" id="eliminarUsuarioForm-{{ oneuser.id }}" action="{% url 'eliminar_usuario' oneuser.id %}"
+        method="post" data-submit-form>
+        {% csrf_token %}
+        <button type="button" class="btn btn_detail" data-mdb-ripple-init data-mdb-dismiss="modal">Cancelar</button>
+        <button type="submit" class="btn btn-danger" data-remove-item="row-user_{{oneuser.id}}" data-mdb-ripple-init data-mdb-dismiss="modal">Eliminar</button>
+      </form>
     </div>
   </div>
 </div>

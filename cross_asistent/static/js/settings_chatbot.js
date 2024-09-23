@@ -246,11 +246,11 @@ if ("speechSynthesis" in window) {
 
     function ttsCustom(valuetext) {
         if (isSpeaking) {
-            $("#speak_btn_icon").addClass("fa-regular fa-circle-play").removeClass("fa-solid fa-circle-pause");
+            $(".speak_btn i").addClass("fa-regular fa-circle-play").removeClass("fa-solid fa-circle-pause");
             synth.cancel();
             isSpeaking = false;
         } else {
-            $("#speak_btn_icon").removeClass("fa-regular fa-circle-play").addClass("fa-solid fa-circle-pause");
+            $(".speak_btn i").removeClass("fa-regular fa-circle-play").addClass("fa-solid fa-circle-pause");
 
             valuetext = removeEmojis(valuetext);
             utterance = new SpeechSynthesisUtterance(valuetext);
@@ -263,7 +263,7 @@ if ("speechSynthesis" in window) {
 
             utterance.onend = () => {
                 isSpeaking = false;
-                $("#speak_btn_icon").addClass("fa-regular fa-circle-play").removeClass("fa-solid fa-circle-pause");
+                $(".speak_btn i").addClass("fa-regular fa-circle-play").removeClass("fa-solid fa-circle-pause");
             };
         }
     }
@@ -318,7 +318,7 @@ function chatSubmit(e) {
     }, 200);
 
     if (microphonerecord) {
-        $("#speak_btn_icon").removeClass("fa-regular fa-circle-play").addClass("fa-solid fa-spinner fa-spin-pulse");
+        $(".speak_btn i").removeClass("fa-regular fa-circle-play").addClass("fa-solid fa-spinner fa-spin-pulse");
     }
 
     fetch(chatForm.action, {
@@ -341,7 +341,7 @@ function chatSubmit(e) {
         .then((data) => {
             if (data.success) {
                 if (microphonerecord) {
-                    $("#speak_btn_icon")
+                    $(".speak_btn i")
                         .removeClass("fa-regular fa-circle-play fa-spinner fa-spin-pulse")
                         .addClass("fa-solid fa-circle-pause");
                 }

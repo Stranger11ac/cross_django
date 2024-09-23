@@ -141,7 +141,7 @@ def eliminar_usuario(request, user_id):
     if request.method == 'POST':
         user = get_object_or_404(User, id=user_id)
         user.delete()
-        return JsonResponse({'success': True, 'functions': 'reload', 'message': 'Usuario eliminado exitosamente.', 'icon': 'warning'}, status=200)
+        return JsonResponse({'success': True, 'message': 'Usuario eliminado exitosamente.', 'icon': 'warning', 'position':'top'}, status=200)
     return JsonResponse({'success': False, 'message': 'Acción no permitida.'}, status=403)
 
 @login_required
@@ -675,7 +675,7 @@ def preguntas_deleted(request):
             quest_id = request.POST.get('question_id')
             pregunta = get_object_or_404(models.Preguntas, id=quest_id)
             pregunta.delete()
-            return JsonResponse({'success': True, 'message': f'Pregunta #.{quest_id} eliminada permanentemente. 😯🫡', 'icon': 'warning'}, status=200)
+            return JsonResponse({'success': True, 'message': f'Pregunta #.{quest_id} eliminada permanentemente. 😯🫡', 'icon': 'warning', 'position':'top'}, status=200)
         except Exception as e:
             return JsonResponse({'success': False, 'message': f'Pregunta #{quest_id} no encontrada.'}, status=404)
     return JsonResponse({'success': False, 'message': 'Acción no permitida.'}, status=400)

@@ -58,8 +58,7 @@
         <div class="box_asistent">
             <model-viewer id="asistent_model" src="{% static 'img/howki-final.glb' %}" tone-mapping="neutral" camera-orbit="15deg 70deg 60m"
                 poster="{% static 'img/howki-final.webp' %}" loading="eager" shadow-intensity="1" autoplay>
-                <button class="btn btn_detail btn-floating btn_play-asistent p-4 speak_btn"><i id="speak_btn_icon"
-                        class="fa-regular fa-circle-play fs-20"></i></button>
+                <button class="btn btn_detail btn-floating btn_play-asistent p-4 speak_btn"><i class="fa-regular fa-circle-play fs-20"></i></button>
             </model-viewer>
             <!-- Controles iniciales -->
             <div class="box_asistent_controls">
@@ -133,7 +132,7 @@
     </div>
 </div>
 <div class="mt-4">
-    <input class="form-check-input" type="checkbox" id="vesticalCtrls"/>
+    <input class="form-check-input" type="checkbox" id="vesticalCtrls" />
     <label class="form-check-label" for="vesticalCtrls">Controles en Vertical</label>
 </div>
 {% endblock %}
