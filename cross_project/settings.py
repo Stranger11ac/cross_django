@@ -31,8 +31,9 @@ SECRET_KEY = 'django-insecure-32wpj55%1@sy+hqt(v6b87!04o3m2(+1##sf@^%45$0@@fdynj
 DEBUG = True
 
 ALLOWED_HOSTS = []
-if DEBUG:
-    ALLOWED_HOSTS = ['10.1.1.113']
+#ALLOWED_HOSTS = ['10.1.1.113']
+#if DEBUG:
+    #ALLOWED_HOSTS = ['10.1.1.113']
     #ALLOWED_HOSTS = ['tu-dominio.com', 'www.tu-dominio.com']
     
 
