@@ -56,6 +56,8 @@ def index(request):
         'img_qr': configuraciones['qr_image'],
         'btn_qr': configuraciones['qr_button'],
         'model_3D': hawkySettings['qr_image'],
+        'active_areas': hawkySettings['qr_button'],
+        'anim_default': hawkySettings['utc_link'],
     })
 
 def fqt_questions(request):
@@ -276,7 +278,9 @@ def vista_programador(request):
         'num_preguntas':databaseall.count(),
         'num_blogs': num_blogs,
         'model_3D': hawkySettings['qr_image'],
-        **configuraciones
+        'active_areas': hawkySettings['qr_button'],
+        'anim_default': hawkySettings['utc_link'],
+        **configuraciones,
     }
      
     if request.method == 'POST':

@@ -395,8 +395,8 @@
               <div id="flush-collapseHawky" class="accordion-collapse collapse" aria-labelledby="flush-headingHawky" data-mdb-parent="#settingsAccordion">
                 <div class="accordion-body">
                   <!-- Modelo -->
-                  <model-viewer id="asistent_model" class="min_h300 col-12 rounded" tone-mapping="neutral" camera-orbit="15deg 70deg 5m"
-                    poster="{% static 'img/hawky.0011.webp' %}" loading="eager" shadow-intensity="1" animation-name="hawky_idle" autoplay>
+                  <model-viewer id="asistent_model" class="min_h400 col-12 rounded" tone-mapping="neutral" camera-orbit="15deg 70deg 5m"
+                    poster="{% static 'img/hawky.0011.webp' %}" loading="eager" shadow-intensity="1" animation-name="{{anim_default}}" autoplay>
                     <!-- Areas -->
                     <div id="model_areas" class="model_areas slide_areas none" style="--grid-row: 3;--grid-column: 3;">
                     </div>
@@ -409,7 +409,8 @@
                       <button type="button" class="btn bg_purple-blue btn-floating p-4" id="pauseAnim" title="Pausar Animación">
                         <i class="fa-solid fa-universal-access fs-20"></i>
                       </button>
-                      <button type="button" class="btn bg_purple-blue btn-floating p-4" id="reloadModel" title="Recargar Modelo" data-model="{{model_3D}}">
+                      <button type="button" class="btn bg_purple-blue btn-floating p-4" data-model="{{model_3D}}" id="reloadModel"
+                        title="Recargar Modelo">
                         <i class="fa-solid fa-arrows-rotate fs-20"></i>
                       </button>
                       <div>
@@ -425,36 +426,43 @@
 
                     <label for="animationsSelect">Animación Principal:</label>
                     <div class="form-outline col-12 col-lg-6 mb-4">
-                      <select class="form-select" id="animationsSelect" name="utclink" required>
-                        <option selected disabled hidden>Animaciones:</option>
+                      <select class="form-select animationsSelect" id="animationsSelect" name="utclink" required>
+                        <option selected hidden value="{{anim_default}}">{{anim_default}} ---</option>
                       </select>
                     </div>
 
                     <div class="col-12">
                       <div class="mb-4 ps-1 none" id="modelAreasCont">
-                        <input class="form-check-input input_change" type="checkbox" id="modelAreas" name="qrButton" data-btn_closed=".slide_areas" />
+                        <input class="form-check-input input_change" type="checkbox" {% if active_areas %}checked{% endif %} id="modelAreas" name="btnqr"
+                          data-btn_closed=".slide_areas" />
                         <label class="form-check-label" for="modelAreas">Activar Areas de Interaccion</label>
                       </div>
                       <div class="slide_areas none">
                         <div class="row">
                           <div class="col-12 col-md-4">
                             <div data-mdb-input-init class="form-outline mb-4">
-                              <input type="number" id="num_areas" name="num_areas" class="form-control text-end" />
+                              <input type="number" id="num_areas" name="num_areas" min="1" class="form-control text-end" />
                               <label class="form-label" for="num_areas">Areas:</label>
                             </div>
                           </div>
                           <div class="col-6 col-md-4">
                             <div data-mdb-input-init class="form-outline mb-4">
-                              <input type="number" id="row_areas" name="row_areas" class="form-control text-end" />
+                              <input type="number" id="row_areas" name="row_areas" min="1" class="form-control text-end" />
                               <label class="form-label" for="row_areas">Filas:</label>
                             </div>
                           </div>
                           <div class="col-6 col-md-4">
                             <div data-mdb-input-init class="form-outline mb-4">
-                              <input type="number" id="column_areas" name="column_areas" class="form-control text-end" />
+                              <input type="number" id="column_areas" name="column_areas" min="1" class="form-control text-end" />
                               <label class="form-label" for="column_areas">Columnas:</label>
                             </div>
                           </div>
+                        </div>
+                      </div>
+                      <div class="slide_areas none mb-4">
+                        <h5>Asignar Animacion a Area</h5>
+                        <div id="areasAnimations" class="row px-0">
+
                         </div>
                       </div>
                     </div>

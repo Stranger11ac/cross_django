@@ -18,8 +18,11 @@ $(document).ready(function () {
     });
 
     // Cargar animaciones #########################################
+    const numAreas = $("#num_areas");
     const reloadModel = $("#reloadModel");
-    const animationsSelect = $("#animationsSelect");
+    const modelAreasContainer = $("#model_areas");
+    const areasAnimations = $("#areasAnimations");
+    const animationsSelect = $(".animationsSelect");
     let animationsLenght = 0;
 
     function loadModelAndAnimations(url) {
@@ -28,37 +31,39 @@ $(document).ready(function () {
             modelViewer.attr("src", url);
         }, 700);
 
-        modelViewer.on("load", function () {
-            const animations = modelViewer[0].availableAnimations;
-            animationsSelect.empty();
-            console.log("En Funcion:", animations.length);
-            animationsLenght = animations.length;
-            if (animations.length > 0) {
-                $.each(animations, function (index, animation) {
-                    animationsSelect.append(
-                        $("<option>", {
-                            value: animation,
-                            text: animation,
-                        })
-                    );
-                });
-            } else {
+        modelViewer.on("load", addAnimationsList);
+    }
+
+    function addAnimationsList() {
+        const animations = modelViewer[0].availableAnimations;
+        animationsLenght = animations.length;
+        numAreas.attr("max", animationsLenght);
+
+        if (animationsLenght > 0) {
+            $.each(animations, function (index, animation) {
                 animationsSelect.append(
                     $("<option>", {
-                        text: "No animations found",
+                        value: animation,
+                        text: animation,
                     })
                 );
-            }
+            });
+        } else {
+            animationsSelect.append(
+                $("<option>", {
+                    text: "No hay animaciones",
+                })
+            );
+        }
 
-            isPaused = false;
-            modelViewer[0].play();
-            pauseAnim.attr("title", "Pausar Animacion");
-            pauseAnim.html('<i class="fa-solid fa-universal-access fs-20"></i>');
+        isPaused = false;
+        modelViewer[0].play();
+        pauseAnim.attr("title", "Pausar Animacion");
+        pauseAnim.html('<i class="fa-solid fa-universal-access fs-20"></i>');
 
-            if (animationsLenght > 1) {
-                $("#modelAreasCont").slideDown();
-            }
-        });
+        if (animationsLenght > 1) {
+            $("#modelAreasCont").slideDown();
+        }
     }
 
     $("#fileInput").on("change", function (event) {
@@ -66,6 +71,7 @@ $(document).ready(function () {
         if (file) {
             const url = URL.createObjectURL(file);
             loadModelAndAnimations(url);
+            animationsSelect.empty();
         }
     });
 
@@ -75,10 +81,6 @@ $(document).ready(function () {
             loadModelAndAnimations(url);
         }
     });
-
-    setTimeout(() => {
-        reloadModel.click();
-    }, 500);
 
     animationsSelect.on("change", function () {
         const selectedAnimation = $(this).val();
@@ -92,22 +94,48 @@ $(document).ready(function () {
     });
 
     // Areas y animaciones #########################################
-    $("#modelAreas").on("change", function () {
-        if ($(this).is(":checked")) {
-            $("#num_areas").on("input", function () {
-                const numAreas = parseInt($(this).val(), 10);
-                const modelAreasContainer = $("#model_areas");
-                modelAreasContainer.empty();
-                for (let i = 1; i <= numAreas; i++) {
-                    modelAreasContainer.append(
-                        `<button type="button" class="item d-flex justify-content-center align-items-center fs-20 item${i}">${i}</button>`
-                    );
-                }
-            });
-        }
-    });
+    if ($("#modelAreas").is(":checked")) {
+        numAreas.on("input", setAreas);
+    }
+    $("#row_areas, #column_areas").on("input", setGrid);
 
-    $("#row_areas, #column_areas").on("input", function () {
+    function setAreas() {
+        const areasLenght = parseInt(numAreas.val(), 10);
+        modelAreasContainer.empty();
+        areasAnimations.empty();
+        for (let i = 1; i <= areasLenght; i++) {
+            modelAreasContainer.append(
+                `<button type="button" class="item d-flex justify-content-center align-items-center fs-20 item${i}">${i}</button>`
+            );
+            areasAnimations.append(
+                `<div class="col-12 col-md-6">
+                    <div class="row">
+                    <input type="hidden" name="areaVal" value="${i}">
+                        <div class="col-2">
+                            <p class="d-flex justify-content-center fs-18 m-0">${i}</p>
+                        </div>
+                        <div class="col">
+                        <select class="form-select animationsSelect">
+                            <option selected hidden disabled>Animacion:</option>
+                        </select>
+                        </div>
+                    </div>
+                </div>`
+            );
+            if (areasLenght > animationsLenght && animationsLenght != 1) {
+                numAreas.val(animationsLenght);
+                alertSToast(
+                    "center",
+                    7000,
+                    "info",
+                    "El numero de areas no puede exceder el numero de animaciones del modelo. 😯🤔😬"
+                );
+            }
+        }
+
+        modelViewer.on("load", addAnimationsList);
+    }
+    function setGrid() {
         const rows = $("#row_areas").val();
         const columns = $("#column_areas").val();
 
@@ -115,5 +143,26 @@ $(document).ready(function () {
             "--grid-row": rows,
             "--grid-column": columns,
         });
-    });
+    }
+
+    // Vuelta de registro ##############
+    setTimeout(() => {
+        reloadModel.click();
+
+        if ($("#modelAreas").is(":checked")) {
+            var targetId = $("#modelAreas").data("btn_closed");
+            $(targetId).toggleClass("show");
+            if (targetId.includes("slide")) {
+                $(targetId).slideToggle("slow");
+            }
+        }
+
+        numAreas.val("5");
+        $("#row_areas").val("2");
+        $("#column_areas").val("3");
+        modelViewer.on("load", function () {
+            setAreas();
+            setGrid();
+        });
+    }, 800);
 });

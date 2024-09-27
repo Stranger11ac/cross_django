@@ -685,7 +685,7 @@ def preguntas_deleted(request):
 def settings_update(request):
     if request.method == 'POST':
         try:
-            idPOST = request.FILES.get('setId')
+            idPOST = request.POST.get('setId')
             qrImgPOST = request.FILES.get('qrImage')
             qrButtonPOST = request.POST.get('btnqrpost')
             qrButton = request.POST.get('btnqr')
@@ -701,7 +701,7 @@ def settings_update(request):
 
             if not idPOST:
                 idPOST = '1'
-
+            
             config = get_object_or_404(models.Configuraciones, id=idPOST)
             if qrImgPOST:
                 config.qr_image = qrImgPOST
