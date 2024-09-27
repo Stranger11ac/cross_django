@@ -113,7 +113,11 @@ $(document).ready(function () {
         // Quitar clase show #####################################
         $("[data-btn_closed]").on("click", function () {
             var targetId = $(this).data("btn_closed");
-            $("#" + targetId).toggleClass("show");
+            $(targetId).toggleClass("show");
+
+            if (targetId.includes('slide')) {
+                $(targetId).slideToggle("slow");
+            }
         });
 
         // Remover item #####################################

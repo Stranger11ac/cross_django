@@ -5,6 +5,7 @@ from django.views.decorators.cache import never_cache
 from django.contrib.auth.models import User
 from django.db import models, transaction
 from django.http import JsonResponse
+from django.conf import settings
 from django.urls import reverse
 from . import functions, models
 
@@ -15,27 +16,31 @@ settingsall = models.Configuraciones.objects.all()
 questions_all = models.Preguntas.objects.all().order_by('-id')
 categoriasFilter = models.Categorias.objects.exclude(categoria__in=['Mapa', 'Calendario'])
 
-def obtener_configuraciones():
-    for oneconfig in settingsall:
-        return {
-            'copyright_settings': oneconfig.copyright_year,
-            'website_settings': oneconfig.utc_link,
-            'calendar_btns_year': getattr(oneconfig, 'calendar_btnsYear', None),
-            'about_imgfirst': getattr(oneconfig, 'about_img_first', None),
-            'about_textfirst': getattr(oneconfig, 'about_text_first', None),
-            'about_imgsecond': getattr(oneconfig, 'about_img_second', None),
-            'about_textsecond': getattr(oneconfig, 'about_text_second', None),
-        }
+def obtener_configuraciones(questID):
+    oneconfig = get_object_or_404(models.Configuraciones, pk=questID)
+    return {
+        'qr_image': oneconfig.qr_image.url,
+        'qr_button': oneconfig.qr_button,
+        'redes_sociales': oneconfig.redes_sociales,
+        'copyright_year': oneconfig.copyright_year,
+        'utc_link': oneconfig.utc_link,
+        'calendar_btnsYear': oneconfig.calendar_btnsYear,
+        'about_img_first': oneconfig.about_img_first.url,
+        'about_text_first': oneconfig.about_text_first,
+        'about_img_second': oneconfig.about_img_second.url,
+        'about_text_second': oneconfig.about_text_second,
+    }
 
 
 def index(request):
     if not request.user.is_staff:
         logout(request)
+    configuraciones = obtener_configuraciones(1)
+    hawkySettings = obtener_configuraciones(2)
     banners_all = models.Banners.objects.filter(visible=True)
     banners_modificados = []
 
     for banner in banners_all:
-        # imagen_url = banner.imagen.url.replace("cross_asistent/", "")
         banners_modificados.append({
             'id': banner.id,
             'titulo': banner.titulo,
@@ -45,29 +50,26 @@ def index(request):
             'onlyImg': banner.solo_imagen,
         })
     
-    for oneconfig in settingsall:
-        settings_img_qr = oneconfig.qr_image.url
-        settings_qr_btn = oneconfig.qr_button
-
     return render(request, 'index.html', {
+        'active_page': 'inicio',
         'banners': banners_modificados,
-        'img_qr': settings_img_qr,
-        'btn_qr': settings_qr_btn,
-        'active_page': 'inicio'
+        'img_qr': configuraciones['qr_image'],
+        'btn_qr': configuraciones['qr_button'],
+        'model_3D': hawkySettings['qr_image'],
     })
 
 def fqt_questions(request):
     if not request.user.is_staff:
         logout(request)
     
-    configuraciones = obtener_configuraciones()
-    
+    configuraciones = obtener_configuraciones(1)
     categoria_Preguntas = models.Categorias.objects.get(categoria="Preguntas")
     questall = models.Database.objects.filter(frecuencia__gt=0, categoria=categoria_Preguntas).order_by('-frecuencia')
     return render(request, 'frecuentes.html', {
-        'quest_all': questall,
         'active_page': 'faq',
-        **configuraciones
+        'quest_all': questall,
+        'copyright_year': configuraciones['copyright_year'],
+        'utc_link': configuraciones['utc_link'],
     })
 
 def fqt_questions_send(request):    
@@ -88,8 +90,7 @@ def blogs(request):
     if not request.user.is_staff:
         logout(request)
     
-    configuraciones = obtener_configuraciones()
-
+    configuraciones = obtener_configuraciones(1)
     blogs = models.Articulos.objects.all().order_by('-id')
     blogs_modificados = []
 
@@ -113,14 +114,15 @@ def blogs(request):
     return render(request, 'blogs_all.html', {
         'blogs_all': blogs_modificados,
         'active_page': 'blog',
-        **configuraciones
+        'copyright_year': configuraciones['copyright_year'],
+        'utc_link': configuraciones['utc_link'],
     })
 
 def mostrar_blog(request, Articulos_id):
     if not request.user.is_staff:
         logout(request)
     
-    configuraciones = obtener_configuraciones()
+    configuraciones = obtener_configuraciones(1)
     
     articulo = get_object_or_404(models.Articulos, pk=Articulos_id)
     autor_username = articulo.autor
@@ -154,23 +156,20 @@ def mostrar_blog(request, Articulos_id):
         'foto_autor': foto_autor,
         'firma_autor': firma_autor,
         'encabezado_url': encabezado_url,
-        **configuraciones
+        'copyright_year': configuraciones['copyright_year'],
+        'utc_link': configuraciones['utc_link'],
     })
 
 def calendario(request):
     if not request.user.is_staff:
         logout(request)
     
-    configuraciones = obtener_configuraciones()
-
+    configuraciones = obtener_configuraciones(1)
     return render(request, 'calendario.html', {
         'active_page': 'calendario',
-        'show_btns_year': configuraciones.get('calendar_btns_year'),
-        'about_imgfirst': configuraciones.get('about_img_first'),
-        'about_textfirst': configuraciones.get('about_text_first'),
-        'about_imgsecond': configuraciones.get('about_img_second'),
-        'about_textsecond': configuraciones.get('about_text_second'),
-        **configuraciones  # Agregar las configuraciones al contexto
+        'copyright_year': configuraciones['copyright_year'],
+        'utc_link': configuraciones['utc_link'],
+        'calendar_btnsYear': True if configuraciones['calendar_btnsYear'] else False,
     })
 
 def map(request):
@@ -184,7 +183,7 @@ def about(request):
     if not request.user.is_staff:
         logout(request)
     
-    configuraciones = obtener_configuraciones()
+    configuraciones = obtener_configuraciones(1)
     return render(request, 'about.html', {
         'active_page': 'about',
         **configuraciones
@@ -238,11 +237,12 @@ def singinpage(request):
         else:
             return JsonResponse({'success': False, 'functions': 'singin', 'message': 'Usuario no registrado 😅. Verifica tu nombre de usuario o contraseña'}, status=400)
     else:
-        configuraciones = obtener_configuraciones()
+        configuraciones = obtener_configuraciones(1)
         logout(request)
         return render(request, 'singinup.html', {
             'active_page': 'singin',
-            **configuraciones
+            'copyright_year': configuraciones['copyright_year'],
+            'utc_link': configuraciones['utc_link'],
         })
 
 @never_cache
@@ -255,7 +255,8 @@ def singout(request):
 def vista_programador(request):
     banners_all = models.Banners.objects.all()
     users = User.objects.all().order_by('-id')
-    configuraciones = obtener_configuraciones()
+    configuraciones = obtener_configuraciones(1)
+    hawkySettings = obtener_configuraciones(2)
     
     if request.user.is_staff:
         num_blogs = models.Articulos.objects.all().count()
@@ -274,6 +275,7 @@ def vista_programador(request):
         'preguntas_count':questions_all.count(),
         'num_preguntas':databaseall.count(),
         'num_blogs': num_blogs,
+        'model_3D': hawkySettings['qr_image'],
         **configuraciones
     }
      
@@ -347,7 +349,7 @@ def banners_page(request):
                 'message': f'El parecer no se envio contenido ⚠️😯🤔😥.'
             }, status=400)
     
-    configuraciones = obtener_configuraciones()
+    configuraciones = obtener_configuraciones(1)
     banners_all = models.Banners.objects.all()
     banners_modificados = []
 
@@ -380,10 +382,12 @@ def database_page(request):
 @login_required
 @never_cache
 def calendario_page(request):
-    for oneconfig in settingsall:
-        btns_year = oneconfig.calendar_btnsYear
-
-    context = { 'active_page': 'calendario', 'show_btns_year': btns_year, 'pages': functions.pages }
+    configuraciones = obtener_configuraciones(1)
+    context = {
+        'pages': functions.pages,
+        'active_page': 'calendario',
+        'calendar_btnsYear': True if configuraciones['calendar_btnsYear'] else False,
+    }
     return render(request, 'admin/calendario.html', context)
 
 # Blogs ----------------------------------------------------------

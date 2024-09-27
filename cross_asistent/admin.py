@@ -23,6 +23,9 @@ class NotifAdmin(admin.ModelAdmin):
 
 class PreguntasAdmin(admin.ModelAdmin):
     list_display = ('pregunta', 'descripcion', 'fecha')
+
+class ConfigAdmin(admin.ModelAdmin):
+    list_display = ('copyright_year','id')
     
 class UserProfileAdmin(admin.ModelAdmin):
     list_display = ('user', 'tutorial', 'blog_firma')
@@ -36,6 +39,6 @@ admin.site.register(models.Articulos, ArticulosAdmin)
 admin.site.register(models.Mapa, MapaAdmin)
 admin.site.register(models.galeria)
 admin.site.register(models.Preguntas, PreguntasAdmin)
-admin.site.register(models.Configuraciones)
+admin.site.register(models.Configuraciones, ConfigAdmin)
 admin.site.register(models.UserProfile, UserProfileAdmin)
 

@@ -120,7 +120,6 @@
 {% block scripts_end %}
 <script>
     let disabledButtons = JSON.parse(localStorage.getItem('disabledButtons')) || [];
-    console.log(disabledButtons);
     disabledButtons.forEach(function (id) {
         const button = document.getElementById(id);
         if (button) {

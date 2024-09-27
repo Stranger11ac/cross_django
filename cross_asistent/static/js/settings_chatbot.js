@@ -21,11 +21,6 @@ const speakButton = $(".speak_btn");
 const voiceSelect = document.getElementById("voice_select");
 const rateInput = document.getElementById("rate_input");
 
-// model viewer ###########################################
-const modelViewer = document.querySelector("#asistent_model");
-const pauseAnim = document.querySelector("#pauseAnim");
-let isPaused = false;
-
 // ##############################################################################################
 // ###################################### Funciones Jquery ######################################
 // ##############################################################################################
@@ -462,20 +457,3 @@ function alertSToast(posittionS, timerS, iconS, titleS, didDestroyS) {
         title: titleS,
     });
 }
-
-// ##############################################################################################
-// #######################################  Model Viewer  #######################################
-// ##############################################################################################
-
-pauseAnim.addEventListener("click", () => {
-    isPaused = !isPaused;
-    if (isPaused) {
-        modelViewer.pause();
-        pauseAnim.title = "Activar Animacion";
-        pauseAnim.innerHTML = '<i class="fa-solid fa-person-walking fs-20"></i>';
-    } else {
-        modelViewer.play();
-        pauseAnim.title = "Pausar Animacion";
-        pauseAnim.innerHTML = '<i class="fa-solid fa-universal-access fs-20"></i>';
-    }
-});

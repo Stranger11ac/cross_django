@@ -206,9 +206,9 @@ iframe {
     width: 100%;
 }
 
-i.fa-solid {
+/* i.fa-solid {
     min-width: 10px;
-}
+} */
 
 /*########################## Navbar ##########################*/
 nav {
@@ -723,13 +723,13 @@ main.main_anchor {
     visibility: visible;
 }
 
-.asistent_group .box_asistent .box_asistent_controls .pop_buttons .btn{
+.asistent_group .box_asistent .box_asistent_controls .pop_buttons .btn {
     transform: scale(0);
     transition: 0.3s var(--transitionCubicVal);
     transition-delay: calc(0.5s * var(--delay));
 }
 
-.asistent_group.open .box_asistent .box_asistent_controls .pop_buttons .btn{
+.asistent_group.open .box_asistent .box_asistent_controls .pop_buttons .btn {
     transform: scale(1);
 }
 
@@ -737,10 +737,10 @@ main.main_anchor {
     z-index: -1;
 }
 
-.box_asistent_controls i.fa-solid,
+/* .box_asistent_controls i.fa-solid,
 .box_asistent_controls i{
     min-width: unset !important;
-}
+} */
 
 .box_asistent_controls .controls_buttons {
     display: flex;
@@ -904,6 +904,38 @@ main.main_anchor {
     font-size: 0.6rem;
 }
 
+/* Areas del modelo */
+#asistent_model .model_areas {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    z-index: -1;
+    display: grid !important;
+    border: 5px solid var(--var-detail_flat);
+    grid-template-rows: repeat(var(--grid-row), 1fr);
+    grid-template-columns: repeat(var(--grid-column), 1fr);
+    transition: 0.3s ease;
+    transition-delay: 0s;
+}
+
+#asistent_model .model_areas.show {
+    z-index: unset;
+    opacity: 1;
+    transition-delay: 1s;
+}
+
+#asistent_model .model_areas .item {
+    border: 3px solid purple;
+    background: var(--darkA3);
+    transition: 0.3s ease;
+}
+
+#asistent_model .model_areas .item:hover {
+    border-width: 5px;
+    background: var(--darkA8);
+    transform: scale(1.1);
+}
+
 @media (min-width: 992px) {
     .asistent_group {
         width: 40vw;
@@ -950,6 +982,40 @@ main.main_anchor {
         margin-block: 1rem;
     }
 }
+
+
+#asistent_model .model_areas .item:nth-child(2n) {
+    border-color: navy;
+}
+
+#asistent_model .model_areas .item:nth-child(3n) {
+    border-color: lime;
+}
+
+#asistent_model .model_areas .item:nth-child(4n) {
+    border-color: yellow;
+}
+
+#asistent_model .model_areas .item:nth-child(5n) {
+    border-color: orange;
+}
+
+/* 
+#asistent_model .model_areas .item:nth-child(6n) {
+    border-color: orangered;
+}
+
+#asistent_model .model_areas .item:nth-child(7n) {
+    border-color: brown;
+}
+
+#asistent_model .model_areas .item:nth-child(8n) {
+    border-color: #333;
+}
+
+#asistent_model .model_areas .item:nth-child(9n) {
+    border-color: cyan;
+} */
 
 /*########################### Mascara / mask ###########################*/
 .mask_dark {
@@ -2000,6 +2066,18 @@ img.img-rounded {
 
 .min_h200 {
     min-height: 200px;
+}
+
+.min_h300 {
+    min-height: 300px;
+}
+
+.min_h400 {
+    min-height: 400px;
+}
+
+.min_h500 {
+    min-height: 500px;
 }
 
 .tscale-1-3 {

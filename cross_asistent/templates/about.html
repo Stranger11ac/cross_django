@@ -13,12 +13,12 @@
       <div class="col-md-8 mb-4">
         <!--Section: Post data-mdb-->
         <section class="border-bottom mb-4">
-          <img src="{{about_imgfirst.url}}" class="img-fluid shadow-2-strong img-rounded mb-4" />
+          <img src="{{about_img_first}}" class="img-fluid shadow-2-strong img-rounded mb-4" />
 
           <div class="row align-items-center mb-4">
             <div class="col-lg-6 text-center text-lg-start mb-3 m-lg-0">
-              © <span class="text_detail">{{copyright_settings}}</span> Todos los Derechos reservados:
-              <a class="text-reset fw-bold text-decoration-underline" href="{{website_settings}}" target="_blank" rel="noopener noreferrer">Universidad
+              © <span class="text_detail">{{copyright_year}}</span> Todos los Derechos reservados:
+              <a class="text-reset fw-bold text-decoration-underline" href="{{utc_link}}" target="_blank" rel="noopener noreferrer">Universidad
                 Tecnológica de Coahuila</a>
             </div>
 
@@ -49,9 +49,9 @@
             </div>
           </div>
         </section>
-        <section>{% autoescape off %}{{about_textfirst}}{% endautoescape %}</section>
+        <section>{% autoescape off %}{{about_text_first}}{% endautoescape %}</section>
         <hr class="hr_divisor my-5">
-        <section>{% autoescape off %}{{about_textsecond}}{% endautoescape %}</section>
+        <section>{% autoescape off %}{{about_text_second}}{% endautoescape %}</section>
       </div>
 
       <div class="col-md-4 mb-4">
@@ -65,7 +65,7 @@
           </iframe>
         </section>
         <section class="pt-5 mt-5">
-          <img src="{{about_imgsecond.url}}" class="img-fluid shadow-2-strong img-rounded mt-4 materialBoxed" />
+          <img src="{{about_img_second}}" class="img-fluid shadow-2-strong img-rounded mt-4 materialBoxed" />
         </section>
       </div>
     </div>

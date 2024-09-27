@@ -1,6 +1,9 @@
 {% extends 'base/widget.html' %}
 {% load static %}
 {% block title %}Administracion {% if user.is_staff %}- Programacion{% endif %} | Inicio{% endblock %}
+{% block extra_head %}
+<script type="module" src="{% static 'js/model-viewer.min.js' %}"></script>
+{% endblock %}
 {% block link_home %}{% url 'vista_programador' %}{% endblock %}
 {% block link_default %}
 {% include 'base/widget_links-admin.html' with pages=pages %}
@@ -383,16 +386,85 @@
         <div class="card-body mx-2">
           <h4 class="text-center mb-4"><span class="text_detail">Mas</span> Configuraciones</h4>
           <div class="accordion accordion-borderless row" id="settingsAccordion">
-            {% for config in settingsall %}
             <!-- Hawky -->
             <div class="accordion-item mb-3 col-12 px-2 col-lg-6">
               <h5 class="accordion-header" id="flush-headingHawky">
                 <button data-mdb-collapse-init class="accordion-button" type="button" data-mdb-toggle="collapse" data-mdb-target="#flush-collapseHawky"
-                  aria-expanded="true" aria-controls="flush-collapseHawky">Hawky</button>
+                  aria-expanded="true" aria-controls="flush-collapseHawky">Chatbot y Hawky</button>
               </h5>
               <div id="flush-collapseHawky" class="accordion-collapse collapse" aria-labelledby="flush-headingHawky" data-mdb-parent="#settingsAccordion">
                 <div class="accordion-body">
-                  <p class="m-0">...</p>
+                  <!-- Modelo -->
+                  <model-viewer id="asistent_model" class="min_h300 col-12 rounded" tone-mapping="neutral" camera-orbit="15deg 70deg 5m"
+                    poster="{% static 'img/hawky.0011.webp' %}" loading="eager" shadow-intensity="1" animation-name="hawky_idle" autoplay>
+                    <!-- Areas -->
+                    <div id="model_areas" class="model_areas slide_areas none" style="--grid-row: 3;--grid-column: 3;">
+                    </div>
+                  </model-viewer>
+                  <!-- formulario -->
+                  <form action="{% url 'update_settings' %}" method="post" class="row px-0" data-submit-form>
+                    {% csrf_token %}
+                    <!-- botones -->
+                    <div class="d-flex justify-content-center gap_20 col-12 my-4">
+                      <button type="button" class="btn bg_purple-blue btn-floating p-4" id="pauseAnim" title="Pausar Animación">
+                        <i class="fa-solid fa-universal-access fs-20"></i>
+                      </button>
+                      <button type="button" class="btn bg_purple-blue btn-floating p-4" id="reloadModel" title="Recargar Modelo" data-model="{{model_3D}}">
+                        <i class="fa-solid fa-arrows-rotate fs-20"></i>
+                      </button>
+                      <div>
+                        <label class="btn bg_purple-blue btn-floating p-4" for="fileInput" title="Subir Modelo">
+                          <i class="fa-solid fa-arrow-up-from-bracket fs-18"></i>
+                        </label>
+                        <input type="file" class="none" id="fileInput" name="qrImage" accept=".glb" />
+                      </div>
+                    </div>
+
+                    <input type="hidden" name="setId" value="2">
+                    <input type="hidden" name="btnqrpost" value="True">
+
+                    <label for="animationsSelect">Animación Principal:</label>
+                    <div class="form-outline col-12 col-lg-6 mb-4">
+                      <select class="form-select" id="animationsSelect" name="utclink" required>
+                        <option selected disabled hidden>Animaciones:</option>
+                      </select>
+                    </div>
+
+                    <div class="col-12">
+                      <div class="mb-4 ps-1 none" id="modelAreasCont">
+                        <input class="form-check-input input_change" type="checkbox" id="modelAreas" name="qrButton" data-btn_closed=".slide_areas" />
+                        <label class="form-check-label" for="modelAreas">Activar Areas de Interaccion</label>
+                      </div>
+                      <div class="slide_areas none">
+                        <div class="row">
+                          <div class="col-12 col-md-4">
+                            <div data-mdb-input-init class="form-outline mb-4">
+                              <input type="number" id="num_areas" name="num_areas" class="form-control text-end" />
+                              <label class="form-label" for="num_areas">Areas:</label>
+                            </div>
+                          </div>
+                          <div class="col-6 col-md-4">
+                            <div data-mdb-input-init class="form-outline mb-4">
+                              <input type="number" id="row_areas" name="row_areas" class="form-control text-end" />
+                              <label class="form-label" for="row_areas">Filas:</label>
+                            </div>
+                          </div>
+                          <div class="col-6 col-md-4">
+                            <div data-mdb-input-init class="form-outline mb-4">
+                              <input type="number" id="column_areas" name="column_areas" class="form-control text-end" />
+                              <label class="form-label" for="column_areas">Columnas:</label>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="col-12">
+                      <button type="submit" class="btn btn_detail btn-block">
+                        Guardar Cambios <i class="fa-solid fa-paper-plane"></i>
+                      </button>
+                    </div>
+                  </form>
                 </div>
               </div>
             </div>
@@ -408,7 +480,7 @@
                     method="post" enctype="multipart/form-data" data-submit-blur="formqr" data-submit-form>
                     {% csrf_token %}
                     <div class="mb-3">
-                      <img src="{{config.qr_image.url}}" alt="Imagen QR del sitio web" id="qrImgDom" class="img-fluid img-rounded materialBoxed max_w200">
+                      <img src="{{qr_image}}" alt="Imagen QR del sitio web" id="qrImgDom" class="img-fluid img-rounded materialBoxed max_w200">
                     </div>
                     <div class="mb-3">
                       <label class="btn btn-block btn_cyan-purple text-white" for="qrImage">
@@ -422,7 +494,7 @@
                   <form action="{% url 'update_settings' %}" class="form-check" method="post" data-submit-blur="formcalendar" data-submit-form>
                     {% csrf_token %}
                     <input type="hidden" id="btnqrpost" name="btnqrpost" value="True" />
-                    <input class="form-check-input input_change" {% if config.qr_button %}checked{% endif %} type="checkbox" id="btnqr" name="btnqr" />
+                    <input class="form-check-input input_change" {% if qr_button %}checked{% endif %} type="checkbox" id="btnqr" name="btnqr" />
                     <label class="form-check-label" for="btnqr">Mostrar en pagina de Inicio</label>
                     <button type="submit" class="d-none" id="formcalendar"></button>
                   </form>
@@ -440,8 +512,7 @@
                   <form action="{% url 'update_settings' %}" class="form-check" method="post" data-submit-blur="formcalendar" data-submit-form>
                     {% csrf_token %}
                     <input type="hidden" id="btnsYearpost" name="btnsYearpost" value="True" />
-                    <input class="form-check-input input_change" {% if config.calendar_btnsYear %}checked{% endif %} type="checkbox" id="btnsYear"
-                      name="btnsYear" />
+                    <input class="form-check-input input_change" {% if calendar_btnsYear %}checked{% endif %} type="checkbox" id="btnsYear" name="btnsYear" />
                     <label class="form-check-label" for="btnsYear">Mostrar Botones de año (<i class="fa-solid fa-angles-left"></i>|<i
                         class="fa-solid fa-angles-right"></i>)</label>
                     <button type="submit" class="d-none" id="formcalendar"></button>
@@ -461,14 +532,13 @@
                     {% csrf_token %}
                     <div class="col-md-6">
                       <div data-mdb-input-init class="form-outline mt-4">
-                        <input type="text" id="cr_year" name="cr_year" class="form-control input_blur active text-end" value="{{config.copyright_year}}"
-                          required />
+                        <input type="text" id="cr_year" name="cr_year" class="form-control input_blur active text-end" value="{{copyright_year}}" required />
                         <label class="form-label" for="cr_year">Copyright:</label>
                       </div>
                     </div>
                     <div class="col-md-6">
                       <div data-mdb-input-init class="form-outline mt-4">
-                        <input type="text" id="utclink" name="utclink" class="form-control input_blur active text-end" value="{{config.utc_link}}" required />
+                        <input type="text" id="utclink" name="utclink" class="form-control input_blur active text-end" value="{{utc_link}}" required />
                         <label class="form-label" for="utclink">Sitio web Oficial:</label>
                       </div>
                     </div>
@@ -483,12 +553,12 @@
                   aria-expanded="true" aria-controls="flush-collapseabout">Seccion Acerca de...</button>
               </h5>
               <div id="flush-collapseabout" class="accordion-collapse collapse" aria-labelledby="flush-headingabout" data-mdb-parent="#settingsAccordion">
-                <div class="accordion-body">
+                <div class="accordion-body px-2">
                   <div class="row">
                     <form action="{% url 'update_settings' %}" method="post" enctype="multipart/form-data" data-submit-blur="formfirst" data-submit-form
                       class="col-md-6 mb-3 d-flex align-items-center justify-content-center flex-column">
                       {% csrf_token %}
-                      <img src="{{config.about_img_first.url}}" alt="primera imagen" id="firstimgDom" class="img-fluid img-rounded materialBoxed max_w250">
+                      <img src="{{about_img_first}}" alt="primera imagen" id="firstimgDom" class="img-fluid img-rounded materialBoxed max_w250">
 
                       <label class="btn btn_cyan-purple text-white mx-auto mt-3" for="firstimage">
                         Cambiar imagen <i class="fa-solid fa-camera-rotate ms-1"></i>
@@ -500,8 +570,7 @@
                     <form action="{% url 'update_settings' %}" method="post" enctype="multipart/form-data" data-submit-blur="formsecond" data-submit-form
                       class="col-md-6 mb-3 d-flex align-items-center justify-content-center flex-column">
                       {% csrf_token %}
-                      <img src="{{config.about_img_second.url}}" alt="Segunda imagen en About" id="secondImgDom"
-                        class="img-fluid img-rounded materialBoxed max_w250">
+                      <img src="{{about_img_second}}" alt="Segunda imagen en About" id="secondImgDom" class="img-fluid img-rounded materialBoxed max_w250">
 
                       <label class="btn btn_cyan-purple text-white mx-auto mt-3" for="secondimage">
                         Cambiar imagen <i class="fa-solid fa-camera-rotate ms-1"></i>
@@ -516,7 +585,7 @@
                     <div class="my-4" data-mdb-input-init>
                       <label for="firsttext" class="form-label">Primera Seccion:</label>
                       <textarea id="textTiny" class="form-control" name="contenidoWord" rows="8" id="firsttext"
-                        placeholder="Puedes hacer listas, encabezados, parrafos y tablas">{{config.about_text_first}}</textarea>
+                        placeholder="Puedes hacer listas, encabezados, parrafos y tablas">{{about_text_first}}</textarea>
                     </div>
                     <div class="d-flex justify-content-end">
                       <button type="submit" class="btn btn_cyan-purple text-white">Guardar Cambios <i class="fa-solid fa-floppy-disk ms-1"></i></button>
@@ -529,7 +598,7 @@
                     <div class="my-4" data-mdb-input-init>
                       <label for="secondtext" class="form-label">Segunda Seccion:</label>
                       <textarea id="textTiny" class="form-control" name="contenidoWord" rows="8" id="secondtext"
-                        placeholder="Puedes hacer listas, encabezados, parrafos y tablas">{{config.about_text_second}}</textarea>
+                        placeholder="Puedes hacer listas, encabezados, parrafos y tablas">{{about_text_second}}</textarea>
                     </div>
                     <div class="d-flex justify-content-end">
                       <button type="submit" class="btn btn_cyan-purple text-white">Guardar Cambios <i class="fa-solid fa-floppy-disk ms-1"></i></button>
@@ -538,7 +607,6 @@
                 </div>
               </div>
             </div>
-            {% endfor %}
             <!-- Importar y Exportar -->
             <div class="accordion-item col-12 px-2">
               <h5 class="accordion-header" id="flush-headingimport">
@@ -841,4 +909,5 @@
 
 <script src="{% static 'tinymce/tinymce.min.js' %}"></script>
 <script src="{% static 'js/settings_tinymce.js' %}"></script>
+<script src="{% static 'js/settings_model.js' %}"></script>
 {% endblock %}

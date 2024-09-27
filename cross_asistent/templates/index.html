@@ -2,7 +2,6 @@
 {% load static %}
 {% block title %}Inicio | Bienvenidos 🦅{% endblock %}
 {% block extra_head %}
-<link rel="preload" href="{% static 'img/hawky.0011.glb' %}" as="fetch" type="model/gltf-binary">
 <link rel="stylesheet" href="{% static 'css/swiper-bundle.min.css' %}" />
 <script type="module" src="{% static 'js/model-viewer.min.js' %}"></script>
 {% endblock %}
@@ -56,7 +55,7 @@
     <!-- Asistente -->
     <section href="#asistente" class="asistent_group">
         <div class="box_asistent">
-            <model-viewer id="asistent_model" src="{% static 'img/hawky.0011.glb' %}" tone-mapping="neutral" camera-orbit="15deg 70deg 10m"
+            <model-viewer id="asistent_model" src="{{model_3D}}" tone-mapping="neutral" camera-orbit="15deg 70deg 5m"
                 poster="{% static 'img/hawky.0011.webp' %}" loading="eager" shadow-intensity="1" animation-name="hawky_idle" autoplay>
                 <!-- Controles de Audio -->
                 <div class="box_asistent_controls controls_vertical-left controls_hide">
@@ -151,4 +150,5 @@
 {% block scripts_end %}
 <script src="{% static 'js/swiper.min.js' %}"></script>
 <script src="{% static 'js/settings_chatbot.js' %}"></script>
+<script src="{% static 'js/settings_model.js' %}"></script>
 {% endblock %}
