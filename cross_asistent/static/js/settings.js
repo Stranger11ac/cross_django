@@ -115,7 +115,7 @@ $(document).ready(function () {
             var targetId = $(this).data("btn_closed");
             $(targetId).toggleClass("show");
 
-            if (targetId.includes('slide')) {
+            if (targetId.includes("slide")) {
                 $(targetId).slideToggle("slow");
             }
         });
@@ -421,6 +421,19 @@ $(document).ready(function () {
         $("[data-select_addClass]").change(function () {
             const newClass = $(this).val();
             $(this).attr("class", `form-select change_bg ${newClass}`);
+        });
+
+        // Poner valor por defecto con blur ######################################
+        $("[data-blur-default]").on("blur", function () {
+            const setDefault = $(this).attr("data-blur-default");
+            const thisValue = $(this).val();
+            const newVal = $(this).attr(setDefault);
+            if (thisValue == "") {
+                $(this).val(newVal);
+            }
+            if (setDefault == "min" && thisValue < newVal) {
+                $(this).val(newVal);
+            }
         });
 
         //

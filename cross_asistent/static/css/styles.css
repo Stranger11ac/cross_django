@@ -927,13 +927,21 @@ main.main_anchor {
 #asistent_model .model_areas .item {
     border: 3px solid purple;
     background: var(--darkA3);
+    transform: scale(0);
+    opacity: 0;
     transition: 0.3s ease;
+}
+
+#asistent_model .model_areas .item.visible {
+    opacity: 1;
+    transform: scale(1);
 }
 
 #asistent_model .model_areas .item:hover {
     border-width: 5px;
-    background: var(--darkA8);
-    transform: scale(1.1);
+    color: white;
+    background: var(--darkA5);
+    transform: scale(1.05);
 }
 
 @media (min-width: 992px) {
@@ -985,37 +993,32 @@ main.main_anchor {
 
 
 #asistent_model .model_areas .item:nth-child(2n) {
-    border-color: navy;
+    border-color: lightseagreen;
 }
 
 #asistent_model .model_areas .item:nth-child(3n) {
     border-color: lime;
 }
 
+#asistent_model .model_areas .item:nth-child(6n) {
+    border-color: orangered;
+}
+
 #asistent_model .model_areas .item:nth-child(4n) {
     border-color: yellow;
+}
+
+#asistent_model .model_areas .item:nth-child(8n) {
+    border-color: tomato;
 }
 
 #asistent_model .model_areas .item:nth-child(5n) {
     border-color: orange;
 }
 
-/* 
-#asistent_model .model_areas .item:nth-child(6n) {
-    border-color: orangered;
-}
-
-#asistent_model .model_areas .item:nth-child(7n) {
-    border-color: brown;
-}
-
-#asistent_model .model_areas .item:nth-child(8n) {
-    border-color: #333;
-}
-
 #asistent_model .model_areas .item:nth-child(9n) {
     border-color: cyan;
-} */
+}
 
 /*########################### Mascara / mask ###########################*/
 .mask_dark {
@@ -1256,6 +1259,19 @@ select.form-select.change_bg option {
 
 form button[disabled] {
     cursor: not-allowed;
+}
+
+/* fildset */
+form fieldset {
+    border: 2px solid;
+    border-radius: 6px;
+}
+
+form fieldset legend {
+    float: unset !important;
+    width: unset !important;
+    font-size: unset !important;
+    line-height: unset !important;
 }
 
 /* SWITCH */

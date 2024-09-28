@@ -9,6 +9,7 @@ import json
 import re
 
 nltk.download('punkt')
+nltk.download('stopwords')
 
 now = timezone.localtime(timezone.now()).strftime('%d-%m-%Y_%H%M')
 allowed_words = {'más', 'una', 'un', 'como'}

@@ -18,28 +18,30 @@ $(document).ready(function () {
     });
 
     // Cargar animaciones #########################################
-    const numAreas = $("#num_areas");
     const reloadModel = $("#reloadModel");
     const modelAreasContainer = $("#model_areas");
     const areasAnimations = $("#areasAnimations");
-    const animationsSelect = $(".animationsSelect");
     let animationsLenght = 0;
 
     function loadModelAndAnimations(url) {
-        modelViewer.attr("src", "_");
+        modelViewer.attr("src", "/static/img/howki-final.glb");
         setTimeout(() => {
             modelViewer.attr("src", url);
-        }, 700);
+        }, 500);
 
         modelViewer.on("load", addAnimationsList);
     }
 
     function addAnimationsList() {
+        const animationsSelect = $(".animationsSelect");
+        const animOtherSelect = $(".animationsSelect.selectList");
         const animations = modelViewer[0].availableAnimations;
         animationsLenght = animations.length;
-        numAreas.attr("max", animationsLenght);
+        $("#num_areas").attr("max", animationsLenght);
+        animationsSelect.empty();
 
-        if (animationsLenght > 0) {
+        if (animationsLenght > 1) {
+            animOtherSelect.append("<option hidden selected disabled>Animaciones:</option>");
             $.each(animations, function (index, animation) {
                 animationsSelect.append(
                     $("<option>", {
@@ -48,21 +50,17 @@ $(document).ready(function () {
                     })
                 );
             });
-        } else {
-            animationsSelect.append(
-                $("<option>", {
-                    text: "No hay animaciones",
-                })
-            );
-        }
 
-        isPaused = false;
-        modelViewer[0].play();
-        pauseAnim.attr("title", "Pausar Animacion");
-        pauseAnim.html('<i class="fa-solid fa-universal-access fs-20"></i>');
-
-        if (animationsLenght > 1) {
+            isPaused = false;
+            modelViewer[0].play();
+            pauseAnim.attr("title", "Pausar Animacion");
+            pauseAnim.html('<i class="fa-solid fa-universal-access fs-20"></i>');
             $("#modelAreasCont").slideDown();
+        } else {
+            $("#modelAreasCont").slideUp();
+            if (animationsLenght == 0) {
+                animationsSelect.append($("<option>", { text: "No hay animaciones", disabled: true }));
+            }
         }
     }
 
@@ -71,18 +69,17 @@ $(document).ready(function () {
         if (file) {
             const url = URL.createObjectURL(file);
             loadModelAndAnimations(url);
-            animationsSelect.empty();
         }
     });
 
     reloadModel.on("click", function () {
-        const url = $.trim(reloadModel.data("model"));
+        const url = $.trim($(this).data("model"));
         if (url) {
             loadModelAndAnimations(url);
         }
     });
 
-    animationsSelect.on("change", function () {
+    $("#animationsSelect").on("change", function () {
         const selectedAnimation = $(this).val();
         if (selectedAnimation) {
             modelViewer[0].animationName = selectedAnimation;
@@ -93,59 +90,81 @@ $(document).ready(function () {
         }
     });
 
-    // Areas y animaciones #########################################
-    if ($("#modelAreas").is(":checked")) {
-        numAreas.on("input", setAreas);
+    // Ejecutar Animacion con click #########################################
+    function playAnimation(setAnimationName) {
+        modelViewer[0].animationName = setAnimationName;
+        modelViewer[0].play();
+        setTimeout(() => {
+            const defaultAnimation = $("#animationsSelect").val();
+            modelViewer[0].animationName = defaultAnimation;
+        }, 1500.0);
     }
-    $("#row_areas, #column_areas").on("input", setGrid);
 
-    function setAreas() {
-        const areasLenght = parseInt(numAreas.val(), 10);
-        modelAreasContainer.empty();
-        areasAnimations.empty();
-        for (let i = 1; i <= areasLenght; i++) {
-            modelAreasContainer.append(
-                `<button type="button" class="item d-flex justify-content-center align-items-center fs-20 item${i}">${i}</button>`
-            );
-            areasAnimations.append(
-                `<div class="col-12 col-md-6">
-                    <div class="row">
-                    <input type="hidden" name="areaVal" value="${i}">
-                        <div class="col-2">
-                            <p class="d-flex justify-content-center fs-18 m-0">${i}</p>
-                        </div>
-                        <div class="col">
-                        <select class="form-select animationsSelect">
-                            <option selected hidden disabled>Animacion:</option>
-                        </select>
-                        </div>
-                    </div>
-                </div>`
-            );
-            if (areasLenght > animationsLenght && animationsLenght != 1) {
-                numAreas.val(animationsLenght);
-                alertSToast(
-                    "center",
-                    7000,
-                    "info",
-                    "El numero de areas no puede exceder el numero de animaciones del modelo. 😯🤔😬"
+    // Areas y animaciones #########################################
+    $("#num_areas").on("input", function () {
+        if ($("#modelAreas").is(":checked")) {
+            const numAreas = parseInt($("#num_areas").val(), 10);
+            modelAreasContainer.empty();
+            areasAnimations.empty();
+
+            for (let i = 1; i <= numAreas; i++) {
+                areasAnimations.append(
+                    `<div class="col-12 mb-3">
+                        <fieldset class="p-2">
+                            <legend class="px-2 mb-0">Botton ${i}:</legend>
+                            <select class="form-select animationsSelect selectList" data-add-action="#actionAnim${i}">
+                                <option selected hidden disabled>Animacion:</option>
+                            </select>
+                            <div class="row mt-4">
+                                <div class="col-12 col-md-4">
+                                <div data-mdb-input-init class="form-outline">
+                                    <input type="number" id="areaTime" name="areaTime" min="1" value="1.8" class="form-control text-end" />
+                                    <label class="form-label" for="areaTime">Duracion:(s)</label>
+                                </div>
+                                </div>
+                                <div class="col-6 col-md-4">
+                                <div data-mdb-input-init class="form-outline">
+                                    <input type="number" id="areaHeight" name="areaHeight" min="1" value="1" class="form-control text-end" />
+                                    <label class="form-label" for="areaHeight">Alto:</label>
+                                </div>
+                                </div>
+                                <div class="col-6 col-md-4">
+                                <div data-mdb-input-init class="form-outline">
+                                    <input type="number" id="areaWidth" name="areaWidth" min="1" value="1" class="form-control text-end" />
+                                    <label class="form-label" for="areaWidth">Largo:</label>
+                                </div>
+                                </div>
+                            </div>
+                        </fieldset>
+                    </div>`
+                );
+                modelAreasContainer.append(
+                    `<button type="button" id="actionAnim${i}" class="item play-anim-btn d-flex justify-content-center align-items-center fs-20">${i}</button>`
                 );
             }
-        }
+            addAnimationsList();
+            $(".animationsSelect").on("change", function () {
+                const dataAction = $(this).attr("data-add-action");
+                const thisVal = $(this).val();
+                $(dataAction).attr("data-animation", thisVal).addClass("visible");
+            });
 
-        modelViewer.on("load", addAnimationsList);
-    }
-    function setGrid() {
+            $(".play-anim-btn").click(function () {
+                let nameAnim = $(this).attr("data-animation");
+                playAnimation(nameAnim);
+            });
+        }
+    });
+    $("#row_areas, #column_areas").on("input", function () {
         const rows = $("#row_areas").val();
         const columns = $("#column_areas").val();
-
         $("#model_areas").css({
             "--grid-row": rows,
             "--grid-column": columns,
         });
-    }
+    });
 
-    // Vuelta de registro ##############
+    // Vuelta de registro #########################################
     setTimeout(() => {
         reloadModel.click();
 
@@ -156,13 +175,5 @@ $(document).ready(function () {
                 $(targetId).slideToggle("slow");
             }
         }
-
-        numAreas.val("5");
-        $("#row_areas").val("2");
-        $("#column_areas").val("3");
-        modelViewer.on("load", function () {
-            setAreas();
-            setGrid();
-        });
-    }, 800);
+    }, 500);
 });
