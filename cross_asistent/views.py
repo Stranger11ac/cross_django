@@ -8,6 +8,7 @@ from django.http import JsonResponse
 from django.conf import settings
 from django.urls import reverse
 from . import functions, models
+import json
 
 mapaall = models.Mapa.objects.all()
 databaseall = models.Database.objects.all()
@@ -265,6 +266,19 @@ def vista_programador(request):
     else:
         num_blogs = models.Articulos.objects.filter(autor=request.user).count()
     
+    modelData = hawkySettings['redes_sociales']
+    parsed_data = json.loads(modelData)
+    
+    gridAreas = parsed_data.get("gridAreas",[])
+    gridA = gridAreas[0]
+    gridR = gridAreas[1]
+    gridC = gridAreas[2]
+    
+    cameraOrbit = parsed_data.get("cameraOrbit",[])
+    orbitH = cameraOrbit[0]
+    orbitV = cameraOrbit[1]
+    orbitD = cameraOrbit[2]
+    
     contexto = {
         'users':users,
         'user':request.user,
@@ -280,9 +294,43 @@ def vista_programador(request):
         'model_3D': hawkySettings['qr_image'],
         'active_areas': hawkySettings['qr_button'],
         'anim_default': hawkySettings['utc_link'],
+        'gridA': gridA,
+        'gridR': gridR,
+        'gridC': gridC,
+        'orbitH': orbitH,
+        'orbitV': orbitV,
+        'orbitD': orbitD,
         **configuraciones,
     }
-     
+
+    # for key, value in parsed_data.items():
+    #     print(f"Clave: {key}")
+    #     print(f"Valor: {value}")
+
+    #     if isinstance(value, list):
+    #         for item in value:
+    #             print(f"  Elemento de la lista: {item}")
+    #             if isinstance(item, list):
+    #                 for subitem in item:
+    #                     print(f"    Sub-Elemento de la lista: {subitem}")
+    
+    # print()
+    # cameraOrbit_data = parsed_data.get("cameraOrbit", [])
+    # for oneData in cameraOrbit_data:
+    #     print(f"Animación: {oneData}")
+            
+    # print()
+    # gridAreas_data = parsed_data.get("gridAreas", [])
+    # for oneData in gridAreas_data:
+    #     print(f"Animación: {oneData}")
+        
+    # print()
+    # animations_data = parsed_data.get("animations", [])
+    # for animation in animations_data:
+    #     print(f"Animación: {animation}")
+    #     for sub_item in animation:
+    #         print(f"  Sub-elemento: {sub_item}")
+    
     if request.method == 'POST':
         response = functions.create_newuser(
             first_name=request.POST.get('first_name'),

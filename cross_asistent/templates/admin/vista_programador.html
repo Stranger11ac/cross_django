@@ -420,7 +420,7 @@
 
               <label for="animationsSelect">Animación Principal:</label>
               <div class="form-outline col-12 col-lg-6 mb-4">
-                <select class="form-select animationsSelect" id="animationsSelect" name="utclink" required>
+                <select class="form-select" id="animationsSelect" name="utclink" required>
                   <option selected hidden value="{{anim_default}}">{{anim_default}} ---</option>
                 </select>
               </div>
@@ -429,7 +429,7 @@
                 <div class="col-4 col-lg-3">Horizontal:</div>
                 <div class="col-6 col-lg-7">
                   <div class="range" data-mdb-range-init>
-                    <input type="range" class="form-range" value="0" min="0" max="360" step="5" id="cameraHorizontal" />
+                    <input type="range" class="form-range" value="{{orbitH}}" min="-180" max="180" step="5" name="camHorizontal" id="cameraHorizontal" />
                   </div>
                 </div>
                 <div class="col-2 pe-0"><span data-range-val="#cameraHorizontal"></span>°</div>
@@ -437,7 +437,7 @@
                 <div class="col-4 col-lg-3">Vertical:</div>
                 <div class="col-6 col-lg-7">
                   <div class="range" data-mdb-range-init>
-                    <input type="range" class="form-range" value="0" min="0" max="360" step="5" id="cameraVertical" />
+                    <input type="range" class="form-range" value="{{orbitV}}" min="0" max="180" step="5" name="camVertical" id="cameraVertical" />
                   </div>
                 </div>
                 <div class="col-2 pe-0"><span data-range-val="#cameraVertical"></span>°</div>
@@ -445,7 +445,7 @@
                 <div class="col-4 col-lg-3">Distancia:</div>
                 <div class="col-6 col-lg-7">
                   <div class="range" data-mdb-range-init>
-                    <input type="range" class="form-range" value="0" min="1" max="25" step="1" id="cameraDistance" />
+                    <input type="range" class="form-range" value="{{orbitD}}" min="0" max="180" step="1" name="camDistance" id="cameraDistance" />
                   </div>
                 </div>
                 <div class="col-2 pe-0"><span data-range-val="#cameraDistance"></span>m</div>
@@ -461,27 +461,28 @@
                   <div class="row">
                     <div class="col-4 col-md-4">
                       <div data-mdb-input-init class="form-outline mb-4">
-                        <input type="number" id="num_areas" name="num_areas" min="1" class="form-control text-end" data-blur-default="min" />
+                        <input type="number" id="num_areas" name="num_areas" min="1" value="{{gridA}}" class="form-control text-end" data-blur-default="min" />
                         <label class="form-label" for="num_areas">Areas:</label>
                       </div>
                     </div>
                     <div class="col-4 col-md-4">
                       <div data-mdb-input-init class="form-outline mb-4">
-                        <input type="number" id="row_areas" name="row_areas" min="1" value="3" class="form-control text-end" data-blur-default="min" />
+                        <input type="number" id="row_areas" name="row_areas" min="1" value="{{gridR}}" class="form-control text-end" data-blur-default="min" />
                         <label class="form-label" for="row_areas">Filas:</label>
                       </div>
                     </div>
                     <div class="col-4 col-md-4">
                       <div data-mdb-input-init class="form-outline mb-4">
-                        <input type="number" id="column_areas" name="column_areas" min="1" value="3" class="form-control text-end" data-blur-default="min" />
-                        <label class="form-label" for="column_areas">Columnas:</label>
+                        <input type="number" id="col_areas" name="col_areas" min="1" value="{{gridC}}" class="form-control text-end"
+                          data-blur-default="min" />
+                        <label class="form-label" for="col_areas">Columnas:</label>
                       </div>
                     </div>
                   </div>
                 </div>
               </div>
               <div class="slide_areas none mb-4">
-                <div class="accordion accordion-flush">
+                <div class="accordion accordion-bg accordion-flush">
                   <div class="accordion-item">
                     <h2 class="accordion-header" id="areasAnimHead">
                       <button data-mdb-collapse-init class="accordion-button p-2" type="button" data-mdb-target="#areasAnimAccordion" aria-expanded="true"
@@ -490,7 +491,7 @@
                       </button>
                     </h2>
                     <div id="areasAnimAccordion" class="accordion-collapse collapse show" aria-labelledby="areasAnimHead">
-                      <div id="areasAnimations" class="accordion-body row px-1"></div>
+                      <div id="areasAnimations" class="accordion-body d-flex flex-column gap_15 px-0 pb-0"></div>
                     </div>
                   </div>
                 </div>

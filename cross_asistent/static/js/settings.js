@@ -444,9 +444,11 @@ $(document).ready(function () {
         });
 
         function setRangeVal() {
-            const getItemRange = $(`[data-range-val]`).attr("data-range-val");
-            const itemRangeValue = $(`${getItemRange}`).val();
-            $(`[data-range-val]`).text(itemRangeValue);
+            $(`[data-range-val]`).each((index, thisObj) => {
+                const getItemRange = $(thisObj).attr("data-range-val");
+                const itemRangeValue = $(`${getItemRange}`).val();
+                $(thisObj).text(itemRangeValue);
+            });
         }
         setRangeVal();
 

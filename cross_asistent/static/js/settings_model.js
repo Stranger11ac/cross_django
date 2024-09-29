@@ -1,84 +1,122 @@
 $(document).ready(function () {
-    // Pausar modelo #########################################
     const modelViewer = $("#asistent_model");
+    const originalAnim = modelViewer.attr("animation-name");
+    let animations;
+    let columns;
+    let rows;
+    modelViewer.on("load", () => (animations = modelViewer[0].availableAnimations));
+
+    // Cambiar Orbita #########################################
+    const cameraHorizontalInput = $("#cameraHorizontal");
+    const cameraVerticalInput = $("#cameraVertical");
+    const cameraDistanceInput = $("#cameraDistance");
+    function changeOrbit() {
+        const valHor = cameraHorizontalInput.val();
+        const valVer = cameraVerticalInput.val();
+        const valDis = cameraDistanceInput.val();
+        if (valHor && valVer && valDis) {
+            modelViewer.attr("camera-orbit", `${valHor}deg ${valVer}deg ${valDis}m`);
+        }
+    }
+    cameraHorizontalInput.on("input", changeOrbit);
+    cameraVerticalInput.on("input", changeOrbit);
+    cameraDistanceInput.on("input", changeOrbit);
+    changeOrbit();
+
+    // Pausar modelo #########################################
     const pauseAnim = $("#pauseAnim");
     let isPaused = false;
-
     pauseAnim.on("click", function () {
         isPaused = !isPaused;
-        if (isPaused) {
-            modelViewer[0].pause(); // Para acceder al método de un elemento DOM con jQuery, usa [0]
-            pauseAnim.attr("title", "Activar Animacion");
-            pauseAnim.html('<i class="fa-solid fa-person-walking fs-20"></i>');
-        } else {
-            modelViewer[0].play(); // Usamos [0] para acceder al método del elemento
-            pauseAnim.attr("title", "Pausar Animacion");
-            pauseAnim.html('<i class="fa-solid fa-universal-access fs-20"></i>');
-        }
+        pauseAnim
+            .attr("title", isPaused ? "Activar Animación" : "Pausar Animación")
+            .html(isPaused ? '<i class="fa-solid fa-person-walking fs-20"></i>' : '<i class="fa-solid fa-universal-access fs-20"></i>');
     });
 
     // Cargar animaciones #########################################
     const reloadModel = $("#reloadModel");
     const modelAreasContainer = $("#model_areas");
     const areasAnimations = $("#areasAnimations");
+    const animationsSelect = $("#animationsSelect");
     let animationsLenght = 0;
-
     function loadModelAndAnimations(url) {
         modelViewer.attr("src", "/static/img/howki-final.glb");
         setTimeout(() => {
             modelViewer.attr("src", url);
-        }, 500);
+        }, 200);
 
-        modelViewer.on("load", addAnimationsList);
+        modelViewer.on("load", function () {
+            animationsLenght = animations.length;
+            $("#num_areas").attr("max", animationsLenght);
+            animationsSelect.empty();
+
+            if (animationsLenght > 0) {
+                $.each(animations, function (index, animation) {
+                    animationsSelect.append(
+                        $("<option>", {
+                            value: animation,
+                            text: animation,
+                        })
+                    );
+                });
+
+                if (originalAnim) {
+                    $(`#animationsSelect option[value="${originalAnim}"]`).attr("selected", true);
+                }
+                $("#modelAreasCont").slideDown();
+            } else {
+                $("#modelAreasCont").slideUp();
+                if (animationsLenght == 0) {
+                    animationsSelect.append("<option hidden selected disabled>No hay animaciones</option>");
+                }
+            }
+
+            isPaused = false;
+            modelViewer[0].play();
+            pauseAnim.attr("title", "Pausar Animacion");
+            pauseAnim.html('<i class="fa-solid fa-universal-access fs-20"></i>');
+        });
     }
-
-    function addAnimationsList() {
-        const animationsSelect = $(".animationsSelect");
+    function addAnimationsAnother() {
         const animOtherSelect = $(".animationsSelect.selectList");
-        const animations = modelViewer[0].availableAnimations;
-        animationsLenght = animations.length;
-        $("#num_areas").attr("max", animationsLenght);
-        animationsSelect.empty();
+        animOtherSelect.empty();
 
         if (animationsLenght > 1) {
             animOtherSelect.append("<option hidden selected disabled>Animaciones:</option>");
             $.each(animations, function (index, animation) {
-                animationsSelect.append(
+                animOtherSelect.append(
                     $("<option>", {
                         value: animation,
                         text: animation,
                     })
                 );
             });
-
-            isPaused = false;
-            modelViewer[0].play();
-            pauseAnim.attr("title", "Pausar Animacion");
-            pauseAnim.html('<i class="fa-solid fa-universal-access fs-20"></i>');
-            $("#modelAreasCont").slideDown();
         } else {
             $("#modelAreasCont").slideUp();
             if (animationsLenght == 0) {
-                animationsSelect.append($("<option>", { text: "No hay animaciones", disabled: true }));
+                animOtherSelect.append("<option hidden selected disabled>No hay animaciones</option>");
             }
         }
     }
-
     $("#fileInput").on("change", function (event) {
         const file = event.target.files[0];
         if (file) {
+            const validExtensions = ["glb", "gltf"];
+            const fileExtension = file.name.split(".").pop().toLowerCase();
+            if (!validExtensions.includes(fileExtension)) {
+                return alertSToast("center", 8000, "error", "Por favor proporciona un archivo tipo GLB o GLTF");
+            }
+
             const url = URL.createObjectURL(file);
             loadModelAndAnimations(url);
         }
     });
-
     reloadModel.on("click", function () {
         const url = $.trim($(this).data("model"));
         if (url) {
             loadModelAndAnimations(url);
         }
     });
-
     $("#animationsSelect").on("change", function () {
         const selectedAnimation = $(this).val();
         if (selectedAnimation) {
@@ -101,71 +139,66 @@ $(document).ready(function () {
     }
 
     // Areas y animaciones #########################################
-    $("#num_areas").on("input", function () {
+    function setAnimAreas() {
         if ($("#modelAreas").is(":checked")) {
             const numAreas = parseInt($("#num_areas").val(), 10);
-            modelAreasContainer.empty();
-            areasAnimations.empty();
-
-            for (let i = 1; i <= numAreas; i++) {
-                areasAnimations.append(
-                    `<div class="col-12 mb-3">
-                        <fieldset class="p-2">
-                            <legend class="px-2 mb-0">Botton ${i}:</legend>
-                            <select class="form-select animationsSelect selectList" data-add-action="#actionAnim${i}">
-                                <option selected hidden disabled>Animacion:</option>
-                            </select>
-                            <div class="row mt-4">
-                                <div class="col-12 col-md-4 mb-4 mb-md-0">
-                                <div data-mdb-input-init class="form-outline">
-                                    <input type="number" id="areaTime" name="areaTime" min="1" value="1.8" class="form-control text-end" />
-                                    <label class="form-label" for="areaTime">Duracion: (s)</label>
-                                </div>
-                                </div>
-                                <div class="col-6 col-md-4">
-                                <div data-mdb-input-init class="form-outline">
-                                    <input type="number" id="areaHeight" name="areaHeight" min="1" value="1" class="form-control text-end" />
-                                    <label class="form-label" for="areaHeight">Alto:</label>
-                                </div>
-                                </div>
-                                <div class="col-6 col-md-4">
-                                <div data-mdb-input-init class="form-outline">
-                                    <input type="number" id="areaWidth" name="areaWidth" min="1" value="1" class="form-control text-end" />
-                                    <label class="form-label" for="areaWidth">Largo:</label>
-                                </div>
-                                </div>
-                            </div>
-                        </fieldset>
-                    </div>`
-                );
-                modelAreasContainer.append(
-                    `<button type="button" id="actionAnim${i}" class="item play-anim-btn d-flex justify-content-center align-items-center fs-20">${i}</button>`
-                );
-                $("[data-mdb-input-init]").each(function () {
-                    new mdb.Input(this);
+            if (numAreas != null || numAreas != "" || numAreas != 0) {
+                modelAreasContainer.empty();
+                areasAnimations.empty();
+                for (let i = 1; i <= numAreas; i++) {
+                    areasAnimations.append(
+                        `<div class="col-12"><fieldset class="p-2"><legend class="px-2 mb-0">Botton ${i}:</legend><select class="form-select animationsSelect selectList" data-add-action="#actionAnim${i}" name="areaAnim"><option selected hidden disabled>Animacion:</option></select><div class="row mt-4"><div class="col-4 col-md-4 mb-4 mb-md-0"><div data-mdb-input-init class="form-outline"><input type="number" id="areaTime${i}" data-anim-btn="#actionAnim${i}" name="areaTime" min="1" value="2" class="form-control text-end" /><label class="form-label" for="areaTime${i}">Duracion: (s)</label></div></div><div class="col-4 col-md-4"><div data-mdb-input-init class="form-outline"><input type="number" id="areaHeight${i}" data-anim-btn="#actionAnim${i}" name="areaHeight" min="1" max="${rows}" value="1" class="form-control text-end" /><label class="form-label" for="areaHeight${i}">Alto:</label></div></div><div class="col-4 col-md-4"><div data-mdb-input-init class="form-outline"><input type="number" id="areaWidth${i}" data-anim-btn="#actionAnim${i}" name="areaWidth" min="1" max="${columns}" value="1" class="form-control text-end" /><label class="form-label" for="areaWidth${i}">Largo:</label></div></div></div></fieldset></div>`
+                    );
+                    modelAreasContainer.append(`<button type="button" id="actionAnim${i}" class="item visible play-anim-btn d-flex justify-content-center align-items-center fs-20">${i}</button>`);
+                    $("[data-mdb-input-init]").each(function () {
+                        new mdb.Input(this);
+                    });
+                }
+                $(".animationsSelect").on("change", function () {
+                    const dataAction = $(this).attr("data-add-action");
+                    const thisVal = $(this).val();
+                    $(dataAction).attr("data-animation", thisVal).addClass("visible");
                 });
-            }
-            addAnimationsList();
-            $(".animationsSelect").on("change", function () {
-                const dataAction = $(this).attr("data-add-action");
-                const thisVal = $(this).val();
-                $(dataAction).attr("data-animation", thisVal).addClass("visible");
-            });
+                $('input[name="areaHeight"]').on("input", function () {
+                    if ($("#modelAreas").is(":checked")) {
+                        const numSpanH = parseInt($(this).val(), 10);
+                        const idAnimBtn = $(this).attr("data-anim-btn");
+                        $(idAnimBtn).removeClass(function (index, className) {
+                            return (className.match(/(^|\s)grid-row_span\S+/g) || []).join(" ");
+                        });
 
-            $(".play-anim-btn").click(function () {
-                let nameAnim = $(this).attr("data-animation");
-                playAnimation(nameAnim);
-            });
+                        $(idAnimBtn).addClass(`grid-row_span-${numSpanH}`);
+                    }
+                });
+                $('input[name="areaWidth"]').on("input", function () {
+                    if ($("#modelAreas").is(":checked")) {
+                        const numSpanW = parseInt($(this).val(), 10);
+                        const idAnimBtn = $(this).attr("data-anim-btn");
+                        $(idAnimBtn).removeClass(function (index, className) {
+                            return (className.match(/(^|\s)grid-col_span\S+/g) || []).join(" ");
+                        });
+
+                        $(idAnimBtn).addClass(`grid-col_span-${numSpanW}`);
+                    }
+                });
+                $(".play-anim-btn").click(function () {
+                    let nameAnim = $(this).attr("data-animation");
+                    playAnimation(nameAnim);
+                });
+                addAnimationsAnother();
+            }
         }
-    });
-    $("#row_areas, #column_areas").on("input", function () {
-        const rows = $("#row_areas").val();
-        const columns = $("#column_areas").val();
+    }
+    function setModelGrid() {
+        rows = $("#row_areas").val();
+        columns = $("#col_areas").val();
         $("#model_areas").css({
             "--grid-row": rows,
             "--grid-column": columns,
         });
-    });
+    }
+    $("#num_areas").on("input", setAnimAreas);
+    $("#row_areas, #col_areas").on("input", setModelGrid);
 
     // Vuelta de registro #########################################
     setTimeout(() => {
@@ -178,5 +211,9 @@ $(document).ready(function () {
                 $(targetId).slideToggle("slow");
             }
         }
+
+        setModelGrid();
+        setAnimAreas();
+        addAnimationsAnother();
     }, 500);
 });

@@ -688,31 +688,57 @@ def settings_update(request):
             idPOST = request.POST.get('setId')
             qrImgPOST = request.FILES.get('qrImage')
             qrButtonPOST = request.POST.get('btnqrpost')
-            qrButton = request.POST.get('btnqr')
+            qrButton = bool(request.POST.get('btnqr'))
             aboutimgfirst = request.FILES.get('firstimage')
             aboutimgsecond = request.FILES.get('secondimage')
             btnyearpost = request.POST.get('btnsYearpost')
-            btnyear_calendar = request.POST.get('btnsYear')
+            btnyear_calendar = bool(request.POST.get('btnsYear'))
             copyryear = request.POST.get('cr_year')
             utclink = request.POST.get('utclink')
+            redeslinks = request.POST.get('redeslinks')
             firstsection = request.POST.get('firstsection')
             secondsection = request.POST.get('secondsection')
             abouttext = request.POST.get('contenidoWord')
 
             if not idPOST:
                 idPOST = '1'
+            else:
+                valH = request.POST.get('camHorizontal')
+                valV = request.POST.get('camVertical')
+                valD = request.POST.get('camDistance')
+                numAreas = request.POST.get('num_areas')
+                rowAreas = request.POST.get('row_areas')
+                colAreas = request.POST.get('column_areas')
+                areaAnim = request.POST.getlist('areaAnim')
+                areaTime = request.POST.getlist('areaTime')
+                areaWidth = request.POST.getlist('areaWidth')
+                areaHeight = request.POST.getlist('areaHeight')
+                
+                modelData = {}
+                cameraOrbit = "cameraOrbit"
+                modelData[cameraOrbit] = [valH, valV, valD]
+                
+                if qrButton:
+                    gridAreas = "gridAreas"
+                    modelData[gridAreas] = [numAreas, rowAreas, colAreas]
+                    animations = "animations"
+                    modelData[animations] = [areaAnim, areaTime, areaWidth, areaHeight]
+                    
+                redeslinks = json.dumps(modelData)
             
             config = get_object_or_404(models.Configuraciones, id=idPOST)
             if qrImgPOST:
                 config.qr_image = qrImgPOST
             if qrButtonPOST:
-                config.qr_button = True if qrButton else False
+                config.qr_button = qrButton
             if btnyearpost:
-                config.calendar_btnsYear = True if btnyear_calendar else False
+                config.calendar_btnsYear = btnyear_calendar
             if copyryear:
                 config.copyright_year = copyryear
             if utclink:
                 config.utc_link = utclink
+            if redeslinks:
+                config.redes_sociales = redeslinks
             if firstsection:
                 config.about_text_first = abouttext
             if secondsection:
