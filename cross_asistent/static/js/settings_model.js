@@ -116,10 +116,10 @@ $(document).ready(function () {
                                 <option selected hidden disabled>Animacion:</option>
                             </select>
                             <div class="row mt-4">
-                                <div class="col-12 col-md-4">
+                                <div class="col-12 col-md-4 mb-4 mb-md-0">
                                 <div data-mdb-input-init class="form-outline">
                                     <input type="number" id="areaTime" name="areaTime" min="1" value="1.8" class="form-control text-end" />
-                                    <label class="form-label" for="areaTime">Duracion:(s)</label>
+                                    <label class="form-label" for="areaTime">Duracion: (s)</label>
                                 </div>
                                 </div>
                                 <div class="col-6 col-md-4">
@@ -141,6 +141,9 @@ $(document).ready(function () {
                 modelAreasContainer.append(
                     `<button type="button" id="actionAnim${i}" class="item play-anim-btn d-flex justify-content-center align-items-center fs-20">${i}</button>`
                 );
+                $("[data-mdb-input-init]").each(function () {
+                    new mdb.Input(this);
+                });
             }
             addAnimationsList();
             $(".animationsSelect").on("change", function () {

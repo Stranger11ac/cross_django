@@ -436,6 +436,20 @@ $(document).ready(function () {
             }
         });
 
+        // Valor del input range ####################
+        $('input[type="range"]').on("input", function () {
+            const thisId = $(this).attr("id");
+            const thisValue = $(this).val();
+            $(`[data-range-val="#${thisId}"]`).text(thisValue);
+        });
+
+        function setRangeVal() {
+            const getItemRange = $(`[data-range-val]`).attr("data-range-val");
+            const itemRangeValue = $(`${getItemRange}`).val();
+            $(`[data-range-val]`).text(itemRangeValue);
+        }
+        setRangeVal();
+
         //
         //
         //

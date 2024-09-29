@@ -1274,6 +1274,22 @@ form fieldset legend {
     line-height: unset !important;
 }
 
+/* Rango */
+.form-range::-webkit-range-thumb,
+.form-range::-moz-range-thumb {
+    background-color: var(--var-detail_flat);
+}
+
+.form-range:focus::-webkit-slider-thumb,
+.form-range:focus::-moz-range-thumb {
+    box-shadow: 0 0 0 1px #fff, 0 0 0 .25rem var(--var-detail_flat) !important;
+}
+
+.range {
+    --mdb-range-thumb-border-radius: 50% 50% 50% 3px;
+    --mdb-range-thumb-background: var(--var-detail_flat);
+}
+
 /* SWITCH */
 .switch {
     --var-height: 40px;
