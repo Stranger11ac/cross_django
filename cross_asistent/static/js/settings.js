@@ -139,15 +139,15 @@ $(document).ready(function () {
         });
 
         // Resetear formulario / vaciar todo el formulario
-        $("[data-reset_form]").on("click", function () {
+        $("[data-reset_form]").on("click", resetForm);
+        function resetForm() {
             var formId = $(this).data("reset_form");
             var formElement = $("#" + formId)[0];
-            setTimeout(() => {
-                if (formElement) {
-                    formElement.reset();
-                }
-            }, 1500);
-        });
+            if (formElement) {
+                formElement.reset();
+                setRangeVal();
+            }
+        }
 
         // Estilo Texto Google ####################################
         function colorizeGoogle() {
@@ -388,21 +388,14 @@ $(document).ready(function () {
                         $("#formularioArticulo #titulo").addClass("active").val(data.titulo);
                         const blogContent = data.contenido;
                         tinymce.get("mainTiny").setContent(blogContent);
-                        $("#formularioArticulo .blogSubmit").html(
-                            'Modificar <i class="fa-regular fa-paper-plane ms-1"></i>'
-                        );
+                        $("#formularioArticulo .blogSubmit").html('Modificar <i class="fa-regular fa-paper-plane ms-1"></i>');
                         $("#formularioArticulo .btnModal").slideDown("fast");
                         $("#blogDelete #blogDeleteTitle").text(data.titulo);
                         $("#blogDelete #blogIdDelete").val(blogIdGet);
                     },
                     error: function (error) {
                         console.error("Error al obtener datos: " + error);
-                        alertSToast(
-                            "center",
-                            8000,
-                            "error",
-                            "UPS! 😯🤔🧐<br> hubo un error al obtener los datos, consulte la consola."
-                        );
+                        alertSToast("center", 8000, "error", "UPS! 😯🤔🧐<br> hubo un error al obtener los datos, consulte la consola.");
                     },
                 });
             } else {
@@ -556,36 +549,33 @@ function jsonSubmit(e) {
         .then((data) => {
             dataMessage = data.message;
             if (data.success == true) {
-                let dataIcon = "success";
+                let dataIcon = data.icon || "success";
+                let dataPosition = data.position || "center";
+
                 function dataRedirect() {
                     window.location.href = data.redirect_url;
                 }
 
-                if (data.icon) {
-                    dataIcon = data.icon;
-                }
-
-                dataPosition = "center";
-                if (data.position) {
-                    dataPosition = data.position;
-                }
-
-                if (data.functions == "singin") {
-                    return dataRedirect();
-                } else if (data.functions == "reload") {
-                    var alertfunction = function () {
-                        location.reload();
-                    };
-                } else if (data.functions == "redirect") {
-                    var alertfunction = function () {
-                        dataRedirect();
-                    };
+                let alertfunction;
+                switch (data.functions) {
+                    case "singin":
+                        return dataRedirect();
+                    case "reload":
+                        alertfunction = () => location.reload();
+                        break;
+                    case "redirect":
+                        alertfunction = dataRedirect;
+                        break;
+                    case "reset":
+                        alertfunction = () => thisForm.reset();
+                        break;
                 }
 
                 setTimeout(() => thisForm.querySelector('button[type="submit"]').removeAttribute("disabled"), 8000);
-                alertSToast(dataPosition, timerOut, dataIcon, dataMessage, alertfunction);
                 const passwordInputs = document.querySelectorAll('input[type="password"]');
                 passwordInputs.forEach((input) => (input.value = ""));
+
+                alertSToast(dataPosition, timerOut, dataIcon, dataMessage, alertfunction);
             } else if (data.success == false) {
                 console.waning(dataMessage);
                 if (data.valSelector) {
@@ -695,9 +685,7 @@ if (dropArea) {
 
             const imageItem = `<div id="img_${imgID}" class="image-item"><img src="${
                 reader.result
-            }" class="img-rounded unfocus-5"><div class="fs-8"><p class="name-file m-0">${fileName}</p><p class="size-file m-0">(${fileType}) ${formatBytes(
-                file.size
-            )}</p></div></div>`;
+            }" class="img-rounded unfocus-5"><div class="fs-8"><p class="name-file m-0">${fileName}</p><p class="size-file m-0">(${fileType}) ${formatBytes(file.size)}</p></div></div>`;
             imageList.insertAdjacentHTML("beforeend", imageItem);
 
             setTimeout(() => {

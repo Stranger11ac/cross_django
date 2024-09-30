@@ -66,11 +66,12 @@ def fqt_questions(request):
         logout(request)
     
     configuraciones = obtener_configuraciones(1)
-    categoria_Preguntas = models.Categorias.objects.get(categoria="Preguntas")
-    questall = models.Database.objects.filter(frecuencia__gt=0, categoria=categoria_Preguntas).order_by('-frecuencia')
+    categoria_Preguntas = get_object_or_404(models.Categorias, categoria="Preguntas")
+    questall = models.Database.objects.filter(frecuencia__gt=0, categoria=categoria_Preguntas)
     return render(request, 'frecuentes.html', {
         'active_page': 'faq',
         'quest_all': questall,
+        'quest_top': questall.order_by('-frecuencia')[:8],
         'copyright_year': configuraciones['copyright_year'],
         'utc_link': configuraciones['utc_link'],
     })
@@ -84,7 +85,7 @@ def fqt_questions_send(request):
             pregunta = models.Preguntas(pregunta=preguntaPOST, descripcion=descripcionPOST)
             pregunta.save()
 
-            return JsonResponse({'success': True, 'message': 'Gracias por tu pregunta. ❤️💕😁👍 <br>Te responderemos lo más pronto posible. 😁😊🫡'}, status=200)
+            return JsonResponse({'success': True, 'functions':'reset', 'message': 'Gracias por tu pregunta. ❤️💕😁👍 <br>Te responderemos lo más pronto posible. 😁😊🫡'}, status=200)
         except Exception as e:
             print(f'Hay un error en: {e}')
             return JsonResponse({'error':True, 'success': False, 'message': 'Ups! 😥😯 hubo un error y tu pregunta no se pudo registrar. Por favor intente de nuevo más tarde.'}, status=400)
@@ -269,16 +270,6 @@ def vista_programador(request):
     modelData = hawkySettings['redes_sociales']
     parsed_data = json.loads(modelData)
     
-    gridAreas = parsed_data.get("gridAreas",[])
-    gridA = gridAreas[0]
-    gridR = gridAreas[1]
-    gridC = gridAreas[2]
-    
-    cameraOrbit = parsed_data.get("cameraOrbit",[])
-    orbitH = cameraOrbit[0]
-    orbitV = cameraOrbit[1]
-    orbitD = cameraOrbit[2]
-    
     contexto = {
         'users':users,
         'user':request.user,
@@ -292,44 +283,9 @@ def vista_programador(request):
         'num_preguntas':databaseall.count(),
         'num_blogs': num_blogs,
         'model_3D': hawkySettings['qr_image'],
-        'active_areas': hawkySettings['qr_button'],
         'anim_default': hawkySettings['utc_link'],
-        'gridA': gridA,
-        'gridR': gridR,
-        'gridC': gridC,
-        'orbitH': orbitH,
-        'orbitV': orbitV,
-        'orbitD': orbitD,
         **configuraciones,
     }
-
-    # for key, value in parsed_data.items():
-    #     print(f"Clave: {key}")
-    #     print(f"Valor: {value}")
-
-    #     if isinstance(value, list):
-    #         for item in value:
-    #             print(f"  Elemento de la lista: {item}")
-    #             if isinstance(item, list):
-    #                 for subitem in item:
-    #                     print(f"    Sub-Elemento de la lista: {subitem}")
-    
-    # print()
-    # cameraOrbit_data = parsed_data.get("cameraOrbit", [])
-    # for oneData in cameraOrbit_data:
-    #     print(f"Animación: {oneData}")
-            
-    # print()
-    # gridAreas_data = parsed_data.get("gridAreas", [])
-    # for oneData in gridAreas_data:
-    #     print(f"Animación: {oneData}")
-        
-    # print()
-    # animations_data = parsed_data.get("animations", [])
-    # for animation in animations_data:
-    #     print(f"Animación: {animation}")
-    #     for sub_item in animation:
-    #         print(f"  Sub-elemento: {sub_item}")
     
     if request.method == 'POST':
         response = functions.create_newuser(

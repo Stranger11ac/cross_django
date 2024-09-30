@@ -384,10 +384,10 @@
     <div class="mt-4">
       <div class="card">
         <div class="card-body mx-2">
-          <h3 class="mb-4 text-center">Configuraciones del <span class="text_detail">Modelo 3D</span></h3>
+          <h3 class="mb-4 text-center">Configurar <span class="text_detail">Modelo 3D</span></h3>
 
           <!-- formulario -->
-          <form action="{% url 'update_settings' %}" method="post" class="row px-0" data-submit-form>
+          <form id="hawkySettings" action="{% url 'update_settings' %}" method="post" class="row px-0" data-submit-form>
             {% csrf_token %}
             <div class="col-12 col-lg-6">
               <model-viewer id="asistent_model" class="min_h400 col-12 rounded" tone-mapping="neutral" camera-orbit="15deg 70deg 5m"
@@ -400,9 +400,10 @@
               <!-- Acciones -->
               <div class="d-flex justify-content-center gap_20 col-12 my-4">
                 <button type="button" class="btn bg_purple-blue btn-floating text-white p-4" id="pauseAnim" title="Pausar Animación">
-                  <i class="fa-solid fa-universal-access fs-20"></i>
+                  <i class="fa-regular fa-circle-pause fs-20"></i>
                 </button>
-                <button type="button" class="btn bg_purple-blue btn-floating text-white p-4" data-model="{{model_3D}}" id="reloadModel" title="Recargar Modelo">
+                <button type="button" class="btn bg_purple-blue btn-floating text-white p-4" data-model="{{model_3D}}" data-reset_form="hawkySettings"
+                  id="reloadModel" title="Recargar Modelo">
                   <i class="fa-solid fa-arrows-rotate fs-20"></i>
                 </button>
                 <div>
@@ -421,7 +422,7 @@
               <label for="animationsSelect">Animación Principal:</label>
               <div class="form-outline col-12 col-lg-6 mb-4">
                 <select class="form-select" id="animationsSelect" name="utclink" required>
-                  <option selected hidden value="{{anim_default}}">{{anim_default}} ---</option>
+                  <option selected hidden value=""></option>
                 </select>
               </div>
 
@@ -429,7 +430,7 @@
                 <div class="col-4 col-lg-3">Horizontal:</div>
                 <div class="col-6 col-lg-7">
                   <div class="range" data-mdb-range-init>
-                    <input type="range" class="form-range" value="{{orbitH}}" min="-180" max="180" step="5" name="camHorizontal" id="cameraHorizontal" />
+                    <input type="range" class="form-range" value="" min="-180" max="180" step="5" name="camHorizontal" id="cameraHorizontal" />
                   </div>
                 </div>
                 <div class="col-2 pe-0"><span data-range-val="#cameraHorizontal"></span>°</div>
@@ -437,7 +438,7 @@
                 <div class="col-4 col-lg-3">Vertical:</div>
                 <div class="col-6 col-lg-7">
                   <div class="range" data-mdb-range-init>
-                    <input type="range" class="form-range" value="{{orbitV}}" min="0" max="180" step="5" name="camVertical" id="cameraVertical" />
+                    <input type="range" class="form-range" value="" min="0" max="180" step="5" name="camVertical" id="cameraVertical" />
                   </div>
                 </div>
                 <div class="col-2 pe-0"><span data-range-val="#cameraVertical"></span>°</div>
@@ -445,7 +446,7 @@
                 <div class="col-4 col-lg-3">Distancia:</div>
                 <div class="col-6 col-lg-7">
                   <div class="range" data-mdb-range-init>
-                    <input type="range" class="form-range" value="{{orbitD}}" min="0" max="180" step="1" name="camDistance" id="cameraDistance" />
+                    <input type="range" class="form-range" value="" min="0" max="180" step="1" name="camDistance" id="cameraDistance" />
                   </div>
                 </div>
                 <div class="col-2 pe-0"><span data-range-val="#cameraDistance"></span>m</div>
@@ -461,20 +462,19 @@
                   <div class="row">
                     <div class="col-4 col-md-4">
                       <div data-mdb-input-init class="form-outline mb-4">
-                        <input type="number" id="num_areas" name="num_areas" min="1" value="{{gridA}}" class="form-control text-end" data-blur-default="min" />
+                        <input type="number" id="num_areas" name="num_areas" min="1" value="" class="form-control text-end" data-blur-default="min" />
                         <label class="form-label" for="num_areas">Areas:</label>
                       </div>
                     </div>
                     <div class="col-4 col-md-4">
                       <div data-mdb-input-init class="form-outline mb-4">
-                        <input type="number" id="row_areas" name="row_areas" min="1" value="{{gridR}}" class="form-control text-end" data-blur-default="min" />
+                        <input type="number" id="row_areas" name="row_areas" min="1" value="" class="form-control text-end" data-blur-default="min" />
                         <label class="form-label" for="row_areas">Filas:</label>
                       </div>
                     </div>
                     <div class="col-4 col-md-4">
                       <div data-mdb-input-init class="form-outline mb-4">
-                        <input type="number" id="col_areas" name="col_areas" min="1" value="{{gridC}}" class="form-control text-end"
-                          data-blur-default="min" />
+                        <input type="number" id="col_areas" name="col_areas" min="1" value="" class="form-control text-end" data-blur-default="min" />
                         <label class="form-label" for="col_areas">Columnas:</label>
                       </div>
                     </div>
@@ -956,4 +956,9 @@
 <script src="{% static 'tinymce/tinymce.min.js' %}"></script>
 <script src="{% static 'js/settings_tinymce.js' %}"></script>
 <script src="{% static 'js/settings_model.js' %}"></script>
+<script>
+  $('input[type="range"]').on("reset", function () {
+    alertSToast('top', 7000, 'info', 'change');
+  })
+</script>
 {% endblock %}
