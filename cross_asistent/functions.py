@@ -691,7 +691,7 @@ def settings_update(request):
             qrButton = bool(request.POST.get('btnqr'))
             aboutimgfirst = request.FILES.get('firstimage')
             aboutimgsecond = request.FILES.get('secondimage')
-            btnyearpost = request.POST.get('btnsYearpost')
+            btnyearPOST = request.POST.get('btnsYearpost')
             btnyear_calendar = bool(request.POST.get('btnsYear'))
             copyryear = request.POST.get('cr_year')
             utclink = request.POST.get('utclink')
@@ -731,7 +731,7 @@ def settings_update(request):
                 config.qr_image = qrImgPOST
             if qrButtonPOST:
                 config.qr_button = qrButton
-            if btnyearpost:
+            if btnyearPOST:
                 config.calendar_btnsYear = btnyear_calendar
             if copyryear:
                 config.copyright_year = copyryear
@@ -750,7 +750,7 @@ def settings_update(request):
                 
             config.save()
             
-            return JsonResponse({'success': True, 'message': f'Configuraciones Actualizadas', 'position':'top-end'}, status=200)
+            return JsonResponse({'success': True, 'message': f'Configuraciones Actualizadas', 'position':'top-end', 'functions':'submit'}, status=200)
         except Exception as e:
             return JsonResponse({'success': False, 'message': f'Ocurrio un error. {str(e)}'}, status=404)
     return JsonResponse({'success': False, 'message': 'Acción no permitida.'}, status=400)

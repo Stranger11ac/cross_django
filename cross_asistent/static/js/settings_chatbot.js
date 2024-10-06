@@ -27,18 +27,24 @@ const rateInput = document.getElementById("rate_input");
 $(document).ready(function () {
     try {
         // abrir menu del asistente ##############################################################
-        $(".controls_btn_microphone").click(() => {
-            $(".asistent_group").addClass("open open_controls bg-body-tertiary");
+        recVoice.click(() => {
+            $(".asistent_group").addClass("open open_controls");
             $(".btn_controls").addClass("text-white");
+            changeMicrophone();
+            setTimeout(() => {
+                $(".btn_controls").addClass("readyRecVoice");
+            }, 1100);
+        });
+        function changeMicrophone() {
             if (microphoneSpeech) {
                 $("#btn_controls_icon").removeClass("fa-comment").addClass("fa-microphone");
             } else {
                 $("#btn_controls_icon").removeClass("fa-comment").addClass("fa-microphone-slash");
             }
-            setTimeout(() => {
-                $(".btn_controls").addClass("readyRecVoice");
-            }, 1100);
-        });
+        }
+        if ($(".asistent_group").hasClass("open")) {
+            changeMicrophone();
+        }
         $(".toggle_controls").click(() => {
             microphonerecord = false;
             $(".asistent_group.open").toggleClass("close_controls open_keyboard open_controls");
@@ -49,7 +55,7 @@ $(document).ready(function () {
             }
         });
         $(".controls_btn_close").click(() => {
-            $(".asistent_group").removeClass("open open_controls close_controls open_keyboard bg-body-tertiary");
+            $(".asistent_group").removeClass("open open_controls close_controls open_keyboard");
             $(".btn_controls").removeClass("readyRecVoice");
             $("#btn_controls_icon").addClass("fa-comment").removeClass("fa-microphone");
             if (recognizing) {
@@ -124,12 +130,7 @@ try {
         recognition.onerror = function (event) {
             console.error("Error de reconocimiento:", event.error);
             if (event.error === "not-allowed") {
-                alertSToast(
-                    "top",
-                    8000,
-                    "error",
-                    "Permiso de micrófono denegado. Por favor, permite el acceso al micrófono."
-                );
+                alertSToast("top", 8000, "error", "Permiso de micrófono denegado. Por favor, permite el acceso al micrófono.");
             } else if (event.error === "no-speech") {
                 alertSToast("top", 8000, "error", "No se detectó ninguna voz. Por favor, intenta de nuevo.");
             } else if (event.error === "network") {
@@ -246,11 +247,11 @@ if ("speechSynthesis" in window) {
 
     function ttsCustom(valuetext) {
         if (isSpeaking) {
-            $(".speak_btn i").addClass("fa-regular fa-circle-play").removeClass("fa-solid fa-circle-pause");
+            $(".speak_btn i").addClass("fa-volume-high").removeClass("fa-volume-xmark");
             synth.cancel();
             isSpeaking = false;
         } else {
-            $(".speak_btn i").removeClass("fa-regular fa-circle-play").addClass("fa-solid fa-circle-pause");
+            $(".speak_btn i").removeClass("fa-volume-high").addClass("fa-volume-xmark");
 
             valuetext = removeEmojis(valuetext);
             utterance = new SpeechSynthesisUtterance(valuetext);
@@ -263,7 +264,7 @@ if ("speechSynthesis" in window) {
 
             utterance.onend = () => {
                 isSpeaking = false;
-                $(".speak_btn i").addClass("fa-regular fa-circle-play").removeClass("fa-solid fa-circle-pause");
+                $(".speak_btn i").addClass("fa-volume-high").removeClass("fa-volume-xmark");
             };
         }
     }
@@ -318,7 +319,7 @@ function chatSubmit(e) {
     }, 200);
 
     if (microphonerecord) {
-        $(".speak_btn i").removeClass("fa-regular fa-circle-play").addClass("fa-solid fa-spinner fa-spin-pulse");
+        $(".speak_btn i").removeClass("fa-volume-high").addClass("fa-spinner fa-spin-pulse");
     }
 
     fetch(chatForm.action, {
@@ -341,9 +342,7 @@ function chatSubmit(e) {
         .then((data) => {
             if (data.success) {
                 if (microphonerecord) {
-                    $(".speak_btn i")
-                        .removeClass("fa-regular fa-circle-play fa-spinner fa-spin-pulse")
-                        .addClass("fa-solid fa-circle-pause");
+                    $(".speak_btn i").removeClass("fa-volume-high fa-spinner fa-spin-pulse").addClass("fa-volume-xmark");
                 }
                 displayChatbotResponse(data.answer);
             } else {
@@ -379,7 +378,7 @@ function displayChatbotResponse(varAnswer) {
     }
 
     if (dataRedirigir && dataRedirigir.trim() !== "") {
-        btnRedir = `<br><br> <a class="btn bg_detail mb-2 max_w300" ${btnBlanck} href="${dataRedirigir}" >Ver Más <i class="fa-solid fa-arrow-up-right-from-square ms-1"></i></a>`;
+        btnRedir = `<br><br> <a class="btn bg_detail mb-2 max_w300" ${btnBlanck} href="${dataRedirigir}" >Ver Más <i class="fa-arrow-up-right-from-square ms-1"></i></a>`;
     }
 
     lastText = varAnswer.informacion;

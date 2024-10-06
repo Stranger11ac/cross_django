@@ -16,28 +16,30 @@ categoriasall = models.Categorias.objects.all()
 settingsall = models.Configuraciones.objects.all()
 questions_all = models.Preguntas.objects.all().order_by('-id')
 categoriasFilter = models.Categorias.objects.exclude(categoria__in=['Mapa', 'Calendario'])
+idConfig = 1
+idHawky = 2
 
 def obtener_configuraciones(questID):
     oneconfig = get_object_or_404(models.Configuraciones, pk=questID)
     return {
-        'qr_image': oneconfig.qr_image.url,
-        'qr_button': oneconfig.qr_button,
-        'redes_sociales': oneconfig.redes_sociales,
-        'copyright_year': oneconfig.copyright_year,
-        'utc_link': oneconfig.utc_link,
-        'calendar_btnsYear': oneconfig.calendar_btnsYear,
-        'about_img_first': oneconfig.about_img_first.url,
-        'about_text_first': oneconfig.about_text_first,
-        'about_img_second': oneconfig.about_img_second.url,
-        'about_text_second': oneconfig.about_text_second,
+        f'qr_image_{questID}': oneconfig.qr_image.url,
+        f'qr_button_{questID}': oneconfig.qr_button,
+        f'redes_sociales_{questID}': oneconfig.redes_sociales,
+        f'copyright_year_{questID}': oneconfig.copyright_year,
+        f'utc_link_{questID}': oneconfig.utc_link,
+        f'calendar_btnsYear_{questID}': oneconfig.calendar_btnsYear,
+        f'about_img_first_{questID}': oneconfig.about_img_first.url,
+        f'about_text_first_{questID}': oneconfig.about_text_first,
+        f'about_img_second_{questID}': oneconfig.about_img_second.url,
+        f'about_text_second_{questID}': oneconfig.about_text_second,
     }
 
 
 def index(request):
     if not request.user.is_staff:
         logout(request)
-    configuraciones = obtener_configuraciones(1)
-    hawkySettings = obtener_configuraciones(2)
+    configuraciones = obtener_configuraciones(idConfig)
+    hawkySettings = obtener_configuraciones(idHawky)
     banners_all = models.Banners.objects.filter(visible=True)
     banners_modificados = []
 
@@ -54,11 +56,12 @@ def index(request):
     return render(request, 'index.html', {
         'active_page': 'inicio',
         'banners': banners_modificados,
-        'img_qr': configuraciones['qr_image'],
-        'btn_qr': configuraciones['qr_button'],
-        'model_3D': hawkySettings['qr_image'],
-        'active_areas': hawkySettings['qr_button'],
-        'anim_default': hawkySettings['utc_link'],
+        'img_qr': configuraciones[f'qr_image_{idConfig}'],
+        'btn_qr': configuraciones[f'qr_button_{idConfig}'],
+        'model_3D': hawkySettings[f'qr_image_{idHawky}'],
+        'active_areas': hawkySettings[f'qr_button_{idHawky}'],
+        'anim_default': hawkySettings[f'utc_link_{idHawky}'],
+        'hawkyAlways': hawkySettings[f'calendar_btnsYear_{idHawky}'],
     })
 
 def fqt_questions(request):
@@ -72,11 +75,11 @@ def fqt_questions(request):
         'active_page': 'faq',
         'quest_all': questall,
         'quest_top': questall.order_by('-frecuencia')[:8],
-        'copyright_year': configuraciones['copyright_year'],
-        'utc_link': configuraciones['utc_link'],
+        'copyright_year': configuraciones['copyright_year_1'],
+        'utc_link': configuraciones['utc_link_1'],
     })
 
-def fqt_questions_send(request):    
+def fqt_questions_send(request):
     if request.method == "POST":
         try:
             preguntaPOST = request.POST.get('pregunta')
@@ -94,7 +97,7 @@ def blogs(request):
     if not request.user.is_staff:
         logout(request)
     
-    configuraciones = obtener_configuraciones(1)
+    configuraciones = obtener_configuraciones(idConfig)
     blogs = models.Articulos.objects.all().order_by('-id')
     blogs_modificados = []
 
@@ -118,15 +121,15 @@ def blogs(request):
     return render(request, 'blogs_all.html', {
         'blogs_all': blogs_modificados,
         'active_page': 'blog',
-        'copyright_year': configuraciones['copyright_year'],
-        'utc_link': configuraciones['utc_link'],
+        'copyright_year': configuraciones[f'copyright_year_{idConfig}'],
+        'utc_link': configuraciones[f'utc_link_{idConfig}'],
     })
 
 def mostrar_blog(request, Articulos_id):
     if not request.user.is_staff:
         logout(request)
     
-    configuraciones = obtener_configuraciones(1)
+    configuraciones = obtener_configuraciones(idConfig)
     
     articulo = get_object_or_404(models.Articulos, pk=Articulos_id)
     autor_username = articulo.autor
@@ -160,20 +163,20 @@ def mostrar_blog(request, Articulos_id):
         'foto_autor': foto_autor,
         'firma_autor': firma_autor,
         'encabezado_url': encabezado_url,
-        'copyright_year': configuraciones['copyright_year'],
-        'utc_link': configuraciones['utc_link'],
+        'copyright_year': configuraciones[f'copyright_year_{idConfig}'],
+        'utc_link': configuraciones[f'utc_link_{idConfig}'],
     })
 
 def calendario(request):
     if not request.user.is_staff:
         logout(request)
     
-    configuraciones = obtener_configuraciones(1)
+    configuraciones = obtener_configuraciones(idConfig)
     return render(request, 'calendario.html', {
         'active_page': 'calendario',
-        'copyright_year': configuraciones['copyright_year'],
-        'utc_link': configuraciones['utc_link'],
-        'calendar_btnsYear': True if configuraciones['calendar_btnsYear'] else False,
+        'copyright_year': configuraciones[f'copyright_year_{idConfig}'],
+        'utc_link': configuraciones[f'utc_link_{idConfig}'],
+        'calendar_btnsYear': bool(configuraciones[f'calendar_btnsYear_{idConfig}']),
     })
 
 def map(request):
@@ -241,12 +244,12 @@ def singinpage(request):
         else:
             return JsonResponse({'success': False, 'functions': 'singin', 'message': 'Usuario no registrado 😅. Verifica tu nombre de usuario o contraseña'}, status=400)
     else:
-        configuraciones = obtener_configuraciones(1)
+        configuraciones = obtener_configuraciones(idConfig)
         logout(request)
         return render(request, 'singinup.html', {
             'active_page': 'singin',
-            'copyright_year': configuraciones['copyright_year'],
-            'utc_link': configuraciones['utc_link'],
+            'copyright_year': configuraciones[f'copyright_year_{idConfig}'],
+            'utc_link': configuraciones[f'utc_link_{idConfig}'],
         })
 
 @never_cache
@@ -267,7 +270,7 @@ def vista_programador(request):
     else:
         num_blogs = models.Articulos.objects.filter(autor=request.user).count()
     
-    modelData = hawkySettings['redes_sociales']
+    modelData = hawkySettings['redes_sociales_2']
     parsed_data = json.loads(modelData)
     
     contexto = {
@@ -282,9 +285,10 @@ def vista_programador(request):
         'preguntas_count':questions_all.count(),
         'num_preguntas':databaseall.count(),
         'num_blogs': num_blogs,
-        'model_3D': hawkySettings['qr_image'],
-        'anim_default': hawkySettings['utc_link'],
         **configuraciones,
+        **hawkySettings,
+        'copyright_year': configuraciones[f'copyright_year_{idConfig}'],
+        'utc_link': configuraciones[f'utc_link_{idConfig}'],
     }
     
     if request.method == 'POST':
@@ -325,7 +329,7 @@ def ver_perfil(request):
 # Banners ----------------------------------------------------------
 @login_required
 @never_cache
-def banners_page(request):    
+def banners_page(request):
     if request.method == 'POST':
         tituloPOST = request.POST.get('contenidoWord')
         soloImagenPOST = request.POST.get('soloImagen')

@@ -571,7 +571,7 @@ function jsonSubmit(e) {
                         break;
                 }
 
-                setTimeout(() => thisForm.querySelector('button[type="submit"]').removeAttribute("disabled"), 8000);
+                setTimeout(() => thisForm.querySelector('button[type="submit"]').removeAttribute("disabled"), 10000);
                 const passwordInputs = document.querySelectorAll('input[type="password"]');
                 passwordInputs.forEach((input) => (input.value = ""));
 
@@ -586,10 +586,9 @@ function jsonSubmit(e) {
                 alertSToast("top", timerOut + 6000, "warning", dataMessage, () => {
                     thisForm.querySelector('button[type="submit"]').removeAttribute("disabled");
                 });
-            } else {
-                if (data.functions == "submit") {
-                    thisForm.querySelector('button[type="submit"]').removeAttribute("disabled");
-                }
+            }
+            if (data.functions == "submit") {
+                thisForm.querySelector('button[type="submit"]').removeAttribute("disabled");
             }
         })
         .catch((error) => {

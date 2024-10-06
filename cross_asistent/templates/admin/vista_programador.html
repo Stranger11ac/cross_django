@@ -385,13 +385,12 @@
       <div class="card">
         <div class="card-body mx-2">
           <h3 class="mb-4 text-center">Configurar <span class="text_detail">Modelo 3D</span></h3>
-
           <!-- formulario -->
           <form id="hawkySettings" action="{% url 'update_settings' %}" method="post" class="row px-0" data-submit-form>
             {% csrf_token %}
             <div class="col-12 col-lg-6">
               <model-viewer id="asistent_model" class="min_h400 col-12 rounded" tone-mapping="neutral" camera-orbit="15deg 70deg 5m"
-                poster="{% static 'img/hawky.0011.webp' %}" loading="eager" shadow-intensity="1" animation-name="{{anim_default}}" autoplay>
+                poster="{% static 'img/hawky.0011.webp' %}" loading="eager" shadow-intensity="1" animation-name="{{utc_link_2}}" autoplay>
                 <!-- Areas -->
                 <div id="model_areas" class="model_areas slide_areas none" style="--grid-row: 3;--grid-column: 3;">
                 </div>
@@ -400,9 +399,9 @@
               <!-- Acciones -->
               <div class="d-flex justify-content-center gap_20 col-12 my-4">
                 <button type="button" class="btn bg_purple-blue btn-floating text-white p-4" id="pauseAnim" title="Pausar Animación">
-                  <i class="fa-regular fa-circle-pause fs-20"></i>
+                  <i class="fa-solid fa-circle-pause fs-20"></i>
                 </button>
-                <button type="button" class="btn bg_purple-blue btn-floating text-white p-4" data-model="{{model_3D}}" data-reset_form="hawkySettings"
+                <button type="button" class="btn bg_purple-blue btn-floating text-white p-4" data-model="{{qr_image_2}}" data-reset_form="hawkySettings"
                   id="reloadModel" title="Recargar Modelo">
                   <i class="fa-solid fa-arrows-rotate fs-20"></i>
                 </button>
@@ -454,7 +453,7 @@
 
               <div class="col-12">
                 <div class="mb-4 ps-1 none" id="modelAreasCont">
-                  <input class="form-check-input input_change" type="checkbox" {% if active_areas %}checked{% endif %} id="modelAreas" name="btnqr"
+                  <input class="form-check-input input_change" type="checkbox" {% if qr_button_2 %}checked{% endif %} id="modelAreas" name="btnqr"
                     data-btn_closed=".slide_areas" />
                   <label class="form-check-label" for="modelAreas">Activar Areas de Interaccion</label>
                 </div>
@@ -523,28 +522,41 @@
               </h5>
               <div id="flush-collapseqrimage" class="accordion-collapse collapse" aria-labelledby="flush-headingqrimage" data-mdb-parent="#settingsAccordion">
                 <div class="accordion-body">
-                  <form action="{% url 'update_settings' %}" class="d-flex justify-content-center align-items-center gap_15 flex-column flex-lg-row"
-                    method="post" enctype="multipart/form-data" data-submit-blur="formqr" data-submit-form>
-                    {% csrf_token %}
-                    <div class="mb-3">
-                      <img src="{{qr_image}}" alt="Imagen QR del sitio web" id="qrImgDom" class="img-fluid img-rounded materialBoxed max_w200">
+                  <div class="row px-0">
+                    <div class="col-lg d-lg-flex justify-content-center flex-column">
+                      <form action="{% url 'update_settings' %}" class="form-check mb-4" method="post" data-submit-blur="formcalendar" data-submit-form>
+                        {% csrf_token %}
+                        <input type="hidden" name="setId" value="2" />
+                        <input type="hidden" name="btnsYearpost" value="True" />
+                        <input class="form-check-input input_change" {% if calendar_btnsYear_2 %}checked{% endif %} type="checkbox" id="btnsYear" name="btnsYear" />
+                        <label class="form-check-label" for="btnsYear">Mostrar Hawky siempre</label>
+                        <button type="submit" class="d-none" id="formcalendar"></button>
+                      </form>
+
+                      <form action="{% url 'update_settings' %}" class="form-check mb-4" method="post" data-submit-blur="formcalendar" data-submit-form>
+                        {% csrf_token %}
+                        <input type="hidden" id="btnqrpost" name="btnqrpost" value="True" />
+                        <input class="form-check-input input_change" {% if qr_button_1 %}checked{% endif %} type="checkbox" id="btnqr" name="btnqr" />
+                        <label class="form-check-label" for="btnqr">Mostrar QR en el Inicio</label>
+                        <button type="submit" class="d-none" id="formcalendar"></button>
+                      </form>
                     </div>
-                    <div class="mb-3">
-                      <label class="btn btn-block btn_cyan-purple text-white" for="qrImage">
-                        Cambiar imagen <i class="fa-solid fa-camera-rotate ms-1"></i>
-                      </label>
-                      <input type="file" class="none input_change" id="qrImage" name="qrImage" accept="image/*" data-img_dom="qrImgDom" />
-                    </div>
-                    <button type="submit" class="d-none" id="formqr"></button>
-                  </form>
-                  <br>
-                  <form action="{% url 'update_settings' %}" class="form-check" method="post" data-submit-blur="formcalendar" data-submit-form>
-                    {% csrf_token %}
-                    <input type="hidden" id="btnqrpost" name="btnqrpost" value="True" />
-                    <input class="form-check-input input_change" {% if qr_button %}checked{% endif %} type="checkbox" id="btnqr" name="btnqr" />
-                    <label class="form-check-label" for="btnqr">Mostrar en pagina de Inicio</label>
-                    <button type="submit" class="d-none" id="formcalendar"></button>
-                  </form>
+                    <form action="{% url 'update_settings' %}" class="col-lg d-flex justify-content-center align-items-center gap_25 flex-column flex-lg-row"
+                      method="post" enctype="multipart/form-data" data-submit-blur="formqr" data-submit-form>
+                      {% csrf_token %}
+                      <div>
+                        <img src="{{qr_image_1}}" alt="Imagen QR del sitio web" id="qrImgDom" class="img-fluid img-rounded materialBoxed max_w200">
+                      </div>
+                      <div>
+                        <label class="btn btn-block btn_cyan-purple text-white" for="qrImage">
+                          Cambiar imagen <i class="fa-solid fa-camera-rotate ms-1"></i>
+                        </label>
+                        <input type="file" class="none input_change" id="qrImage" name="qrImage" accept="image/*" data-img_dom="qrImgDom" />
+                      </div>
+                      <button type="submit" class="d-none" id="formqr"></button>
+                    </form>
+
+                  </div>
                 </div>
               </div>
             </div>
@@ -559,7 +571,7 @@
                   <form action="{% url 'update_settings' %}" class="form-check" method="post" data-submit-blur="formcalendar" data-submit-form>
                     {% csrf_token %}
                     <input type="hidden" id="btnsYearpost" name="btnsYearpost" value="True" />
-                    <input class="form-check-input input_change" {% if calendar_btnsYear %}checked{% endif %} type="checkbox" id="btnsYear" name="btnsYear" />
+                    <input class="form-check-input input_change" {% if calendar_btnsYear_1 %}checked{% endif %} type="checkbox" id="btnsYear" name="btnsYear" />
                     <label class="form-check-label" for="btnsYear">Mostrar Botones de año (<i class="fa-solid fa-angles-left"></i>|<i
                         class="fa-solid fa-angles-right"></i>)</label>
                     <button type="submit" class="d-none" id="formcalendar"></button>
@@ -579,13 +591,13 @@
                     {% csrf_token %}
                     <div class="col-md-6">
                       <div data-mdb-input-init class="form-outline mt-4">
-                        <input type="text" id="cr_year" name="cr_year" class="form-control input_blur active text-end" value="{{copyright_year}}" required />
+                        <input type="text" id="cr_year" name="cr_year" class="form-control input_blur active text-end" value="{{copyright_year_1}}" required />
                         <label class="form-label" for="cr_year">Copyright:</label>
                       </div>
                     </div>
                     <div class="col-md-6">
                       <div data-mdb-input-init class="form-outline mt-4">
-                        <input type="text" id="utclink" name="utclink" class="form-control input_blur active text-end" value="{{utc_link}}" required />
+                        <input type="text" id="utclink" name="utclink" class="form-control input_blur active text-end" value="{{utc_link_1}}" required />
                         <label class="form-label" for="utclink">Sitio web Oficial:</label>
                       </div>
                     </div>
@@ -605,7 +617,7 @@
                     <form action="{% url 'update_settings' %}" method="post" enctype="multipart/form-data" data-submit-blur="formfirst" data-submit-form
                       class="col-md-6 mb-3 d-flex align-items-center justify-content-center flex-column">
                       {% csrf_token %}
-                      <img src="{{about_img_first}}" alt="primera imagen" id="firstimgDom" class="img-fluid img-rounded materialBoxed max_w250">
+                      <img src="{{about_img_first_1}}" alt="primera imagen" id="firstimgDom" class="img-fluid img-rounded materialBoxed max_w250">
 
                       <label class="btn btn_cyan-purple text-white mx-auto mt-3" for="firstimage">
                         Cambiar imagen <i class="fa-solid fa-camera-rotate ms-1"></i>
@@ -617,7 +629,7 @@
                     <form action="{% url 'update_settings' %}" method="post" enctype="multipart/form-data" data-submit-blur="formsecond" data-submit-form
                       class="col-md-6 mb-3 d-flex align-items-center justify-content-center flex-column">
                       {% csrf_token %}
-                      <img src="{{about_img_second}}" alt="Segunda imagen en About" id="secondImgDom" class="img-fluid img-rounded materialBoxed max_w250">
+                      <img src="{{about_img_second_1}}" alt="Segunda imagen en About" id="secondImgDom" class="img-fluid img-rounded materialBoxed max_w250">
 
                       <label class="btn btn_cyan-purple text-white mx-auto mt-3" for="secondimage">
                         Cambiar imagen <i class="fa-solid fa-camera-rotate ms-1"></i>
@@ -632,7 +644,7 @@
                     <div class="my-4" data-mdb-input-init>
                       <label for="firsttext" class="form-label">Primera Seccion:</label>
                       <textarea id="textTiny" class="form-control" name="contenidoWord" rows="8" id="firsttext"
-                        placeholder="Puedes hacer listas, encabezados, parrafos y tablas">{{about_text_first}}</textarea>
+                        placeholder="Puedes hacer listas, encabezados, parrafos y tablas">{{about_text_first_1}}</textarea>
                     </div>
                     <div class="d-flex justify-content-end">
                       <button type="submit" class="btn btn_cyan-purple text-white">Guardar Cambios <i class="fa-solid fa-floppy-disk ms-1"></i></button>
@@ -645,7 +657,7 @@
                     <div class="my-4" data-mdb-input-init>
                       <label for="secondtext" class="form-label">Segunda Seccion:</label>
                       <textarea id="textTiny" class="form-control" name="contenidoWord" rows="8" id="secondtext"
-                        placeholder="Puedes hacer listas, encabezados, parrafos y tablas">{{about_text_second}}</textarea>
+                        placeholder="Puedes hacer listas, encabezados, parrafos y tablas">{{about_text_second_1}}</textarea>
                     </div>
                     <div class="d-flex justify-content-end">
                       <button type="submit" class="btn btn_cyan-purple text-white">Guardar Cambios <i class="fa-solid fa-floppy-disk ms-1"></i></button>
