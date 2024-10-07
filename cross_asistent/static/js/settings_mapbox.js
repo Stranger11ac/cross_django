@@ -17,8 +17,7 @@ window.addEventListener("load", () => {
     var doorMarker;
 
     const offcanvasElement = document.querySelector("#infoLateral");
-    const offcanvasInstance =
-        bootstrap.Offcanvas.getInstance(offcanvasElement) || new bootstrap.Offcanvas(offcanvasElement);
+    const offcanvasInstance = bootstrap.Offcanvas.getInstance(offcanvasElement) || new bootstrap.Offcanvas(offcanvasElement);
 
     mapboxgl.accessToken = mapToken;
     const mapMapbox = new mapboxgl.Map({
@@ -237,10 +236,7 @@ window.addEventListener("load", () => {
         function addMarker(e) {
             if (coords.length < 4) {
                 const color = colors[coords.length];
-                const marker = new mapboxgl.Marker({ color: color, draggable: true })
-                    .setLngLat(e.lngLat)
-                    .addTo(mapMapbox)
-                    .on("dragend", updatePolygon);
+                const marker = new mapboxgl.Marker({ color: color, draggable: true }).setLngLat(e.lngLat).addTo(mapMapbox).on("dragend", updatePolygon);
                 markers.push(marker);
                 coords.push(e.lngLat);
 
@@ -290,13 +286,7 @@ window.addEventListener("load", () => {
             const polygonText = document.getElementById("nombreEdificio").value || "Nuevo Lugar";
             const polygonColor = document.getElementById("colorHex").value || "#808080";
 
-            const coordinates = [
-                coords[0].toArray(),
-                coords[1].toArray(),
-                coords[2].toArray(),
-                coords[3].toArray(),
-                coords[0].toArray(),
-            ];
+            const coordinates = [coords[0].toArray(), coords[1].toArray(), coords[2].toArray(), coords[3].toArray(), coords[0].toArray()];
 
             if (mapMapbox.getLayer("polygon_label")) {
                 mapMapbox.removeLayer("polygon_label");
@@ -385,9 +375,7 @@ window.addEventListener("load", () => {
                 btnDoor.classList.remove("btn_detail");
                 mapMapbox.on("contextmenu", addMarkerDoor);
 
-                $("#controlsIndic .card-header h6").html(
-                    '<i class="fa-solid fa-location-dot me-1"></i>Punto de Entrada:'
-                );
+                $("#controlsIndic .card-header h6").html('<i class="fa-solid fa-location-dot me-1"></i>Punto de Entrada:');
                 $("#controlsIndic .card-body p").html(
                     "Da <strong>1</strong> clik derecho en el mapa... <br> Debe esta ubicada en el <strong>borde</strong>  del poligono y conectada con algun <strong>camino</strong>"
                 );
@@ -406,10 +394,7 @@ window.addEventListener("load", () => {
             if (doorMarker) {
                 doorMarker.remove();
             }
-            doorMarker = new mapboxgl.Marker({ color: "purple", draggable: true })
-                .setLngLat(e.lngLat)
-                .addTo(mapMapbox)
-                .on("dragend", updateDoorCords);
+            doorMarker = new mapboxgl.Marker({ color: "purple", draggable: true }).setLngLat(e.lngLat).addTo(mapMapbox).on("dragend", updateDoorCords);
 
             puertaCordsEdificio.classList.add("active");
             puertaCordsEdificio.value = `${e.lngLat.lng}, ${e.lngLat.lat}`;
@@ -484,21 +469,16 @@ window.addEventListener("load", () => {
                 button.onclick = onClick;
                 return button;
             };
-            const linkmaps = createButton(
-                "gmaps",
-                `<div class="mapboxgl-ctrl-icon"><i class="fa-solid fa-map-location-dot"></i></div>`,
-                "Google Maps",
-                () => {
-                    document.querySelectorAll(".offcanvas.show").forEach((openOffcanvasElement) => {
-                        const openOffcanvasInstance = bootstrap.Offcanvas.getInstance(openOffcanvasElement);
-                        if (openOffcanvasInstance) {
-                            openOffcanvasInstance.hide();
-                        }
-                    });
-                    var myModal = new mdb.Modal(document.getElementById("beforeSend"));
-                    myModal.show();
-                }
-            );
+            const linkmaps = createButton("gmaps", `<div class="mapboxgl-ctrl-icon"><i class="fa-solid fa-map-location-dot"></i></div>`, "Google Maps", () => {
+                document.querySelectorAll(".offcanvas.show").forEach((openOffcanvasElement) => {
+                    const openOffcanvasInstance = bootstrap.Offcanvas.getInstance(openOffcanvasElement);
+                    if (openOffcanvasInstance) {
+                        openOffcanvasInstance.hide();
+                    }
+                });
+                var myModal = new mdb.Modal(document.getElementById("beforeSend"));
+                myModal.show();
+            });
             const layers = createButton("styles", '<i class="fa-solid fa-layer-group"></i>', "Cambiar Aspecto", () => {
                 document.querySelectorAll(".offcanvas.show").forEach((openOffcanvasElement) => {
                     const openOffcanvasInstance = bootstrap.Offcanvas.getInstance(openOffcanvasElement);
@@ -509,11 +489,7 @@ window.addEventListener("load", () => {
                 const offcanvasElement = new bootstrap.Offcanvas(document.querySelector("#offcanvasBottom"));
                 offcanvasElement.show();
             });
-            const btnroute = createButton(
-                "route",
-                '<div class="mapboxgl-ctrl-icon" data-btn_closed="controlsRoute"><i class="fa-solid fa-route"></i></div>',
-                "Como ir a..."
-            );
+            const btnroute = createButton("route", '<div class="mapboxgl-ctrl-icon"><i class="fa-solid fa-route"></i></div>', "Como ir a...", () => $("#controlsRoute").toggleClass("show"));
 
             // Agregar botones al contenedor personalizado
             this._container.appendChild(linkmaps);
@@ -521,68 +497,53 @@ window.addEventListener("load", () => {
             this._container.appendChild(btnroute);
 
             if (mapElement.classList.contains("map_editing")) {
-                const newBuild = createButton(
-                    "newBuild",
-                    `<i class="fa-solid fa-building-flag"></i>`,
-                    "Crear Nuevo Edificio",
-                    () => {
-                        $("#btnDeletedPleace").hide();
-                        $("[data-namePleace]").text("");
+                const newBuild = createButton("newBuild", `<i class="fa-solid fa-building-flag"></i>`, "Crear Nuevo Edificio", () => {
+                    $("#btnDeletedPleace").hide();
+                    $("[data-namePleace]").text("");
 
-                        if (formChanges) {
-                            $("#offcanvasContent input").removeClass("active is-invalid is-valid").val("");
-                            $(".error.bg-danger").slideUp("fast");
-                            document.getElementById("imagen_actual").src = "/static/img/default_image.webp";
-                            $("#offcanvasContent #isNewEdif").val("new");
+                    if (formChanges) {
+                        $("#offcanvasContent input").removeClass("active is-invalid is-valid").val("");
+                        $(".error.bg-danger").slideUp("fast");
+                        document.getElementById("imagen_actual").src = "/static/img/default_image.webp";
+                        $("#offcanvasContent #isNewEdif").val("new");
 
-                            const newUID = $("#uuid").data("new-uid");
-                            $("#uuid").removeClass("active").val(newUID);
-                            $("#namecolor").addClass("active").val("gray");
-                            $("#colorPicker").addClass("active").val("#808080");
-                            initPolygonDrawing();
+                        const newUID = $("#uuid").data("new-uid");
+                        $("#uuid").removeClass("active").val(newUID);
+                        $("#namecolor").addClass("active").val("gray");
+                        $("#colorPicker").addClass("active").val("#808080");
+                        initPolygonDrawing();
 
-                            $('[for="fotoEdificio"]').html('Subir foto <i class="fa-regular fa-image ms-1"></i>');
-                            $("#fotoEdificio").attr("required", true);
-                            tinymce.get("textTiny").setContent("");
+                        $('[for="fotoEdificio"]').html('Subir foto <i class="fa-regular fa-image ms-1"></i>');
+                        $("#fotoEdificio").attr("required", true);
+                        tinymce.get("textTiny").setContent("");
 
-                            $("#ismarker").removeAttr("checked");
-                            $("#sizemarkerdiv").slideUp();
-                            $("[data-notmarker]").slideDown();
-                            $('[for="puertaCordsEdificio"]').text("Punto de entrada:");
-                            $("#hidename").slideDown();
-                            $("#btnOpenGalery").slideUp();
-                        }
+                        $("#ismarker").removeAttr("checked");
+                        $("#sizemarkerdiv").slideUp();
+                        $("[data-notmarker]").slideDown();
+                        $('[for="puertaCordsEdificio"]').text("Punto de entrada:");
+                        $("#hidename").slideDown();
+                        $("#btnOpenGalery").slideUp();
+                    }
 
-                        if (!offcanvasOpen) {
-                            if (offcanvasElement.classList.contains("show")) {
-                                offcanvasInstance.hide();
-                            } else {
-                                offcanvasInstance.show();
-                            }
+                    if (!offcanvasOpen) {
+                        if (offcanvasElement.classList.contains("show")) {
+                            offcanvasInstance.hide();
+                        } else {
+                            offcanvasInstance.show();
                         }
                     }
-                );
-                const OSMgo = createButton(
-                    "OSMgo",
-                    `<i class="fa-solid fa-book-atlas"></i>`,
-                    "Editar en OpenStreetMaps",
-                    () => {
-                        const url = "https://www.openstreetmap.org/edit#map=17/25.55684/-100.93548";
-                        window.open(url, "_blank", "noopener,noreferrer");
-                    }
-                );
-                const importMap = createButton(
-                    "importmap",
-                    `<div class="mapboxgl-ctrl-icon"><i class="fa-solid fa-cloud-arrow-up"></i></div>`,
-                    "Importar y Exportar",
-                    () => {
-                        var myModal = new mdb.Modal(document.getElementById("importInMap"));
-                        myModal.show();
-                    }
-                );
+                });
+                const OSMgo = createButton("OSMgo", `<i class="fa-solid fa-book-atlas"></i>`, "Editar en OpenStreetMaps", () => {
+                    const url = "https://www.openstreetmap.org/edit#map=17/25.55684/-100.93548";
+                    window.open(url, "_blank", "noopener,noreferrer");
+                });
+                const importMap = createButton("importmap", `<div class="mapboxgl-ctrl-icon"><i class="fa-solid fa-cloud-arrow-up"></i></div>`, "Importar y Exportar", () => {
+                    var myModal = new mdb.Modal(document.getElementById("importInMap"));
+                    myModal.show();
+                });
 
-                this._container.appendChild(importMap);
                 this._container.appendChild(OSMgo);
+                this._container.appendChild(importMap);
                 this._container.appendChild(newBuild);
             }
 
@@ -654,9 +615,7 @@ window.addEventListener("load", () => {
                     },
                     geometry: {
                         type: "Polygon",
-                        coordinates: [
-                            [item.polygons[0], item.polygons[1], item.polygons[2], item.polygons[3], item.polygons[0]],
-                        ],
+                        coordinates: [[item.polygons[0], item.polygons[1], item.polygons[2], item.polygons[3], item.polygons[0]]],
                     },
                 })),
             };
@@ -717,12 +676,8 @@ window.addEventListener("load", () => {
                 const destino = selectDestiny.value;
 
                 if (origen && destino && origen !== destino) {
-                    const origenFeature = geojsonEdificios.features.find(
-                        (feature) => feature.properties.nombre === origen
-                    );
-                    const destiFeature = geojsonEdificios.features.find(
-                        (feature) => feature.properties.nombre === destino
-                    );
+                    const origenFeature = geojsonEdificios.features.find((feature) => feature.properties.nombre === origen);
+                    const destiFeature = geojsonEdificios.features.find((feature) => feature.properties.nombre === destino);
 
                     if (origenFeature && destiFeature) {
                         const origenCoords = origenFeature.properties.door;
@@ -779,9 +734,7 @@ window.addEventListener("load", () => {
                     }
 
                     const originFeature = currentRoute.features.find((feature) => feature.properties.id === "origin");
-                    const destFeature = currentRoute.features.find(
-                        (feature) => feature.properties.id === "destination"
-                    );
+                    const destFeature = currentRoute.features.find((feature) => feature.properties.id === "destination");
 
                     // Agregar capa de línea de ruta
                     if (!mapMapbox.getLayer("directions-route-line")) {
@@ -1206,43 +1159,41 @@ window.addEventListener("load", () => {
                         const { nombre, imagen, uuid, ismarker, icon_size, edges } = feature.properties;
                         const coordinates = feature.geometry.coordinates.slice();
 
-                        if (mapElement.classList.contains("map_editing")) {
-                            const offcanvasContent = document.getElementById("offcanvasContent");
-                            document.getElementById("imagen_actual").src = imagen;
+                        const offcanvasContent = document.getElementById("offcanvasContent");
+                        document.getElementById("imagen_actual").src = imagen;
 
-                            $("#btnDeletedPleace").show();
-                            $("[data-namePleace]").text(nombre);
+                        $("#btnDeletedPleace").show();
+                        $("[data-namePleace]").text(nombre);
 
-                            offcanvasContent.querySelector("#isNewEdif").value = "notnew";
+                        offcanvasContent.querySelector("#isNewEdif").value = "notnew";
 
-                            if (ismarker) {
-                                $("#ismarker").attr("checked", "checked");
-                                $("#sizemarkerdiv").slideDown("fast");
-                                $("[data-notmarker]").slideUp();
-                                $('[for="puertaCordsEdificio"]').text("Ubicacion:");
-                            } else {
-                                $("#ismarker").removeAttr("checked");
-                            }
+                        if (ismarker) {
+                            $("#ismarker").attr("checked", "checked");
+                            $("#sizemarkerdiv").slideDown("fast");
+                            $("[data-notmarker]").slideUp();
+                            $('[for="puertaCordsEdificio"]').text("Ubicacion:");
+                        } else {
+                            $("#ismarker").removeAttr("checked");
+                        }
 
-                            $("#hidename").slideUp();
-                            $("[data-uuid]").addClass("active").val(uuid);
-                            $("#nombreEdificio").addClass("active").val(nombre);
-                            $("#sizemarker").addClass("active").val(icon_size);
-                            $("#puertaCordsEdificio").addClass("active").val(`${coordinates}`);
+                        $("#hidename").slideUp();
+                        $("[data-uuid]").addClass("active").val(uuid);
+                        $("#nombreEdificio").addClass("active").val(nombre);
+                        $("#sizemarker").addClass("active").val(icon_size);
+                        $("#puertaCordsEdificio").addClass("active").val(`${coordinates}`);
 
-                            $('[for="fotoEdificio"]').html('Cambiar foto <i class="fa-regular fa-image ms-1"></i>');
-                            $("#fotoEdificio").attr("required", false);
+                        $('[for="fotoEdificio"]').html('Cambiar foto <i class="fa-regular fa-image ms-1"></i>');
+                        $("#fotoEdificio").attr("required", false);
 
-                            $("#esquina1").addClass("active").val(edges[0]);
-                            $("#esquina2").addClass("active").val(edges[1]);
-                            $("#esquina3").addClass("active").val(edges[2]);
-                            $("#esquina4").addClass("active").val(edges[3]);
+                        $("#esquina1").addClass("active").val(edges[0]);
+                        $("#esquina2").addClass("active").val(edges[1]);
+                        $("#esquina3").addClass("active").val(edges[2]);
+                        $("#esquina4").addClass("active").val(edges[3]);
 
-                            var canvasGalery = document.getElementById("pleaceGalery");
-                            var bsOffcanvasGalery = bootstrap.Offcanvas.getInstance(canvasGalery);
-                            if (bsOffcanvasGalery) {
-                                bsOffcanvasGalery.hide();
-                            }
+                        var canvasGalery = document.getElementById("pleaceGalery");
+                        var bsOffcanvasGalery = bootstrap.Offcanvas.getInstance(canvasGalery);
+                        if (bsOffcanvasGalery) {
+                            bsOffcanvasGalery.hide();
                         }
 
                         offcanvasInstance.show();

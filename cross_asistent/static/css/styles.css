@@ -730,14 +730,25 @@ main.main_anchor {
     visibility: visible;
 }
 
-.asistent_group .box_asistent .box_asistent_controls .pop_buttons .btn {
+/* .asistent_group .box_asistent .box_asistent_controls .pop_buttons .btn {
     transform: scale(0);
     transition: 0.3s var(--transitionCubicVal);
     transition-delay: calc(0.5s * var(--delay));
-}
+} */
 
 .asistent_group.open .box_asistent .box_asistent_controls .pop_buttons .btn {
-    transform: scale(1);
+    transform: scale(0);
+    animation: popBtn .4s var(--transitionCubicVal) calc(0.5s * var(--delay)) forwards;
+}
+
+@keyframes popBtn {
+    from {
+        transform: scale(0);
+    }
+
+    to {
+        transform: scale(1);
+    }
 }
 
 .asistent_group.open.open_keyboard .box_asistent .box_asistent_controls {
@@ -1190,11 +1201,6 @@ img.img-tiny {
 
 
 /*########################### Formulario / forms ###########################*/
-.was-validated .form-control:valid,
-.form-control {
-    margin: 0 !important;
-}
-
 input.is-invalid {
     border-color: #dc4c64;
 }
@@ -1344,13 +1350,14 @@ input:checked+.slider:before {
 }
 
 .input_transparent {
-    /* border-top-color: transparent;
-    border-left-color: transparent;
-    border-right-color: transparent; */
     border-radius: var(--mdb-border-radius) !important;
     border-color: transparent;
     background: transparent;
     transition: 0.2s ease;
+}
+
+.was-validated .form-control:valid, .form-control.is-valid {
+	margin-bottom: unset !important;
 }
 
 /*########################### Acordiones / accordion ###########################*/
