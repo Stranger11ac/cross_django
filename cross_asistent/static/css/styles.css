@@ -676,16 +676,15 @@ main.main_anchor {
 }
 
 .asistent_group.open .box_asistent #asistent_model {
-    width: 100%;
     height: var(--full_page);
-    margin: 0 5%;
+    width: 100%;
     opacity: 1;
     visibility: visible;
 }
 
 .asistent_group.open.open_keyboard .box_asistent #asistent_model {
-    opacity: 0;
     visibility: hidden;
+    opacity: 0;
     z-index: 2;
 }
 
@@ -714,10 +713,6 @@ main.main_anchor {
     transform: translateY(-50%);
 }
 
-.asistent_group .box_asistent #asistent_model .box_asistent_controls.controls_vertical-left {
-    left: unset;
-}
-
 .asistent_group .box_asistent .box_asistent_controls.controls_hide {
     z-index: unset !important;
     opacity: 0;
@@ -729,12 +724,6 @@ main.main_anchor {
     opacity: 1;
     visibility: visible;
 }
-
-/* .asistent_group .box_asistent .box_asistent_controls .pop_buttons .btn {
-    transform: scale(0);
-    transition: 0.3s var(--transitionCubicVal);
-    transition-delay: calc(0.5s * var(--delay));
-} */
 
 .asistent_group.open .box_asistent .box_asistent_controls .pop_buttons .btn {
     transform: scale(0);
@@ -794,7 +783,7 @@ main.main_anchor {
 
 .asistent_group.open .btn_controls.controls_btn_microphone {
     background: transparent;
-    box-shadow: none;
+    font-size: 1.6rem;
 }
 
 .asistent_group.open.open_controls .controls_buttons {
@@ -979,9 +968,9 @@ main.main_anchor {
     .asistent_group.open.open_keyboard .box_asistent #asistent_model {
         position: absolute;
         left: 5%;
+        width: 20vw;
         bottom: 3vh;
         height: 20vh;
-        width: 20vw;
         margin-bottom: 0;
         visibility: visible;
         opacity: 1;
@@ -2152,6 +2141,14 @@ img.img-rounded {
 
 .min_h500 {
     min-height: 500px;
+}
+
+.tscale-1 {
+    transform: scale(1);
+}
+
+.tscale-1-2 {
+    transform: scale(1.2);
 }
 
 .tscale-1-3 {

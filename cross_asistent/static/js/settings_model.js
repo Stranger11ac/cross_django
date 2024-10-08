@@ -264,9 +264,9 @@ $(document).ready(function () {
                     }
                 }
 
+                modelViewer.attr("camera-orbit", `${data.cameraOrbit[0]}deg ${data.cameraOrbit[1]}deg ${data.cameraOrbit[2]}m`);
                 setModelGrid(data.gridAreas[1], data.gridAreas[2]);
                 setTimeout(() => {
-                    modelViewer.attr("camera-orbit", `${data.cameraOrbit[0]}deg ${data.cameraOrbit[1]}deg ${data.cameraOrbit[2]}m`);
                     setAnimAreas(data.gridAreas[0]);
                     setTimeout(() => {
                         changeAnim();

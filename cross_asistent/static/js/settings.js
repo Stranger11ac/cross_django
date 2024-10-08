@@ -445,25 +445,21 @@ $(document).ready(function () {
         }
         setRangeVal();
 
-        $(document).ready(function () {
-            $("[init-wave-click]").on("click", function (event) {
-                var wave = $('<div class="wave"></div>');
-                var offset = $(this).offset();
-                var x = event.pageX - offset.left;
-                var y = event.pageY - offset.top;
+        $("[init-wave-click]").on("click", function (event) {
+            var wave = $('<div class="wave"></div>');
+            var offset = $(this).offset();
+            var x = event.pageX - offset.left;
+            var y = event.pageY - offset.top;
 
-                wave.css({
-                    width: "50px",
-                    height: "50px",
-                    top: y - 25 + "px",
-                    left: x - 25 + "px",
-                });
-
-                $(this).append(wave);
-                setTimeout(function () {
-                    wave.remove();
-                }, 1000);
+            wave.css({
+                width: "50px",
+                height: "50px",
+                top: y - 25 + "px",
+                left: x - 25 + "px",
             });
+
+            $(this).append(wave);
+            setTimeout(() => wave.remove(), 1000);
         });
 
         //

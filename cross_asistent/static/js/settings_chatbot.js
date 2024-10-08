@@ -409,7 +409,7 @@ speakButton.on("click", () => {
 
 // Saludo Inicial ######################
 if (contOutput && saludoMostrado) {
-    const initialMessage = `<div class="chat_msg asistent_response" data-tokeid="initialMessage"><span>¡Hola!!! Soy Hawky 👋😁, tu asistente virtual de la Universidad Tecnológica de Coahuila! Puedes preguntarme sobre tramites, carreras, costos u otros temas de la universidad. ¿En qué puedo ayudarte? 🫡🤘😋</span></div>`;
+    const initialMessage = `<div class="chat_msg asistent_response" data-tokeid="initialMessage"><span>¡Hola! Soy Hawky 👋😁, tu asistente virtual de la Universidad Tecnológica de Coahuila. Puedes preguntarme sobre trámites, carreras, costos u otros temas de la universidad. ¿En qué puedo ayudarte? 🫡🤘😋</span></div>`;
 
     contOutput.insertAdjacentHTML("beforeend", initialMessage);
     const elementInitMsg = document.querySelector(`.asistent_response[data-tokeid="initialMessage"]`);
