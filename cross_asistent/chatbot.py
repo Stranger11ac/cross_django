@@ -1,4 +1,6 @@
+from .views import obtener_configuraciones
 from django.http import JsonResponse
+from django.shortcuts import render
 from django.utils import timezone
 from nltk.corpus import stopwords
 from django.conf import settings
@@ -97,3 +99,15 @@ def chatbot(request):
             return JsonResponse({'success': False, 'message': f'Error inesperado: {str(e)}'})
     return JsonResponse({'success': False, 'message': 'Método no permitido.'}, status=405)
 
+def modelsettings(request):
+    if request.method == 'POST':
+        try:
+            quest_id = request.POST.get('idSetings')
+            hawkySettings = obtener_configuraciones(quest_id)
+            modelData = hawkySettings[f'redes_sociales_{quest_id}']
+            parsed_data = json.loads(modelData)
+            return JsonResponse(parsed_data, status=200)
+        except Exception as e:
+            return JsonResponse({'success': False, 'message': f'#{quest_id} no encontrada.'}, status=404)
+    # return render(request, 'error/404.html')
+    return JsonResponse({'success': False, 'message': 'Acción no permitida.'}, status=400)

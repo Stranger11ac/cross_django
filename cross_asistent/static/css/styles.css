@@ -924,11 +924,11 @@ main.main_anchor {
     inset: 0;
     opacity: 0;
     z-index: -1;
+    border: none;
     display: grid !important;
-    border: 5px solid var(--var-detail_flat);
     grid-template-rows: repeat(var(--grid-row), 1fr);
     grid-template-columns: repeat(var(--grid-column), 1fr);
-    /*################# Esto hace que los elementos llenen huecos automáticamente #################*/
+    /*## Esto hace que los elementos llenen huecos automáticamente ##*/
     grid-auto-flow: row dense;
     transition: 0.3s ease;
     transition-delay: 0s;
@@ -940,17 +940,19 @@ main.main_anchor {
     transition-delay: 1s;
 }
 
+#asistent_model .model_areas.visible-btns.show {
+    border: 5px solid var(--var-detail_flat);
+}
+
 #asistent_model .model_areas .item {
     border: 3px solid purple;
     background: var(--darkA3);
-    transform: scale(0);
     opacity: 0;
     transition: 0.3s ease;
 }
 
-#asistent_model .model_areas .item.visible {
+#asistent_model .model_areas.visible-btns .item {
     opacity: 1;
-    transform: scale(1);
 }
 
 #asistent_model .model_areas .item:hover {
@@ -1356,8 +1358,9 @@ input:checked+.slider:before {
     transition: 0.2s ease;
 }
 
-.was-validated .form-control:valid, .form-control.is-valid {
-	margin-bottom: unset !important;
+.was-validated .form-control:valid,
+.form-control.is-valid {
+    margin-bottom: unset !important;
 }
 
 /*########################### Acordiones / accordion ###########################*/

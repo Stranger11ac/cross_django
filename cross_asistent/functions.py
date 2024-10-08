@@ -708,7 +708,7 @@ def settings_update(request):
                 valD = request.POST.get('camDistance')
                 numAreas = request.POST.get('num_areas')
                 rowAreas = request.POST.get('row_areas')
-                colAreas = request.POST.get('column_areas')
+                colAreas = request.POST.get('col_areas')
                 areaAnim = request.POST.getlist('areaAnim')
                 areaTime = request.POST.getlist('areaTime')
                 areaWidth = request.POST.getlist('areaWidth')
@@ -722,7 +722,7 @@ def settings_update(request):
                     gridAreas = "gridAreas"
                     modelData[gridAreas] = [numAreas, rowAreas, colAreas]
                     animations = "animations"
-                    modelData[animations] = [areaAnim, areaTime, areaWidth, areaHeight]
+                    modelData[animations] = [areaAnim, areaTime, areaHeight, areaWidth]
                     
                 redeslinks = json.dumps(modelData)
             

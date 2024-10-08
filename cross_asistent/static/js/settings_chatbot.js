@@ -178,7 +178,9 @@ try {
         microphoneSpeech = false;
         console.warn("Este navegador no soporta la Web Speech API");
         $("#btn_controls_icon").addClass("fa-microphone-slash");
-        alertSToast("center", 9000, "warning", "Al parecer tu navegador no permite activar el micrófono. 🤔😯😥");
+        recVoice.on("click", function () {
+            alertSToast("center", 9000, "warning", "Al parecer tu navegador no permite activar el micrófono. 🤔😯😥");
+        });
     }
 } catch (error) {
     alertSToast("top", 10000, "warning", error);

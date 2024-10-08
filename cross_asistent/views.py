@@ -262,16 +262,13 @@ def singout(request):
 def vista_programador(request):
     banners_all = models.Banners.objects.all()
     users = User.objects.all().order_by('-id')
-    configuraciones = obtener_configuraciones(1)
-    hawkySettings = obtener_configuraciones(2)
+    configuraciones = obtener_configuraciones(idConfig)
+    hawkySettings = obtener_configuraciones(idHawky)
     
     if request.user.is_staff:
         num_blogs = models.Articulos.objects.all().count()
     else:
         num_blogs = models.Articulos.objects.filter(autor=request.user).count()
-    
-    modelData = hawkySettings['redes_sociales_2']
-    parsed_data = json.loads(modelData)
     
     contexto = {
         'users':users,

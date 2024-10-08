@@ -383,17 +383,17 @@
     <!-- Configuraciones de Hawky -->
     <div class="mt-4">
       <div class="card">
-        <div class="card-body mx-2">
+        <div class="card-body">
           <h3 class="mb-4 text-center">Configurar <span class="text_detail">Modelo 3D</span></h3>
           <!-- formulario -->
           <form id="hawkySettings" action="{% url 'update_settings' %}" method="post" class="row px-0" data-submit-form>
             {% csrf_token %}
             <div class="col-12 col-lg-6">
               <model-viewer id="asistent_model" class="min_h400 col-12 rounded" tone-mapping="neutral" camera-orbit="15deg 70deg 5m"
-                poster="{% static 'img/hawky.0011.webp' %}" loading="eager" shadow-intensity="1" animation-name="{{utc_link_2}}" autoplay>
+                poster="{% static 'img/hawky.0011.webp' %}" loading="eager" shadow-intensity="1" animation-name="{{utc_link_2}}" autoplay
+                data-settings-model="{% url 'modelsettings' %}">
                 <!-- Areas -->
-                <div id="model_areas" class="model_areas slide_areas none" style="--grid-row: 3;--grid-column: 3;">
-                </div>
+                <div id="model_areas" class="model_areas visible-btns slide_areas none" style="--grid-row: 3;--grid-column: 3;"></div>
               </model-viewer>
 
               <!-- Acciones -->
@@ -466,14 +466,14 @@
                       </div>
                     </div>
                     <div class="col-4 col-md-4">
-                      <div data-mdb-input-init class="form-outline mb-4">
-                        <input type="number" id="row_areas" name="row_areas" min="1" value="" class="form-control text-end" data-blur-default="min" />
+                      <div data-mdb-input-init class="form-outline active mb-4">
+                        <input type="number" id="row_areas" name="row_areas" min="1" value="3" class="form-control active text-end" data-blur-default="min" />
                         <label class="form-label" for="row_areas">Filas:</label>
                       </div>
                     </div>
                     <div class="col-4 col-md-4">
-                      <div data-mdb-input-init class="form-outline mb-4">
-                        <input type="number" id="col_areas" name="col_areas" min="1" value="" class="form-control text-end" data-blur-default="min" />
+                      <div data-mdb-input-init class="form-outline active mb-4">
+                        <input type="number" id="col_areas" name="col_areas" min="1" value="3" class="form-control active text-end" data-blur-default="min" />
                         <label class="form-label" for="col_areas">Columnas:</label>
                       </div>
                     </div>
@@ -486,7 +486,7 @@
                     <h2 class="accordion-header" id="areasAnimHead">
                       <button data-mdb-collapse-init class="accordion-button p-2" type="button" data-mdb-target="#areasAnimAccordion" aria-expanded="true"
                         aria-controls="areasAnimAccordion">
-                        Relacionar Animacion y Area
+                        Relacionar Animacion y Boton
                       </button>
                     </h2>
                     <div id="areasAnimAccordion" class="accordion-collapse collapse show" aria-labelledby="areasAnimHead">
@@ -511,7 +511,7 @@
     <!-- Otras Configuraciones -->
     <div class="my-4">
       <div class="card">
-        <div class="card-body mx-2">
+        <div class="card-body">
           <h4 class="text-center mb-4"><span class="text_detail">Mas</span> Configuraciones</h4>
           <div class="accordion accordion-borderless row" id="settingsAccordion">
             <!-- Index -->
@@ -528,7 +528,8 @@
                         {% csrf_token %}
                         <input type="hidden" name="setId" value="2" />
                         <input type="hidden" name="btnsYearpost" value="True" />
-                        <input class="form-check-input input_change" {% if calendar_btnsYear_2 %}checked{% endif %} type="checkbox" id="btnsYear" name="btnsYear" />
+                        <input class="form-check-input input_change" {% if calendar_btnsYear_2 %}checked{% endif %} type="checkbox" id="btnsYear"
+                          name="btnsYear" />
                         <label class="form-check-label" for="btnsYear">Mostrar Hawky siempre</label>
                         <button type="submit" class="d-none" id="formcalendar"></button>
                       </form>
@@ -968,9 +969,4 @@
 <script src="{% static 'tinymce/tinymce.min.js' %}"></script>
 <script src="{% static 'js/settings_tinymce.js' %}"></script>
 <script src="{% static 'js/settings_model.js' %}"></script>
-<script>
-  $('input[type="range"]').on("reset", function () {
-    alertSToast('top', 7000, 'info', 'change');
-  })
-</script>
 {% endblock %}

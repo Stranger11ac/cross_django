@@ -538,11 +538,10 @@ function jsonSubmit(e) {
             "X-CSRFToken": formToken,
         },
     })
-        .then((response) => {
+        .then(async (response) => {
             if (!response.ok) {
-                return response.json().then((data) => {
-                    throw new Error(data.error || "Error desconocido");
-                });
+                const data = await response.json();
+                throw new Error(data.error || "Error en el formato recivido");
             }
             return response.json();
         })
