@@ -745,6 +745,6 @@ function alertSToast(posittionS, timerS, iconS, titleS, didDestroyS) {
 }
 
 // context menu disabled ######################################################################
-// document.oncontextmenu = function () {
-//     return false;
-// };
+document.oncontextmenu = function () {
+    return false;
+};
