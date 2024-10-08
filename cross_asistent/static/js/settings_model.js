@@ -151,9 +151,7 @@ $(document).ready(function () {
                 areasAnimations.append(
                     `<div class="col-12"><fieldset class="p-2" id="sectionAnim${i}"><legend class="px-2 mb-0">Boton #${i}:</legend><select class="form-select animationsSelect selectList" data-add-action="#actionAnim${i}" name="areaAnim"><option selected hidden disabled>Animacion:</option></select><div class="row mt-4"><div class="col-4 col-md-4 mb-4 mb-md-0"><div data-mdb-input-init class="form-outline"><input type="number" id="areaTime${i}" data-anim-btn="#actionAnim${i}" name="areaTime" max="10" min="1" value="2" class="form-control text-end" /><label class="form-label" for="areaTime${i}">Duracion: (s)</label></div></div><div class="col-4 col-md-4"><div data-mdb-input-init class="form-outline"><input type="number" id="areaHeight${i}" data-anim-btn="#actionAnim${i}" name="areaHeight" min="1" max="${rows}" value="1" class="form-control text-end" /><label class="form-label" for="areaHeight${i}">Alto:</label></div></div><div class="col-4 col-md-4"><div data-mdb-input-init class="form-outline"><input type="number" id="areaWidth${i}" data-anim-btn="#actionAnim${i}" name="areaWidth" min="1" max="${columns}" value="1" class="form-control text-end" /><label class="form-label" for="areaWidth${i}">Largo:</label></div></div></div></fieldset></div>`
                 );
-                modelAreasContainer.append(
-                    `<button type="button" id="actionAnim${i}" class="item play-anim-btn d-flex justify-content-center align-items-center fs-20" data-mdb-ripple-init data-mdb-ripple-color="white" disabled>${i}</button>`
-                );
+                modelAreasContainer.append(`<button type="button" id="actionAnim${i}" class="item play-anim-btn d-flex justify-content-center align-items-center fs-20" disabled>${i}</button>`);
                 $("[data-mdb-input-init]").each(function () {
                     new mdb.Input(this);
                 });

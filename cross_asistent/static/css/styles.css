@@ -1958,6 +1958,31 @@ input:checked+.slider:before {
     animation: pulse .4s ease .4s infinite alternate;
 }
 
+/*########################### wave click ###########################*/
+@keyframes waveEffect {
+    0% {
+        transform: scale(1);
+        opacity: 1;
+    }
+
+    95% {
+        transform: scale(4);
+    }
+
+    100% {
+        opacity: 0;
+    }
+}
+
+.wave {
+    position: absolute;
+    border-radius: 50%;
+    background: radial-gradient(circle, #ffffff 0%, rgba(0, 0, 0, 0) 90%);
+    animation: waveEffect .3s forwards;
+    pointer-events: none;
+}
+
+
 /*########################### Position sticky ###########################*/
 .sticky-top-4 {
     top: 1.5rem;
