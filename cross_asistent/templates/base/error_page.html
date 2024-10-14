@@ -1,0 +1,43 @@
+{% extends 'base/widget.html' %}
+{% load static %}
+{% block title %}UPS! ⚠️😯😥🤔 | Error {{error_code}} {% endblock %}
+{% block extra_head %}
+<script type="module" src="{% static 'js/model-viewer.min.js' %}"></script>
+{% endblock %}
+{% block content %}
+<main class="main_anchor full_page d-flex align-items-lg-center">
+    <div class="container container-fluid my-4">
+        <h2 class="fs--50 mb-md-5 mb-3"><i class="fa-solid fa-circle-exclamation me-1"></i>Error #{{error_code}}</h2>
+        <div class="fs--18 max_w650">{{error_info}}</div>
+    </div>
+    <!-- Asistente -->
+    <section href="#asistente" class="asistent_group">
+        <div class="box_asistent">
+            <model-viewer id="asistent_model" src="{{model_3D}}" data-settings-model="{% url 'modelsettings' %}" tone-mapping="neutral" autoplay
+                camera-orbit="0deg 90deg 20m" poster="{% static 'img/hawky.0011.webp' %}" loading="eager" shadow-intensity="1"
+                animation-name="{{anim_default}}">
+                <div id="model_areas" class="model_areas slide_areas show" init-wave-click></div>
+                <!-- Audio y animacion -->
+                <div class="box_asistent_controls controls_vertical">
+                    <button class="btn bg_blue-green btn-floating p-4 text-white" id="pauseAnim" title="Pausar Animacion" style="--delay:4;">
+                        <i class="fa-regular fa-circle-pause fs-20"></i>
+                    </button>
+                </div>
+            </model-viewer>
+        </div>
+    </section>
+</main>
+{% endblock %}
+
+
+{% block moresettings %}
+<div class="mt-4">
+    <h5>Configuraciones del Asistente</h5>
+    <input class="form-check-input" type="checkbox" id="vesticalCtrls" />
+    <label class="form-check-label" for="vesticalCtrls">Controles en Vertical</label>
+</div>
+{% endblock %}
+
+{% block scripts_end %}
+<script src="{% static 'js/settings_model.js' %}"></script>
+{% endblock %}

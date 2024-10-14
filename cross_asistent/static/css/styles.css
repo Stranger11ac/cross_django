@@ -174,6 +174,19 @@ body {
     margin: 0 !important;
 }
 
+html {
+    --gap-xs: .25rem;
+    --gap-sm: .5rem;
+    --gap-md: .75rem;
+    --gap-lg: 1rem;
+    --gap-xl: 1.5rem;
+    --radius-xs: .25rem;
+    --radius-sm: .5rem;
+    --radius-md: .75rem;
+    --radius-lg: 1rem;
+    --radius-xl: 1.25rem;
+}
+
 *::-webkit-scrollbar {
     width: 5px;
 }
@@ -215,6 +228,7 @@ nav {
     height: var(--nav_height);
     padding-block: 5px !important;
     z-index: 5;
+    box-shadow: none !important;
 }
 
 nav .navbar-brand img {
@@ -760,6 +774,7 @@ main.main_anchor {
 
 .box_asistent_controls .controls_buttons .btn_controls {
     background: transparent;
+    place-content: center;
     box-shadow: none;
     font-size: 1.8rem;
     min-height: 60px;
@@ -1966,7 +1981,7 @@ input:checked+.slider:before {
 .wave {
     position: absolute;
     border-radius: 50%;
-    background: radial-gradient(circle, #ffffff 0%, rgba(0, 0, 0, 0) 90%);
+    background: radial-gradient(circle, var(--mdb-surface-color) 0%, var(--darkA) 90%);
     animation: waveEffect .3s forwards;
     pointer-events: none;
 }
@@ -2093,6 +2108,26 @@ img.img-rounded {
 
 .max_w350 {
     max-width: 350px;
+}
+
+.max_w400 {
+    max-width: 400px;
+}
+
+.max_w450 {
+    max-width: 450px;
+}
+
+.max_w500 {
+    max-width: 500px;
+}
+
+.max_w550 {
+    max-width: 550px;
+}
+
+.max_w650 {
+    max-width: 650px;
 }
 
 .max_h100 {

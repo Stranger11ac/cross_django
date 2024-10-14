@@ -24,6 +24,34 @@ $(document).ready(function () {
     cameraDistanceInput.on("input", changeOrbit);
     changeOrbit();
 
+    // Cambiar HDRI #########################################
+    listHDRIs = ["rainforest_trail_1k", "symmetrical_garden_02_1k", "rogland_clear_night_1k", ""];
+    currentIndex = 0;
+
+    $("#changeScene").click(function () {
+        localStorage.setItem("model_hdr", listHDRIs[currentIndex]);
+        if (listHDRIs[currentIndex] == "") {
+            modelViewer.attr("environment-image", "");
+            modelViewer.attr("skybox-image", "");
+        } else {
+            modelViewer.attr("environment-image", `/media/hdri/${listHDRIs[currentIndex]}.hdr`);
+            modelViewer.attr("skybox-image", `/media/hdri/${listHDRIs[currentIndex]}.hdr`);
+        }
+        currentIndex++;
+        if (currentIndex >= listHDRIs.length) {
+            currentIndex = 0;
+        }
+    });
+
+    const hdrSaved = localStorage.getItem("model_hdr");
+    if (hdrSaved != "") {
+        modelViewer.attr("environment-image", `/media/hdri/${hdrSaved}.hdr`);
+        modelViewer.attr("skybox-image", `/media/hdri/${hdrSaved}.hdr`);
+    } else {
+        modelViewer.attr("environment-image", "");
+        modelViewer.attr("skybox-image", "");
+    }
+
     // Pausar modelo #########################################
     const pauseAnim = $("#pauseAnim");
     let isPaused = false;

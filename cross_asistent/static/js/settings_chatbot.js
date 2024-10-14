@@ -45,13 +45,33 @@ $(document).ready(function () {
         if ($(".asistent_group").hasClass("open")) {
             changeMicrophone();
         }
+        // Abrir chat #######################
         $(".toggle_controls").click(() => {
             microphonerecord = false;
-            $(".asistent_group.open").toggleClass("close_controls open_keyboard open_controls");
+            const asistentGroup = $(".asistent_group.open");
+            asistentGroup.toggleClass("close_controls open_keyboard open_controls");
             if (!isMobile) {
                 setTimeout(function () {
                     $(".controls_input #txtQuestion").focus();
-                }, 1500);
+                }, 900);
+            }
+
+            let modelViewer = $("#asistent_model");
+            const hdrSaved = localStorage.getItem("model_hdr");
+
+            if (asistentGroup.hasClass("open_keyboard")) {
+                $("#changeScene").addClass("none").css("--delay", "7");
+                modelViewer.attr("environment-image", "");
+                modelViewer.attr("skybox-image", "");
+            } else {
+                $("#changeScene").removeClass("none").css("--delay", "3");
+                if (hdrSaved != "") {
+                    modelViewer.attr("environment-image", `/media/hdri/${hdrSaved}.hdr`);
+                    modelViewer.attr("skybox-image", `/media/hdri/${hdrSaved}.hdr`);
+                } else {
+                    modelViewer.attr("environment-image", "");
+                    modelViewer.attr("skybox-image", "");
+                }
             }
         });
         $(".controls_btn_close").click(() => {
@@ -380,7 +400,7 @@ function displayChatbotResponse(varAnswer) {
     }
 
     if (dataRedirigir && dataRedirigir.trim() !== "") {
-        btnRedir = `<br><br> <a class="btn bg_detail mb-2 max_w300" ${btnBlanck} href="${dataRedirigir}" >Ver Más <i class="fa-arrow-up-right-from-square ms-1"></i></a>`;
+        btnRedir = `<br><br> <a class="btn bg_detail mb-2 max_w300" ${btnBlanck} href="${dataRedirigir}" >Ver Más <i class="<i class="fa-solid fa-up-right-from-square"></i> ms-1"></i></a>`;
     }
 
     lastText = varAnswer.informacion;

@@ -21,7 +21,7 @@
 </head>
 
 <body>
-    <nav class="navbar navbar-expand-lg navbar-light bg-body-tertiary">
+    <nav class="navbar navbar-expand-lg">
         <div class="container container-fluid">
             <a class="navbar-brand" href="{% block link_home %}/{% endblock %}">
                 <img src="{% static 'img/UTC_logo-plano.webp' %}" alt="UTC logo" />
@@ -35,9 +35,11 @@
                     </button>
                     {% block qrBTN %}{% endblock %}
                 </div>
+                {% block toggleMenu %}
                 <button data-mdb-collapse-init class="navbar-toggler" type="button" data-mdb-target="#navbarText" aria-controls="navbarText"
                     aria-expanded="false" aria-label="Toggle navigation" data-btn_closed="#overlayMenu"></button>
-                <div class="collapse navbar-collapse position-absolute top-100 navbar-light bg-body-tertiary flex-grow-0" id="navbarText">
+                {% endblock %}
+                <div class="collapse navbar-collapse position-absolute top-100 flex-grow-0" id="navbarText">
                     <ul class="navbar-nav mb-lg-0 px-2 px-lg-0">
                         {% block link_default %}
                         <li class="nav-item">
@@ -58,27 +60,8 @@
                                 href="{% url 'calendario' %}">Calendario <i class="fa-solid fa-calendar-days ms-1"></i></i></a>
                         </li>
                         <li class="nav-item">
-                            <a class="btn {% if active_page == 'blog' %}btn_secondary{% else %}btn_detail{% endif %} m-1 my-lg-0 d-block"
-                                href="{% url 'blog' %}">Blog <i class="fa-solid fa-newspaper ms-1"></i></i></a>
-                        </li>
-                        <li class="nav-item">
-                            <div class="dropdown">
-                                <a class="btn btn_detail m-1 my-lg-0 d-block dropdown-toggle" href="" role="button" id="dropdownMenuLink" data-mdb-dropdown-init
-                                    data-mdb-ripple-init aria-expanded="false">
-                                    Otros <i class="fa-solid fa-users ms-1"></i>
-                                </a>
-
-                                <ul class="dropdown-menu mx-100" aria-labelledby="dropdownMenuLink">
-                                    <li>
-                                        <a href="{% url 'about' %}" class="dropdown-item {% if active_page|default:'' == 'about' %}active{% endif %}"
-                                            aria-current="true">Acerca de</a>
-                                    </li>
-                                    <li>
-                                        <a href="{% url 'singin' %}" class="dropdown-item {% if active_page|default:'' == 'singin' %}active{% endif %}"
-                                            aria-current="true">Acceder</a>
-                                    </li>
-                                </ul>
-                            </div>
+                            <a class="btn {% if active_page == 'about' %}btn_secondary{% else %}btn_detail{% endif %} m-1 my-lg-0 d-block"
+                                href="{% url 'about' %}">Acerca de <i class="fa-solid fa-heart me-1"></i></a>
                         </li>
                         {% endblock %}
                     </ul>

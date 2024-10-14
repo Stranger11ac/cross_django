@@ -5,6 +5,8 @@
 <link rel="stylesheet" href="{% static 'css/swiper-bundle.min.css' %}" />
 <script type="module" src="{% static 'js/model-viewer.min.js' %}"></script>
 {% endblock %}
+{% block toggleMenu %} <span></span> {% endblock %}
+{% block link_default %} <span></span> {% endblock %}
 {% block qrBTN %}
 {% if btn_qr %}
 <button type="button" class="btn btn_detail btn-floating p-0 me-2 me-md-0 ms-md-2" data-mdb-ripple-init data-mdb-modal-init data-mdb-target="#modalqr">
@@ -57,18 +59,23 @@
     <!-- Asistente -->
     <section href="#asistente" class="asistent_group {% if hawkyAlways %}open open_controls{% endif %}">
         <div class="box_asistent">
-            <model-viewer id="asistent_model" src="{{model_3D}}" data-settings-model="{% url 'modelsettings' %}" tone-mapping="neutral" autoplay
-                camera-orbit="0deg 90deg 20m" poster="{% static 'img/hawky.0011.webp' %}" loading="eager" shadow-intensity="1"
-                animation-name="{{anim_default}}">
+            <model-viewer id="asistent_model" autoplay loading="eager" src="{{model_3D}}" shadow-intensity="1" tone-mapping="neutral"
+                camera-orbit="0deg 90deg 20m" animation-name="{{anim_default}}" poster="{% static 'img/hawky.0011.webp' %}"
+                data-settings-model="{% url 'modelsettings' %}" environment-image="" skybox-image="">
+
                 <div id="model_areas" class="model_areas slide_areas show" init-wave-click></div>
+                <!-- camera-controls -->
                 <!-- Audio y animacion -->
                 <div class="box_asistent_controls controls_vertical-left controls_hide">
-                    <div class="d-flex flex-column gap_20 pop_buttons">
-                        <button class="btn bg_blue-green btn-floating p-4 speak_btn" style="--delay:3;">
+                    <div class="d-flex flex-column gap_10 pop_buttons">
+                        <button class="btn bg_blue-green btn-floating p-4 speak_btn text-white" style="--delay:5;">
                             <i class="fa-solid fa-volume-high fs-15"></i>
                         </button>
-                        <button class="btn bg_blue-green btn-floating p-4 text-white" id="pauseAnim" title="Pausar Animacion" style="--delay:4;">
+                        <button class="btn bg_blue-green btn-floating p-4 text-white" id="pauseAnim" title="Pausar Animacion" style="--delay:6;">
                             <i class="fa-regular fa-circle-pause fs-20"></i>
+                        </button>
+                        <button class="btn bg_blue-green btn-floating p-4 text-white" id="changeScene" title="Cambiar Esena" style="--delay:7;">
+                            <i class="fa-solid fa-earth-africa fs-20"></i>
                         </button>
                     </div>
                 </div>
@@ -77,14 +84,19 @@
             <!-- Controles iniciales -->
             <div class="box_asistent_controls">
                 <div class="controls_buttons">
-                    <button type="button" class="btn btn_controls toggle_controls">
+                    <button type="button" class="btn btn_controls text-white toggle_controls">
                         <i class="fa-regular fa-keyboard"></i>
                     </button>
-                    <button type="button" class="btn btn_controls {% if not hawkyAlways %}btn_detail{% endif %} controls_btn_microphone">
+                    <button type="button" class="btn btn_controls text-white {% if not hawkyAlways %}btn_detail{% endif %} controls_btn_microphone">
                         <i class="fa-solid fa-comment tscale-1" id="btn_controls_icon"></i>
                     </button>
+                    {% if hawkyAlways %}
+                    <a href="{% url 'map' %}" class="btn btn_controls text-white">
+                        <i class="fa-solid fa-map-location-dot"></i>
+                    </a>
+                    {% endif %}
                     {% if not hawkyAlways %}
-                    <button type="button" class="btn btn_controls controls_btn_close">
+                    <button type="button" class="btn btn_controls text-white controls_btn_close">
                         <i class="fa-solid fa-xmark tscale-1-2"></i>
                     </button>
                     {% endif %}
