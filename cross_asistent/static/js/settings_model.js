@@ -257,45 +257,45 @@ $(document).ready(function () {
                     return;
                 }
 
-                $("#cameraHorizontal").attr("value", data.cameraOrbit[0]);
-                $("#cameraVertical").attr("value", data.cameraOrbit[1]);
-                $("#cameraDistance").attr("value", data.cameraOrbit[2]);
                 $("[data-range-val='#cameraHorizontal']").text(data.cameraOrbit[0]);
                 $("[data-range-val='#cameraVertical']").text(data.cameraOrbit[1]);
                 $("[data-range-val='#cameraDistance']").text(data.cameraOrbit[2]);
 
-                $("#num_areas").attr("value", data.gridAreas[0]);
-                $("#row_areas").attr("value", data.gridAreas[1]);
-                $("#col_areas").attr("value", data.gridAreas[2]);
-
-                $("#cameraHorizontal").val(data.cameraOrbit[0]);
-                $("#cameraVertical").val(data.cameraOrbit[1]);
-                $("#cameraDistance").val(data.cameraOrbit[2]);
-
-                $("#num_areas").val(data.gridAreas[0]);
-                $("#row_areas").val(data.gridAreas[1]);
-                $("#col_areas").val(data.gridAreas[2]);
+                $("#cameraHorizontal").attr("value", data.cameraOrbit[0]);
+                $("#cameraVertical").attr("value", data.cameraOrbit[1]);
+                $("#cameraDistance").attr("value", data.cameraOrbit[2]);
 
                 function changeAnim() {
-                    const animations = data.animations;
-                    for (let i = 0; i < animations[0].length; i++) {
-                        const name = animations[0][i];
+                    if (data.animations) {
+                        const animations = data.animations;
+                        for (let i = 0; i < animations[0].length; i++) {
+                            const name = animations[0][i];
 
-                        $(`#sectionAnim${i + 1} option[value="${name}"]`).attr("selected", true);
-                        $(`#actionAnim${i + 1}`)
-                            .removeAttr("disabled")
-                            .attr({ "data-animation": name, "data-duration": animations[1][i] })
-                            .addClass(`grid-row_span-${animations[2][i]} grid-col_span-${animations[3][i]}`);
-                        $(`#sectionAnim${i + 1} #areaTime${i + 1}`).attr("value", animations[1][i]);
-                        $(`#sectionAnim${i + 1} #areaHeight${i + 1}`).attr("value", animations[2][i]);
-                        $(`#sectionAnim${i + 1} #areaWidth${i + 1}`).attr("value", animations[3][i]);
+                            $(`#sectionAnim${i + 1} option[value="${name}"]`).attr("selected", true);
+                            $(`#actionAnim${i + 1}`)
+                                .removeAttr("disabled")
+                                .attr({ "data-animation": name, "data-duration": animations[1][i] })
+                                .addClass(`grid-row_span-${animations[2][i]} grid-col_span-${animations[3][i]}`);
+                            $(`#sectionAnim${i + 1} #areaTime${i + 1}`).attr("value", animations[1][i]);
+                            $(`#sectionAnim${i + 1} #areaHeight${i + 1}`).attr("value", animations[2][i]);
+                            $(`#sectionAnim${i + 1} #areaWidth${i + 1}`).attr("value", animations[3][i]);
+                        }
                     }
                 }
 
                 modelViewer.attr("camera-orbit", `${data.cameraOrbit[0]}deg ${data.cameraOrbit[1]}deg ${data.cameraOrbit[2]}m`);
-                setModelGrid(data.gridAreas[1], data.gridAreas[2]);
+
+                if (data.gridAreas) {
+                    $("#num_areas").attr("value", data.gridAreas[0]);
+                    $("#row_areas").attr("value", data.gridAreas[1]);
+                    $("#col_areas").attr("value", data.gridAreas[2]);
+                    setModelGrid(data.gridAreas[1], data.gridAreas[2]);
+                }
+
                 setTimeout(() => {
-                    setAnimAreas(data.gridAreas[0]);
+                    if (data.gridAreas) {
+                        setAnimAreas(data.gridAreas[0]);
+                    }
                     setTimeout(() => {
                         changeAnim();
                     }, 500);

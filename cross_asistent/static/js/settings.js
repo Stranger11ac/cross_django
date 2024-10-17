@@ -429,6 +429,16 @@ $(document).ready(function () {
             }
         });
 
+        // Transferir valor booleano del checkbox ####################
+        $('input[type="checkbox"][data-transfer-bool]').on("change", function () {
+            var inputId = $(this).attr("data-transfer-bool");
+            if ($(this).is(":checked")) {
+                $(inputId).attr("value", "true");
+            } else {
+                $(inputId).attr("value", "false");
+            }
+        });
+
         // Valor del input range ####################
         $('input[type="range"]').on("input", function () {
             const thisId = $(this).attr("id");

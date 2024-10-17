@@ -605,7 +605,7 @@ def mapa_data(request):
             "informacion": mapa.informacion,
             "galery_items": galery_items,
             "galery_count": galeryQuery.count(),
-            "hidename": True if mapa.hide_name else False,
+            "hidename": bool(mapa.hide_name),
             "door_coords": [float(coord) for coord in mapa.door_cords.split(",")],
             "polygons": [
                 [float(coord) for coord in mapa.p1_polygons.split(",")],

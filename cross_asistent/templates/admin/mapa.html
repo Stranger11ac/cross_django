@@ -92,12 +92,14 @@
 
             <!-- Marcador de imagen -->
             <div class="mt-4" data-notmarker>
-                <input class="form-check-input" type="checkbox" id="hidename" name="hidename" checked />
-                <label class="form-check-label" for="hidename">: Mostrar Nombre</label>
+                <input class="form-check-input" type="checkbox" id="checkHidename" data-transfer-bool="#hidename" />
+                <label class="form-check-label" for="checkHidename">: Mostrar Nombre</label>
+                <input type="hidden" id="hidename" name="hidename">
             </div>
             <div class="my-4">
-                <input class="form-check-input" type="checkbox" id="ismarker" name="ismarker" />
-                <label class="form-check-label" for="ismarker">: Marcador de Imagen</label>
+                <input class="form-check-input" type="checkbox" id="checkIsmarker" data-transfer-bool="#ismarker" />
+                <label class="form-check-label" for="checkIsmarker">: Marcador de Imagen</label>
+                <input type="hidden" id="ismarker" name="ismarker" />
             </div>
             <div class="form-outline none mb-4" data-mdb-input-init id="sizemarkerdiv">
                 <input type="number" id="sizemarker" name="sizemarker" class="form-control active text-end" min="0.01" max="1" step="0.01" value="0.05"

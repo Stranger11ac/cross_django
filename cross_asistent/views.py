@@ -512,8 +512,8 @@ def update_create_pleace_map(request):
                 edificio.door_cords = door_cordsPost
                 edificio.size_marker = sizemarkerPost
                 edificio.informacion = informacionPost
-                edificio.is_marker = True if is_markerPost else False
-                edificio.hide_name = True if hide_namePost else False
+                edificio.is_marker = bool(is_markerPost)
+                edificio.hide_name = bool(hide_namePost)
                 edificio.save()
                 success_message = f'Se Actualizaron los datos de <span>"{nombrePost}"</span> en el mapa de forma exitosa 🧐😁🎈'
 
@@ -526,21 +526,20 @@ def update_create_pleace_map(request):
         else:
             # validar si este ya existe en el mapa y en db para que no se repitan
             models.Mapa.objects.create(
-                uuid=uuidPost,
-                color=colorPost,
-                nombre=nombrePost,
-                p1_polygons=p1Post,
-                p2_polygons=p2Post,
-                p3_polygons=p3Post,
-                p4_polygons=p4Post,
-                door_cords=door_cordsPost,
-                informacion=informacionPost,
-                size_marker = sizemarkerPost,
-                is_marker=True if is_markerPost else False,
-                hide_name=True if hide_namePost else False,
+                uuid = uuidPost,
+                color = colorPost,
+                nombre = nombrePost,
+                p1_polygons = p1Post,
+                p2_polygons = p2Post,
+                p3_polygons = p3Post,
+                p4_polygons = p4Post,
+                door_cords = door_cordsPost,
+                informacion = informacionPost,
+                size_marker  =  sizemarkerPost,
+                is_marker = bool(is_markerPost),
+                hide_name = bool(hide_namePost),
             )
             
-            # Verificar notas ToDo
             models.Database.objects.create(
                 categoria=models.Categorias.objects.get(categoria="Mapa"),
                 titulo=nombrePost,
