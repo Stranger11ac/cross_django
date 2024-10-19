@@ -10,6 +10,10 @@ from django.utils import timezone
 from . import models
 import datetime
 import json
+import os
+import environ
+env = environ.Env()
+environ.Env.read_env()
 
 ALLOWED_EXTENSIONS = ['jpg', 'jpeg', 'png']
 
@@ -848,4 +852,34 @@ def galeria_upload_images(request):
         except Exception as e:
             return JsonResponse({'error': str(e)}, status=400)
     return JsonResponse({'success': False, 'message': 'Método no permitido.'}, status=405)
+
+
+# Variables del Entorno env ----------------------------------------------------------
+@login_required
+@never_cache
+def get_env(request):    
+    variable_keys = ['OPENAI_API_KEY', 'ENCRYPTION_KEY', 'TMP', 'WINDIR', 'USERNAME']
+    env_variables = {key: env(key) for key in variable_keys if env(key, None) is not None}
+    return JsonResponse(env_variables)
+
+def update_env_variable(request):
+    if request.method == 'POST':
+        variable_name = request.POST.get('variable_name')
+        variable_value = request.POST.get('variable_value')
+
+        if not variable_name or not variable_value:
+            return JsonResponse({'error': 'Debe proporcionar el nombre y el valor de la variable'}, status=400)
+
+        env_variables = {key: env(key) for key in env.ENVIRON.keys()}
+        env_variables[variable_name] = variable_value
+        env_file_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), '.env')
+
+        with open(env_file_path, 'w') as file:
+            for key, value in env_variables.items():
+                file.write(f"{key}={value}\n")
+
+        return JsonResponse({'success': True, 'message':f'{variable_name} actualizada correctamente'})
+    return JsonResponse({'success': False, 'message': 'Metodo no permitido'})
+
+
 

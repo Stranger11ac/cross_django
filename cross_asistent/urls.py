@@ -84,6 +84,7 @@ urlpatterns = [
     
     # configuraciones ----------------------------------------------------------
     path('administracion/configuraciones/actualizar/', functions.settings_update, name='update_settings'),
+    path('administracion/configuraciones/variables/', functions.get_env, name='get_env'),
     
     # Importar y Exportar ----------------------------------------------------------
     path('administracion/export/categorias/', imex_port.export_categorias, name='export_categorias'),

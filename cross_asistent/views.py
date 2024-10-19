@@ -5,7 +5,6 @@ from django.views.decorators.cache import never_cache
 from django.contrib.auth.models import User
 from django.db import models, transaction
 from django.http import JsonResponse
-from django.conf import settings
 from django.urls import reverse
 from . import functions, models
 import json
@@ -52,6 +51,7 @@ error_messages = {
 def index(request):
     if not request.user.is_staff:
         logout(request)
+    
     configuraciones = obtener_configuraciones(idConfig)
     hawkySettings = obtener_configuraciones(idHawky)
     banners_all = models.Banners.objects.filter(visible=True)

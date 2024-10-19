@@ -109,5 +109,4 @@ def modelsettings(request):
             return JsonResponse(parsed_data, status=200)
         except Exception as e:
             return JsonResponse({'success': False, 'message': f'#{quest_id} no encontrada.'}, status=404)
-    # return render(request, 'error/404.html')
     return JsonResponse({'success': False, 'message': 'Acción no permitida.'}, status=400)

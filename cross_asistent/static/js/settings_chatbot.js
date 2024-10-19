@@ -400,7 +400,7 @@ function displayChatbotResponse(varAnswer) {
     }
 
     if (dataRedirigir && dataRedirigir.trim() !== "") {
-        btnRedir = `<br><br> <a class="btn bg_detail mb-2 max_w300" ${btnBlanck} href="${dataRedirigir}" >Ver Más <i class="<i class="fa-solid fa-up-right-from-square"></i> ms-1"></i></a>`;
+        btnRedir = `<br><br> <a class="btn bg_detail mb-2 max_w300" ${btnBlanck} href="${dataRedirigir}" >Ver Más <i class="fa-solid fa-up-right-from-square ms-1"></i></a>`;
     }
 
     lastText = varAnswer.informacion;
