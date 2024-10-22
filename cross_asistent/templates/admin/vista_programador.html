@@ -564,49 +564,6 @@
                 </div>
               </div>
             </div>
-            <!-- ENV -->
-            <div class="accordion-item mb-3 col-12 px-2 col-lg-8">
-              <h5 class="accordion-header" id="flush-headingenv">
-                <button data-mdb-collapse-init class="accordion-button" type="button" data-mdb-toggle="collapse" data-mdb-target="#flush-collapseenv"
-                  aria-expanded="true" aria-controls="flush-collapseenv">Variables del Entorno (.env)</button>
-              </h5>
-              <div id="flush-collapseenv" class="accordion-collapse collapse" aria-labelledby="flush-headingenv" data-mdb-parent="#settingsAccordion">
-                <div class="accordion-body">
-                  <form action="{% url 'set_env' %}" class="row" method="post" data-submit-form>
-                    {% csrf_token %}
-                    <input type="hidden" name="variable_name" value="OPENAI_API_KEY">
-                    <div class="col-10">
-                      <div data-mdb-input-init class="form-outline">
-                        <input type="password" id="firstvalue" name="variable_value" class="form-control text-end" required />
-                        <label class="form-label" for="firstvalue">OpenAI Api Key:</label>
-                      </div>
-                    </div>
-                    <div class="col-2">
-                      <button type="submit" class="btn btn_detail btn-block"><i class="fa-solid fa-paper-plane"></i></button>
-                    </div>
-                  </form>
-                </div>
-              </div>
-            </div>
-            <!-- calendario -->
-            <div class="accordion-item mb-3 col-12 px-2 col-lg-4">
-              <h5 class="accordion-header" id="flush-headingcalendar">
-                <button data-mdb-collapse-init class="accordion-button" type="button" data-mdb-toggle="collapse" data-mdb-target="#flush-collapsecalendar"
-                  aria-expanded="true" aria-controls="flush-collapsecalendar">Calendario</button>
-              </h5>
-              <div id="flush-collapsecalendar" class="accordion-collapse collapse" aria-labelledby="flush-headingcalendar" data-mdb-parent="#settingsAccordion">
-                <div class="accordion-body">
-                  <form action="{% url 'update_settings' %}" class="form-check" method="post" data-submit-blur="formcalendar" data-submit-form>
-                    {% csrf_token %}
-                    <input type="hidden" id="btnsYearpost" name="btnsYearpost" value="True" />
-                    <input class="form-check-input input_change" {% if calendar_btnsYear_1 %}checked{% endif %} type="checkbox" id="btnsYear" name="btnsYear" />
-                    <label class="form-check-label" for="btnsYear">Mostrar Botones de año (<i class="fa-solid fa-angles-left"></i>|<i
-                        class="fa-solid fa-angles-right"></i>)</label>
-                    <button type="submit" class="d-none" id="formcalendar"></button>
-                  </form>
-                </div>
-              </div>
-            </div>
             <!-- About -->
             <div class="accordion-item mb-3 col-12 px-2">
               <h5 class="accordion-header" id="flush-headingabout">
