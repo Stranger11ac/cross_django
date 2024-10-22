@@ -11,9 +11,14 @@ fernet = Fernet(encryption_key)
 encrypted_api_key = env("OPENAI_API_KEY").encode()
 decrypted_api_key = fernet.decrypt(encrypted_api_key).decode()
 
+
 OPENAI_API_KEY = decrypted_api_key
 
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+ENV_FILE_PATH = os.path.join(BASE_DIR, '.env')
+if os.path.exists(ENV_FILE_PATH):
+    environ.Env.read_env(ENV_FILE_PATH)
 
 # Cambiar la clave secreta en produccion ---------------------------------------------------------
 SECRET_KEY = 'django-insecure-32wpj55%1@sy+hqt(v6b87!04o3m2(+1##sf@^%45$0@@fdynj'

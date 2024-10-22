@@ -61,10 +61,10 @@
         <div class="box_asistent">
             <model-viewer id="asistent_model" autoplay loading="eager" src="{{model_3D}}" shadow-intensity="1" tone-mapping="neutral"
                 camera-orbit="0deg 90deg 20m" animation-name="{{anim_default}}" poster="{% static 'img/hawky.0011.webp' %}"
-                data-settings-model="{% url 'modelsettings' %}" environment-image="" skybox-image="">
-
-                <div id="model_areas" class="model_areas slide_areas show" init-wave-click></div>
-                <!-- camera-controls -->
+                data-settings-model="{% url 'modelsettings' %}" environment-image="" skybox-image="" {% if not active_areas %}camera-controls{% endif %}>
+                {% if active_areas %}
+                <div init-wave-click id="model_areas" class="model_areas slide_areas show"></div>
+                {% endif %}
                 <!-- Audio y animacion -->
                 <div class="box_asistent_controls controls_vertical-left controls_hide">
                     <div class="d-flex flex-column gap_10 pop_buttons">

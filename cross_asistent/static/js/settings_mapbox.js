@@ -413,7 +413,7 @@ window.addEventListener("load", () => {
         }
 
         // Detectar si es marcador
-        $("#ismarker").change(function () {
+        $("#checkIsmarker").change(function () {
             if ($(this).is(":checked")) {
                 $("#sizemarkerdiv").slideDown("fast");
                 $("[data-notmarker]").slideUp();
@@ -517,7 +517,8 @@ window.addEventListener("load", () => {
                         $("#fotoEdificio").attr("required", true);
                         tinymce.get("textTiny").setContent("");
 
-                        $("#ismarker").removeAttr("checked");
+                        $("#ismarker").val("False");
+                        $("#checkIsmarker").removeAttr("checked");
                         $("#sizemarkerdiv").slideUp();
                         $("[data-notmarker]").slideDown();
                         $('[for="puertaCordsEdificio"]').text("Punto de entrada:");
@@ -895,7 +896,7 @@ window.addEventListener("load", () => {
                     $(".error.bg-danger").slideUp("fast");
                     const { color, door, uuid, ismarker, label } = feature.properties;
 
-                    if ($("#ismarker").is(":checked")) {
+                    if ($("#checkIsmarker").is(":checked")) {
                         $("#sizemarkerdiv").slideUp();
                         $("[data-notmarker]").slideDown();
                         $('[for="puertaCordsEdificio"]').text("Punto de entrada:");
@@ -908,9 +909,11 @@ window.addEventListener("load", () => {
                     $("#sizemarker").val("0.5");
 
                     if (ismarker) {
-                        $("#ismarker").attr("checked", "checked");
+                        $("#ismarker").val("True");
+                        $("#checkIsmarker").attr("checked", "checked");
                     } else {
-                        $("#ismarker").removeAttr("checked");
+                        $("#ismarker").val("False");
+                        $("#checkIsmarker").removeAttr("checked");
                     }
 
                     $("#hidename").slideDown();
@@ -1168,12 +1171,14 @@ window.addEventListener("load", () => {
                         offcanvasContent.querySelector("#isNewEdif").value = "notnew";
 
                         if (ismarker) {
-                            $("#ismarker").attr("checked", "checked");
+                            $("#ismarker").val("True");
+                            $("#checkIsmarker").attr("checked", "checked");
                             $("#sizemarkerdiv").slideDown("fast");
                             $("[data-notmarker]").slideUp();
                             $('[for="puertaCordsEdificio"]').text("Ubicacion:");
                         } else {
-                            $("#ismarker").removeAttr("checked");
+                            $("#ismarker").val("False");
+                            $("#checkIsmarker").removeAttr("checked");
                         }
 
                         $("#hidename").slideUp();

@@ -384,7 +384,7 @@
     <div class="mt-4">
       <div class="card">
         <div class="card-body">
-          <h3 class="mb-4 text-center">Configurar <span class="text_detail">Modelo 3D</span></h3>
+          <h3 class="mb-4 text-center">Asistente y <span class="text_detail">Modelo 3D</span></h3>
           <!-- formulario -->
           <form id="hawkySettings" action="{% url 'update_settings' %}" method="post" class="row px-0" data-submit-form>
             {% csrf_token %}
@@ -398,6 +398,9 @@
 
               <!-- Acciones -->
               <div class="d-flex justify-content-center gap_20 col-12 my-4">
+                <button type="button" class="btn bg_purple-blue btn-floating p-4 text-white" id="changeScene" title="Cambiar Esena" style="--delay:7;">
+                  <i class="fa-solid fa-earth-africa fs-20"></i>
+                </button>
                 <button type="button" class="btn bg_purple-blue btn-floating text-white p-4" id="pauseAnim" title="Pausar Animación">
                   <i class="fa-solid fa-circle-pause fs-20"></i>
                 </button>
@@ -561,6 +564,30 @@
                 </div>
               </div>
             </div>
+            <!-- ENV -->
+            <div class="accordion-item mb-3 col-12 px-2 col-lg-8">
+              <h5 class="accordion-header" id="flush-headingenv">
+                <button data-mdb-collapse-init class="accordion-button" type="button" data-mdb-toggle="collapse" data-mdb-target="#flush-collapseenv"
+                  aria-expanded="true" aria-controls="flush-collapseenv">Variables del Entorno (.env)</button>
+              </h5>
+              <div id="flush-collapseenv" class="accordion-collapse collapse" aria-labelledby="flush-headingenv" data-mdb-parent="#settingsAccordion">
+                <div class="accordion-body">
+                  <form action="{% url 'set_env' %}" class="row" method="post" data-submit-form>
+                    {% csrf_token %}
+                    <input type="hidden" name="variable_name" value="OPENAI_API_KEY">
+                    <div class="col-10">
+                      <div data-mdb-input-init class="form-outline">
+                        <input type="password" id="firstvalue" name="variable_value" class="form-control text-end" required />
+                        <label class="form-label" for="firstvalue">OpenAI Api Key:</label>
+                      </div>
+                    </div>
+                    <div class="col-2">
+                      <button type="submit" class="btn btn_detail btn-block"><i class="fa-solid fa-paper-plane"></i></button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
             <!-- calendario -->
             <div class="accordion-item mb-3 col-12 px-2 col-lg-4">
               <h5 class="accordion-header" id="flush-headingcalendar">
@@ -576,32 +603,6 @@
                     <label class="form-check-label" for="btnsYear">Mostrar Botones de año (<i class="fa-solid fa-angles-left"></i>|<i
                         class="fa-solid fa-angles-right"></i>)</label>
                     <button type="submit" class="d-none" id="formcalendar"></button>
-                  </form>
-                </div>
-              </div>
-            </div>
-            <!-- Footer -->
-            <div class="accordion-item mb-3 col-12 px-2 col-lg-8">
-              <h5 class="accordion-header" id="flush-headingfooter">
-                <button data-mdb-collapse-init class="accordion-button" type="button" data-mdb-toggle="collapse" data-mdb-target="#flush-collapsefooter"
-                  aria-expanded="true" aria-controls="flush-collapsefooter">Footer</button>
-              </h5>
-              <div id="flush-collapsefooter" class="accordion-collapse collapse" aria-labelledby="flush-headingfooter" data-mdb-parent="#settingsAccordion">
-                <div class="accordion-body">
-                  <form action="{% url 'update_settings' %}" class="row" method="post" data-submit-blur="formfooter" data-submit-form>
-                    {% csrf_token %}
-                    <div class="col-md-6">
-                      <div data-mdb-input-init class="form-outline mt-4">
-                        <input type="text" id="cr_year" name="cr_year" class="form-control input_blur active text-end" value="{{copyright_year_1}}" required />
-                        <label class="form-label" for="cr_year">Copyright:</label>
-                      </div>
-                    </div>
-                    <div class="col-md-6">
-                      <div data-mdb-input-init class="form-outline mt-4">
-                        <input type="text" id="utclink" name="utclink" class="form-control input_blur active text-end" value="{{utc_link_1}}" required />
-                        <label class="form-label" for="utclink">Sitio web Oficial:</label>
-                      </div>
-                    </div>
                   </form>
                 </div>
               </div>
@@ -662,6 +663,35 @@
                     </div>
                     <div class="d-flex justify-content-end">
                       <button type="submit" class="btn btn_cyan-purple text-white">Guardar Cambios <i class="fa-solid fa-floppy-disk ms-1"></i></button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+            <!-- Footer -->
+            <div class="accordion-item mb-3 col-12 px-2">
+              <h5 class="accordion-header" id="flush-headingfooter">
+                <button data-mdb-collapse-init class="accordion-button" type="button" data-mdb-toggle="collapse" data-mdb-target="#flush-collapsefooter"
+                  aria-expanded="true" aria-controls="flush-collapsefooter">Footer</button>
+              </h5>
+              <div id="flush-collapsefooter" class="accordion-collapse collapse" aria-labelledby="flush-headingfooter" data-mdb-parent="#settingsAccordion">
+                <div class="accordion-body">
+                  <form action="{% url 'update_settings' %}" class="row" method="post" data-submit-blur="formfooter" data-submit-form>
+                    {% csrf_token %}
+                    <div class="col-md-6">
+                      <div data-mdb-input-init class="form-outline mt-4">
+                        <input type="text" id="cr_year" name="cr_year" class="form-control input_blur active text-end" value="{{copyright_year_1}}" required />
+                        <label class="form-label" for="cr_year">Copyright:</label>
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <div data-mdb-input-init class="form-outline mt-4">
+                        <input type="text" id="utclink" name="utclink" class="form-control input_blur active text-end" value="{{utc_link_1}}" required />
+                        <label class="form-label" for="utclink">Sitio web Oficial:</label>
+                      </div>
+                    </div>
+                    <div class="d-none">
+                      <button type="submit" id="formfooter"></button>
                     </div>
                   </form>
                 </div>

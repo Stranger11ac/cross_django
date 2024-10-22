@@ -568,6 +568,7 @@ function jsonSubmit(e) {
         .then(async (response) => {
             if (!response.ok) {
                 const data = await response.json();
+                console.error(data)
                 throw new Error(data.error || "Error en el formato recivido");
             }
             return response.json();
