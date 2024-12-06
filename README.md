@@ -15,8 +15,8 @@ Con el fin de resolver y atender las dudas sobre la UTC, tanto de administrativo
 | Oscuro     | ![#292f38](https://via.placeholder.com/10/292f38?text=+) #292f38 |
 
 ## Modelo 3D
-En el proyecto se realizo un modelo 3D del halcon de la UTC, se realizo en blender, realizado en conjunto por el TSU. Fransisco Malacara y el Ing. Salvador Hernandez.
-Este modelo tiene el objetivo de ser la figura representativa de la universidad, al estar directamente en el inicio del sitio y en el chat de conversacion, ademas se tiene contemplado ubicarlo en otros objetos y paginas del sitio, por ejemplo, en los varios tutoriales del sitio web.
+En el proyecto se realizo un modelo 3D del halcon que representa a la UTC, desarrollado en blender, en conjunto por el TSU. Fransisco Malacara y el Ing. Salvador Hernandez.
+Con el objetivo de ser la figura representativa del asistente, al estar directamente en el inicio del sitio y en el chat de conversacion, ademas se tiene contemplado ubicarlo en otros objetos y paginas del sitio, por ejemplo, en los varios tutoriales del sitio web.
 
 ### Colores del Modelo
 
